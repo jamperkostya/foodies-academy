@@ -1,0 +1,65 @@
+services:
+  mysql:
+    image: mysql:9.7.1
+    container_name: foodies_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: foodies_wp
+      MYSQL_USER: wp_user
+      MYSQL_PASSWORD: wp_password
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+
+  wordpress:
+    image: wordpress:7.0.2-php8.3-apache
+    container_name: foodies_wordpress
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_NAME: foodies_wp
+      WORDPRESS_DB_USER: wp_user
+      WORDPRESS_DB_PASSWORD: wp_password
+    volumes:
+      - ./wp-content:/var/www/html/wp-content
+    ports:
+      - "8081:80"
+
+  laravel:
+    build:
+      context: ./laravel-app
+      dockerfile: Dockerfile.dev
+    container_name: foodies_laravel
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    volumes:
+      - ./laravel-app:/var/www/html
+    ports:
+      - "8000:8000"
+    environment:
+      DB_HOST: mysql
+      DB_DATABASE: foodies_laravel
+      DB_USERNAME: laravel_user
+      DB_PASSWORD: laravel_password
+
+  astro:
+    build:
+      context: ./astro-app
+      dockerfile: Dockerfile.dev
+    container_name: foodies_astro
+    restart: unless-stopped
+    volumes:
+      - ./astro-app:/app
+      - astro_node_modules:/app/node_modules
+    ports:
+      - "80:4321"
+
+volumes:
+  db_data:
+  astro_node_modules:
