@@ -1,6 +1,6 @@
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { beforeAll, describe, expect, it } from "vitest";
-import Footer from "../src/components/Footer.astro";
+import Footer from "../src/components/layout/Footer.astro";
 
 describe("Footer", () => {
 	let html: string;
@@ -38,7 +38,12 @@ describe("Footer", () => {
 		expect(new Set(titles).size).toBe(titles.length);
 	});
 
-	it("does not use a real link for a non-navigating column title", () => {
-		expect(html).not.toMatch(/<a[^>]*class="footer__col-header"/);
+	it("gives every column title a real, non-placeholder href", () => {
+		const hrefs = [...html.matchAll(/<a href="([^"]*)"[^>]*class="footer__col-header"/g)].map((m) => m[1]);
+		expect(hrefs.length).toBeGreaterThan(0);
+		for (const href of hrefs) {
+			expect(href).not.toBe("#");
+			expect(href).not.toBe("");
+		}
 	});
 });

@@ -1,6 +1,6 @@
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { describe, expect, it } from "vitest";
-import Icon from "../src/components/Icon.astro";
+import Icon from "../src/components/ui/Icon.astro";
 
 describe("Icon", () => {
 	it("points at the shared sprite by symbol id", async () => {

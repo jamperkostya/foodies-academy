@@ -1,0 +1,25 @@
+.stars {
+	position: relative;
+	display: inline-flex;
+
+	&__track,
+	&__fill {
+		display: flex;
+
+		:global(svg) {
+			flex-shrink: 0;
+		}
+	}
+
+	&__track {
+		color: var(--color-grey);
+	}
+
+	&__fill {
+		position: absolute;
+		inset: 0;
+		overflow: hidden;
+		width: var(--stars-fill);
+		color: var(--color-red);
+	}
+}

@@ -1,0 +1,24 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+	rating: number;
+	max?: number;
+}
+
+const { rating, max = 5 } = Astro.props;
+const percent = Math.max(0, Math.min(100, (rating / max) * 100));
+---
+
+<span class="stars" style={`--stars-fill: ${percent}%`} role="img" aria-label={`Рейтинг ${rating} из ${max}`}>
+	<span class="stars__track" aria-hidden="true">
+		{Array.from({ length: max }).map(() => <Icon name="star" width={19} height={19} />)}
+	</span>
+	<span class="stars__fill" aria-hidden="true">
+		{Array.from({ length: max }).map(() => <Icon name="star" width={19} height={19} />)}
+	</span>
+</span>
+
+<style lang="less">
+	@import "./Stars.less";
+</style>

@@ -1,6 +1,6 @@
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { beforeAll, describe, expect, it } from "vitest";
-import Header from "../src/components/Header.astro";
+import Header from "../src/components/layout/Header.astro";
 
 describe("Header", () => {
 	let html: string;
