@@ -4,9 +4,9 @@ import Icon from "./Icon.astro";
 
 <footer class="footer container">
 	<div class="footer__top">
-		<aside class="footer__brand flex gap-13">
-			<a href="#" class="footer_logo">
-				<img src="/images/logotype.jpg" alt="logotype" title="logotype">
+		<div class="footer__brand flex gap-13">
+			<a href="#" class="footer__logo">
+				<img src="/images/logotype.jpg" alt="Foodies" width="242" height="81">
 			</a>
 			<p>Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit, Sed Do Eiusmod Tempor</p>
 			<div class="footer__social flex gap-10">
@@ -16,11 +16,11 @@ import Icon from "./Icon.astro";
 				<a href="#" aria-label="Instagram"><Icon name="social-instagram" width={24} height={24} /></a>
 				<a href="#" aria-label="Telegram"><Icon name="social-telegram" width={24} height={24} /></a>
 			</div>
-		</aside>
-		
-		<aside class="footer__cols grid">
+		</div>
+
+		<nav class="footer__cols grid" aria-label="Дополнительная навигация">
 			<div class="footer__col">
-				<a href="#" class="footer__col-header">Кухни мира</a>
+				<a href="/kitchenks" class="footer__col-header">Кухни мира</a>
 				<ul>
 					<li><a href="index.html">Главная</a></li>
 					<li><a href="categories.html">Категории</a></li>
@@ -30,7 +30,7 @@ import Icon from "./Icon.astro";
 				</ul>
 			</div>
 			<div class="footer__col">
-				<a href="#" class="footer__col-header">Типы Блюд</a>
+				<a href="/dishes" class="footer__col-header">Типы блюд</a>
 				<ul>
 					<li><a href="index.html">Главная</a></li>
 					<li><a href="categories.html">Категории</a></li>
@@ -40,7 +40,7 @@ import Icon from "./Icon.astro";
 				</ul>
 			</div>
 			<div class="footer__col">
-				<a href="#" class="footer__col-header">Видеорецепты</a>
+				<a href="/video" class="footer__col-header">Видеорецепты</a>
 				<ul>
 					<li><a href="index.html">Главная</a></li>
 					<li><a href="categories.html">Категории</a></li>
@@ -50,7 +50,7 @@ import Icon from "./Icon.astro";
 				</ul>
 			</div>
 			<div class="footer__col">
-				<a href="#" class="footer__col-header">Контент</a>
+				<a href="/content" class="footer__col-header">Контент</a>
 				<ul>
 					<li><a href="index.html">Главная</a></li>
 					<li><a href="categories.html">Категории</a></li>
@@ -60,7 +60,7 @@ import Icon from "./Icon.astro";
 				</ul>
 			</div>
 			<div class="footer__col">
-				<a href="#" class="footer__col-header">Контент</a>
+				<a href="/authors" class="footer__col-header">Авторы</a>
 				<ul>
 					<li><a href="index.html">Главная</a></li>
 					<li><a href="categories.html">Категории</a></li>
@@ -69,7 +69,7 @@ import Icon from "./Icon.astro";
 					<li><a href="author.html">Авторы</a></li>
 				</ul>
 			</div>
-		</aside>
+		</nav>
 	</div>
 	
 	<div class="footer__bottom flex flex-between">
