@@ -1,0 +1,19 @@
+---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/global.less";
+---
+
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Foodies.academy</title>
+		<meta name="description" content="Description">
+	</head>
+	<body>
+		<Header />
+			<main><slot /></main> <!-- сюда подставится контент страницы -->
+		<Footer />
+	</body>
+</html>

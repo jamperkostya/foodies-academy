@@ -1,0 +1,46 @@
+---
+import Icon from "./Icon.astro";
+---
+
+<header class="header container flex gap-40 flex-center justify-between" id="header">
+	<a href="#" class="header__logo">
+		<img src="/images/logotype.jpg" alt="logotype" title="logotype">
+	</a>
+
+	<aside class="header__right-part flex gap-20 flex-center">
+		<div class="header__categories" id="categoriesDropdown">
+			<button type="button" class="header__categories-toggle" id="categoriesBtn" aria-haspopup="true" aria-expanded="false">
+				Категории
+				<Icon name="menu-arrow" width={16} height={7} />
+			</button>
+		</div>
+	
+		<form class="header__search" id="searchForm">
+			<input type="search" name="q" placeholder="Поиск рецептов..." aria-label="Поиск рецептов">
+			<button type="submit" aria-label="Найти" class="btn">
+				<Icon name="search" width={24} height={24} />
+			</button>
+		</form>
+	
+		<a href="#" class="header__ai-chef flex gap-3">Ai Повар <Icon name="ai-chef" width={16} height={16} /></a>
+	
+		<div class="header__icons flex gap-13 flex-center">
+			<button type="button" class="header__icon-btn flex gap-5 flex-center" aria-label="Избранное">
+				<Icon name="favorites" width={24} height={24} />
+				<span>708</span>
+			</button>
+			<div class="header__register-block flex gap-20 flex-center">
+				<button type="button" class="header__icon-btn" aria-label="Профиль">
+					<Icon name="profile" width={18} height={20} />
+				</button>
+				<span class="header__divider"></span>
+				<a href="#" class="header__register-link">Регистрация</a>
+			</div>
+		</div>
+		<button type="button" class="header__burger" id="burgerBtn" aria-label="Меню" aria-expanded="false"><span></span></button>
+	</aside>
+</header>
+
+<style lang="less">
+	@import "./Header.less";
+</style>
