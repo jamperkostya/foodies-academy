@@ -1,5 +1,7 @@
 ---
 import RecipeGrid from '../recipes/RecipeGrid.astro';
+import type { Recipe } from '../../types/recipe';
+
 interface Props {
 	recipes: Recipe[];
 	href?: string;
@@ -9,7 +11,26 @@ const { recipes, href, trackId } = Astro.props;
 ---
 
 <section class="section--item section--cream">
-	<h2 class="section--title"><slot name="title" /></h2>
+	<div class="section-head flex-between">
+		<h2 class="section--title"><slot name="title" /></h2>
+	</div>
 
 	<RecipeGrid recipes={recipes} trackId={trackId} />
 </section>
+
+<style lang="less">
+	.section-head {
+		gap: 20px;
+		&__all {
+			flex: 0 0 auto;
+			font-weight: 600;
+			font-size: 14px;
+			color: var(--color-red);
+			white-space: nowrap;
+			transition: opacity .15s;
+			&:hover {
+				opacity: .7;
+			}
+		}
+	}
+</style>

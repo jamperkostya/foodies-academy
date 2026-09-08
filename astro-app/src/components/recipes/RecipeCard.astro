@@ -2,6 +2,7 @@
 import Icon from "../ui/Icon.astro";
 import CardStats from "../sections/CardStats.astro";
 import Stars from "../ui/Stars.astro";
+import type { Recipe } from "../../types/recipe";
 
 interface Props {
   recipe: Recipe;
@@ -22,7 +23,7 @@ const { recipe } = Astro.props;
 			<Stars rating={recipe.rating} />
 		</div>
 		<h3 class="recipe-card__title">{recipe.title}</h3>
-		<CardStats views={recipe.views} likes={recipe.likes} comments={recipe.comments} time={recipe.time} />
+		<CardStats views={recipe.views ?? 0} likes={recipe.likes ?? 0} comments={recipe.comments} time={recipe.time} />
 	</div>
 </a>
 
