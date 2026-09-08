@@ -3,12 +3,13 @@ import RecipeGrid from '../recipes/RecipeGrid.astro';
 interface Props {
 	recipes: Recipe[];
 	href?: string;
+	trackId?: string;
 }
-const { recipes, href } = Astro.props;
+const { recipes, href, trackId } = Astro.props;
 ---
 
 <section class="section--item section--cream">
 	<h2 class="section--title"><slot name="title" /></h2>
-	
-	<RecipeGrid recipes={recipes} />
+
+	<RecipeGrid recipes={recipes} trackId={trackId} />
 </section>

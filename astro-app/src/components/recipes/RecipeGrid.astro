@@ -1,21 +1,183 @@
 ---
+import Icon from "../ui/Icon.astro";
 import RecipeCard from '../recipes/RecipeCard.astro';
 
 interface Props {
   recipes: Recipe[];
+  trackId?: string;
 }
 
-const { recipes, rating } = Astro.props;
+const { recipes, trackId } = Astro.props;
 ---
 
-<div class="carousel">
-	<div class="cards-row">
+<div class="carousel carousel--recipes">
+	<div class="cards-row" id={trackId}>
     	{recipes.map((recipe) => (
 			<RecipeCard recipe={recipe} />
 		))}
 	</div>
+	<button class="row-arrow row-arrow--prev" aria-label="Назад">
+		<Icon name="arrow-slider" width={12} height={10} />
+	</button>
+	<button class="row-arrow row-arrow--next" aria-label="Вперёд">
+		<Icon name="arrow-slider" width={12} height={10} />
+	</button>
 </div>
+<div class="dots"></div>
 
 <style lang="less">
 	@import "./RecipeGrid.less";
 </style>
+
+<script>
+	class RecipeCarousel {
+		track: HTMLElement;
+		dotsEl: HTMLElement | null;
+		prevBtn: HTMLButtonElement | null;
+		nextBtn: HTMLButtonElement | null;
+		isDown = false;
+		dragged = false;
+		startX = 0;
+		startScroll = 0;
+
+		constructor(
+			track: HTMLElement,
+			{
+				dotsEl,
+				prevBtn,
+				nextBtn,
+			}: {
+				dotsEl?: HTMLElement | null;
+				prevBtn?: HTMLButtonElement | null;
+				nextBtn?: HTMLButtonElement | null;
+			} = {}
+		) {
+			this.track = track;
+			this.dotsEl = dotsEl ?? null;
+			this.prevBtn = prevBtn ?? null;
+			this.nextBtn = nextBtn ?? null;
+
+			this.track.addEventListener("scroll", () => this.onScroll(), { passive: true });
+			this.prevBtn?.addEventListener("click", () => this.scrollByPage(-1));
+			this.nextBtn?.addEventListener("click", () => this.scrollByPage(1));
+
+			this.bindDrag();
+			window.addEventListener("resize", () => this.refresh());
+			this.refresh();
+		}
+
+		bindDrag() {
+			const t = this.track;
+			t.classList.add("is-draggable");
+
+			t.addEventListener("pointerdown", (e) => {
+				if (e.pointerType !== "mouse" || e.button !== 0) return;
+				this.isDown = true;
+				this.dragged = false;
+				this.startX = e.clientX;
+				this.startScroll = t.scrollLeft;
+				t.classList.add("is-dragging");
+				t.setPointerCapture(e.pointerId);
+			});
+
+			t.addEventListener("pointermove", (e) => {
+				if (!this.isDown) return;
+				const dx = e.clientX - this.startX;
+				if (Math.abs(dx) > 4) this.dragged = true;
+				t.scrollLeft = this.startScroll - dx;
+			});
+
+			const end = () => {
+				if (!this.isDown) return;
+				this.isDown = false;
+				t.classList.remove("is-dragging");
+				this.snapToNearest();
+			};
+			t.addEventListener("pointerup", end);
+			t.addEventListener("pointerleave", end);
+			t.addEventListener("pointercancel", end);
+
+			t.addEventListener(
+				"click",
+				(e) => {
+					if (this.dragged) {
+						e.preventDefault();
+						e.stopPropagation();
+					}
+				},
+				true
+			);
+		}
+
+		refresh() {
+			this.buildDots();
+			this.onScroll();
+		}
+
+		get pageWidth() {
+			return this.track.clientWidth;
+		}
+		get maxScroll() {
+			return Math.max(0, this.track.scrollWidth - this.track.clientWidth);
+		}
+
+		pageCount() {
+			if (this.pageWidth === 0) return 1;
+			return Math.max(1, Math.round(this.track.scrollWidth / this.pageWidth));
+		}
+
+		buildDots() {
+			if (!this.dotsEl) return;
+			const count = this.pageCount();
+			if (count <= 1) {
+				this.dotsEl.innerHTML = "";
+				this.dotsEl.style.display = "none";
+				return;
+			}
+			this.dotsEl.style.display = "";
+			this.dotsEl.innerHTML = Array.from({ length: count })
+				.map((_, i) => `<span data-i="${i}"></span>`)
+				.join("");
+			this.dotsEl.querySelectorAll("span").forEach((dot) => {
+				dot.addEventListener("click", () => {
+					const i = Number(dot.dataset.i);
+					this.track.scrollTo({ left: i * this.pageWidth, behavior: "smooth" });
+				});
+			});
+		}
+
+		onScroll() {
+			const idx = this.pageWidth ? Math.round(this.track.scrollLeft / this.pageWidth) : 0;
+			if (this.dotsEl) {
+				this.dotsEl.querySelectorAll("span").forEach((d, i) => d.classList.toggle("is-active", i === idx));
+			}
+			if (this.prevBtn) this.prevBtn.disabled = this.track.scrollLeft <= 4;
+			if (this.nextBtn) this.nextBtn.disabled = this.track.scrollLeft >= this.maxScroll - 4;
+		}
+
+		scrollByPage(dir: number) {
+			this.track.scrollTo({ left: this.track.scrollLeft + dir * this.pageWidth, behavior: "smooth" });
+		}
+
+		snapToNearest() {
+			const idx = Math.round(this.track.scrollLeft / this.pageWidth);
+			this.track.scrollTo({ left: idx * this.pageWidth, behavior: "smooth" });
+		}
+	}
+
+	// A page can render several recipe carousels (top 5, new, by ingredient…),
+	// so every ".carousel--recipes" on the page gets its own instance instead
+	// of relying on a single hardcoded id.
+	document.querySelectorAll<HTMLElement>(".carousel--recipes").forEach((carouselEl) => {
+		const track = carouselEl.querySelector<HTMLElement>(".cards-row");
+		if (!track) return;
+		const dotsSibling = carouselEl.nextElementSibling;
+		const dotsEl = dotsSibling?.classList.contains("dots") ? (dotsSibling as HTMLElement) : null;
+
+		new RecipeCarousel(track, {
+			dotsEl,
+			prevBtn: carouselEl.querySelector<HTMLButtonElement>(".row-arrow--prev"),
+			nextBtn: carouselEl.querySelector<HTMLButtonElement>(".row-arrow--next"),
+		});
+	});
+</script>

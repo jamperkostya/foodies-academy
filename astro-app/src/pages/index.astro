@@ -8,7 +8,7 @@ import RecipeSection from "../components/sections/RecipeSection.astro";
 
 const topRecipes = recipes
 	.filter((recipe) => recipe.isTop)
-	.slice(0, 5);
+	.slice(0, 10);
 ---
 
 <BaseLayout>
@@ -18,12 +18,13 @@ const topRecipes = recipes
 		<RecipeSection
 			recipes={topRecipes}
 			href="/recipes/top"
+			trackId="top5Recipes"
 		>
 			<Fragment slot="title">
 				<span>TOP 5</span> RECIPES
 			</Fragment>
 		</RecipeSection>
-		
+
 		<RecipeSection
 			recipes={topRecipes}
 			href="/recipes/top"

@@ -6,19 +6,34 @@ interface Props {
 	views: number;
 	likes: number;
 	comments: number;
-	rating: number;
+	time: number;
 }
 
-const { views, likes, comments, rating } = Astro.props;
+const { views, likes, comments, time } = Astro.props;
 ---
-
-<div class="hero-card__stats gap-12 grid">
-	<div class="flex gap-12 flex-center">
-		<span class="views flex gap-3"><Icon name="views" width={16} height={16} />{views}</span>
-		<span class="likes flex gap-3"><Icon name="like" width={16} height={16} />{likes}</span>
-	</div>
-	<div class="hero-card__rating flex gap-5 flex-center">
-		<span class="flex gap-3"><Icon name="comment" width={16} height={16} />{comments}</span>
-		<Stars rating={rating} />
-	</div>
+<div class="recipe-card__stats flex">
+	<span class="comments flex gap-3"><Icon name="comment" width={16} height={16} />{comments}</span>
+	<span class="likes flex gap-3"><Icon name="like" width={16} height={16} />{likes}</span>
+	<span class="views flex gap-3"><Icon name="views" width={16} height={16} />{views}</span>
+	<span class="clock flex gap-3"><Icon name="clock" width={16} height={16} />{time}</span>
 </div>
+
+<style type="less">
+.recipe-card__stats {
+	border-top: var(--border-width) solid var(--color-black-20);
+	padding-top: 13px;
+	font-weight: 300;
+	font-size: 14px;
+	line-height: 17px;
+	color: var(--color-grey);
+	justify-content: space-between;
+	gap: 15px;
+	.clock {
+		&::before {
+			content: '';
+			border-left: var(--border-width) solid var(--color-grey);
+			margin-right: 15px;
+		}
+	}
+}
+</style>

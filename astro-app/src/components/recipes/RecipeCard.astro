@@ -1,5 +1,6 @@
 ---
 import Icon from "../ui/Icon.astro";
+import CardStats from "../sections/CardStats.astro";
 import Stars from "../ui/Stars.astro";
 
 interface Props {
@@ -13,28 +14,60 @@ const { recipe } = Astro.props;
 		<div class="recipe-card__img" style={`background-image: url('${recipe.image}')`}></div>
 		<span class="badge">{recipe.category}</span>
 	</div>
-	<div class="recipe-card__body">
-		<div class="recipe-card__meta">
+	<div class="recipe-card__body flex">
+		<div class="recipe-card__meta flex">
 			<div class="country">
 				<span class="flag">🇮🇹</span> Итальянская 
 			</div>
 			<Stars rating={recipe.rating} />
 		</div>
 		<h3 class="recipe-card__title">{recipe.title}</h3>
-		<div class="recipe-card__stats">
-			<span>👤 2</span>
-			<span>👍 771</span>
-			<span>👁 708</span>
-			<span>⏱ {recipe.time}min</span>
-		</div>
+		<CardStats views={recipe.views} likes={recipe.likes} comments={recipe.comments} time={recipe.time} />
 	</div>
 </a>
 
-<style>
+<style lang="less">
 .recipe-card {
-	display: block;
-	background: rgba(255, 255, 255, 0.1);
-	box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-	border-radius: 25px;
+	background: var(--color-white-10);
+	box-shadow: 0px 4px 15px var(--color-black-10);
+	border-radius: var(--border-radius-25);
+	overflow: hidden;
+	&:hover {
+		color: initial;
+	}
+	/* &:active, &:hover { */
+		/* transform: translateY(-2px) scale(.98); */
+	/* } */
+	.recipe-card__media {
+		position: relative;
+		aspect-ratio: 1/1;
+		overflow: hidden;
+		.recipe-card__img {
+			position: absolute;
+			inset: 0;
+			background-size: cover;
+			background-position: center;
+			transition: transform .5s var(--ease);
+		}
+	}
+	.recipe-card__body {
+		flex-direction: column;
+		gap: 15px;
+		padding: 22px 14px;
+		.recipe-card__meta {
+			justify-content: space-between;
+			.country {
+				font-weight: 300;
+				font-size: 14px;
+				line-height: 17px;
+			}
+		}
+		.recipe-card__title {
+			font-weight: 700;
+			font-size: 16px;
+			line-height: 17px;
+			opacity: 0.7;
+		}
+	}
 }
 </style>

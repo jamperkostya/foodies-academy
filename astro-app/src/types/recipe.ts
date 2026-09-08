@@ -10,4 +10,5 @@ export interface Recipe {
   isTop: boolean;
   rating: number;
   ingredients: string[];
+  comments: number;
 }

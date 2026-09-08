@@ -1,6 +1,6 @@
 ---
 import Icon from "../ui/Icon.astro";
-import CardStats from "./CardStats.astro";
+import HeroStats from "./HeroStats.astro";
 import Stars from "../ui/Stars.astro";
 
 interface Props {
@@ -23,10 +23,10 @@ const { href, size, image, title, views, likes, comments, rating, videoId } = As
 	{videoId ? (
 		<div class="hero-card__top flex flex-between">
 			<button class="play-badge" id={videoId}><Icon name="youtube-play" width={42} height={29} /></button>
-			<CardStats views={views} likes={likes} comments={comments} rating={rating} />
+			<HeroStats views={views} likes={likes} comments={comments} rating={rating} />
 		</div>
 	) : (
-		<CardStats views={views} likes={likes} comments={comments} rating={rating} />
+		<HeroStats views={views} likes={likes} comments={comments} rating={rating} />
 	)}
 	<div class="hero-card__title">{title}</div>
 </a>
