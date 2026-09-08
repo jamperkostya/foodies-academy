@@ -1,0 +1,21 @@
+---
+import RecipeCard from '../recipes/RecipeCard.astro';
+
+interface Props {
+  recipes: Recipe[];
+}
+
+const { recipes, rating } = Astro.props;
+---
+
+<div class="carousel">
+	<div class="cards-row">
+    	{recipes.map((recipe) => (
+			<RecipeCard recipe={recipe} />
+		))}
+	</div>
+</div>
+
+<style lang="less">
+	@import "./RecipeGrid.less";
+</style>

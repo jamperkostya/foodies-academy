@@ -1,0 +1,14 @@
+---
+import RecipeGrid from '../recipes/RecipeGrid.astro';
+interface Props {
+	recipes: Recipe[];
+	href?: string;
+}
+const { recipes, href } = Astro.props;
+---
+
+<section class="section--item section--cream">
+	<h2 class="section--title"><slot name="title" /></h2>
+	
+	<RecipeGrid recipes={recipes} />
+</section>

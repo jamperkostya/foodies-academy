@@ -1,19 +1,64 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Hero from "../components/sections/Hero.astro";
+
+import { recipes } from '../data/recipes';
+
+import RecipeSection from "../components/sections/RecipeSection.astro";
+
+const topRecipes = recipes
+	.filter((recipe) => recipe.isTop)
+	.slice(0, 5);
 ---
 
 <BaseLayout>
 	<main role="main" class="container">
 		<Hero />
-
-		<section class="section--item section--cream">
-			<h2 class="section--title"><span>TOP 5</span> RECIPES</h2>
-		</section>
-
-		<section class="section--item section--cream">
-			<h2 class="section--title"><span>New</span> RECIPES</h2>
-		</section>
+		
+		<RecipeSection
+			recipes={topRecipes}
+			href="/recipes/top"
+		>
+			<Fragment slot="title">
+				<span>TOP 5</span> RECIPES
+			</Fragment>
+		</RecipeSection>
+		
+		<RecipeSection
+			recipes={topRecipes}
+			href="/recipes/top"
+		>
+			<Fragment slot="title">
+				<span>New</span> RECIPES
+			</Fragment>
+		</RecipeSection>
+		
+		<RecipeSection
+			recipes={topRecipes}
+			href="/recipes/top"
+		>
+			<Fragment slot="title">
+				<span>TOP 5</span> RECIPES
+			</Fragment>
+		</RecipeSection>
+		
+		<RecipeSection
+			recipes={topRecipes}
+			href="/recipes/top"
+		>
+			<Fragment slot="title">
+				<span>TOP 5</span> RECIPES
+			</Fragment>
+		</RecipeSection>
+		
+		<RecipeSection
+			recipes={topRecipes}
+			href="/recipes/top"
+		>
+			<Fragment slot="title">
+				<span>TOP 5</span> RECIPES
+			</Fragment>
+		</RecipeSection>
 
 		<section class="section--item section--cream">
 			<h2 class="section--title"><span>Best</span> categories</h2>
@@ -27,9 +72,14 @@ import Hero from "../components/sections/Hero.astro";
 			<h2 class="section--title"><span>Подборки</span> Рецептов</h2>
 		</section>
 
-		<section class="section--item section--cream">
-			<h2 class="section--title"><span>Рецепты</span> по ингредиентам</h2>
-		</section>
+		<RecipeSection
+			recipes={topRecipes}
+			href="/recipes/top"
+		>
+			<Fragment slot="title">
+				<span>Рецепты</span> по ингредиентам
+			</Fragment>
+		</RecipeSection>
 
 		<section class="section--item section--cream">
 			<h2 class="section--title"><span>Последние</span> новости</h2>

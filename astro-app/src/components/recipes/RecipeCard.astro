@@ -1,0 +1,40 @@
+---
+import Icon from "../ui/Icon.astro";
+import Stars from "../ui/Stars.astro";
+
+interface Props {
+  recipe: Recipe;
+}
+
+const { recipe } = Astro.props;
+---
+<a href={`/recipes/${recipe.slug}`} class="recipe-card" data-tags="Итальянская,до 30 мин,Просто">
+	<div class="recipe-card__media">
+		<div class="recipe-card__img" style={`background-image: url('${recipe.image}')`}></div>
+		<span class="badge">{recipe.category}</span>
+	</div>
+	<div class="recipe-card__body">
+		<div class="recipe-card__meta">
+			<div class="country">
+				<span class="flag">🇮🇹</span> Итальянская 
+			</div>
+			<Stars rating={recipe.rating} />
+		</div>
+		<h3 class="recipe-card__title">{recipe.title}</h3>
+		<div class="recipe-card__stats">
+			<span>👤 2</span>
+			<span>👍 771</span>
+			<span>👁 708</span>
+			<span>⏱ {recipe.time}min</span>
+		</div>
+	</div>
+</a>
+
+<style>
+.recipe-card {
+	display: block;
+	background: rgba(255, 255, 255, 0.1);
+	box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+	border-radius: 25px;
+}
+</style>
