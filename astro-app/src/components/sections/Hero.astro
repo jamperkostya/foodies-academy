@@ -1,0 +1,81 @@
+---
+import Icon from "../ui/Icon.astro";
+import HeroCard from "./HeroCard.astro";
+
+const heroPages = [
+	{
+		main: {
+			href: "#11",
+			size: "tall" as const,
+			image: "https://foodies.academy/wp-content/uploads/2018/09/DSC00328-300x300.jpg",
+			videoId: "video-id-41",
+			views: 1034,
+			likes: 771,
+			comments: 2,
+			rating: 1.3,
+			title: "Мидии с чоризо в томатном соусе",
+		},
+		stack: [
+			{
+				href: "#",
+				size: "half" as const,
+				image: "https://foodies.academy/wp-content/uploads/2025/10/zamachau-sous-300x300.webp",
+				views: 1034,
+				likes: 771,
+				comments: 2,
+				rating: 4.5,
+				title: "Паэлья с морепродуктами",
+			},
+			{
+				href: "#",
+				size: "half" as const,
+				image: "https://foodies.academy/wp-content/uploads/2018/09/DSC00683-300x300.jpg",
+				views: 134,
+				likes: 71,
+				comments: 112,
+				rating: 4.5,
+				title: "Мидии с чоризо в томатном соусе",
+			},
+		],
+		secondary: {
+			href: "#11",
+			size: "tall" as const,
+			image: "https://foodies.academy/wp-content/uploads/2018/09/DSC00328-300x300.jpg",
+			videoId: "video-id-42",
+			views: 1034,
+			likes: 771,
+			comments: 2,
+			rating: 4.1,
+			title: "Мидии с чоризо в томатном соусе",
+		},
+	},
+];
+---
+
+<section class="hero section--item">
+	<div class="carousel carousel--hero">
+		<div class="hero__grid is-draggable" id="heroGrid">
+			{heroPages.map((page) => (
+				<div class="hero__page">
+					<HeroCard {...page.main} />
+					<div class="hero__stack">
+						{page.stack.map((card) => (
+							<HeroCard {...card} />
+						))}
+					</div>
+					<HeroCard {...page.secondary} />
+				</div>
+			))}
+		</div>
+		<button class="hero__arrow hero__arrow--prev" aria-label="Назад">
+			<Icon name="arrow-slider" width={12} height={10} />
+		</button>
+		<button class="hero__arrow hero__arrow--next" aria-label="Вперёд">
+			<Icon name="arrow-slider" width={12} height={10} />
+		</button>
+	</div>
+</section>
+
+<style lang="less">
+	@import "./Hero.less";
+</style>

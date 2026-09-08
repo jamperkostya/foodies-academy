@@ -1,0 +1,35 @@
+---
+import Icon from "../ui/Icon.astro";
+import CardStats from "./CardStats.astro";
+
+interface Props {
+	href: string;
+	size: "tall" | "half";
+	image: string;
+	title: string;
+	views: number;
+	likes: number;
+	comments: number;
+	rating: number;
+	videoId?: string;
+}
+
+const { href, size, image, title, views, likes, comments, rating, videoId } = Astro.props;
+---
+
+<a href={href} class={`hero-card hero-card--${size}`}>
+	<div class="hero-card__img" style={`background-image:url('${image}')`}></div>
+	{videoId ? (
+		<div class="hero-card__top flex flex-between">
+			<button class="play-badge" id={videoId}><Icon name="youtube-play" width={42} height={29} /></button>
+			<CardStats views={views} likes={likes} comments={comments} rating={rating} />
+		</div>
+	) : (
+		<CardStats views={views} likes={likes} comments={comments} rating={rating} />
+	)}
+	<div class="hero-card__title">{title}</div>
+</a>
+
+<style lang="less">
+	@import "./HeroCard.less";
+</style>

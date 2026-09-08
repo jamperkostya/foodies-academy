@@ -23,59 +23,6 @@
 				grid-template-rows: 1fr 1fr;
 				gap: 16px;
 				height: 460px;
-				.hero-card {
-					position: relative;
-					border-radius: var(--border-radius-25);
-					overflow: hidden;
-					color: var(--color-white);
-					display: flex;
-					flex-direction: column;
-					justify-content: space-between;
-					padding: 32px;
-					transition: box-shadow .25s;
-					&::after {
-						content: "";
-						position: absolute;
-						inset: 0;
-						z-index: 1;
-						background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.75) 100%);
-					}
-					& > * {
-						position: relative;
-						z-index: 2;
-					}
-					.hero-card__img {
-						position: absolute;
-						inset: 0;
-						z-index: 0;
-						background-size: cover;
-						background-position: center;
-						transition: transform .5s var(--ease);
-					}
-					.hero-card__top {
-						display: flex;
-						align-items: center;
-						justify-content: space-between;
-						font-weight: 500;
-						font-size: 14px;
-						line-height: 17px;
-						gap: 12px;
-						.hero-card__stats {
-							justify-items: end;
-						}
-					}
-					.hero-card__title {
-						font-weight: 900;
-						font-size: 32px;
-						line-height: 39px;
-					}
-				}
-				.hero-card--half {
-					height: 100%;
-				}
-				.hero-card--tall {
-					grid-row: 1 / 3;
-				}
 				.hero__stack {
 					display: flex;
 					flex-direction: column;
