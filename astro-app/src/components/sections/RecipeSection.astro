@@ -11,7 +11,7 @@ const { recipes, href, trackId } = Astro.props;
 ---
 
 <section class="section--item section--cream">
-	<div class="section-head flex-between">
+	<div class="section-head">
 		<h2 class="section--title"><slot name="title" /></h2>
 	</div>
 
@@ -19,18 +19,15 @@ const { recipes, href, trackId } = Astro.props;
 </section>
 
 <style lang="less">
-	.section-head {
-		gap: 20px;
-		&__all {
-			flex: 0 0 auto;
-			font-weight: 600;
-			font-size: 14px;
-			color: var(--color-red);
-			white-space: nowrap;
-			transition: opacity .15s;
-			&:hover {
-				opacity: .7;
-			}
+	.section-head__all {
+		flex: 0 0 auto;
+		font-weight: 600;
+		font-size: 14px;
+		color: var(--color-red);
+		white-space: nowrap;
+		transition: opacity .15s;
+		&:hover {
+			opacity: .7;
 		}
 	}
 </style>

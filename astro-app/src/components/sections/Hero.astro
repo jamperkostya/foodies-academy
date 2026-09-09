@@ -305,6 +305,7 @@ const heroGroups = groupHeroCards(heroCards);
 		}
 
 		snapToNearest() {
+			if (!this.pageWidth) return;
 			const idx = Math.round(this.track.scrollLeft / this.pageWidth);
 			this.track.scrollTo({ left: idx * this.pageWidth, behavior: "smooth" });
 		}

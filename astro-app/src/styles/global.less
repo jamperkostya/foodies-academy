@@ -13,6 +13,16 @@ body {
 	margin-top: 15px;
 	margin-bottom: 105px;
 }
+// Shared by every section that puts a title (and optionally a "view all"
+// link) in one row — RecipeSection.astro, LastNewsSection.astro, etc.
+// Astro's per-component style scoping means a rule defined in only one of
+// them never reaches the others, so it lives here instead.
+.section-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 20px;
+}
 .badge {
 	position: absolute;
 	top: 18px;
