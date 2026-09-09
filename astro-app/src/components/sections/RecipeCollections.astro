@@ -1,0 +1,51 @@
+---
+import RecipeCollectionCard from '../recipe-collections/RecipeCollectionCard.astro';
+
+const recipeCollections = [
+	{
+		id: 1,
+		title: 'С курицей',
+		image: 'https://foodies.academy/wp-content/uploads/2018/10/burgers.jpg',
+		slug: 's-kuricey'
+	},
+	{
+		id: 2,
+		title: 'С мясом',
+		image: 'https://foodies.academy/wp-content/uploads/2018/10/burgers.jpg',
+		slug: 's-kuricey'
+	},
+	{
+		id: 2,
+		title: 'С мясом 2',
+		image: 'https://foodies.academy/wp-content/uploads/2018/10/burgers.jpg',
+		slug: 's-kuricey'
+	},
+	{
+		id: 2,
+		title: 'С мясом 3',
+		image: 'https://foodies.academy/wp-content/uploads/2018/10/burgers.jpg',
+		slug: 's-kuricey'
+	},
+];
+---
+
+<section class="section--item">
+	<div class="section-head">
+		<h2 class="section--title"><slot name="title" /></h2>
+	</div>
+
+	<div class="collection-row grid gap-20">
+		{recipeCollections.map((recipeCollection) => (
+			<RecipeCollectionCard recipeCollection={recipeCollection} />
+		))}
+	</div>
+</section>
+
+<style lang="less">
+.collection-row {
+	grid-template-columns: 1fr 1fr 1fr 1fr;
+	
+	padding: 20px 0 56px;
+	margin: -20px 0 -56px;
+}
+</style>

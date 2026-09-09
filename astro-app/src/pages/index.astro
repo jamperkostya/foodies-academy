@@ -8,6 +8,8 @@ import { news } from '../data/news';
 import RecipeSection from "../components/sections/RecipeSection.astro";
 import LastNewsSection from "../components/sections/LastNewsSection.astro";
 
+import RecipeCollestionsSection from "../components/sections/RecipeCollections.astro";
+
 const topRecipes = recipes
 	.filter((recipe) => recipe.isTop)
 	.slice(0, 10);
@@ -66,17 +68,19 @@ const lastNews = news.slice(0, 7);
 			</Fragment>
 		</RecipeSection>
 
-		<section class="section--item section--cream">
+		<section class="section--item">
 			<h2 class="section--title"><span>Best</span> categories</h2>
 		</section>
 
-		<section class="section--item section--cream">
+		<section class="section--item">
 			<h2 class="section--title"><span>top 5</span> video</h2>
 		</section>
-
-		<section class="section--item section--cream">
-			<h2 class="section--title"><span>Подборки</span> Рецептов</h2>
-		</section>
+		
+		<RecipeCollestionsSection>
+			<Fragment slot="title">
+				<span>Подборки</span> Рецептов
+			</Fragment>
+		</RecipeCollestionsSection>
 
 		<RecipeSection
 			recipes={topRecipes}
