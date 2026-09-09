@@ -1,0 +1,168 @@
+---
+import type { News } from '../../types/news';
+
+interface Props {
+	news: News[];
+}
+const { news } = Astro.props;
+---
+
+<section class="section--item section--cream">
+	<div class="section-head">
+		<h2 class="section--title"><slot name="title" /></h2>
+
+		<div class="news grid gap-40">
+			<div class="news__list grid gap-40">
+				{news.slice(1, 7).map((item) => (
+					<a href={`/news/${item.slug}`} class="news__item">
+						<div class="news__content grid gap-20">
+							<div class="news__tags flex gap-20">
+								<span class="news__category">{item.category}</span>
+								{item.tags.map((tag) => <span>{tag}</span>)}
+							</div>
+							<h4 class="news__title">{item.title}</h4>
+							<p class="news__desc">{item.excerpt}</p>
+						</div>
+					</a>
+				))}
+			</div>
+			<a href="#" class="news__media">
+				<div class="news__media__figure">
+					<div class="news__img" style="background-image:url('https://foodies.academy/wp-content/uploads/2025/11/mat-300x300.jpeg')"></div>
+				</div>
+				<div class="news__content grid gap-20">
+					<div class="news__tags flex gap-20">
+						<span class="news__category">{news[0].category}</span>
+						{news[0].tags.map((tag) => <span>{tag}</span>)}
+					</div>
+					<h4 class="news__title">{news[0].title}</h4>
+					<p class="news__desc">{news[0].excerpt}</p>
+				</div>
+			</a>
+		</div>
+	</div>
+</section>
+
+<style lang="less">
+.news {
+	grid-template-columns: 1fr 1fr;
+	align-items: stretch;
+	.news__list {
+		display: flex;
+		flex-direction: column;
+		border-right: var(--border-width) solid var(--color-black-50);
+		counter-reset: item;
+		.news__item {
+			display: flex;
+			align-items: flex-start;
+			gap: 20px;
+			counter-increment: item;
+			&::before {
+				content: counter(item);
+				flex: 0 0 32px;
+				line-height: 1;
+				color: var(--color-black-20);
+				transition: color .2s;
+				font-size: 64px;
+				line-height: 78px;
+				color: rgba(0, 0, 0, 0.2);
+			}
+			&:hover {
+				padding-left: 6px;
+				color: initial;
+				&::before {
+					color: var(--color-red);
+				}
+				.news__title {
+					color: var(--color-red);
+				}
+			}
+			padding-right: 20px;
+			transition: padding-left .2s var(--ease);
+			.news__content {
+				min-width: 0;
+			}
+			.news__tags {
+				font-weight: 300;
+				font-size: 14px;
+				line-height: 17px;
+				opacity: 0.5;
+				.news__category {
+					font-weight: 700;
+					&::after {
+						content: '';
+						border-right: var(--border-width) solid var(--color-black-50);
+						margin-left: 20px;
+					}
+				}
+			}
+			.news__title {
+				font-weight: 500;
+				font-size: 20px;
+				line-height: 24px;
+				font-style: italic;
+			}
+			.news__desc {
+				font-size: 16px;
+				line-height: 20px;
+				color: var(--color-black-50);
+			}
+		}
+	}
+	.news__media {
+		display: flex;
+		flex-direction: column;
+		gap: 30px;
+		&:hover {
+			.news__img {
+				transform: scale(1.06);
+			}
+			color: initial;
+			.news__title {
+				color: var(--color-red);
+			}
+		}
+		.news__media__figure {
+			flex: 1;
+			position: relative;
+			overflow: hidden;
+			border-radius: var(--border-radius-25);
+			aspect-ratio: 16/10;
+		}
+		.news__img {
+			position: absolute;
+			inset: 0;
+			background-size: cover;
+			background-position: center;
+			transition: transform .6s var(--ease);
+		}
+		.news__content {
+			.news__tags {
+				font-weight: 300;
+				font-size: 14px;
+				line-height: 17px;
+				opacity: 0.5;
+				.news__category {
+					font-weight: 700;
+					&::after {
+						content: '';
+						border-right: var(--border-width) solid var(--color-black-50);
+						margin-left: 20px;
+					}
+				}
+			}
+			.news__title {
+				font-weight: 500;
+				font-size: 20px;
+				line-height: 24px;
+				font-style: italic;
+			}
+			.news__desc {
+				font-size: 16px;
+				line-height: 20px;
+				color: var(--color-black-50);
+			}
+		}
+	}
+}
+</style>

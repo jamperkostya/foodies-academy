@@ -3,12 +3,17 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Hero from "../components/sections/Hero.astro";
 
 import { recipes } from '../data/recipes';
+import { news } from '../data/news';
 
 import RecipeSection from "../components/sections/RecipeSection.astro";
+import LastNewsSection from "../components/sections/LastNewsSection.astro";
 
 const topRecipes = recipes
 	.filter((recipe) => recipe.isTop)
 	.slice(0, 10);
+	
+// 1 featured (shown on the right) + 6 in the list on the left
+const lastNews = news.slice(0, 7);
 ---
 
 <BaseLayout>
@@ -81,9 +86,13 @@ const topRecipes = recipes
 				<span>Рецепты</span> по ингредиентам
 			</Fragment>
 		</RecipeSection>
-
-		<section class="section--item section--cream">
-			<h2 class="section--title"><span>Последние</span> новости</h2>
-		</section>
+		
+		<LastNewsSection
+			news={lastNews}
+		>
+			<Fragment slot="title">
+				<span>Last</span> news
+			</Fragment>
+		</LastNewsSection>
 	</main>
 </BaseLayout>
