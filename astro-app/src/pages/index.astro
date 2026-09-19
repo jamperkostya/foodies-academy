@@ -13,6 +13,8 @@ import RecipeCollestionsSection from "../components/sections/RecipeCollections.a
 import PromoSection from "../components/sections/PromoSection.astro";
 import PromoCTASection from "../components/sections/PromoCTASection.astro";
 
+import SEOTextSection from "../components/sections/SEOTextSection.astro";
+
 const topRecipes = recipes
 	.filter((recipe) => recipe.isTop)
 	.slice(0, 10);
@@ -107,5 +109,8 @@ const lastNews = news.slice(0, 7);
 		
 		<PromoCTASection>
 		</PromoCTASection>
+		
+		<SEOTextSection>
+		</SEOTextSection>
 	</main>
 </BaseLayout>
