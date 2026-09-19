@@ -10,6 +10,9 @@ import LastNewsSection from "../components/sections/LastNewsSection.astro";
 
 import RecipeCollestionsSection from "../components/sections/RecipeCollections.astro";
 
+import PromoSection from "../components/sections/PromoSection.astro";
+import PromoCTASection from "../components/sections/PromoCTASection.astro";
+
 const topRecipes = recipes
 	.filter((recipe) => recipe.isTop)
 	.slice(0, 10);
@@ -91,6 +94,9 @@ const lastNews = news.slice(0, 7);
 			</Fragment>
 		</RecipeSection>
 		
+		<PromoSection>
+		</PromoSection>
+		
 		<LastNewsSection
 			news={lastNews}
 		>
@@ -98,5 +104,8 @@ const lastNews = news.slice(0, 7);
 				<span>Last</span> news
 			</Fragment>
 		</LastNewsSection>
+		
+		<PromoCTASection>
+		</PromoCTASection>
 	</main>
 </BaseLayout>

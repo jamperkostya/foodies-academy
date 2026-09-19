@@ -1,0 +1,75 @@
+---
+---
+
+<section class="section--item">
+	<div class="promo promo-cta">
+		<div class="promo-text grid">
+			<h3 class="promo-text__title section--title"><span>Ingredient</span> Guide</h3>
+			<h3 class="promo-text__title section--title">Get Started. 10 Ingredients. Hundreds of Recipes</h3>
+			<div class="promo-text__descriptions">
+				<p>
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+				</p>
+			</div>
+			<a href="promo" class="btn">Browse Guide</a>
+		</div>
+		<div class="promo-media">
+			<div class="promo__img" style="background-image:url('https://foodies.academy/wp-content/uploads/2025/11/1615444442-5347-300x300.jpg')"></div>
+		</div>
+	</div>
+</section>
+
+<style lang="less">
+.promo {
+	border-radius: var(--border-radius-25);
+	overflow: hidden;
+	padding: 13px 13px 13px 40px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	align-items: stretch;
+	gap: 7px;
+	.promo-text {
+		gap: 30px;
+		align-content: center;
+		.promo-text__title {
+			margin: 0;
+		}
+		.promo-text__descriptions {
+			font-weight: 400;
+			font-size: 16px;
+			line-height: 150%;
+		}
+	}
+	&:hover {
+		.promo__img {
+			transform: scale(1.05);
+		}
+	}
+	.promo-media {
+		position: relative;
+		min-height: 400px;
+		overflow: hidden;
+		border-radius: 20px;
+		.promo__img {
+			position: absolute;
+			inset: 0;
+			background-size: cover;
+			background-position: center;
+			transition: transform .6s var(--ease);
+		}
+	}
+}
+.promo-cta {
+	gap: 42px;
+	padding: 0;
+	.promo-text {
+		order: 2;
+	}
+	.promo-media {
+		order: 1;
+	}
+	.btn {
+		width: fit-content;
+	}
+}
+</style>
