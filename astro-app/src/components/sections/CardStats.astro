@@ -12,10 +12,10 @@ interface Props {
 const { views, likes, comments, time } = Astro.props;
 ---
 <div class="recipe-card__stats flex">
-	<span class="comments flex gap-3"><Icon name="comment" width={16} height={16} />{comments}</span>
-	<span class="likes flex gap-3"><Icon name="like" width={16} height={16} />{likes}</span>
-	<span class="views flex gap-3"><Icon name="views" width={16} height={16} />{views}</span>
-	<span class="clock flex gap-3"><Icon name="clock" width={16} height={16} />{time}</span>
+	<span class="recipe-card__stat flex gap-3"><Icon name="comment" width={16} height={16} />{comments}</span>
+	<span class="recipe-card__stat flex gap-3"><Icon name="like" width={16} height={16} />{likes}</span>
+	<span class="recipe-card__stat flex gap-3"><Icon name="views" width={16} height={16} />{views}</span>
+	<span class="recipe-card__stat recipe-card__stat--time flex gap-3"><Icon name="clock" width={16} height={16} />{time}</span>
 </div>
 
 <style lang="less">
@@ -28,7 +28,7 @@ const { views, likes, comments, time } = Astro.props;
 	color: var(--color-grey);
 	justify-content: space-between;
 	gap: 15px;
-	.clock {
+	.recipe-card__stat--time {
 		&::before {
 			content: '';
 			border-left: var(--border-width) solid var(--color-grey);

@@ -10,15 +10,15 @@ interface Props {
 
 const { recipe } = Astro.props;
 ---
-<a href={`/recipes/${recipe.slug}`} class="recipe-card" data-tags="Итальянская,до 30 мин,Просто">
+<a href={`/recipes/${recipe.slug}`} class="recipe-card">
 	<div class="recipe-card__media">
 		<div class="recipe-card__img" style={`background-image: url('${recipe.image}')`}></div>
 		<span class="badge">{recipe.category}</span>
 	</div>
 	<div class="recipe-card__body flex">
 		<div class="recipe-card__meta flex">
-			<div class="country">
-				<span class="flag">🇮🇹</span> Итальянская 
+			<div class="recipe-card__country">
+				<span class="recipe-card__flag">🇮🇹</span> Итальянская
 			</div>
 			<Stars rating={recipe.rating} />
 		</div>
@@ -36,9 +36,6 @@ const { recipe } = Astro.props;
 	&:hover {
 		color: initial;
 	}
-	/* &:active, &:hover { */
-		/* transform: translateY(-2px) scale(.98); */
-	/* } */
 	.recipe-card__media {
 		position: relative;
 		aspect-ratio: 1/1;
@@ -57,7 +54,7 @@ const { recipe } = Astro.props;
 		padding: 22px 14px;
 		.recipe-card__meta {
 			justify-content: space-between;
-			.country {
+			.recipe-card__country {
 				font-weight: 300;
 				font-size: 14px;
 				line-height: 17px;

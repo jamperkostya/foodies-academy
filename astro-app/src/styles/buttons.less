@@ -9,10 +9,22 @@
 	color: var(--color-white);
 	padding: 20px 30px;
 	width: fit-content;
-	
-	// &:hover {
-	// 	background: var(--color-button-clicked);
-	// }
+
+	&:hover {
+		background: var(--color-button-clicked);
+		color: var(--color-white);
+		border-color: var(--color-button-clicked);
+	}
+}
+.btn--secondary {
+	background: var(--color-white);
+	border-color: var(--color-red);
+	color: var(--color-red);
+
+	&:hover {
+		background: var(--color-red);
+		color: var(--color-white);
+	}
 }
 .header__categories-toggle {
 	.btn;

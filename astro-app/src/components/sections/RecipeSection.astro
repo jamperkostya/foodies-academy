@@ -10,9 +10,10 @@ interface Props {
 const { recipes, href, trackId } = Astro.props;
 ---
 
-<section class="section--item">
+<section class="section-item">
 	<div class="section-head">
-		<h2 class="section--title"><slot name="title" /></h2>
+		<h2 class="section-title"><slot name="title" /></h2>
+		{href && <a href={href} class="section-head__all">Смотреть все</a>}
 	</div>
 
 	<RecipeGrid recipes={recipes} trackId={trackId} />

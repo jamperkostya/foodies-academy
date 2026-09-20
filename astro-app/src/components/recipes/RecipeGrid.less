@@ -10,79 +10,98 @@
 		margin-left: calc(50% - 50vw);
 		margin-right: calc(50% - 50vw);
 	}
-}
 
-.cards-row {
-	display: flex;
-	gap: 20px;
-	overflow-x: auto;
-	overflow-y: clip;
-	scroll-snap-type: x mandatory;
-	scroll-behavior: smooth;
-	-webkit-overflow-scrolling: touch;
-	scrollbar-width: none;
-	overflow-clip-margin: 40px;
-	padding: 20px 0 56px;
-	margin: -20px 0 -56px;
-	&::-webkit-scrollbar {
-		display: none;
-	}
-	&.is-draggable {
-		cursor: grab;
-	}
-	&.is-dragging {
-		cursor: grabbing;
-		scroll-snap-type: none;
-		user-select: none;
-	}
+	.carousel__track {
+		display: flex;
+		gap: 20px;
+		overflow-x: auto;
+		overflow-y: clip;
+		scroll-snap-type: x mandatory;
+		scroll-behavior: smooth;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+		overflow-clip-margin: 40px;
+		padding: 20px 0 56px;
+		margin: -20px 0 -56px;
+		&::-webkit-scrollbar {
+			display: none;
+		}
+		&.is-draggable {
+			cursor: grab;
+		}
+		&.is-dragging {
+			cursor: grabbing;
+			scroll-snap-type: none;
+			user-select: none;
+		}
 
-	// RecipeCard.astro owns its own scoped styles, so its root class isn't
-	// reachable from here without :global — this is only the carousel's
-	// sizing/snap concern, not the card's own look. A fixed width (rather
-	// than a percentage split) lets the row fit as many cards as the
-	// viewport allows instead of always showing a fixed column count.
-	:global(.recipe-card) {
-		flex: 0 0 var(--recipe-card-w);
-		min-width: 0;
-		scroll-snap-align: start;
-	}
-}
-
-.row-arrow {
-	position: absolute;
-	top: 50%;
-	transform: translateY(-50%);
-	width: 46px;
-	height: 44px;
-	background: var(--color-white);
-	box-shadow: 0 10px 24px var(--color-black-10);
-	border-radius: var(--border-radius-10);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	z-index: 5;
-	color: var(--color-black);
-	transition: background .15s, color .15s, transform .15s, opacity .15s, border-color .15s;
-	&:hover {
-		background: var(--color-red);
-		color: var(--color-white);
-	}
-	&[disabled] {
-		opacity: 0;
-		pointer-events: none;
-	}
-	&.row-arrow--prev {
-		left: 20px;
-		svg {
-			transform: rotate(180deg);
+		// RecipeCard.astro owns its own scoped styles, so its root class isn't
+		// reachable from here without :global — this is only the carousel's
+		// sizing/snap concern, not the card's own look. A fixed width (rather
+		// than a percentage split) lets the row fit as many cards as the
+		// viewport allows instead of always showing a fixed column count.
+		:global(.recipe-card) {
+			flex: 0 0 var(--recipe-card-w);
+			min-width: 0;
+			scroll-snap-align: start;
 		}
 	}
-	&.row-arrow--next {
-		right: 20px;
+
+	.carousel__arrow {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 46px;
+		height: 44px;
+		background: var(--color-white);
+		box-shadow: 0 10px 24px var(--color-black-10);
+		border-radius: var(--border-radius-10);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 5;
+		color: var(--color-black);
+		transition: background .15s, color .15s, transform .15s, opacity .15s, border-color .15s;
+		&:hover {
+			background: var(--color-red);
+			color: var(--color-white);
+		}
+		&[disabled] {
+			opacity: 0;
+			pointer-events: none;
+		}
+		&.carousel__arrow--prev {
+			left: 20px;
+			svg {
+				transform: rotate(180deg);
+			}
+		}
+		&.carousel__arrow--next {
+			right: 20px;
+		}
 	}
+
+// 	@media (max-width: 860px) {
+// 		.carousel__arrow {
+// 			width: 38px;
+// 			height: 38px;
+// 			&.carousel__arrow--prev {
+// 				left: 8px;
+// 			}
+// 			&.carousel__arrow--next {
+// 				right: 8px;
+// 			}
+// 		}
+// 	}
+// 
+// 	@media (max-width: 640px) {
+// 		.carousel__arrow {
+// 			display: none;
+// 		}
+// 	}
 }
 
-.dots {
+.carousel__dots {
 	display: flex;
 	justify-content: center;
 	gap: 6px;
@@ -103,24 +122,5 @@
 			background: var(--color-red);
 			width: 28px;
 		}
-	}
-}
-
-@media (max-width: 860px) {
-	.row-arrow {
-		width: 38px;
-		height: 38px;
-		&.row-arrow--prev {
-			left: 8px;
-		}
-		&.row-arrow--next {
-			right: 8px;
-		}
-	}
-}
-
-@media (max-width: 640px) {
-	.row-arrow {
-		display: none;
 	}
 }

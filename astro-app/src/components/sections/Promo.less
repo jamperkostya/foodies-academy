@@ -1,0 +1,43 @@
+// Shared `.promo` block styles — the same structural block is used by
+// PromoSection.astro (regular) and PromoCTASection.astro (`--cta` modifier).
+// Each of those files imports this and adds only its own variant-specific
+// styles (background, gaps, order) on top.
+.promo {
+	border-radius: var(--border-radius-25);
+	overflow: hidden;
+	padding: 13px 13px 13px 40px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	align-items: stretch;
+	gap: 7px;
+
+	&__text {
+		align-content: center;
+	}
+	&__text-title {
+		margin: 0;
+	}
+	&__descriptions {
+		font-weight: 400;
+		font-size: 16px;
+		line-height: 150%;
+	}
+	&__media {
+		position: relative;
+		min-height: 400px;
+		overflow: hidden;
+		border-radius: 20px;
+	}
+	&__img {
+		position: absolute;
+		inset: 0;
+		background-size: cover;
+		background-position: center;
+		transition: transform .6s var(--ease);
+	}
+	&:hover {
+		.promo__img {
+			transform: scale(1.05);
+		}
+	}
+}

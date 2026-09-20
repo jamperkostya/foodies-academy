@@ -145,9 +145,9 @@ function groupHeroCards(cards: HeroCardData[]): RenderGroup[] {
 const heroGroups = groupHeroCards(heroCards);
 ---
 
-<section class="hero section--item">
+<section class="hero section-item">
 	<div class="carousel carousel--hero">
-		<div class="hero__grid" id="heroGrid">
+		<div class="carousel__track" id="heroGrid">
 			{heroGroups.map((group) =>
 				group.kind === "tall" ? (
 					<HeroCard {...group.card} />
@@ -160,14 +160,14 @@ const heroGroups = groupHeroCards(heroCards);
 				)
 			)}
 		</div>
-		<button class="hero__arrow hero__arrow--prev" aria-label="Назад">
+		<button class="carousel__arrow carousel__arrow--prev" aria-label="Назад">
 			<Icon name="arrow-slider" width={12} height={10} />
 		</button>
-		<button class="hero__arrow hero__arrow--next" aria-label="Вперёд">
+		<button class="carousel__arrow carousel__arrow--next" aria-label="Вперёд">
 			<Icon name="arrow-slider" width={12} height={10} />
 		</button>
 	</div>
-	<div class="dots" id="heroDots"></div>
+	<div class="carousel__dots" id="heroDots"></div>
 </section>
 
 <style lang="less">
@@ -175,149 +175,8 @@ const heroGroups = groupHeroCards(heroCards);
 </style>
 
 <script>
-	class HeroCarousel {
-		track: HTMLElement;
-		dotsEl: HTMLElement | null;
-		prevBtn: HTMLButtonElement | null;
-		nextBtn: HTMLButtonElement | null;
-		isDown = false;
-		dragged = false;
-		startX = 0;
-		startScroll = 0;
+	import { initDragCarousel } from "../../scripts/dragCarousel";
 
-		constructor(
-			track: HTMLElement,
-			{
-				dotsEl,
-				prevBtn,
-				nextBtn,
-			}: {
-				dotsEl?: HTMLElement | null;
-				prevBtn?: HTMLButtonElement | null;
-				nextBtn?: HTMLButtonElement | null;
-			} = {}
-		) {
-			this.track = track;
-			this.dotsEl = dotsEl ?? null;
-			this.prevBtn = prevBtn ?? null;
-			this.nextBtn = nextBtn ?? null;
-
-			this.track.addEventListener("scroll", () => this.onScroll(), { passive: true });
-			this.prevBtn?.addEventListener("click", () => this.scrollByPage(-1));
-			this.nextBtn?.addEventListener("click", () => this.scrollByPage(1));
-
-			this.bindDrag();
-			window.addEventListener("resize", () => this.refresh());
-			this.refresh();
-		}
-
-		bindDrag() {
-			const t = this.track;
-			t.classList.add("is-draggable");
-
-			t.addEventListener("pointerdown", (e) => {
-				if (e.pointerType !== "mouse" || e.button !== 0) return;
-				this.isDown = true;
-				this.dragged = false;
-				this.startX = e.clientX;
-				this.startScroll = t.scrollLeft;
-				t.classList.add("is-dragging");
-				t.setPointerCapture(e.pointerId);
-			});
-
-			t.addEventListener("pointermove", (e) => {
-				if (!this.isDown) return;
-				const dx = e.clientX - this.startX;
-				if (Math.abs(dx) > 4) this.dragged = true;
-				t.scrollLeft = this.startScroll - dx;
-			});
-
-			const end = () => {
-				if (!this.isDown) return;
-				this.isDown = false;
-				t.classList.remove("is-dragging");
-				this.snapToNearest();
-			};
-			t.addEventListener("pointerup", end);
-			t.addEventListener("pointerleave", end);
-			t.addEventListener("pointercancel", end);
-
-			t.addEventListener(
-				"click",
-				(e) => {
-					if (this.dragged) {
-						e.preventDefault();
-						e.stopPropagation();
-					}
-				},
-				true
-			);
-		}
-
-		refresh() {
-			this.buildDots();
-			this.onScroll();
-		}
-
-		get pageWidth() {
-			return this.track.clientWidth;
-		}
-		get maxScroll() {
-			return Math.max(0, this.track.scrollWidth - this.track.clientWidth);
-		}
-
-		pageCount() {
-			if (this.pageWidth === 0) return 1;
-			return Math.max(1, Math.round(this.track.scrollWidth / this.pageWidth));
-		}
-
-		buildDots() {
-			if (!this.dotsEl) return;
-			const count = this.pageCount();
-			if (count <= 1) {
-				this.dotsEl.innerHTML = "";
-				this.dotsEl.style.display = "none";
-				return;
-			}
-			this.dotsEl.style.display = "";
-			this.dotsEl.innerHTML = Array.from({ length: count })
-				.map((_, i) => `<span data-i="${i}"></span>`)
-				.join("");
-			this.dotsEl.querySelectorAll("span").forEach((dot) => {
-				dot.addEventListener("click", () => {
-					const i = Number(dot.dataset.i);
-					this.track.scrollTo({ left: i * this.pageWidth, behavior: "smooth" });
-				});
-			});
-		}
-
-		onScroll() {
-			const idx = this.pageWidth ? Math.round(this.track.scrollLeft / this.pageWidth) : 0;
-			if (this.dotsEl) {
-				this.dotsEl.querySelectorAll("span").forEach((d, i) => d.classList.toggle("is-active", i === idx));
-			}
-			if (this.prevBtn) this.prevBtn.disabled = this.track.scrollLeft <= 4;
-			if (this.nextBtn) this.nextBtn.disabled = this.track.scrollLeft >= this.maxScroll - 4;
-		}
-
-		scrollByPage(dir: number) {
-			this.track.scrollTo({ left: this.track.scrollLeft + dir * this.pageWidth, behavior: "smooth" });
-		}
-
-		snapToNearest() {
-			if (!this.pageWidth) return;
-			const idx = Math.round(this.track.scrollLeft / this.pageWidth);
-			this.track.scrollTo({ left: idx * this.pageWidth, behavior: "smooth" });
-		}
-	}
-
-	const heroGrid = document.getElementById("heroGrid");
-	if (heroGrid) {
-		const heroCarouselEl = heroGrid.closest(".carousel");
-		new HeroCarousel(heroGrid, {
-			dotsEl: document.getElementById("heroDots"),
-			prevBtn: heroCarouselEl?.querySelector<HTMLButtonElement>(".hero__arrow--prev"),
-			nextBtn: heroCarouselEl?.querySelector<HTMLButtonElement>(".hero__arrow--next"),
-		});
-	}
+	const heroCarouselEl = document.querySelector<HTMLElement>(".carousel--hero");
+	if (heroCarouselEl) initDragCarousel(heroCarouselEl);
 </script>
