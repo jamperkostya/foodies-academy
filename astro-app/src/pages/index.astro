@@ -15,6 +15,8 @@ import PromoCTASection from "../components/sections/PromoCTASection.astro";
 
 import SEOTextSection from "../components/sections/SEOTextSection.astro";
 
+import TrustSection from "../components/sections/TrustSection.astro";
+
 const topRecipes = recipes
 	.filter((recipe) => recipe.isTop)
 	.slice(0, 10);
@@ -109,6 +111,12 @@ const lastNews = news.slice(0, 7);
 		
 		<PromoCTASection>
 		</PromoCTASection>
+		
+		<TrustSection>
+			<Fragment slot="title">
+				<span>Trust</span> us
+			</Fragment>
+		</TrustSection>
 		
 		<SEOTextSection>
 		</SEOTextSection>

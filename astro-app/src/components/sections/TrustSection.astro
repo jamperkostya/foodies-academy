@@ -1,0 +1,86 @@
+---
+---
+
+<section class="section-item">
+	<div class="section--trust">
+		<div class="section-title"><slot name="title" /></div>
+		<div class="section-text">Лучшая авторская кухня в Европе</div>
+		
+		<div class="trust__stats flex">
+			<div class="trust__stat" data-count="900" data-suffix="+"><strong>900+</strong><span>Recipes</span></div>
+			<div class="trust__stat" data-count="12" data-suffix="k+"><strong>12k+</strong><span>Ratings</span></div>
+			<div class="trust__stat" data-count="1" data-suffix="M+"><strong>1M+</strong><span>Views</span></div>
+			<div class="trust__stat" data-count="600" data-suffix="+"><strong>600+</strong><span>Comments</span></div>
+		</div>
+	</div>
+</section>
+
+<style lang="less">
+.section--trust {
+	text-align: center;
+	max-width: 80%;
+	margin: auto;
+	.section-title {
+		margin-bottom: 20px;
+	}
+	.section-text {
+		font-size: 16px;
+		line-height: 20px;
+		border-bottom: var(--border-width) solid var(--color-black);
+		padding-bottom: 30px;
+		text-transform: uppercase;
+	}
+	.trust__stats {
+		justify-content: center;
+		gap: 60px;
+		flex-wrap: wrap;
+		margin-top: 40px;
+		margin-left: 50px;
+		margin-right: 50px;
+		justify-content: space-between;
+		strong {
+			text-align: center;
+			font-style: italic;
+			font-weight: 600;
+			font-size: 64px;
+			line-height: 120%;
+			color: var(--color-red);
+		}
+		span {
+			display: block;
+			font-size: 16px;
+			line-height: 150%;
+			color: var(--color-black);
+			text-transform: uppercase;
+		}
+	}
+}
+</style>
+<script>
+// ---------------------------------------------------------------------------
+// Trust stats — count up when scrolled into view
+// ---------------------------------------------------------------------------
+const trustStats = document.querySelectorAll('.trust__stat');
+if (trustStats.length) {
+  const observer = new IntersectionObserver((entries) => {
+	entries.forEach((entry) => {
+	  if (!entry.isIntersecting) return;
+	  const el = entry.target;
+	  const target = Number(el.dataset.count);
+	  const suffix = el.dataset.suffix || '';
+	  const strong = el.querySelector('strong');
+	  const duration = 900;
+	  const start = performance.now();
+	  function step(now) {
+		const progress = Math.min(1, (now - start) / duration);
+		const eased = 1 - Math.pow(1 - progress, 3);
+		strong.textContent = Math.round(target * eased) + suffix;
+		if (progress < 1) requestAnimationFrame(step);
+	  }
+	  requestAnimationFrame(step);
+	  observer.unobserve(el);
+	});
+  }, { threshold: 0.4 });
+  trustStats.forEach((el) => observer.observe(el));
+}
+</script>
