@@ -1,9 +1,9 @@
 ---
 ---
 <section class="section-item">
-	<div class="seo-text grid gap-20">
+	<div class="seo-text">
 		<div class="section-title">Lorem ipsum dolor sit amet</div>
-		<div class="section-text">
+		<div class="section-text clamped-text is-clamped">
 			<p>
 				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Lorem ipsum dolor sit amet 
 			</p>
@@ -11,7 +11,7 @@
 				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Lorem ipsum dolor sit amet 
 			</p>
 		</div>
-		<button class="btn btn--secondary">Показать больше</button>
+		<button class="btn btn--secondary clamped-text__toggle">Показать больше</button>
 	</div>
 </section>
 
@@ -23,7 +23,22 @@
 		margin: 0;
 	}
 	.btn {
+		display: block;
 		margin: auto;
+		margin-top: 40px;
 	}
 }
 </style>
+<script>
+// ---------------------------------------------------------------------------
+// SEO-text block show more / show less
+// ---------------------------------------------------------------------------
+document.querySelectorAll('.clamped-text__toggle').forEach((toggle) => {
+  toggle.addEventListener('click', () => {
+    const clampedBlock = toggle.parentElement?.querySelector('.clamped-text');
+    if (!clampedBlock) return;
+    const expanded = clampedBlock.classList.toggle('is-clamped') === false;
+    toggle.textContent = expanded ? 'Свернуть' : 'Показать больше';
+  });
+});
+</script>
