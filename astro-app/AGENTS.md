@@ -1,3 +1,11 @@
+## Role & Approach
+
+Act as a senior-level developer. Make changes without over-engineering: no unnecessary abstractions, no speculative flexibility, no premature generalization — solve the task at hand simply and directly.
+
+## Styling
+
+Use BEM (Block Element Modifier) methodology for all markup and CSS class naming.
+
 ## Development
 
 When starting the dev server, use background mode:
