@@ -1,0 +1,91 @@
+// Shared chrome for every ".carousel" block that isn't the hero (RecipeGrid,
+// CategoryGrid, …): white circular prev/next arrows, dot pagination, and the
+// drag/scroll states dragCarousel.ts toggles on the track. Hero.less keeps
+// its own translucent arrow style since it looks deliberately different.
+// Imported per-component so Astro's style scoping still applies.
+.carousel__track {
+	&::-webkit-scrollbar {
+		display: none;
+	}
+	&.is-draggable {
+		cursor: grab;
+	}
+	&.is-dragging {
+		cursor: grabbing;
+		scroll-snap-type: none;
+		user-select: none;
+	}
+}
+
+.carousel__arrow {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 46px;
+	height: 44px;
+	background: var(--color-white);
+	box-shadow: 0 10px 24px var(--color-black-10);
+	border-radius: var(--border-radius-10);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 5;
+	color: var(--color-black);
+	transition: background .15s, color .15s, transform .15s, opacity .15s, border-color .15s;
+	&:hover {
+		background: var(--color-red);
+		color: var(--color-white);
+	}
+	&[disabled] {
+		opacity: 0;
+		pointer-events: none;
+	}
+	&.carousel__arrow--prev {
+		left: 20px;
+		svg {
+			transform: rotate(180deg);
+		}
+	}
+	&.carousel__arrow--next {
+		right: 20px;
+	}
+
+	@media (max-width: 860px) {
+		width: 38px;
+		height: 38px;
+		&.carousel__arrow--prev {
+			left: 8px;
+		}
+		&.carousel__arrow--next {
+			right: 8px;
+		}
+	}
+
+	@media (max-width: 640px) {
+		display: none;
+	}
+}
+
+.carousel__dots {
+	display: flex;
+	justify-content: center;
+	gap: 6px;
+	margin-top: 20px;
+	// spans are injected client-side by the carousel script, so they never
+	// receive Astro's scoping attribute — style them unscoped.
+	:global(span) {
+		width: 20px;
+		height: 4px;
+		border-radius: var(--border-radius-100);
+		background: var(--color-black-20);
+		cursor: pointer;
+		transition: background .15s, width .2s;
+		&:hover {
+			background: var(--color-grey);
+		}
+		&.is-active {
+			background: var(--color-red);
+			width: 28px;
+		}
+	}
+}

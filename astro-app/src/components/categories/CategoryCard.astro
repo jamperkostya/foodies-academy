@@ -1,0 +1,50 @@
+---
+import type { Category } from "../../types/category";
+
+interface Props {
+	recipe: Category;
+}
+
+const { recipe } = Astro.props;
+---
+<a href={`/category/${recipe.slug}`} class="category-card">
+	<div class="category-card__img" style={`background-image:url('${recipe.image}')`}></div>
+	<div class="category-card__label"><strong>{recipe.title}</strong><small>1200 рецептов</small></div>
+</a>
+<style lang="less">
+.category-card {
+	flex: 0 0 calc((100% - 14px*7)/8);
+	min-width: 0;
+	scroll-snap-align: start;
+	position: relative;
+	border-radius: var(--border-radius-25);
+	overflow: hidden;
+	aspect-ratio: 3/5;
+	color: var(--color-white);
+	display: flex;
+	align-items: flex-end;
+	padding: 14px 12px;
+	cursor: pointer;
+	transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+	&::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		background: linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,.78) 100%);
+		transition: background .25s;
+	}
+	.category-card__img {
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		background-size: cover;
+		background-position: center;
+		transition: transform .5s var(--ease);
+	}
+	.category-card__label {
+		position: relative;
+		z-index: 2;
+	}
+}
+</style>

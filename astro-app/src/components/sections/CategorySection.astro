@@ -1,0 +1,18 @@
+---
+import CategoryGrid from '../categories/CategoryGrid.astro';
+
+import type { Category } from '../../types/category';
+
+interface Props {
+	categories: Category[];
+	href?: string;
+	trackId?: string;
+}
+const { categories, href, trackId } = Astro.props;
+---
+<section class="section-item">
+	<div class="section-head">
+		<h2 class="section-title"><slot name="title" /></h2>
+	</div>
+	<CategoryGrid categories={categories} trackId={trackId} />
+</section>

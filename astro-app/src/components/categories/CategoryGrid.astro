@@ -1,0 +1,56 @@
+---
+import Icon from "../ui/Icon.astro";
+import CategoryCard from '../categories/CategoryCard.astro';
+import type { Category } from "../../types/category";
+
+interface Props {
+  categories: Category[];
+  trackId?: string;
+}
+
+const { categories, trackId } = Astro.props;
+---
+<div class="carousel carousel--categories">
+	<div class="carousel__track" id={trackId}>
+		{categories.map((category) => (
+			<CategoryCard recipe={category} />
+		))}
+	</div>
+	<button class="carousel__arrow carousel__arrow--prev" aria-label="Назад">
+		<Icon name="arrow-slider" width={12} height={10} />
+	</button>
+	<button class="carousel__arrow carousel__arrow--next" aria-label="Вперёд">
+		<Icon name="arrow-slider" width={12} height={10} />
+	</button>
+</div>
+<div class="carousel__dots"></div>
+
+<style lang="less">
+@import "../../styles/carousel.less";
+
+.carousel--categories {
+	position: relative;
+
+	.carousel__track {
+		display: flex;
+		gap: 14px;
+		overflow-x: auto;
+		overflow-y: clip;
+		scroll-snap-type: x mandatory;
+		scroll-behavior: smooth;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+		overflow-clip-margin: 40px;
+		padding: 20px 0 56px;
+		margin: -20px 0 -56px;
+	}
+}
+</style>
+<script>
+	import { initDragCarousel } from "../../scripts/dragCarousel";
+
+	// A page can render several category carousels, so every
+	// ".carousel--categories" on the page gets its own instance instead of
+	// relying on a single hardcoded id.
+	document.querySelectorAll<HTMLElement>(".carousel--categories").forEach(initDragCarousel);
+</script>

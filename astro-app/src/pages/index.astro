@@ -4,8 +4,10 @@ import Hero from "../components/sections/Hero.astro";
 
 import { recipes } from '../data/recipes';
 import { news } from '../data/news';
+import { categories } from '../data/categories';
 
 import RecipeSection from "../components/sections/RecipeSection.astro";
+import CategorySection from "../components/sections/CategorySection.astro";
 import LastNewsSection from "../components/sections/LastNewsSection.astro";
 
 import RecipeCollestionsSection from "../components/sections/RecipeCollections.astro";
@@ -74,10 +76,12 @@ const lastNews = news.slice(0, 7);
 				<span>TOP 5</span> RECIPES
 			</Fragment>
 		</RecipeSection>
-
-		<section class="section-item">
-			<h2 class="section-title"><span>Best</span> categories</h2>
-		</section>
+		
+		<CategorySection categories={categories}>
+			<Fragment slot="title">
+				<span>BEST</span> categories
+			</Fragment>
+		</CategorySection>
 
 		<section class="section-item">
 			<h2 class="section-title"><span>top 5</span> video</h2>
