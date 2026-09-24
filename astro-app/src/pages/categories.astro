@@ -5,10 +5,11 @@ import CardGrid from "../components/ui/CardGrid.astro";
 import CategoryCard from "../components/categories/CategoryCard.astro";
 import { categories } from "../data/categories";
 ---
-<BaseLayout title="Все категории">
+<BaseLayout title="Все категории" breadcrumbs={[{ label: "Категории" }]}>
 	<Section>
 		<Fragment slot="title"><span>Все</span> категории</Fragment>
-		<CardGrid minCardWidth={160}>
+		{/* Category cards are at least 195px wide (325px min-height at 3:5). */}
+		<CardGrid minCardWidth={200}>
 			{categories.map((category) => <CategoryCard category={category} />)}
 		</CardGrid>
 	</Section>

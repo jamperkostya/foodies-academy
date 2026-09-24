@@ -1,0 +1,61 @@
+---
+import type { Breadcrumb } from "../../types/breadcrumb";
+
+interface Props {
+	// Trail after "Главная", ending with the current page.
+	items: Breadcrumb[];
+}
+
+const trail: Breadcrumb[] = [{ label: "Главная", href: "/" }, ...Astro.props.items];
+---
+<div class="breadcrumbs">
+	<nav class="container" aria-label="Хлебные крошки">
+		<ol class="breadcrumbs__list">
+			{trail.map((item, i) => (
+				<li class="breadcrumbs__item">
+					{item.href && i < trail.length - 1 ? (
+						<a class="breadcrumbs__link" href={item.href}>{item.label}</a>
+					) : (
+						<span class="breadcrumbs__current" aria-current="page">{item.label}</span>
+					)}
+				</li>
+			))}
+		</ol>
+	</nav>
+</div>
+
+<style lang="less">
+.breadcrumbs {
+	background: var(--color-white);
+	border-bottom: var(--border-width) solid var(--color-black-10);
+}
+
+.breadcrumbs__list {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	padding: 14px 0;
+	font-size: 13px;
+	line-height: 18px;
+	color: var(--color-grey);
+}
+
+// Separator drawn by CSS, so screen readers don't read out "slash".
+.breadcrumbs__item + .breadcrumbs__item::before {
+	content: "/";
+	margin-right: 8px;
+}
+
+.breadcrumbs__link {
+	// The global `a` rule sets its own font.
+	font-size: inherit;
+	line-height: inherit;
+	transition: color .15s;
+}
+
+.breadcrumbs__current {
+	font-weight: 600;
+	color: var(--color-black);
+}
+</style>

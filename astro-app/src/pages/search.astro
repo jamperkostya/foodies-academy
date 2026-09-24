@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Section from "../components/layout/Section.astro";
 ---
-<BaseLayout title="Поиск">
+<BaseLayout title="Поиск" breadcrumbs={[{ label: "Поиск" }]}>
 	<Section>
 		<Fragment slot="title"><span>Результаты</span> поиска</Fragment>
 		<div class="search-results">
