@@ -6,6 +6,8 @@ export interface Video {
   title: string;
   image: string;
   category: string;
+  // Length as shown on the card, e.g. "12:40".
+  duration: string;
   views: number;
   likes: number;
   comments: number;

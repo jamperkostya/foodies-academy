@@ -15,20 +15,14 @@ class DragCarousel {
 
 	constructor(
 		track: HTMLElement,
-		{
-			dotsEl,
-			prevBtn,
-			nextBtn,
-		}: {
-			dotsEl?: HTMLElement | null;
-			prevBtn?: HTMLButtonElement | null;
-			nextBtn?: HTMLButtonElement | null;
-		} = {}
+		dotsEl: HTMLElement | null,
+		prevBtn: HTMLButtonElement | null,
+		nextBtn: HTMLButtonElement | null
 	) {
 		this.track = track;
-		this.dotsEl = dotsEl ?? null;
-		this.prevBtn = prevBtn ?? null;
-		this.nextBtn = nextBtn ?? null;
+		this.dotsEl = dotsEl;
+		this.prevBtn = prevBtn;
+		this.nextBtn = nextBtn;
 
 		this.track.addEventListener("scroll", () => this.onScroll(), { passive: true });
 		this.prevBtn?.addEventListener("click", () => this.scrollByPage(-1));
@@ -127,9 +121,9 @@ class DragCarousel {
 		}
 		this.dotsEl.style.display = "";
 		this.dotsEl.innerHTML = positions.map((_, i) => `<span class="carousel__dot" data-i="${i}"></span>`).join("");
-		this.dotsEl.querySelectorAll("span").forEach((dot) => {
+		this.dotsEl.querySelectorAll<HTMLElement>(".carousel__dot").forEach((dot) => {
 			dot.addEventListener("click", () => {
-				const i = Number((dot as HTMLElement).dataset.i);
+				const i = Number(dot.dataset.i);
 				this.track.scrollTo({ left: this.pagePositions()[i], behavior: "smooth" });
 			});
 		});
@@ -138,7 +132,7 @@ class DragCarousel {
 	onScroll() {
 		if (this.dotsEl) {
 			const idx = this.nearestPage(this.pagePositions());
-			this.dotsEl.querySelectorAll("span").forEach((d, i) => d.classList.toggle("is-active", i === idx));
+			this.dotsEl.querySelectorAll(".carousel__dot").forEach((d, i) => d.classList.toggle("is-active", i === idx));
 		}
 		if (this.prevBtn) this.prevBtn.disabled = this.track.scrollLeft <= 4;
 		if (this.nextBtn) this.nextBtn.disabled = this.track.scrollLeft >= this.maxScroll - 4;
@@ -165,9 +159,10 @@ export function initDragCarousel(carouselEl: HTMLElement) {
 	const dotsSibling = carouselEl.nextElementSibling;
 	const dotsEl = dotsSibling?.classList.contains("carousel__dots") ? (dotsSibling as HTMLElement) : null;
 
-	return new DragCarousel(track, {
+	return new DragCarousel(
+		track,
 		dotsEl,
-		prevBtn: carouselEl.querySelector<HTMLButtonElement>(".carousel__arrow--prev"),
-		nextBtn: carouselEl.querySelector<HTMLButtonElement>(".carousel__arrow--next"),
-	});
+		carouselEl.querySelector<HTMLButtonElement>(".carousel__arrow--prev"),
+		carouselEl.querySelector<HTMLButtonElement>(".carousel__arrow--next")
+	);
 }
