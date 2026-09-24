@@ -80,13 +80,13 @@ const groups = [...new Set(videos.map((video) => video.category))];
 		// fit --per-view columns instead of the hero's fixed 640x460.
 		// The card is only ~250px wide here (the hero's is 640px), so the
 		// padding and title are scaled down to keep long words inside it.
-		:global(.hero-card) {
+		:global(.video-card) {
 			flex: 0 0 calc((100% - var(--gap) * (var(--per-view) - 1)) / var(--per-view));
 			height: auto;
 			aspect-ratio: 3/4.3;
 			padding: 20px;
 		}
-		:global(.hero-card__title) {
+		:global(.video-card__title) {
 			font-size: 24px;
 			line-height: 29px;
 			// Still too narrow for the odd long word ("Неаполитанская").

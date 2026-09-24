@@ -3,22 +3,36 @@ import Icon from "../ui/Icon.astro";
 import Stars from "../ui/Stars.astro";
 
 interface Props {
-	views: number;
-	likes: number;
-	comments: number;
+	views?: number;
+	likes?: number;
+	comments?: number;
 	rating: number;
 }
 
 const { views, likes, comments, rating } = Astro.props;
 ---
 
-<div class="hero-card__stats gap-12 grid">
-	<div class="flex gap-12 flex-center">
-		<span class="hero-card__stat flex gap-3"><Icon name="views" width={16} height={16} />{views}</span>
-		<span class="hero-card__stat flex gap-3"><Icon name="like" width={16} height={16} />{likes}</span>
-	</div>
-	<div class="hero-card__rating flex gap-5 flex-center">
-		<span class="hero-card__stat flex gap-3"><Icon name="comment" width={16} height={16} />{comments}</span>
+<div class="video-card__stats gap-12 grid">
+	{/* Ternaries, not `views && …`: that would print a bare "0". The row
+	    itself is skipped when both are empty, so it leaves no gap behind. */}
+	{views || likes ? (
+		<div class="flex gap-12 items-center ">
+			{views ? <span class="video-card__stat flex gap-3"><Icon name="views" width={16} height={16} />{views}</span> : null}
+			{likes ? <span class="video-card__stat flex gap-3"><Icon name="like" width={16} height={16} />{likes}</span> : null}
+		</div>
+	) : null}
+	<div class="video-card__rating flex gap-5 flex-center">
+		{comments ? <span class="video-card__stat flex gap-3"><Icon name="comment" width={16} height={16} />{comments}</span>: null}
 		<Stars rating={rating} />
 	</div>
 </div>
+
+<style lang="less">
+// Always on the right edge of the card, with each row right-aligned, whether
+// or not there's a YouTube button on the left. Lives here rather than in
+// VideoCard.less: the card's scoped styles don't reach a child component.
+.video-card__stats {
+	margin-left: auto;
+	justify-items: end;
+}
+</style>
