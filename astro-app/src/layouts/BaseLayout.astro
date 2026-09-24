@@ -8,11 +8,17 @@ import "../styles/global.less";
 interface Props {
 	// Page name, shown before the site name in the browser tab.
 	title?: string;
+	// Search-result snippet for the page; the site-wide one if omitted.
+	description?: string;
 	// Trail shown under the header, after "Главная". Omit on the home page.
 	breadcrumbs?: Breadcrumb[];
 }
 
-const { title, breadcrumbs } = Astro.props;
+const {
+	title,
+	description = "Foodies Academy — рецепты с пошаговыми фото и видео: основные блюда, супы, салаты, десерты и выпечка.",
+	breadcrumbs,
+} = Astro.props;
 ---
 
 <html lang="ru">
@@ -20,11 +26,13 @@ const { title, breadcrumbs } = Astro.props;
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>{title ? `${title} — Foodies.academy` : "Foodies.academy"}</title>
-		<meta name="description" content="Description">
+		<meta name="description" content={description}>
 	</head>
 	<body>
 		<Header />
 		{breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
+		{/* Full-width intro between the breadcrumbs and the page content (e.g. PageHero). */}
+		<slot name="hero" />
 		<main class="container"><slot /></main>
 		<Footer />
 	</body>

@@ -112,6 +112,9 @@ const columns = [...new Set(categories.flatMap((category) => category.groups))].
 	font-size: 14px;
 	line-height: 20px;
 	transition: color .15s;
+	&:hover {
+		color: var(--color-red);
+	}
 }
 
 .categories-menu__all {

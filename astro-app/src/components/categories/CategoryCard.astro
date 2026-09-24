@@ -1,5 +1,5 @@
 ---
-import { plural } from "../../utils/plural";
+import { recipesWord } from "../../utils/plural";
 import type { Category } from "../../types/category";
 
 interface Props {
@@ -8,9 +8,9 @@ interface Props {
 
 const { category } = Astro.props;
 
-const recipeWord = plural(category.recipesCount, ["рецепт", "рецепта", "рецептов"]);
+const recipeWord = recipesWord(category.recipesCount);
 ---
-<a href={`/category/${category.slug}`} class="category-card" data-groups={JSON.stringify(category.groups)}>
+<a href={`/category/${category.slug}`} class="category-card" data-groups={JSON.stringify(category.groups)} data-recipes-count={category.recipesCount}>
 	<div class="category-card__img" style={`background-image:url('${category.image}')`}></div>
 	<div class="category-card__label">
 		<strong class="category-card__title">{category.title}</strong>
@@ -74,5 +74,6 @@ const recipeWord = plural(category.recipesCount, ["рецепт", "рецепт�
 
 .category-card__count {
 	display: block;
+	line-height: 24px;
 }
 </style>

@@ -21,5 +21,29 @@ const percent = Math.max(0, Math.min(100, (rating / MAX) * 100));
 </span>
 
 <style lang="less">
-	@import "./Stars.less";
+.stars {
+	position: relative;
+	display: inline-flex;
+
+	&__track,
+	&__fill {
+		display: flex;
+
+		:global(svg) {
+			flex-shrink: 0;
+		}
+	}
+
+	&__track {
+		color: var(--color-grey);
+	}
+
+	&__fill {
+		position: absolute;
+		inset: 0;
+		overflow: hidden;
+		width: var(--stars-fill);
+		color: var(--color-red);
+	}
+}
 </style>

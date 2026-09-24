@@ -83,8 +83,6 @@ const featuredImage = featured?.image ?? "https://foodies.academy/wp-content/upl
 	}
 	&:hover {
 		padding-left: 6px;
-		// Undo the global a:hover color.
-		color: initial;
 		&::before {
 			color: var(--color-red);
 		}
@@ -99,7 +97,6 @@ const featuredImage = featured?.image ?? "https://foodies.academy/wp-content/upl
 	flex-direction: column;
 	gap: 30px;
 	&:hover {
-		color: initial;
 		.news__img {
 			transform: scale(1.06);
 		}
@@ -158,6 +155,7 @@ const featuredImage = featured?.image ?? "https://foodies.academy/wp-content/upl
 }
 
 .news__desc {
+	margin: 12px 0;
 	font-size: 16px;
 	line-height: 20px;
 	color: var(--color-black-50);

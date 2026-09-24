@@ -6,15 +6,17 @@
 	line-height: 150%;
 }
 
-// The global `a` rule sets its own font, so links don't inherit the footer's.
-.footer__logo,
+// Footer links are dimmed (here or by .footer__bottom) and light up on hover.
 .footer__social-link,
+.footer__col-header,
 .footer__link,
 .footer__country,
 .footer__legal-link {
-	font-weight: 400;
-	font-size: 12px;
-	line-height: 150%;
+	transition: color .15s, opacity .15s;
+	&:hover {
+		color: var(--color-red);
+		opacity: 1;
+	}
 }
 
 .footer__top {
@@ -35,6 +37,7 @@
 }
 
 .footer__desc {
+	margin: 12px 0;
 	font-size: 14px;
 	line-height: 150%;
 	color: var(--color-black-50);

@@ -1,0 +1,59 @@
+---
+// Full-width intro banner of a listing page (categories, blog, …). Pass it to
+// BaseLayout's "hero" slot. The title goes in the default slot, so it can
+// hold an accent: Все <span>категории</span>.
+interface Props {
+	eyebrow?: string;
+	description?: string;
+}
+
+const { eyebrow, description } = Astro.props;
+---
+<section class="page-hero">
+	<div class="container">
+		{eyebrow && <p class="page-hero__eyebrow">{eyebrow}</p>}
+		<h1 class="page-hero__title"><slot /></h1>
+		{description && <p class="page-hero__desc">{description}</p>}
+	</div>
+</section>
+
+<style lang="less">
+.page-hero {
+	padding: 48px 0;
+	background: var(--color-cream);
+	text-align: center;
+}
+
+.page-hero__eyebrow {
+	margin: 0 0 10px;
+	font-weight: 800;
+	font-size: 13px;
+	line-height: 16px;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: var(--color-red);
+}
+
+.page-hero__title {
+	margin: 0 0 14px;
+	font-weight: 800;
+	font-size: 40px;
+	line-height: 1.2;
+	text-transform: uppercase;
+	@media (max-width: 860px) {
+		font-size: 28px;
+	}
+	// The accent is part of the slotted title, outside this component's scope.
+	:global(span) {
+		color: var(--color-red);
+	}
+}
+
+.page-hero__desc {
+	max-width: 620px;
+	margin: 0 auto;
+	font-size: 15px;
+	line-height: 1.7;
+	color: var(--color-grey-dark);
+}
+</style>

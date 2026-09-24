@@ -1,16 +1,68 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import Section from "../components/layout/Section.astro";
+import PageHero from "../components/layout/PageHero.astro";
+import SortBar from "../components/ui/SortBar.astro";
 import CardGrid from "../components/ui/CardGrid.astro";
 import CategoryCard from "../components/categories/CategoryCard.astro";
 import { categories } from "../data/categories";
+import { plural, recipesWord } from "../utils/plural";
+
+// Counted from the data, so the intro never disagrees with the catalogue.
+const totalRecipes = categories.reduce((sum, category) => sum + category.recipesCount, 0);
+const description =
+	`${totalRecipes.toLocaleString("ru-RU")} ${recipesWord(totalRecipes)}, ` +
+	"разложенных по полочкам — от завтрака до праздничного стола. Выберите категорию и найдите то, что приготовите уже сегодня.";
+
+// "popular" keeps the data's own order.
+const sortOptions = [
+	{ value: "popular", label: "По популярности" },
+	{ value: "az", label: "По алфавиту" },
+	{ value: "count", label: "По числу рецептов" },
+];
 ---
-<BaseLayout title="Все категории" breadcrumbs={[{ label: "Категории" }]}>
-	<Section>
-		<Fragment slot="title"><span>Все</span> категории</Fragment>
+<BaseLayout title="Все категории" description={description} breadcrumbs={[{ label: "Категории" }]}>
+	<PageHero slot="hero" eyebrow="Каталог" description={description}>
+		Все <span>категории</span>
+	</PageHero>
+
+	<section class="catalog">
+		<SortBar
+			count={categories.length}
+			countWord={plural(categories.length, ["категория", "категории", "категорий"])}
+			options={sortOptions}
+		/>
 		{/* Category cards are at least 195px wide (325px min-height at 3:5). */}
 		<CardGrid minCardWidth={200}>
 			{categories.map((category) => <CategoryCard category={category} />)}
 		</CardGrid>
-	</Section>
+	</section>
 </BaseLayout>
+
+<style lang="less">
+.catalog {
+	padding-top: 56px;
+}
+</style>
+
+<script>
+	// Sorting only reorders the cards already on the page.
+	const catalog = document.querySelector<HTMLElement>(".catalog");
+	const select = catalog?.querySelector<HTMLSelectElement>(".sort-bar__field");
+	const grid = catalog?.querySelector<HTMLElement>(".card-grid");
+
+	if (select && grid) {
+		const cards = [...grid.querySelectorAll<HTMLElement>(".category-card")];
+		const title = (card: HTMLElement) => card.querySelector(".category-card__title")?.textContent ?? "";
+		const recipes = (card: HTMLElement) => Number(card.dataset.recipesCount);
+
+		const sorters: Record<string, (a: HTMLElement, b: HTMLElement) => number> = {
+			az: (a, b) => title(a).localeCompare(title(b), "ru"),
+			count: (a, b) => recipes(b) - recipes(a),
+		};
+
+		select.addEventListener("change", () => {
+			const sorter = sorters[select.value];
+			grid.append(...(sorter ? [...cards].sort(sorter) : cards));
+		});
+	}
+</script>

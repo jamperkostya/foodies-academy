@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 import { recipes } from "../data/recipes";
 import { categories } from "../data/categories";
 import { videos } from "../data/videos";
-import { plural } from "../utils/plural";
+import { recipesWord } from "../utils/plural";
 
 // Built into a static /search-index.json that the header search fetches on
 // first use, instead of embedding the list in every page.
@@ -27,7 +27,7 @@ export const GET: APIRoute = () => {
 		})),
 		...categories.map((category) => ({
 			title: category.title,
-			meta: `Категория · ${category.recipesCount} ${plural(category.recipesCount, ["рецепт", "рецепта", "рецептов"])}`,
+			meta: `Категория · ${category.recipesCount} ${recipesWord(category.recipesCount)}`,
 			icon: icon(category.groups[0]),
 			href: `/category/${category.slug}`,
 		})),

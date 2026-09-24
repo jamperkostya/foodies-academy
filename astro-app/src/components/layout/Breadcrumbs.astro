@@ -48,10 +48,10 @@ const trail: Breadcrumb[] = [{ label: "Главная", href: "/" }, ...Astro.pr
 }
 
 .breadcrumbs__link {
-	// The global `a` rule sets its own font.
-	font-size: inherit;
-	line-height: inherit;
 	transition: color .15s;
+	&:hover {
+		color: var(--color-red);
+	}
 }
 
 .breadcrumbs__current {

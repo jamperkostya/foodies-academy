@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Section from "../components/layout/Section.astro";
 ---
-<BaseLayout title="Поиск" breadcrumbs={[{ label: "Поиск" }]}>
+<BaseLayout title="Поиск" description="Поиск рецептов, категорий и видео на Foodies Academy." breadcrumbs={[{ label: "Поиск" }]}>
 	<Section>
 		<Fragment slot="title"><span>Результаты</span> поиска</Fragment>
 		<div class="search-results">
@@ -42,8 +42,6 @@ import Section from "../components/layout/Section.astro";
 	line-height: 22px;
 	transition: box-shadow .2s, transform .2s;
 	&:hover {
-		// Undo the global a:hover color.
-		color: inherit;
 		transform: translateY(-2px);
 		box-shadow: 0 10px 24px var(--color-black-10);
 	}

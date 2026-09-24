@@ -1,0 +1,67 @@
+---
+// Row above a listing: how many items there are, and a sort dropdown. The page
+// does the actual sorting (see pages/categories.astro).
+interface Props {
+	count: number;
+	// Noun after the count, already declined: "категории", "рецептов", …
+	countWord: string;
+	options: { value: string; label: string }[];
+}
+
+const { count, countWord, options } = Astro.props;
+---
+<div class="sort-bar">
+	<p class="sort-bar__count"><strong class="sort-bar__value">{count}</strong>{" "}{countWord}</p>
+	<label class="sort-bar__select">
+		Сортировка:
+		<select class="sort-bar__field">
+			{options.map((option) => <option value={option.value}>{option.label}</option>)}
+		</select>
+	</label>
+</div>
+
+<style lang="less">
+.sort-bar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 24px;
+	padding-bottom: 16px;
+	border-bottom: var(--border-width) solid var(--color-black-10);
+}
+
+.sort-bar__count {
+	margin: 0;
+	font-size: 13px;
+	line-height: 18px;
+	color: var(--color-grey-dark);
+}
+
+.sort-bar__value {
+	color: var(--color-black);
+}
+
+.sort-bar__select {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 16px;
+	border: var(--border-width) solid var(--color-black-10);
+	border-radius: var(--border-radius-1000);
+	background: var(--color-white);
+	font-weight: 600;
+	font-size: 13px;
+	line-height: 18px;
+	color: var(--color-black);
+	cursor: pointer;
+}
+
+.sort-bar__field {
+	border: none;
+	background: none;
+	cursor: pointer;
+	outline: none;
+}
+</style>

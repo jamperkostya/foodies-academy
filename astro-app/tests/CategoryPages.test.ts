@@ -12,6 +12,36 @@ describe("/categories", () => {
 
 		expect(html.match(/class="category-card"/g)).toHaveLength(categories.length);
 	});
+
+	it("shows how many categories there are and the sort options", async () => {
+		const container = await AstroContainer.create();
+		const html = await container.renderToString(CategoriesPage);
+		const options = [...html.matchAll(/<option value="([^"]+)"[^>]*>([^<]+)</g)].map((m) => [m[1], m[2]]);
+
+		expect(html).toMatch(new RegExp(`sort-bar__value[^>]*>${categories.length}</strong> категори`));
+		expect(options).toEqual([
+			["popular", "По популярности"],
+			["az", "По алфавиту"],
+			["count", "По числу рецептов"],
+		]);
+	});
+
+	it("gives each card its recipe count for sorting", async () => {
+		const container = await AstroContainer.create();
+		const html = await container.renderToString(CategoriesPage);
+
+		expect(html).toContain(`data-recipes-count="${categories[0].recipesCount}"`);
+	});
+
+	it("opens with a single h1 and the recipe total from the data", async () => {
+		const container = await AstroContainer.create();
+		const html = await container.renderToString(CategoriesPage);
+		const total = categories.reduce((sum, category) => sum + category.recipesCount, 0);
+
+		expect(html.match(/<h1/g)).toHaveLength(1);
+		expect(html).toMatch(/class="page-hero__title"[^>]*>\s*Все <span[^>]*>категории<\/span>/);
+		expect(html).toContain(`${total.toLocaleString("ru-RU")} рецептов`);
+	});
 });
 
 describe("/category/[slug]", () => {

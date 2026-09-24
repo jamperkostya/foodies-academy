@@ -36,8 +36,6 @@ const { recipe, groups } = Astro.props;
 	overflow: hidden;
 	transition: transform .25s var(--ease), box-shadow .25s var(--ease);
 	&:hover {
-		// Undo the global a:hover color.
-		color: initial;
 		transform: translateY(-6px);
 		box-shadow: 0 20px 36px rgba(29,27,32,.12);
 		.recipe-card__img {

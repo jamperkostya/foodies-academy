@@ -21,7 +21,10 @@ const { category } = Astro.props;
 // same dish groups (e.g. every "Супы" recipe on the "Борщ" page).
 const categoryRecipes = recipes.filter((recipe) => category.groups.includes(recipe.category));
 ---
-<BaseLayout title={category.title} breadcrumbs={[{ label: "Категории", href: "/categories" }, { label: category.title }]}>
+<BaseLayout
+	title={category.title}
+	description={`${category.title}: рецепты с пошаговыми фото на Foodies Academy.`}
+	breadcrumbs={[{ label: "Категории", href: "/categories" }, { label: category.title }]}>
 	<Section>
 		<Fragment slot="title">{category.title}</Fragment>
 		{categoryRecipes.length ? (
