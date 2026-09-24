@@ -1,0 +1,157 @@
+---
+import Icon from "../ui/Icon.astro";
+import { categories } from "../../data/categories";
+
+// One column per group, same groups as the category filters. A category that
+// belongs to several groups is listed in each of them.
+const columns = [...new Set(categories.flatMap((category) => category.groups))].map((group) => ({
+	group,
+	items: categories.filter((category) => category.groups.includes(group)),
+}));
+---
+<div class="categories-menu">
+	<button type="button" class="categories-menu__toggle" aria-expanded="false" aria-controls="categories-menu-panel">
+		Категории
+		<Icon name="menu-arrow" width={12} height={7} />
+	</button>
+
+	<nav class="categories-menu__panel" id="categories-menu-panel" aria-label="Категории" hidden>
+		<div class="categories-menu__columns">
+			{columns.map(({ group, items }) => (
+				<div class="categories-menu__column">
+					<p class="categories-menu__title">{group}</p>
+					<ul class="categories-menu__list">
+						{items.map((category) => (
+							<li>
+								<a class="categories-menu__link" href={`/category/${category.slug}`}>{category.title}</a>
+							</li>
+						))}
+					</ul>
+				</div>
+			))}
+		</div>
+		<a class="categories-menu__all" href="/categories">Все категории</a>
+	</nav>
+</div>
+
+<style lang="less">
+// (reference): pull in the .btn mixin without re-emitting it.
+@import (reference) "../../styles/buttons.less";
+
+.categories-menu {
+	position: relative;
+}
+
+.categories-menu__toggle {
+	.btn();
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 3px;
+	padding: 16px 14px 15px 17px;
+	background: var(--color-black-20);
+	border: var(--border-width) solid var(--color-black-20);
+	font-weight: 600;
+	font-size: 14px;
+	line-height: 16px;
+	// The arrow is Icon's <svg>, outside this component's scope.
+	:global(svg) {
+		transition: transform .2s var(--ease);
+	}
+	&[aria-expanded="true"] {
+		background: var(--color-red);
+		border-color: var(--color-red);
+		:global(svg) {
+			transform: rotate(180deg);
+		}
+	}
+}
+
+.categories-menu__panel {
+	position: absolute;
+	top: calc(100% + 10px);
+	left: 0;
+	z-index: 50;
+	display: grid;
+	gap: 20px;
+	width: max-content;
+	max-width: min(760px, calc(100vw - 40px));
+	padding: 25px 30px;
+	background: var(--color-white);
+	border-radius: var(--border-radius-25);
+	box-shadow: 0 20px 40px var(--color-black-20);
+	// display: grid would otherwise beat the UA style for [hidden].
+	&[hidden] {
+		display: none;
+	}
+}
+
+.categories-menu__columns {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+	gap: 20px 24px;
+	width: 700px;
+	max-width: 100%;
+}
+
+.categories-menu__title {
+	margin: 0 0 10px;
+	font-style: italic;
+	font-weight: 700;
+	font-size: 14px;
+	line-height: 17px;
+	color: var(--color-red);
+}
+
+.categories-menu__list {
+	display: grid;
+	gap: 6px;
+}
+
+.categories-menu__link {
+	font-size: 14px;
+	line-height: 20px;
+	transition: color .15s;
+}
+
+.categories-menu__all {
+	justify-self: start;
+	padding-top: 15px;
+	border-top: var(--border-width) solid var(--color-black-10);
+	font-weight: 600;
+	font-size: 14px;
+	line-height: 17px;
+	color: var(--color-red);
+}
+</style>
+
+<script>
+	// Disclosure menu: the toggle opens the panel; a click outside, focus
+	// leaving the menu, or Escape closes it.
+	document.querySelectorAll<HTMLElement>(".categories-menu").forEach((menu) => {
+		const toggle = menu.querySelector<HTMLButtonElement>(".categories-menu__toggle");
+		const panel = menu.querySelector<HTMLElement>(".categories-menu__panel");
+		if (!toggle || !panel) return;
+
+		const setOpen = (open: boolean) => {
+			panel.hidden = !open;
+			toggle.setAttribute("aria-expanded", String(open));
+		};
+
+		toggle.addEventListener("click", () => setOpen(panel.hidden));
+
+		document.addEventListener("click", (e) => {
+			if (!menu.contains(e.target as Node)) setOpen(false);
+		});
+
+		menu.addEventListener("focusout", (e) => {
+			if (!menu.contains(e.relatedTarget as Node | null)) setOpen(false);
+		});
+
+		menu.addEventListener("keydown", (e) => {
+			if (e.key !== "Escape" || panel.hidden) return;
+			setOpen(false);
+			toggle.focus();
+		});
+	});
+</script>

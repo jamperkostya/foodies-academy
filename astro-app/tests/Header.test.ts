@@ -28,11 +28,12 @@ describe("Header", () => {
 		expect(html).toMatch(/<input[^>]*aria-label="[^"]+"/);
 	});
 
-	it("marks the categories toggle as a collapsed popup trigger", () => {
-		const button = html.match(/<button[^>]*class="header__categories-toggle[^>]*>/)?.[0];
+	it("marks the categories toggle as a collapsed disclosure for its panel", () => {
+		const button = html.match(/<button[^>]*class="categories-menu__toggle[^>]*>/)?.[0];
 		expect(button).toBeDefined();
-		expect(button).toContain('aria-haspopup="true"');
 		expect(button).toContain('aria-expanded="false"');
+		expect(button).toContain('aria-controls="categories-menu-panel"');
+		expect(html).toMatch(/id="categories-menu-panel"[^>]*hidden/);
 	});
 
 	it("gives every icon-only button an accessible name", () => {

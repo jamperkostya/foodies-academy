@@ -1,0 +1,19 @@
+---
+interface Props {
+	// Narrowest a card may get before the grid drops a column.
+	minCardWidth: number;
+}
+
+const { minCardWidth } = Astro.props;
+---
+<div class="card-grid" style={`--card-grid-min: ${minCardWidth}px`}>
+	<slot />
+</div>
+
+<style lang="less">
+.card-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(var(--card-grid-min), 1fr));
+	gap: 20px;
+}
+</style>

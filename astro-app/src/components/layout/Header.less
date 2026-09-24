@@ -1,8 +1,16 @@
-// (reference): pull in the .btn mixin without re-emitting it.
-@import (reference) "../../styles/buttons.less";
-
+// Sticks to the top; BaseLayout adds .is-scrolled once the page scrolls.
 .header {
+	position: sticky;
+	top: 0;
+	z-index: 100;
 	background: var(--color-white);
+	transition: box-shadow .25s;
+	&.is-scrolled {
+		box-shadow: 0 6px 20px rgba(29,27,32,.06);
+	}
+}
+
+.header__inner {
 	padding-top: 3px;
 	padding-bottom: 10px;
 }
@@ -10,42 +18,6 @@
 .header__right-part {
 	flex: 1;
 	margin-top: 25px;
-}
-
-.header__categories-toggle {
-	.btn();
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 3px;
-	background: var(--color-black-20);
-	border: var(--border-width) solid var(--color-black-20);
-	padding: 16px 14px 15px 17px;
-	font-weight: 600;
-	font-size: 14px;
-	line-height: 16px;
-}
-
-.header__search {
-	flex: 1;
-	display: grid;
-	grid-template-columns: 1fr 63px;
-	padding: 5px 5px 5px 15px;
-	border: var(--border-width) solid var(--color-border-search-form);
-	border-radius: var(--border-radius-1000);
-}
-
-.header__search-input {
-	border: none;
-	outline: 0;
-}
-
-.header__search-btn {
-	width: max-content;
-	padding: 9px 17px 6px 21px;
-	font-weight: 600;
-	font-size: 14px;
-	line-height: 16px;
 }
 
 .header__ai-chef {

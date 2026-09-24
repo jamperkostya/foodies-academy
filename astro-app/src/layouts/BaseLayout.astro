@@ -2,13 +2,20 @@
 import Header from "../components/layout/Header.astro";
 import Footer from "../components/layout/Footer.astro";
 import "../styles/global.less";
+
+interface Props {
+	// Page name, shown before the site name in the browser tab.
+	title?: string;
+}
+
+const { title } = Astro.props;
 ---
 
 <html lang="ru">
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Foodies.academy</title>
+		<title>{title ? `${title} — Foodies.academy` : "Foodies.academy"}</title>
 		<meta name="description" content="Description">
 	</head>
 	<body>
@@ -19,19 +26,16 @@ import "../styles/global.less";
 </html>
 
 <script>
-// ---------------------------------------------------------------------------
-// Header shadow on scroll + back-to-top button
-// ---------------------------------------------------------------------------
-const header = document.getElementById('header');
-const backToTop = document.getElementById('backToTop');
+	// Header shadow once the page is scrolled; "back to top" button further down.
+	const header = document.querySelector<HTMLElement>(".header");
+	const backToTop = document.querySelector<HTMLButtonElement>(".back-to-top");
 
-function onWindowScroll() {
-  header?.classList.toggle('is-scrolled', window.scrollY > 8);
-  backToTop?.classList.toggle('is-visible', window.scrollY > 600);
-}
-window.addEventListener('scroll', onWindowScroll, { passive: true });
-onWindowScroll();
+	const onScroll = () => {
+		header?.classList.toggle("is-scrolled", window.scrollY > 8);
+		backToTop?.classList.toggle("is-visible", window.scrollY > 600);
+	};
+	window.addEventListener("scroll", onScroll, { passive: true });
+	onScroll();
 
-backToTop?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-
+	backToTop?.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
 </script>

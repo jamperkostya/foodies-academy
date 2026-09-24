@@ -1,0 +1,114 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Section from "../components/layout/Section.astro";
+---
+<BaseLayout title="Поиск">
+	<Section>
+		<Fragment slot="title"><span>Результаты</span> поиска</Fragment>
+		<div class="search-results">
+			<p class="search-results__summary" aria-live="polite">Введите запрос в строку поиска вверху страницы.</p>
+			<ul class="search-results__list"></ul>
+		</div>
+	</Section>
+</BaseLayout>
+
+<style lang="less">
+.search-results {
+	max-width: 760px;
+}
+
+.search-results__summary {
+	margin: 0 0 20px;
+	font-size: 16px;
+	line-height: 24px;
+	color: var(--color-grey);
+}
+
+.search-results__list {
+	display: grid;
+	gap: 10px;
+}
+
+// Rendered by the script below, so they never get Astro's scoping attribute.
+.search-results__list :global(.search-results__item) {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 16px 20px;
+	border: var(--border-width) solid var(--color-black-10);
+	border-radius: 20px;
+	background: var(--color-white);
+	font-size: 16px;
+	line-height: 22px;
+	transition: box-shadow .2s, transform .2s;
+	&:hover {
+		// Undo the global a:hover color.
+		color: inherit;
+		transform: translateY(-2px);
+		box-shadow: 0 10px 24px var(--color-black-10);
+	}
+}
+
+.search-results__list :global(.search-results__icon) {
+	flex-shrink: 0;
+	width: 36px;
+	font-size: 24px;
+	text-align: center;
+}
+
+.search-results__list :global(.search-results__title) {
+	display: block;
+	font-weight: 600;
+}
+
+.search-results__list :global(mark) {
+	background: none;
+	color: var(--color-red);
+	font-weight: 700;
+}
+
+.search-results__list :global(.search-results__meta) {
+	display: block;
+	margin-top: 2px;
+	font-size: 13px;
+	color: var(--color-grey);
+}
+</style>
+
+<script>
+	import { loadIndex, normalize, findItems, el, highlight } from "../scripts/search";
+	import { plural } from "../utils/plural";
+
+	const summary = document.querySelector<HTMLElement>(".search-results__summary");
+	const list = document.querySelector<HTMLElement>(".search-results__list");
+	const raw = (new URLSearchParams(window.location.search).get("q") ?? "").trim();
+	const query = normalize(raw);
+
+	const showResults = async (summary: HTMLElement, list: HTMLElement) => {
+		summary.textContent = "Ищем…";
+		const results = findItems(await loadIndex(), query);
+
+		summary.textContent = results.length
+			? `По запросу «${raw}» ${plural(results.length, ["найден", "найдено", "найдено"])} ${results.length} ${plural(results.length, ["результат", "результата", "результатов"])}`
+			: `Ничего не найдено по запросу «${raw}»`;
+
+		list.replaceChildren(
+			...results.map((result) => {
+				const title = el("span", "search-results__title");
+				title.append(...highlight(result.title, query));
+				const text = el("span", "search-results__text");
+				text.append(title, el("span", "search-results__meta", result.meta));
+
+				const link = el("a", "search-results__item");
+				link.href = result.href;
+				link.append(el("span", "search-results__icon", result.icon), text);
+
+				const item = document.createElement("li");
+				item.append(link);
+				return item;
+			})
+		);
+	};
+
+	if (summary && list && query) showResults(summary, list);
+</script>

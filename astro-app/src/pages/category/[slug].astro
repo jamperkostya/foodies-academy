@@ -1,0 +1,43 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Section from "../../components/layout/Section.astro";
+import CardGrid from "../../components/ui/CardGrid.astro";
+import RecipeCard from "../../components/recipes/RecipeCard.astro";
+import { categories } from "../../data/categories";
+import { recipes } from "../../data/recipes";
+import type { Category } from "../../types/category";
+
+export function getStaticPaths() {
+	return categories.map((category) => ({ params: { slug: category.slug }, props: { category } }));
+}
+
+interface Props {
+	category: Category;
+}
+
+const { category } = Astro.props;
+
+// Mock data has no category ↔ recipe link yet, so show the recipes from the
+// same dish groups (e.g. every "Супы" recipe on the "Борщ" page).
+const categoryRecipes = recipes.filter((recipe) => category.groups.includes(recipe.category));
+---
+<BaseLayout title={category.title}>
+	<Section>
+		<Fragment slot="title">{category.title}</Fragment>
+		{categoryRecipes.length ? (
+			<CardGrid minCardWidth={260}>
+				{categoryRecipes.map((recipe) => <RecipeCard recipe={recipe} />)}
+			</CardGrid>
+		) : (
+			<p class="category-page__empty">В этой категории пока нет рецептов.</p>
+		)}
+	</Section>
+</BaseLayout>
+
+<style lang="less">
+.category-page__empty {
+	font-size: 16px;
+	line-height: 24px;
+	color: var(--color-grey);
+}
+</style>

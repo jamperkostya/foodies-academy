@@ -1,0 +1,15 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Section from "../components/layout/Section.astro";
+import CardGrid from "../components/ui/CardGrid.astro";
+import CategoryCard from "../components/categories/CategoryCard.astro";
+import { categories } from "../data/categories";
+---
+<BaseLayout title="Все категории">
+	<Section>
+		<Fragment slot="title"><span>Все</span> категории</Fragment>
+		<CardGrid minCardWidth={160}>
+			{categories.map((category) => <CategoryCard category={category} />)}
+		</CardGrid>
+	</Section>
+</BaseLayout>

@@ -1,0 +1,277 @@
+---
+import Icon from "../ui/Icon.astro";
+---
+<form class="search" role="search" action="/search">
+	<input
+		type="search"
+		name="q"
+		class="search__input"
+		placeholder="Поиск рецептов..."
+		aria-label="Поиск рецептов"
+		role="combobox"
+		aria-autocomplete="list"
+		aria-expanded="false"
+		aria-controls="search-suggestions"
+		autocomplete="off"
+	>
+	<button type="submit" aria-label="Найти" class="search__btn btn">
+		<Icon name="search" width={24} height={24} />
+	</button>
+	<div class="search__suggest">
+		<div class="search__list" id="search-suggestions" role="listbox" aria-label="Подсказки"></div>
+		<p class="search__empty" hidden></p>
+		<a class="search__all" href="/search" hidden></a>
+	</div>
+</form>
+
+<style lang="less">
+.search {
+	position: relative;
+	flex: 1;
+	display: grid;
+	grid-template-columns: 1fr 63px;
+	padding: 5px 5px 5px 15px;
+	border: var(--border-width) solid var(--color-border-search-form);
+	border-radius: var(--border-radius-1000);
+}
+
+.search__input {
+	border: none;
+	outline: 0;
+	// Chrome/Safari draw their own clear (×) button in type="search".
+	&::-webkit-search-cancel-button {
+		-webkit-appearance: none;
+		appearance: none;
+	}
+}
+
+.search__btn {
+	width: max-content;
+	padding: 9px 17px 6px 21px;
+	font-weight: 600;
+	font-size: 14px;
+	line-height: 16px;
+}
+
+.search__suggest {
+	position: absolute;
+	top: calc(100% + 10px);
+	left: 0;
+	right: 0;
+	z-index: 120;
+	max-height: 420px;
+	overflow-y: auto;
+	padding: 8px;
+	background: var(--color-white);
+	border: var(--border-width) solid var(--color-black-10);
+	border-radius: 20px;
+	box-shadow: 0 20px 44px rgba(29,27,32,.14);
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(-6px);
+	transition: opacity .15s var(--ease), transform .15s var(--ease), visibility .15s;
+	&.is-open {
+		opacity: 1;
+		visibility: visible;
+		transform: translateY(0);
+	}
+}
+
+// Items are rendered by the script below, so they never get Astro's scoping
+// attribute — hence :global.
+.search__list :global(.search__item) {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 12px;
+	border-radius: 10px;
+	font-size: 14px;
+	line-height: 18px;
+	transition: background .12s;
+	&:hover,
+	&[aria-selected="true"] {
+		// Undo the global a:hover color.
+		color: inherit;
+		background: var(--color-black-5);
+	}
+}
+
+.search__list :global(.search__icon) {
+	flex-shrink: 0;
+	width: 30px;
+	font-size: 19px;
+	text-align: center;
+}
+
+.search__list :global(.search__text) {
+	min-width: 0;
+}
+
+.search__list :global(.search__title) {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-weight: 600;
+}
+
+.search__list :global(mark) {
+	background: none;
+	color: var(--color-red);
+	font-weight: 700;
+}
+
+.search__list :global(.search__meta) {
+	display: block;
+	margin-top: 2px;
+	font-size: 12px;
+	color: var(--color-grey);
+}
+
+.search__empty {
+	margin: 0;
+	padding: 18px 12px;
+	text-align: center;
+	font-size: 13px;
+	line-height: 18px;
+	color: var(--color-grey);
+}
+
+.search__all {
+	display: block;
+	margin-top: 4px;
+	padding: 11px;
+	border-top: var(--border-width) solid var(--color-black-10);
+	border-radius: 10px;
+	text-align: center;
+	font-weight: 700;
+	font-size: 13px;
+	line-height: 18px;
+	color: var(--color-red);
+	transition: background .12s;
+	&:hover {
+		background: var(--color-pink-20);
+	}
+	&[hidden] {
+		display: none;
+	}
+}
+</style>
+
+<script>
+	import { loadIndex, normalize, findItems, el, highlight, type SearchItem } from "../../scripts/search";
+
+	const MAX_RESULTS = 6;
+	const DEBOUNCE_MS = 120;
+
+	document.querySelectorAll<HTMLFormElement>(".search").forEach((form) => {
+		const input = form.querySelector<HTMLInputElement>(".search__input");
+		const panel = form.querySelector<HTMLElement>(".search__suggest");
+		const list = form.querySelector<HTMLElement>(".search__list");
+		const empty = form.querySelector<HTMLElement>(".search__empty");
+		const all = form.querySelector<HTMLAnchorElement>(".search__all");
+		if (!input || !panel || !list || !empty || !all) return;
+
+		// On the results page, keep the query in the box.
+		if (window.location.pathname === "/search") {
+			input.value = new URLSearchParams(window.location.search).get("q") ?? "";
+		}
+
+		let items: HTMLAnchorElement[] = [];
+		let active = -1;
+		let timer: number | undefined;
+
+		const setOpen = (open: boolean) => {
+			panel.classList.toggle("is-open", open);
+			input.setAttribute("aria-expanded", String(open));
+			if (!open) select(-1);
+		};
+
+		const select = (i: number) => {
+			active = i;
+			items.forEach((item, j) => item.setAttribute("aria-selected", String(j === i)));
+			if (i >= 0) {
+				input.setAttribute("aria-activedescendant", items[i].id);
+				items[i].scrollIntoView({ block: "nearest" });
+			} else {
+				input.removeAttribute("aria-activedescendant");
+			}
+		};
+
+		const showMessage = (message: string) => {
+			list.replaceChildren();
+			items = [];
+			empty.textContent = message;
+			empty.hidden = false;
+			all.hidden = true;
+			setOpen(true);
+		};
+
+		const render = (results: SearchItem[], query: string) => {
+			items = results.map((result, i) => {
+				const item = el("a", "search__item");
+				item.href = result.href;
+				item.id = `search-option-${i}`;
+				item.tabIndex = -1;
+				item.setAttribute("role", "option");
+				item.setAttribute("aria-selected", "false");
+
+				const title = el("span", "search__title");
+				title.append(...highlight(result.title, query));
+				const text = el("span", "search__text");
+				text.append(title, el("span", "search__meta", result.meta));
+				item.append(el("span", "search__icon", result.icon), text);
+				return item;
+			});
+			list.replaceChildren(...items);
+			empty.hidden = true;
+			all.hidden = false;
+			all.href = `/search?q=${encodeURIComponent(input.value.trim())}`;
+			all.textContent = `Все результаты по «${input.value.trim()}» →`;
+			active = -1;
+			setOpen(true);
+		};
+
+		const search = async () => {
+			const raw = input.value.trim();
+			const query = normalize(raw);
+			if (!query) return setOpen(false);
+
+			showMessage("Ищем…");
+			const data = await loadIndex();
+			// The query changed while the index was loading.
+			if (normalize(input.value.trim()) !== query) return;
+
+			const results = findItems(data, query).slice(0, MAX_RESULTS);
+			if (results.length) render(results, query);
+			else showMessage(`Ничего не найдено по запросу «${raw}»`);
+		};
+
+		input.addEventListener("input", () => {
+			clearTimeout(timer);
+			timer = window.setTimeout(search, DEBOUNCE_MS);
+		});
+		input.addEventListener("focus", () => {
+			if (input.value.trim()) search();
+		});
+
+		input.addEventListener("keydown", (e) => {
+			if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+				if (!items.length) return;
+				e.preventDefault();
+				const step = e.key === "ArrowDown" ? 1 : -1;
+				// From "nothing selected", ↓ goes to the first item and ↑ to the last.
+				select(active < 0 ? (step > 0 ? 0 : items.length - 1) : (active + step + items.length) % items.length);
+			} else if (e.key === "Enter" && active >= 0) {
+				e.preventDefault();
+				items[active].click();
+			} else if (e.key === "Escape") {
+				setOpen(false);
+			}
+		});
+
+		document.addEventListener("click", (e) => {
+			if (!form.contains(e.target as Node)) setOpen(false);
+		});
+	});
+</script>
