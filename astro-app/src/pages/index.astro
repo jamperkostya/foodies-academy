@@ -21,6 +21,8 @@ import SEOTextSection from "../components/sections/SEOTextSection.astro";
 
 import TrustSection from "../components/sections/TrustSection.astro";
 
+import SubscribeSection from "../components/sections/SubscribeSection.astro";
+
 const topRecipes = recipes
 	.filter((recipe) => recipe.isTop)
 	.slice(0, 10);
@@ -95,6 +97,8 @@ const lastNews = news.slice(0, 7);
 			Нам <span>доверяют</span>
 		</Fragment>
 	</TrustSection>
+	
+	<SubscribeSection />
 	
 	<SEOTextSection />
 </BaseLayout>
