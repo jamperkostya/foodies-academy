@@ -40,3 +40,31 @@
 		box-shadow: 0 5px 10px rgba(238,65,85,0.32);
 	}
 }
+.back-to-top {
+	position: fixed;
+	right: 24px;
+	bottom: 24px;
+	width: 46px;
+	height: 46px;
+	border-radius: 50%;
+	background: var(--color-black);
+	color: var(--color-white);
+	border: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 10px 26px var(--color-black-20);
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(10px);
+	transition: opacity .25s, transform .25s, visibility .25s, background .15s;
+	z-index: 90;
+	&.is-visible {
+		opacity: 1;
+		visibility: visible;
+		transform: translateY(0);
+	}
+	&:hover {
+		background: var(--color-red);
+	}
+}
