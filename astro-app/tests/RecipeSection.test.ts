@@ -1,6 +1,6 @@
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { describe, expect, it } from "vitest";
-import RecipeGrid from "../src/components/recipes/RecipeGrid.astro";
+import RecipeSection from "../src/components/sections/RecipeSection.astro";
 import type { Recipe } from "../src/types/recipe";
 
 const recipe = (id: string, category: string, ingredients: string[]): Recipe => ({
@@ -21,12 +21,12 @@ const recipes = [recipe("1", "Супы", ["Курица", "Овощи"]), recipe
 
 const render = async (props: Record<string, unknown>) => {
 	const container = await AstroContainer.create();
-	return container.renderToString(RecipeGrid, { props: { recipes, ...props } });
+	return container.renderToString(RecipeSection, { props: { recipes, ...props } });
 };
 
 const filterLabels = (html: string) => [...html.matchAll(/filters__btn[^>]*>([^<]+)</g)].map((m) => m[1]);
 
-describe("RecipeGrid", () => {
+describe("RecipeSection", () => {
 	it("renders no filters by default", async () => {
 		const html = await render({});
 

@@ -1,6 +1,6 @@
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { describe, expect, it } from "vitest";
-import CategoryGrid from "../src/components/categories/CategoryGrid.astro";
+import CategorySection from "../src/components/sections/CategorySection.astro";
 import type { Category } from "../src/types/category";
 
 const category = (id: string, groups: string[], recipesCount = 10): Category => ({
@@ -14,10 +14,10 @@ const category = (id: string, groups: string[], recipesCount = 10): Category => 
 
 const render = async (categories: Category[], href?: string) => {
 	const container = await AstroContainer.create();
-	return container.renderToString(CategoryGrid, { props: { categories, href } });
+	return container.renderToString(CategorySection, { props: { categories, href } });
 };
 
-describe("CategoryGrid", () => {
+describe("CategorySection", () => {
 	it("renders an 'all' filter plus one filter per distinct group, in order of first appearance", async () => {
 		const html = await render([category("1", ["Супы"]), category("2", ["Десерты", "Супы"]), category("3", ["Выпечка"])]);
 		const labels = [...html.matchAll(/filters__btn[^>]*>([^<]+)</g)].map((m) => m[1]);

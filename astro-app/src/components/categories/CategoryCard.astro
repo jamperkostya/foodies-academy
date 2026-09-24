@@ -16,7 +16,10 @@ const recipeWord = {
 ---
 <a href={`/category/${category.slug}`} class="category-card" data-groups={JSON.stringify(category.groups)}>
 	<div class="category-card__img" style={`background-image:url('${category.image}')`}></div>
-	<div class="category-card__label"><strong>{category.title}</strong><small>{category.recipesCount} {recipeWord}</small></div>
+	<div class="category-card__label">
+		<strong class="category-card__title">{category.title}</strong>
+		<small class="category-card__count">{category.recipesCount} {recipeWord}</small>
+	</div>
 </a>
 <style lang="less">
 .category-card {
@@ -31,27 +34,6 @@ const recipeWord = {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	.category-card__img {
-		position: absolute;
-		inset: 0;
-		z-index: 0;
-		background-size: cover;
-		background-position: center;
-		transition: transform .5s var(--ease);
-	}
-	.category-card__label {
-		position: relative;
-		z-index: 2;
-		text-align: center;
-		strong {
-			font-weight: 700;
-			font-size: 16px;
-			line-height: 20px;
-		}
-		* {
-			display: block;
-		}
-	}
 	&::after {
 		content: "";
 		position: absolute;
@@ -70,5 +52,31 @@ const recipeWord = {
 			background: linear-gradient(180deg, rgba(0,0,0,.05) 30%, rgba(0,0,0,.85) 100%);
 		}
 	}
+}
+
+.category-card__img {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	background-size: cover;
+	background-position: center;
+	transition: transform .5s var(--ease);
+}
+
+.category-card__label {
+	position: relative;
+	z-index: 2;
+	text-align: center;
+}
+
+.category-card__title {
+	display: block;
+	font-weight: 700;
+	font-size: 16px;
+	line-height: 20px;
+}
+
+.category-card__count {
+	display: block;
 }
 </style>

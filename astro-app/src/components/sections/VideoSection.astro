@@ -1,16 +1,35 @@
 ---
-import VideoGrid from '../videos/VideoGrid.astro';
-import type { Video } from '../../types/video';
+import Section from "../layout/Section.astro";
+import Carousel from "../ui/Carousel.astro";
+import VideoCard from "../videos/VideoCard.astro";
+import type { Video } from "../../types/video";
 
 interface Props {
 	videos: Video[];
+	// "Смотреть все" link, shown at the end of the filters row.
 	href?: string;
 }
+
 const { videos, href } = Astro.props;
+
+// Filters come from the data itself, so a group never shows up empty.
+const groups = [...new Set(videos.map((video) => video.category))];
 ---
-<section class="section-item">
-	<div class="section-head">
-		<h2 class="section-title"><slot name="title" /></h2>
-	</div>
-	<VideoGrid videos={videos} href={href} />
-</section>
+<Section>
+	<slot name="title" slot="title" />
+	<Carousel variant="videos" groups={groups} href={href}>
+		{videos.map((video) => (
+			<VideoCard
+				href={`/video/${video.slug}`}
+				size="compact"
+				image={video.image}
+				title={video.title}
+				likes={video.likes}
+				comments={video.comments}
+				rating={video.rating}
+				videoId={video.videoId}
+				groups={[video.category]}
+			/>
+		))}
+	</Carousel>
+</Section>

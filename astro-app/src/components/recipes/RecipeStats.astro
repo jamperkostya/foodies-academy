@@ -1,6 +1,5 @@
 ---
 import Icon from "../ui/Icon.astro";
-import Stars from "../ui/Stars.astro";
 
 interface Props {
 	views: number;
@@ -11,7 +10,7 @@ interface Props {
 
 const { views, likes, comments, time } = Astro.props;
 ---
-<div class="recipe-card__stats flex">
+<div class="recipe-card__stats">
 	<span class="recipe-card__stat flex gap-3"><Icon name="comment" width={16} height={16} />{comments}</span>
 	<span class="recipe-card__stat flex gap-3"><Icon name="like" width={16} height={16} />{likes}</span>
 	<span class="recipe-card__stat flex gap-3"><Icon name="views" width={16} height={16} />{views}</span>
@@ -19,7 +18,9 @@ const { views, likes, comments, time } = Astro.props;
 </div>
 
 <style lang="less">
+// Elements of the .recipe-card block, split out of RecipeCard.astro.
 .recipe-card__stats {
+	display: flex;
 	border-top: var(--border-width) solid var(--color-black-20);
 	padding-top: 13px;
 	font-weight: 300;
@@ -28,12 +29,11 @@ const { views, likes, comments, time } = Astro.props;
 	color: var(--color-grey);
 	justify-content: space-between;
 	gap: 15px;
-	.recipe-card__stat--time {
-		&::before {
-			content: '';
-			border-left: var(--border-width) solid var(--color-grey);
-			margin-right: 15px;
-		}
-	}
+}
+
+.recipe-card__stat--time::before {
+	content: '';
+	border-left: var(--border-width) solid var(--color-grey);
+	margin-right: 15px;
 }
 </style>

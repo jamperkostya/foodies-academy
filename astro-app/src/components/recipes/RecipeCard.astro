@@ -1,13 +1,12 @@
 ---
-import Icon from "../ui/Icon.astro";
-import CardStats from "../sections/CardStats.astro";
+import RecipeStats from "./RecipeStats.astro";
 import Stars from "../ui/Stars.astro";
 import type { Recipe } from "../../types/recipe";
 
 interface Props {
-  recipe: Recipe;
-  // Filter groups this card matches, when its carousel has filters.
-  groups?: string[];
+	recipe: Recipe;
+	// Filter groups this card matches, when its carousel has filters.
+	groups?: string[];
 }
 
 const { recipe, groups } = Astro.props;
@@ -17,15 +16,15 @@ const { recipe, groups } = Astro.props;
 		<div class="recipe-card__img" style={`background-image: url('${recipe.image}')`}></div>
 		<span class="badge">{recipe.category}</span>
 	</div>
-	<div class="recipe-card__body flex">
-		<div class="recipe-card__meta flex">
+	<div class="recipe-card__body">
+		<div class="recipe-card__meta">
 			<div class="recipe-card__country">
 				<span class="recipe-card__flag">🇮🇹</span> Итальянская
 			</div>
 			<Stars rating={recipe.rating} />
 		</div>
 		<h3 class="recipe-card__title">{recipe.title}</h3>
-		<CardStats views={recipe.views ?? 0} likes={recipe.likes ?? 0} comments={recipe.comments} time={recipe.time} />
+		<RecipeStats views={recipe.views ?? 0} likes={recipe.likes ?? 0} comments={recipe.comments} time={recipe.time} />
 	</div>
 </a>
 
@@ -35,46 +34,57 @@ const { recipe, groups } = Astro.props;
 	box-shadow: 0px 4px 15px var(--color-black-10);
 	border-radius: var(--border-radius-25);
 	overflow: hidden;
-	transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s;
-	.recipe-card__media {
-		position: relative;
-		aspect-ratio: 1/1;
-		overflow: hidden;
-		.recipe-card__img {
-			position: absolute;
-			inset: 0;
-			background-size: cover;
-			background-position: center;
-			transition: transform .5s var(--ease);
-		}
-	}
-	.recipe-card__body {
-		flex-direction: column;
-		gap: 15px;
-		padding: 22px 15px 12px 15px;
-		.recipe-card__meta {
-			justify-content: space-between;
-			.recipe-card__country {
-				font-weight: 300;
-				font-size: 14px;
-				line-height: 17px;
-			}
-		}
-		.recipe-card__title {
-			font-weight: 700;
-			font-size: 16px;
-			line-height: 17px;
-			opacity: 0.7;
-		}
-	}
+	transition: transform .25s var(--ease), box-shadow .25s var(--ease);
 	&:hover {
+		// Undo the global a:hover color.
 		color: initial;
 		transform: translateY(-6px);
 		box-shadow: 0 20px 36px rgba(29,27,32,.12);
-		border-color: transparent;
 		.recipe-card__img {
 			transform: scale(1.09);
 		}
 	}
+	&:active {
+		transform: translateY(-2px) scale(.98);
+	}
+}
+
+.recipe-card__media {
+	position: relative;
+	aspect-ratio: 1/1;
+	overflow: hidden;
+}
+
+.recipe-card__img {
+	position: absolute;
+	inset: 0;
+	background-size: cover;
+	background-position: center;
+	transition: transform .5s var(--ease);
+}
+
+.recipe-card__body {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	padding: 22px 15px 12px 15px;
+}
+
+.recipe-card__meta {
+	display: flex;
+	justify-content: space-between;
+}
+
+.recipe-card__country {
+	font-weight: 300;
+	font-size: 14px;
+	line-height: 17px;
+}
+
+.recipe-card__title {
+	font-weight: 700;
+	font-size: 16px;
+	line-height: 17px;
+	opacity: 0.7;
 }
 </style>

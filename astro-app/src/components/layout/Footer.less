@@ -1,71 +1,87 @@
 .footer {
 	margin-top: 112px;
-	* {
-		font-style: normal;
-		font-weight: 400;
-		font-size: 12px;
-		line-height: 150%;
-	}
+	font-style: normal;
+	font-weight: 400;
+	font-size: 12px;
+	line-height: 150%;
+}
 
-	&__top {
-		padding-top: 50px;
-		padding-bottom: 50px;
-		border-top: var(--border-width) solid var(--color-grey);
-		border-bottom: var(--border-width) solid var(--color-grey);
-		display: grid;
-		grid-template-columns: 213px 1fr;
-		align-items: center;
-		gap: 50px;
-		.footer__brand {
-			flex-direction: column;
-			p {
-				font-weight: 400;
-				font-size: 14px;
-				line-height: 150%;
-				color: var(--color-black-50);
-			}
-		}
-		.footer__cols {
-			grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-			.footer__col {
-				&-header {
-					font-weight: 700;
-					font-size: 14px;
-					line-height: 150%;
-					opacity: 0.5;
-				}
-				ul {
-					li {
-						margin-top: 10px;
-						a {
-							font-weight: 400;
-							font-size: 12px;
-							line-height: 150%;
-							opacity: 0.5;
-						}
-					}
-				}
-			}
-		}
-	}
-	&__bottom {
-		border-bottom: var(--border-width) solid var(--color-grey);
-		padding-top: 15px;
-		padding-bottom: 15px;
-		opacity: 0.5;
+// The global `a` rule sets its own font, so links don't inherit the footer's.
+.footer__logo,
+.footer__social-link,
+.footer__link,
+.footer__country,
+.footer__legal-link {
+	font-weight: 400;
+	font-size: 12px;
+	line-height: 150%;
+}
 
-		.footer__countries {
-			a {
-				margin-left: 15px;
-			}
-		}
-		.footer__legal {
-			a {
-				margin-right: 20px;
-				&:last-of-type {
-					margin: 0;
-				}
-			}
-		}
+.footer__top {
+	display: grid;
+	grid-template-columns: 213px 1fr;
+	align-items: center;
+	gap: 50px;
+	padding-top: 50px;
+	padding-bottom: 50px;
+	border-top: var(--border-width) solid var(--color-grey);
+	border-bottom: var(--border-width) solid var(--color-grey);
+}
+
+.footer__brand {
+	display: flex;
+	flex-direction: column;
+	gap: 13px;
+}
+
+.footer__desc {
+	font-size: 14px;
+	line-height: 150%;
+	color: var(--color-black-50);
+}
+
+.footer__social {
+	display: flex;
+	gap: 10px;
+}
+
+.footer__cols {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.footer__col-header {
+	font-weight: 700;
+	font-size: 14px;
+	line-height: 150%;
+	opacity: 0.5;
+}
+
+.footer__item {
+	margin-top: 10px;
+}
+
+.footer__link {
+	opacity: 0.5;
+}
+
+.footer__bottom {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	border-bottom: var(--border-width) solid var(--color-grey);
+	opacity: 0.5;
+}
+
+.footer__country {
+	margin-left: 15px;
+}
+
+.footer__legal-link {
+	margin-right: 20px;
+	&:last-child {
+		margin-right: 0;
 	}
 }

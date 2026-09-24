@@ -1,0 +1,40 @@
+---
+import Icon from "./Icon.astro";
+import Filters from "./Filters.astro";
+
+interface Props {
+	// `.carousel` modifier: card size and cards per view (see carousel.less).
+	variant: "recipes" | "categories" | "videos";
+	// Filter pills above the row; each card then needs a `data-groups` attribute.
+	groups?: string[];
+	// "Смотреть все" link at the end of the filters row.
+	href?: string;
+}
+
+const { variant, groups, href } = Astro.props;
+---
+<div data-filterable-carousel>
+	{groups && <Filters groups={groups} href={href} />}
+	<div class={`carousel carousel--${variant}`}>
+		<div class="carousel__track">
+			<slot />
+		</div>
+		<button type="button" class="carousel__arrow carousel__arrow--prev" aria-label="Назад">
+			<Icon name="arrow-slider" width={12} height={10} />
+		</button>
+		<button type="button" class="carousel__arrow carousel__arrow--next" aria-label="Вперёд">
+			<Icon name="arrow-slider" width={12} height={10} />
+		</button>
+	</div>
+	<div class="carousel__dots"></div>
+</div>
+
+<style lang="less">
+	@import "../../styles/carousel.less";
+</style>
+
+<script>
+	import { initFilterableCarousel } from "../../scripts/filterableCarousel";
+
+	document.querySelectorAll<HTMLElement>("[data-filterable-carousel]").forEach(initFilterableCarousel);
+</script>

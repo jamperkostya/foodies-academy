@@ -12,7 +12,7 @@ import CategorySection from "../components/sections/CategorySection.astro";
 import VideoSection from "../components/sections/VideoSection.astro";
 import LastNewsSection from "../components/sections/LastNewsSection.astro";
 
-import RecipeCollestionsSection from "../components/sections/RecipeCollections.astro";
+import RecipeCollectionsSection from "../components/sections/RecipeCollectionsSection.astro";
 
 import PromoSection from "../components/sections/PromoSection.astro";
 import PromoCTASection from "../components/sections/PromoCTASection.astro";
@@ -26,84 +26,75 @@ const topRecipes = recipes
 	.slice(0, 10);
 
 const newRecipes = recipes.filter((recipe) => recipe.isNew);
-	
+
 // 1 featured (shown on the right) + 6 in the list on the left
 const lastNews = news.slice(0, 7);
 ---
 
 <BaseLayout>
-	<main role="main" class="container">
-		<Hero />
-				
-		<RecipeSection
-			recipes={topRecipes}
-			href="/recipes/top"
-			trackId="top5Recipes"
-		>
-			<Fragment slot="title">
-				<span>ТОП 5</span> рецептов
-			</Fragment>
-		</RecipeSection>
+	<Hero />
 
-		<RecipeSection
-			recipes={newRecipes}
-			groupsOf={(recipe) => [recipe.category]}
-			href="/recipes/new"
-		>
-			<Fragment slot="title">
-				<span>Новые</span> рецепты
-			</Fragment>
-		</RecipeSection>
-		
-		<CategorySection categories={categories} href="/categories">
-			<Fragment slot="title">
-				<span>Популярные</span> категории
-			</Fragment>
-		</CategorySection>
+	<RecipeSection recipes={topRecipes}>
+		<Fragment slot="title">
+			<span>ТОП 5</span> рецептов
+		</Fragment>
+	</RecipeSection>
 
-		<VideoSection videos={videos} href="/video">
-			<Fragment slot="title">
-				<span>Видео</span>рецепты
-			</Fragment>
-		</VideoSection>
-		
-		<RecipeCollestionsSection>
-			<Fragment slot="title">
-				<span>Подборки</span> Рецептов
-			</Fragment>
-		</RecipeCollestionsSection>
+	<RecipeSection
+		recipes={newRecipes}
+		groupsOf={(recipe) => [recipe.category]}
+		href="/recipes/new"
+	>
+		<Fragment slot="title">
+			<span>Новые</span> рецепты
+		</Fragment>
+	</RecipeSection>
+	
+	<CategorySection categories={categories} href="/categories">
+		<Fragment slot="title">
+			<span>Популярные</span> категории
+		</Fragment>
+	</CategorySection>
 
-		<RecipeSection
-			recipes={recipes}
-			groupsOf={(recipe) => recipe.ingredients}
-			href="/recipes"
-		>
-			<Fragment slot="title">
-				<span>Рецепты</span> по ингредиентам
-			</Fragment>
-		</RecipeSection>
-		
-		<PromoSection>
-		</PromoSection>
-		
-		<LastNewsSection
-			news={lastNews}
-		>
-			<Fragment slot="title">
-				<span>Последние</span> новости
-			</Fragment>
-		</LastNewsSection>
-		
-		<PromoCTASection>
-		</PromoCTASection>
-		
-		<TrustSection>
-			<Fragment slot="title">
-				Нам <span>доверяют</span>
-			</Fragment>
-		</TrustSection>
-		
-		<SEOTextSection>
-		</SEOTextSection>
-	</main>
+	<VideoSection videos={videos} href="/video">
+		<Fragment slot="title">
+			<span>Видео</span>рецепты
+		</Fragment>
+	</VideoSection>
+	
+	<RecipeCollectionsSection>
+		<Fragment slot="title">
+			<span>Подборки</span> Рецептов
+		</Fragment>
+	</RecipeCollectionsSection>
+
+	<RecipeSection
+		recipes={recipes}
+		groupsOf={(recipe) => recipe.ingredients}
+		href="/recipes"
+	>
+		<Fragment slot="title">
+			<span>Рецепты</span> по ингредиентам
+		</Fragment>
+	</RecipeSection>
+	
+	<PromoSection />
+	
+	<LastNewsSection
+		news={lastNews}
+	>
+		<Fragment slot="title">
+			<span>Последние</span> новости
+		</Fragment>
+	</LastNewsSection>
+	
+	<PromoCTASection />
+	
+	<TrustSection>
+		<Fragment slot="title">
+			Нам <span>доверяют</span>
+		</Fragment>
+	</TrustSection>
+	
+	<SEOTextSection />
 </BaseLayout>

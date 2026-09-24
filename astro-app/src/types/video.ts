@@ -12,6 +12,6 @@ export interface Video {
   likes: number;
   comments: number;
   rating: number;
-  // Player id, used by the play button (same as HeroCard's videoId).
+  // Player id, set on the card's play badge as data-video-id.
   videoId: string;
 }

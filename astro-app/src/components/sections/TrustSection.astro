@@ -1,16 +1,24 @@
 ---
+const stats = [
+	{ count: 900, suffix: "+", label: "Recipes" },
+	{ count: 12, suffix: "k+", label: "Ratings" },
+	{ count: 1, suffix: "M+", label: "Views" },
+	{ count: 600, suffix: "+", label: "Comments" },
+];
 ---
 
 <section class="section-item">
 	<div class="trust">
-		<div class="section-title"><slot name="title" /></div>
-		<div class="section-text">Лучшая авторская кухня в Европе</div>
-		
-		<div class="trust__stats flex">
-			<div class="trust__stat" data-count="900" data-suffix="+"><strong>900+</strong><span>Recipes</span></div>
-			<div class="trust__stat" data-count="12" data-suffix="k+"><strong>12k+</strong><span>Ratings</span></div>
-			<div class="trust__stat" data-count="1" data-suffix="M+"><strong>1M+</strong><span>Views</span></div>
-			<div class="trust__stat" data-count="600" data-suffix="+"><strong>600+</strong><span>Comments</span></div>
+		<div class="trust__title section-title"><slot name="title" /></div>
+		<div class="trust__subtitle">Лучшая авторская кухня в Европе</div>
+
+		<div class="trust__stats">
+			{stats.map((stat) => (
+				<div class="trust__stat" data-count={stat.count} data-suffix={stat.suffix}>
+					<strong class="trust__value">{stat.count}{stat.suffix}</strong>
+					<span class="trust__label">{stat.label}</span>
+				</div>
+			))}
 		</div>
 	</div>
 </section>
@@ -20,66 +28,73 @@
 	text-align: center;
 	max-width: 80%;
 	margin: auto;
-	.section-title {
-		margin-bottom: 20px;
-	}
-	.section-text {
-		font-size: 16px;
-		line-height: 20px;
-		border-bottom: var(--border-width) solid var(--color-black);
-		padding-bottom: 30px;
-		text-transform: uppercase;
-	}
-	.trust__stats {
-		gap: 60px;
-		flex-wrap: wrap;
-		margin-top: 40px;
-		margin-left: 50px;
-		margin-right: 50px;
-		justify-content: space-between;
-		strong {
-			text-align: center;
-			font-style: italic;
-			font-weight: 600;
-			font-size: 64px;
-			line-height: 120%;
-			color: var(--color-red);
-		}
-		span {
-			display: block;
-			font-size: 16px;
-			line-height: 150%;
-			color: var(--color-black);
-			text-transform: uppercase;
-		}
-	}
+}
+
+.trust__title {
+	margin-bottom: 20px;
+}
+
+.trust__subtitle {
+	font-size: 16px;
+	line-height: 20px;
+	border-bottom: var(--border-width) solid var(--color-black);
+	padding-bottom: 30px;
+	text-transform: uppercase;
+}
+
+.trust__stats {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 60px;
+	margin: 40px 50px 0;
+}
+
+.trust__value {
+	text-align: center;
+	font-style: italic;
+	font-weight: 600;
+	font-size: 64px;
+	line-height: 120%;
+	color: var(--color-red);
+}
+
+.trust__label {
+	display: block;
+	font-size: 16px;
+	line-height: 150%;
+	color: var(--color-black);
+	text-transform: uppercase;
 }
 </style>
+
 <script>
-// ---------------------------------------------------------------------------
-// Trust stats — count up when scrolled into view
-// ---------------------------------------------------------------------------
-const trustStats = document.querySelectorAll('.trust__stat');
-if (trustStats.length) {
-  const observer = new IntersectionObserver((entries) => {
-	entries.forEach((entry) => {
-	  if (!entry.isIntersecting) return;
-	  const el = entry.target;
-	  const target = Number(el.dataset.count);
-	  const suffix = el.dataset.suffix || '';
-	  const strong = el.querySelector('strong');
-	  const duration = 900;
-	  const start = performance.now();
-	  function step(now) {
-		const progress = Math.min(1, (now - start) / duration);
-		const eased = 1 - Math.pow(1 - progress, 3);
-		strong.textContent = Math.round(target * eased) + suffix;
-		if (progress < 1) requestAnimationFrame(step);
-	  }
-	  requestAnimationFrame(step);
-	  observer.unobserve(el);
-	});
-  }, { threshold: 0.4 });
-  trustStats.forEach((el) => observer.observe(el));
-}
+	// Count each stat up from 0 once it scrolls into view.
+	const DURATION = 900;
+
+	const observer = new IntersectionObserver(
+		(entries) => {
+			entries.forEach((entry) => {
+				if (!entry.isIntersecting) return;
+				const stat = entry.target as HTMLElement;
+				const value = stat.querySelector<HTMLElement>(".trust__value");
+				const target = Number(stat.dataset.count);
+				const suffix = stat.dataset.suffix ?? "";
+				observer.unobserve(stat);
+				if (!value) return;
+
+				const start = performance.now();
+				const step = (now: number) => {
+					const progress = Math.min(1, (now - start) / DURATION);
+					const eased = 1 - Math.pow(1 - progress, 3);
+					value.textContent = Math.round(target * eased) + suffix;
+					if (progress < 1) requestAnimationFrame(step);
+				};
+				requestAnimationFrame(step);
+			});
+		},
+		{ threshold: 0.4 }
+	);
+
+	document.querySelectorAll<HTMLElement>(".trust__stat").forEach((stat) => observer.observe(stat));
 </script>

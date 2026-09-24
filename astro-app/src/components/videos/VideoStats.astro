@@ -16,13 +16,13 @@ const { views, likes, comments, rating } = Astro.props;
 	{/* Ternaries, not `views && …`: that would print a bare "0". The row
 	    itself is skipped when both are empty, so it leaves no gap behind. */}
 	{views || likes ? (
-		<div class="flex gap-12 items-center ">
+		<div class="video-card__stats-row flex gap-12 items-center">
 			{views ? <span class="video-card__stat flex gap-3"><Icon name="views" width={16} height={16} />{views}</span> : null}
 			{likes ? <span class="video-card__stat flex gap-3"><Icon name="like" width={16} height={16} />{likes}</span> : null}
 		</div>
 	) : null}
 	<div class="video-card__rating flex gap-5 flex-center">
-		{comments ? <span class="video-card__stat flex gap-3"><Icon name="comment" width={16} height={16} />{comments}</span>: null}
+		{comments ? <span class="video-card__stat flex gap-3"><Icon name="comment" width={16} height={16} />{comments}</span> : null}
 		<Stars rating={rating} />
 	</div>
 </div>

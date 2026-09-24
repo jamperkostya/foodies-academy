@@ -1,12 +1,73 @@
-// Shared chrome for every ".carousel" block that isn't the hero (RecipeGrid,
-// CategoryGrid, …): white circular prev/next arrows, dot pagination, and the
-// drag/scroll states dragCarousel.ts toggles on the track. Hero.less keeps
-// its own translucent arrow style since it looks deliberately different.
-// Imported per-component so Astro's style scoping still applies.
+// `.carousel` block for the rows of cards (recipes, categories, videos),
+// imported by Carousel.astro. The hero's carousel looks different and keeps
+// its own styles in Hero.less.
+//
+// Every row is full-bleed below 1500px: the track runs edge-to-edge to the
+// viewport, but its side padding keeps the first card (and every snapped page)
+// lined up with `.container`. cqw rather than % because scroll-padding
+// percentages resolve against the track itself.
+.carousel {
+	position: relative;
+	container-type: inline-size;
+}
+
+.carousel--recipes {
+	--carousel-gap: 20px;
+	--carousel-item-w: 285px;
+}
+
+.carousel--categories {
+	--carousel-gap: 14px;
+	--carousel-per-view: 8;
+	@media (max-width: 1200px) {
+		--carousel-per-view: 6;
+	}
+	@media (max-width: 860px) {
+		--carousel-per-view: 4;
+	}
+	@media (max-width: 640px) {
+		--carousel-per-view: 3;
+	}
+}
+
+.carousel--videos {
+	--carousel-gap: 18px;
+	--carousel-per-view: 5;
+	@media (max-width: 1200px) {
+		--carousel-per-view: 4;
+	}
+	@media (max-width: 860px) {
+		--carousel-per-view: 3;
+	}
+	@media (max-width: 640px) {
+		--carousel-per-view: 1.6;
+	}
+}
+
 .carousel__track {
+	display: flex;
+	gap: var(--carousel-gap);
+	overflow-x: auto;
+	overflow-y: clip;
+	scroll-snap-type: x mandatory;
+	scroll-behavior: smooth;
+	-webkit-overflow-scrolling: touch;
+	scrollbar-width: none;
+	overflow-clip-margin: 40px;
+	padding: 20px 0 56px;
+	margin: -20px 0 -56px;
 	&::-webkit-scrollbar {
 		display: none;
 	}
+	@media (max-width: 1499px) {
+		--bleed: calc(50vw - 50cqw);
+		margin-left: calc(-1 * var(--bleed));
+		margin-right: calc(-1 * var(--bleed));
+		padding-left: var(--bleed);
+		padding-right: var(--bleed);
+		scroll-padding-inline: var(--bleed);
+	}
+	// States toggled by dragCarousel.ts.
 	&.is-draggable {
 		cursor: grab;
 	}
@@ -15,11 +76,22 @@
 		scroll-snap-type: none;
 		user-select: none;
 	}
-	// Items filtered out by filterableCarousel.ts. Cards set their own display,
-	// which would otherwise beat the UA style for [hidden].
-	> :global([hidden]) {
-		display: none;
-	}
+}
+
+// The cards are other components, so they're reached with :global. Sizing
+// them is the carousel's job: a fixed --carousel-item-w, or an equal share of
+// the row for --carousel-per-view cards. `.carousel` in front keeps this above
+// the cards' own sizing (e.g. .video-card--tall in the hero).
+.carousel .carousel__track > :global(*) {
+	flex: 0 0 var(--carousel-item-w, calc((100% - var(--carousel-gap) * (var(--carousel-per-view) - 1)) / var(--carousel-per-view)));
+	min-width: 0;
+	scroll-snap-align: start;
+}
+
+// Cards filtered out by filterableCarousel.ts. Cards set their own display,
+// which would otherwise beat the UA style for [hidden].
+.carousel .carousel__track > :global([hidden]) {
+	display: none;
 }
 
 .carousel__arrow {
@@ -45,30 +117,28 @@
 		opacity: 0;
 		pointer-events: none;
 	}
-	&.carousel__arrow--prev {
-		left: 20px;
-		svg {
-			transform: rotate(180deg);
-		}
-	}
-	&.carousel__arrow--next {
-		right: 20px;
-		transform: translateY(-50%) rotate(180deg);
-	}
-
 	@media (max-width: 860px) {
 		width: 38px;
 		height: 38px;
-		&.carousel__arrow--prev {
-			left: 8px;
-		}
-		&.carousel__arrow--next {
-			right: 8px;
-		}
 	}
-
 	@media (max-width: 640px) {
 		display: none;
+	}
+}
+
+.carousel__arrow--prev {
+	left: 20px;
+	@media (max-width: 860px) {
+		left: 8px;
+	}
+}
+
+// The sprite's arrow points left, so the "next" one is turned around.
+.carousel__arrow--next {
+	right: 20px;
+	transform: translateY(-50%) rotate(180deg);
+	@media (max-width: 860px) {
+		right: 8px;
 	}
 }
 
@@ -77,21 +147,22 @@
 	justify-content: center;
 	gap: 6px;
 	margin-top: 20px;
-	// spans are injected client-side by the carousel script, so they never
-	// receive Astro's scoping attribute — style them unscoped.
-	:global(span) {
-		width: 20px;
-		height: 4px;
-		border-radius: var(--border-radius-100);
-		background: var(--color-black-20);
-		cursor: pointer;
-		transition: background .15s, width .2s;
-		&:hover {
-			background: var(--color-grey);
-		}
-		&.is-active {
-			background: var(--color-red);
-			width: 28px;
-		}
+}
+
+// Injected client-side by dragCarousel.ts, so they never receive Astro's
+// scoping attribute — hence :global.
+.carousel__dots :global(.carousel__dot) {
+	width: 20px;
+	height: 4px;
+	border-radius: var(--border-radius-100);
+	background: var(--color-black-20);
+	cursor: pointer;
+	transition: background .15s, width .2s;
+	&:hover {
+		background: var(--color-grey);
+	}
+	&:global(.is-active) {
+		background: var(--color-red);
+		width: 28px;
 	}
 }

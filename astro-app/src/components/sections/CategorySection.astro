@@ -1,18 +1,25 @@
 ---
-import CategoryGrid from '../categories/CategoryGrid.astro';
-
-import type { Category } from '../../types/category';
+import Section from "../layout/Section.astro";
+import Carousel from "../ui/Carousel.astro";
+import CategoryCard from "../categories/CategoryCard.astro";
+import type { Category } from "../../types/category";
 
 interface Props {
 	categories: Category[];
+	// "Смотреть все" link, shown at the end of the filters row.
 	href?: string;
-	trackId?: string;
 }
-const { categories, href, trackId } = Astro.props;
+
+const { categories, href } = Astro.props;
+
+// Filters come from the data itself, so a group never shows up empty.
+const groups = [...new Set(categories.flatMap((category) => category.groups))];
 ---
-<section class="section-item">
-	<div class="section-head">
-		<h2 class="section-title"><slot name="title" /></h2>
-	</div>
-	<CategoryGrid categories={categories} href={href} trackId={trackId} />
-</section>
+<Section>
+	<slot name="title" slot="title" />
+	<Carousel variant="categories" groups={groups} href={href}>
+		{categories.map((category) => (
+			<CategoryCard category={category} />
+		))}
+	</Carousel>
+</Section>

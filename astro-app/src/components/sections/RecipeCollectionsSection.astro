@@ -1,0 +1,24 @@
+---
+import Section from "../layout/Section.astro";
+import CollectionCard from "../collections/CollectionCard.astro";
+import { recipeCollections } from "../../data/recipeCollections";
+---
+<Section>
+	<slot name="title" slot="title" />
+	<div class="collections">
+		{recipeCollections.map((collection) => (
+			<CollectionCard collection={collection} />
+		))}
+	</div>
+</Section>
+
+<style lang="less">
+.collections {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr;
+	gap: 20px;
+	// Room for the cards' hover lift and shadow, as in the carousels.
+	padding: 20px 0 56px;
+	margin: -20px 0 -56px;
+}
+</style>

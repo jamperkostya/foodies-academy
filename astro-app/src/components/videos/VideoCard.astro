@@ -1,22 +1,35 @@
 ---
-import HeroCard from "../sections/HeroCard.astro";
-import type { Video } from "../../types/video";
+import Icon from "../ui/Icon.astro";
+import VideoStats from "./VideoStats.astro";
 
 interface Props {
-	video: Video;
+	href: string;
+	// tall/half: hero layout; compact: a card in a carousel row.
+	size: "tall" | "half" | "compact";
+	image: string;
+	title: string;
+	views?: number;
+	likes?: number;
+	comments?: number;
+	rating: number;
+	videoId?: string;
+	// Filter groups this card matches, when its carousel has filters.
+	groups?: string[];
 }
 
-const { video } = Astro.props;
+const { href, size, image, title, views, likes, comments, rating, videoId, groups } = Astro.props;
 ---
-{/* Same card as the tall video card in the hero, so the two never drift apart. */}
-<HeroCard
-	href={`/video/${video.slug}`}
-	size="tall"
-	image={video.image}
-	title={video.title}
-	likes={video.likes}
-	comments={video.comments}
-	rating={video.rating}
-	videoId={video.videoId}
-	groups={[video.category]}
-/>
+
+<a href={href} class={`video-card video-card--${size}`} data-groups={groups && JSON.stringify(groups)}>
+	<div class="video-card__img" style={`background-image:url('${image}')`}></div>
+	<div class="video-card__top">
+		{/* A span, not a button: the whole card is already a link. */}
+		{videoId ? <span class="video-card__play-badge" data-video-id={videoId}><Icon name="youtube-play" width={42} height={29} /></span> : null}
+		<VideoStats views={views} likes={likes} comments={comments} rating={rating} />
+	</div>
+	<div class="video-card__title">{title}</div>
+</a>
+
+<style lang="less">
+	@import "./VideoCard.less";
+</style>

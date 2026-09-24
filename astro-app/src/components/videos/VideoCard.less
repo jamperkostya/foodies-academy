@@ -1,0 +1,88 @@
+.video-card {
+	position: relative;
+	border-radius: var(--border-radius-25);
+	overflow: hidden;
+	color: var(--color-white);
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 32px;
+	transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+	&::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.75) 100%);
+	}
+	&:active {
+		transform: translateY(-2px) scale(.98);
+	}
+}
+
+// Above the gradient overlay (::after). The image stays underneath.
+.video-card__top,
+.video-card__title {
+	position: relative;
+	z-index: 2;
+}
+
+.video-card__img {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	background-size: cover;
+	background-position: center;
+	transition: transform .5s var(--ease);
+}
+
+.video-card__top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 17px;
+	gap: 12px;
+}
+
+.video-card__title {
+	font-weight: 900;
+	font-size: 32px;
+	line-height: 39px;
+}
+
+// Hero layout: a tall card, or one of two stacked half-height cards.
+.video-card--tall {
+	flex: 0 0 var(--hero-item-w, 340px);
+	min-width: 0;
+	height: var(--hero-item-h, 460px);
+	scroll-snap-align: start;
+}
+
+.video-card--half {
+	flex: 1 1 0;
+	min-height: 0;
+}
+
+// A card in a carousel row: the carousel sets its width, which is ~250px
+// rather than the hero's 640px, so padding and title are scaled down.
+.video-card--compact {
+	aspect-ratio: 3/4.3;
+	padding: 20px;
+	&:hover {
+		transform: translateY(-6px);
+		box-shadow: 0 20px 34px rgba(29,27,32,.2);
+	}
+	// Re-stated so :active still wins over the :hover above.
+	&:active {
+		transform: translateY(-2px) scale(.98);
+	}
+	.video-card__title {
+		font-size: 24px;
+		line-height: 29px;
+		// Still too narrow for the odd long word ("Неаполитанская").
+		hyphens: auto;
+		overflow-wrap: break-word;
+	}
+}

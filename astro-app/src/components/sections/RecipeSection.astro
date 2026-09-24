@@ -1,35 +1,27 @@
 ---
-import RecipeGrid from '../recipes/RecipeGrid.astro';
-import type { Recipe } from '../../types/recipe';
+import Section from "../layout/Section.astro";
+import Carousel from "../ui/Carousel.astro";
+import RecipeCard from "../recipes/RecipeCard.astro";
+import type { Recipe } from "../../types/recipe";
 
 interface Props {
 	recipes: Recipe[];
+	// Turns on the filters row: which filter groups a recipe belongs to.
 	groupsOf?: (recipe: Recipe) => string[];
+	// "Смотреть все" link, shown at the end of the filters row.
 	href?: string;
-	trackId?: string;
 }
-const { recipes, groupsOf, href, trackId } = Astro.props;
+
+const { recipes, groupsOf, href } = Astro.props;
+
+// Filters come from the data itself, so a group never shows up empty.
+const groups = groupsOf && [...new Set(recipes.flatMap(groupsOf))];
 ---
-
-<section class="section-item">
-	<div class="section-head">
-		<h2 class="section-title"><slot name="title" /></h2>
-		{/* With filters, "Смотреть все" closes the filters row instead. */}
-	</div>
-
-	<RecipeGrid recipes={recipes} groupsOf={groupsOf} href={href} trackId={trackId} />
-</section>
-
-<style lang="less">
-	.section-head__all {
-		flex: 0 0 auto;
-		font-weight: 600;
-		font-size: 14px;
-		color: var(--color-red);
-		white-space: nowrap;
-		transition: opacity .15s;
-		&:hover {
-			opacity: .7;
-		}
-	}
-</style>
+<Section>
+	<slot name="title" slot="title" />
+	<Carousel variant="recipes" groups={groups} href={href}>
+		{recipes.map((recipe) => (
+			<RecipeCard recipe={recipe} groups={groupsOf?.(recipe)} />
+		))}
+	</Carousel>
+</Section>

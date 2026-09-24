@@ -1,6 +1,6 @@
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { describe, expect, it } from "vitest";
-import VideoStats from "../src/components/sections/VideoStats.astro";
+import VideoStats from "../src/components/videos/VideoStats.astro";
 
 const render = async (views?: number) => {
 	const container = await AstroContainer.create();

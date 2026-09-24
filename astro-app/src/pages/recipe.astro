@@ -6,18 +6,13 @@ import { recipes } from '../data/recipes';
 import RecipeSection from "../components/sections/RecipeSection.astro";
 
 const similarRecipes = recipes
-.filter((recipe) => recipe.isTop)
-.slice(0, 10);
+	.filter((recipe) => recipe.isTop)
+	.slice(0, 10);
 ---
 <BaseLayout>
-	<main role="main" class="container">
-		<RecipeSection
-			recipes={similarRecipes}
-			href="/recipes/top"
-		>
-			<Fragment slot="title">
-				<span>Похожие</span> рецепты
-			</Fragment>
-		</RecipeSection>
-	</main>
+	<RecipeSection recipes={similarRecipes}>
+		<Fragment slot="title">
+			<span>Похожие</span> рецепты
+		</Fragment>
+	</RecipeSection>
 </BaseLayout>

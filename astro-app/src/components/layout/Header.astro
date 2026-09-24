@@ -3,7 +3,7 @@ import Icon from "../ui/Icon.astro";
 ---
 
 <header class="header container flex gap-40 flex-center justify-between" id="header">
-	<a href="#" class="header__logo">
+	<a href="/" class="header__logo">
 		<img src="/images/logotype.jpg" alt="Foodies" width="242" height="81">
 	</a>
 
@@ -16,8 +16,8 @@ import Icon from "../ui/Icon.astro";
 		</div>
 
 		<form class="header__search" id="searchForm" role="search">
-			<input type="search" name="q" placeholder="Поиск рецептов..." aria-label="Поиск рецептов">
-			<button type="submit" aria-label="Найти" class="btn">
+			<input type="search" name="q" class="header__search-input" placeholder="Поиск рецептов..." aria-label="Поиск рецептов">
+			<button type="submit" aria-label="Найти" class="header__search-btn btn">
 				<Icon name="search" width={24} height={24} />
 			</button>
 		</form>

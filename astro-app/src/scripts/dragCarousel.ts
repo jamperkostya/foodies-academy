@@ -1,7 +1,7 @@
-// Shared by every ".carousel" block on the site (Hero.astro, RecipeGrid.astro,
-// …), each distinguished only by a BEM modifier (`carousel--hero`,
-// `carousel--recipes`). Handles pointer-drag scrolling, prev/next arrows and
-// the dot pagination that goes with a `.carousel__track`.
+// Shared by every ".carousel" block on the site (Hero.astro, Carousel.astro),
+// each distinguished only by a BEM modifier (`carousel--hero`,
+// `carousel--recipes`, …). Handles pointer-drag scrolling, prev/next arrows
+// and the dot pagination that goes with a `.carousel__track`.
 
 class DragCarousel {
 	track: HTMLElement;
@@ -126,7 +126,7 @@ class DragCarousel {
 			return;
 		}
 		this.dotsEl.style.display = "";
-		this.dotsEl.innerHTML = positions.map((_, i) => `<span data-i="${i}"></span>`).join("");
+		this.dotsEl.innerHTML = positions.map((_, i) => `<span class="carousel__dot" data-i="${i}"></span>`).join("");
 		this.dotsEl.querySelectorAll("span").forEach((dot) => {
 			dot.addEventListener("click", () => {
 				const i = Number((dot as HTMLElement).dataset.i);
