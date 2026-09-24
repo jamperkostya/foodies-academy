@@ -15,7 +15,6 @@ const { recipes, groupsOf, href, trackId } = Astro.props;
 	<div class="section-head">
 		<h2 class="section-title"><slot name="title" /></h2>
 		{/* With filters, "Смотреть все" closes the filters row instead. */}
-		{href && !groupsOf && <a href={href} class="section-head__all">Смотреть все</a>}
 	</div>
 
 	<RecipeGrid recipes={recipes} groupsOf={groupsOf} href={href} trackId={trackId} />

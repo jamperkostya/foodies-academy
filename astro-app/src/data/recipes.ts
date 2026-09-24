@@ -13,7 +13,7 @@ export const recipes: Recipe[] = [
 		isNew: true,
 		isTop: true,
 		rating: 4.8,
-		ingredients: ['Паста', 'Яйца', 'Сыр'],
+		ingredients: ['Паста', 'Яйца', 'Сыр', 'Первые блюда', 'Second', 'Trird'],
 		category: 'Основные блюда',
 		comments: 25,
 		likes: 2,

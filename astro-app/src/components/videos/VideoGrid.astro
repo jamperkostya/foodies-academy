@@ -36,18 +36,21 @@ const groups = [...new Set(videos.map((video) => video.category))];
 @import "../../styles/carousel.less";
 
 .carousel--videos {
-	--gap: 20px;
-	--per-view: 3;
+	--gap: 18px;
+	--per-view: 5;
 
 	position: relative;
 	// Lets the track measure the carousel's (= container's) width in cqw.
 	container-type: inline-size;
 
+	@media (max-width: 1200px) {
+		--per-view: 4;
+	}
 	@media (max-width: 860px) {
-		--per-view: 2;
+		--per-view: 3;
 	}
 	@media (max-width: 640px) {
-		--per-view: 1.2;
+		--per-view: 1.6;
 	}
 
 	.carousel__track {
@@ -73,10 +76,22 @@ const groups = [...new Set(videos.map((video) => video.category))];
 			scroll-padding-inline: var(--bleed);
 		}
 
-		:global(.video-card) {
+		// The card is HeroCard's tall variant; only its size differs here —
+		// fit --per-view columns instead of the hero's fixed 640x460.
+		// The card is only ~250px wide here (the hero's is 640px), so the
+		// padding and title are scaled down to keep long words inside it.
+		:global(.hero-card) {
 			flex: 0 0 calc((100% - var(--gap) * (var(--per-view) - 1)) / var(--per-view));
-			min-width: 0;
-			scroll-snap-align: start;
+			height: auto;
+			aspect-ratio: 3/4.3;
+			padding: 20px;
+		}
+		:global(.hero-card__title) {
+			font-size: 24px;
+			line-height: 29px;
+			// Still too narrow for the odd long word ("Неаполитанская").
+			hyphens: auto;
+			overflow-wrap: break-word;
 		}
 	}
 }

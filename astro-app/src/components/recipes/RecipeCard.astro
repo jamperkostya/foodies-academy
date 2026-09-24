@@ -35,9 +35,7 @@ const { recipe, groups } = Astro.props;
 	box-shadow: 0px 4px 15px var(--color-black-10);
 	border-radius: var(--border-radius-25);
 	overflow: hidden;
-	&:hover {
-		color: initial;
-	}
+	transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s;
 	.recipe-card__media {
 		position: relative;
 		aspect-ratio: 1/1;
@@ -53,7 +51,7 @@ const { recipe, groups } = Astro.props;
 	.recipe-card__body {
 		flex-direction: column;
 		gap: 15px;
-		padding: 22px 14px;
+		padding: 22px 15px 12px 15px;
 		.recipe-card__meta {
 			justify-content: space-between;
 			.recipe-card__country {
@@ -67,6 +65,15 @@ const { recipe, groups } = Astro.props;
 			font-size: 16px;
 			line-height: 17px;
 			opacity: 0.7;
+		}
+	}
+	&:hover {
+		color: initial;
+		transform: translateY(-6px);
+		box-shadow: 0 20px 36px rgba(29,27,32,.12);
+		border-color: transparent;
+		.recipe-card__img {
+			transform: scale(1.09);
 		}
 	}
 }

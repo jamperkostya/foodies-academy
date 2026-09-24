@@ -41,7 +41,7 @@ const lastNews = news.slice(0, 7);
 			trackId="top5Recipes"
 		>
 			<Fragment slot="title">
-				<span>TOP 5</span> RECIPES
+				<span>ТОП 5</span> рецептов
 			</Fragment>
 		</RecipeSection>
 
@@ -51,46 +51,19 @@ const lastNews = news.slice(0, 7);
 			href="/recipes/new"
 		>
 			<Fragment slot="title">
-				<span>New</span> RECIPES
-			</Fragment>
-		</RecipeSection>
-		
-		<RecipeSection
-			recipes={topRecipes}
-			href="/recipes/top"
-		>
-			<Fragment slot="title">
-				<span>TOP 5</span> RECIPES
-			</Fragment>
-		</RecipeSection>
-		
-		<RecipeSection
-			recipes={topRecipes}
-			href="/recipes/top"
-		>
-			<Fragment slot="title">
-				<span>TOP 5</span> RECIPES
-			</Fragment>
-		</RecipeSection>
-		
-		<RecipeSection
-			recipes={topRecipes}
-			href="/recipes/top"
-		>
-			<Fragment slot="title">
-				<span>TOP 5</span> RECIPES
+				<span>Новые</span> рецепты
 			</Fragment>
 		</RecipeSection>
 		
 		<CategorySection categories={categories} href="/categories">
 			<Fragment slot="title">
-				<span>BEST</span> categories
+				<span>Популярные</span> категории
 			</Fragment>
 		</CategorySection>
 
 		<VideoSection videos={videos} href="/video">
 			<Fragment slot="title">
-				<span>top 5</span> video
+				<span>Видео</span>рецепты
 			</Fragment>
 		</VideoSection>
 		
@@ -117,7 +90,7 @@ const lastNews = news.slice(0, 7);
 			news={lastNews}
 		>
 			<Fragment slot="title">
-				<span>Last</span> news
+				<span>Последние</span> новости
 			</Fragment>
 		</LastNewsSection>
 		
@@ -126,7 +99,7 @@ const lastNews = news.slice(0, 7);
 		
 		<TrustSection>
 			<Fragment slot="title">
-				<span>Trust</span> us
+				Нам <span>доверяют</span>
 			</Fragment>
 		</TrustSection>
 		
