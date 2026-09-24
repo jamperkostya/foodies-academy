@@ -5,9 +5,11 @@ import Hero from "../components/sections/Hero.astro";
 import { recipes } from '../data/recipes';
 import { news } from '../data/news';
 import { categories } from '../data/categories';
+import { videos } from '../data/videos';
 
 import RecipeSection from "../components/sections/RecipeSection.astro";
 import CategorySection from "../components/sections/CategorySection.astro";
+import VideoSection from "../components/sections/VideoSection.astro";
 import LastNewsSection from "../components/sections/LastNewsSection.astro";
 
 import RecipeCollestionsSection from "../components/sections/RecipeCollections.astro";
@@ -22,6 +24,8 @@ import TrustSection from "../components/sections/TrustSection.astro";
 const topRecipes = recipes
 	.filter((recipe) => recipe.isTop)
 	.slice(0, 10);
+
+const newRecipes = recipes.filter((recipe) => recipe.isNew);
 	
 // 1 featured (shown on the right) + 6 in the list on the left
 const lastNews = news.slice(0, 7);
@@ -42,8 +46,9 @@ const lastNews = news.slice(0, 7);
 		</RecipeSection>
 
 		<RecipeSection
-			recipes={topRecipes}
-			href="/recipes/top"
+			recipes={newRecipes}
+			groupsOf={(recipe) => [recipe.category]}
+			href="/recipes/new"
 		>
 			<Fragment slot="title">
 				<span>New</span> RECIPES
@@ -77,15 +82,17 @@ const lastNews = news.slice(0, 7);
 			</Fragment>
 		</RecipeSection>
 		
-		<CategorySection categories={categories}>
+		<CategorySection categories={categories} href="/categories">
 			<Fragment slot="title">
 				<span>BEST</span> categories
 			</Fragment>
 		</CategorySection>
 
-		<section class="section-item">
-			<h2 class="section-title"><span>top 5</span> video</h2>
-		</section>
+		<VideoSection videos={videos} href="/video">
+			<Fragment slot="title">
+				<span>top 5</span> video
+			</Fragment>
+		</VideoSection>
 		
 		<RecipeCollestionsSection>
 			<Fragment slot="title">
@@ -94,8 +101,9 @@ const lastNews = news.slice(0, 7);
 		</RecipeCollestionsSection>
 
 		<RecipeSection
-			recipes={topRecipes}
-			href="/recipes/top"
+			recipes={recipes}
+			groupsOf={(recipe) => recipe.ingredients}
+			href="/recipes"
 		>
 			<Fragment slot="title">
 				<span>Рецепты</span> по ингредиентам

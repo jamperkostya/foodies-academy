@@ -4,19 +4,21 @@ import type { Recipe } from '../../types/recipe';
 
 interface Props {
 	recipes: Recipe[];
+	groupsOf?: (recipe: Recipe) => string[];
 	href?: string;
 	trackId?: string;
 }
-const { recipes, href, trackId } = Astro.props;
+const { recipes, groupsOf, href, trackId } = Astro.props;
 ---
 
 <section class="section-item">
 	<div class="section-head">
 		<h2 class="section-title"><slot name="title" /></h2>
-		{href && <a href={href} class="section-head__all">Смотреть все</a>}
+		{/* With filters, "Смотреть все" closes the filters row instead. */}
+		{href && !groupsOf && <a href={href} class="section-head__all">Смотреть все</a>}
 	</div>
 
-	<RecipeGrid recipes={recipes} trackId={trackId} />
+	<RecipeGrid recipes={recipes} groupsOf={groupsOf} href={href} trackId={trackId} />
 </section>
 
 <style lang="less">

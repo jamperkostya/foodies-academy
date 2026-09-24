@@ -14,5 +14,5 @@ const { categories, href, trackId } = Astro.props;
 	<div class="section-head">
 		<h2 class="section-title"><slot name="title" /></h2>
 	</div>
-	<CategoryGrid categories={categories} trackId={trackId} />
+	<CategoryGrid categories={categories} href={href} trackId={trackId} />
 </section>

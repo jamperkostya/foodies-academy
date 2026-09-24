@@ -87,41 +87,57 @@ class DragCarousel {
 		this.onScroll();
 	}
 
-	get pageWidth() {
-		return this.track.clientWidth;
+	// One "page" is a viewport of cards plus the gap before the next one. The
+	// track's side padding (full-bleed rows) isn't part of the viewport.
+	get pageStep() {
+		const style = getComputedStyle(this.track);
+		const padding = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+		return this.track.clientWidth - padding + (parseFloat(style.columnGap) || 0);
 	}
 	get maxScroll() {
 		return Math.max(0, this.track.scrollWidth - this.track.clientWidth);
 	}
 
-	pageCount() {
-		if (this.pageWidth === 0) return 1;
-		return Math.max(1, Math.round(this.track.scrollWidth / this.pageWidth));
+	// Scroll offset of every page. The last one is clamped to the end, so a
+	// partial last page (e.g. 9 cards at 8 per view) still gets its own page.
+	pagePositions() {
+		const step = this.pageStep;
+		if (!step) return [0];
+		// Small tolerance so sub-pixel rounding doesn't add an empty page.
+		const count = Math.ceil(this.maxScroll / step - 0.05) + 1;
+		return Array.from({ length: count }, (_, i) => Math.min(i * step, this.maxScroll));
+	}
+
+	nearestPage(positions: number[]) {
+		const x = this.track.scrollLeft;
+		let best = 0;
+		positions.forEach((pos, i) => {
+			if (Math.abs(pos - x) < Math.abs(positions[best] - x)) best = i;
+		});
+		return best;
 	}
 
 	buildDots() {
 		if (!this.dotsEl) return;
-		const count = this.pageCount();
-		if (count <= 1) {
+		const positions = this.pagePositions();
+		if (positions.length <= 1) {
 			this.dotsEl.innerHTML = "";
 			this.dotsEl.style.display = "none";
 			return;
 		}
 		this.dotsEl.style.display = "";
-		this.dotsEl.innerHTML = Array.from({ length: count })
-			.map((_, i) => `<span data-i="${i}"></span>`)
-			.join("");
+		this.dotsEl.innerHTML = positions.map((_, i) => `<span data-i="${i}"></span>`).join("");
 		this.dotsEl.querySelectorAll("span").forEach((dot) => {
 			dot.addEventListener("click", () => {
 				const i = Number((dot as HTMLElement).dataset.i);
-				this.track.scrollTo({ left: i * this.pageWidth, behavior: "smooth" });
+				this.track.scrollTo({ left: this.pagePositions()[i], behavior: "smooth" });
 			});
 		});
 	}
 
 	onScroll() {
-		const idx = this.pageWidth ? Math.round(this.track.scrollLeft / this.pageWidth) : 0;
 		if (this.dotsEl) {
+			const idx = this.nearestPage(this.pagePositions());
 			this.dotsEl.querySelectorAll("span").forEach((d, i) => d.classList.toggle("is-active", i === idx));
 		}
 		if (this.prevBtn) this.prevBtn.disabled = this.track.scrollLeft <= 4;
@@ -129,13 +145,14 @@ class DragCarousel {
 	}
 
 	scrollByPage(dir: number) {
-		this.track.scrollTo({ left: this.track.scrollLeft + dir * this.pageWidth, behavior: "smooth" });
+		const positions = this.pagePositions();
+		const idx = Math.max(0, Math.min(positions.length - 1, this.nearestPage(positions) + dir));
+		this.track.scrollTo({ left: positions[idx], behavior: "smooth" });
 	}
 
 	snapToNearest() {
-		if (!this.pageWidth) return;
-		const idx = Math.round(this.track.scrollLeft / this.pageWidth);
-		this.track.scrollTo({ left: idx * this.pageWidth, behavior: "smooth" });
+		const positions = this.pagePositions();
+		this.track.scrollTo({ left: positions[this.nearestPage(positions)], behavior: "smooth" });
 	}
 }
 
@@ -148,7 +165,7 @@ export function initDragCarousel(carouselEl: HTMLElement) {
 	const dotsSibling = carouselEl.nextElementSibling;
 	const dotsEl = dotsSibling?.classList.contains("carousel__dots") ? (dotsSibling as HTMLElement) : null;
 
-	new DragCarousel(track, {
+	return new DragCarousel(track, {
 		dotsEl,
 		prevBtn: carouselEl.querySelector<HTMLButtonElement>(".carousel__arrow--prev"),
 		nextBtn: carouselEl.querySelector<HTMLButtonElement>(".carousel__arrow--next"),

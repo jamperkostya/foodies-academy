@@ -1,26 +1,25 @@
 ---
 import Icon from "../ui/Icon.astro";
 import Filters from "../ui/Filters.astro";
-import CategoryCard from '../categories/CategoryCard.astro';
-import type { Category } from "../../types/category";
+import VideoCard from "./VideoCard.astro";
+import type { Video } from "../../types/video";
 
 interface Props {
-  categories: Category[];
-  href?: string;
-  trackId?: string;
+	videos: Video[];
+	href?: string;
 }
 
-const { categories, href, trackId } = Astro.props;
+const { videos, href } = Astro.props;
 
 // Filters come from the data itself, so a group never shows up empty.
-const groups = [...new Set(categories.flatMap((category) => category.groups))];
+const groups = [...new Set(videos.map((video) => video.category))];
 ---
-<div class="category-grid">
+<div class="video-grid">
 	<Filters groups={groups} href={href} />
-	<div class="carousel carousel--categories">
-		<div class="carousel__track" id={trackId}>
-			{categories.map((category) => (
-				<CategoryCard category={category} />
+	<div class="carousel carousel--videos">
+		<div class="carousel__track">
+			{videos.map((video) => (
+				<VideoCard video={video} />
 			))}
 		</div>
 		<button class="carousel__arrow carousel__arrow--prev" aria-label="Назад">
@@ -36,22 +35,19 @@ const groups = [...new Set(categories.flatMap((category) => category.groups))];
 <style lang="less">
 @import "../../styles/carousel.less";
 
-.carousel--categories {
-	--gap: 14px;
-	--per-view: 8;
+.carousel--videos {
+	--gap: 20px;
+	--per-view: 3;
 
 	position: relative;
 	// Lets the track measure the carousel's (= container's) width in cqw.
 	container-type: inline-size;
 
-	@media (max-width: 1200px) {
-		--per-view: 6;
-	}
 	@media (max-width: 860px) {
-		--per-view: 4;
+		--per-view: 2;
 	}
 	@media (max-width: 640px) {
-		--per-view: 3;
+		--per-view: 1.2;
 	}
 
 	.carousel__track {
@@ -67,10 +63,7 @@ const groups = [...new Set(categories.flatMap((category) => category.groups))];
 		padding: 20px 0 56px;
 		margin: -20px 0 -56px;
 
-		// full-bleed below 1500px, like .carousel--recipes: the track runs
-		// edge-to-edge to the viewport, but its padding keeps the first card
-		// (and every snapped page) lined up with `.container`. cqw rather than %
-		// because scroll-padding percentages resolve against the track itself.
+		// full-bleed below 1500px, same technique as .carousel--categories.
 		@media (max-width: 1499px) {
 			--bleed: calc(50vw - 50cqw);
 			margin-left: calc(-1 * var(--bleed));
@@ -80,8 +73,7 @@ const groups = [...new Set(categories.flatMap((category) => category.groups))];
 			scroll-padding-inline: var(--bleed);
 		}
 
-		// CategoryCard owns its look; how many fit per view is the carousel's call.
-		:global(.category-card) {
+		:global(.video-card) {
 			flex: 0 0 calc((100% - var(--gap) * (var(--per-view) - 1)) / var(--per-view));
 			min-width: 0;
 			scroll-snap-align: start;
@@ -92,5 +84,5 @@ const groups = [...new Set(categories.flatMap((category) => category.groups))];
 <script>
 	import { initFilterableCarousel } from "../../scripts/filterableCarousel";
 
-	document.querySelectorAll<HTMLElement>(".category-grid").forEach(initFilterableCarousel);
+	document.querySelectorAll<HTMLElement>(".video-grid").forEach(initFilterableCarousel);
 </script>

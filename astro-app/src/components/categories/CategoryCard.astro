@@ -2,38 +2,35 @@
 import type { Category } from "../../types/category";
 
 interface Props {
-	recipe: Category;
+	category: Category;
 }
 
-const { recipe } = Astro.props;
+const { category } = Astro.props;
+
+const recipeWord = {
+	one: "рецепт",
+	few: "рецепта",
+	many: "рецептов",
+	other: "рецепта",
+}[new Intl.PluralRules("ru-RU").select(category.recipesCount)];
 ---
-<a href={`/category/${recipe.slug}`} class="category-card">
-	<div class="category-card__img" style={`background-image:url('${recipe.image}')`}></div>
-	<div class="category-card__label"><strong>{recipe.title}</strong><small>1200 рецептов</small></div>
+<a href={`/category/${category.slug}`} class="category-card" data-groups={JSON.stringify(category.groups)}>
+	<div class="category-card__img" style={`background-image:url('${category.image}')`}></div>
+	<div class="category-card__label"><strong>{category.title}</strong><small>{category.recipesCount} {recipeWord}</small></div>
 </a>
 <style lang="less">
 .category-card {
-	flex: 0 0 calc((100% - 14px*7)/8);
-	min-width: 0;
-	scroll-snap-align: start;
 	position: relative;
 	border-radius: var(--border-radius-25);
 	overflow: hidden;
 	aspect-ratio: 3/5;
+	min-height: 325px;
 	color: var(--color-white);
-	display: flex;
-	align-items: flex-end;
-	padding: 14px 12px;
 	cursor: pointer;
 	transition: transform .25s var(--ease), box-shadow .25s var(--ease);
-	&::after {
-		content: "";
-		position: absolute;
-		inset: 0;
-		z-index: 1;
-		background: linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,.78) 100%);
-		transition: background .25s;
-	}
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	.category-card__img {
 		position: absolute;
 		inset: 0;
@@ -45,6 +42,33 @@ const { recipe } = Astro.props;
 	.category-card__label {
 		position: relative;
 		z-index: 2;
+		text-align: center;
+		strong {
+			font-weight: 700;
+			font-size: 16px;
+			line-height: 20px;
+		}
+		* {
+			display: block;
+		}
+	}
+	&::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		background: linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,.78) 100%);
+		transition: background .25s;
+	}
+	&:hover {
+		transform: translateY(-6px);
+		box-shadow: 0 5px 5px rgba(29,27,32,.18);
+		.category-card__img {
+			transform: scale(1.1);
+		}
+		&::after {
+			background: linear-gradient(180deg, rgba(0,0,0,.05) 30%, rgba(0,0,0,.85) 100%);
+		}
 	}
 }
 </style>

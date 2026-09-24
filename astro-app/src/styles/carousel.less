@@ -15,6 +15,11 @@
 		scroll-snap-type: none;
 		user-select: none;
 	}
+	// Items filtered out by filterableCarousel.ts. Cards set their own display,
+	// which would otherwise beat the UA style for [hidden].
+	> :global([hidden]) {
+		display: none;
+	}
 }
 
 .carousel__arrow {

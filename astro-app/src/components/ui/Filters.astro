@@ -1,0 +1,76 @@
+---
+interface Props {
+	groups: string[];
+	// "Смотреть все" link, always the last item in the row.
+	href?: string;
+}
+
+const { groups, href } = Astro.props;
+---
+<div class="filters">
+	<div class="filters__list" role="group" aria-label="Фильтры">
+		<button type="button" class="filters__btn filter-name is-active" aria-pressed="true" data-group="">Все</button>
+		{groups.map((group) => (
+			<button type="button" class="filters__btn filter-name" aria-pressed="false" data-group={group}>{group}</button>
+		))}
+	</div>
+	{href && <a href={href} class="filters__all filter-name">Смотреть все</a>}
+</div>
+
+<style lang="less">
+// "Смотреть все" is pinned to the right; the filters take the rest of the
+// row and scroll sideways when they don't fit.
+.filters {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.filters__list {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	gap: 10px;
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+.filters__btn,
+.filters__all {
+	flex: 0 0 auto;
+	padding: 10px 20px;
+	border: var(--border-width) solid var(--color-black-20);
+	border-radius: var(--border-radius-100);
+	white-space: nowrap;
+	cursor: pointer;
+	transition: background .15s, color .15s, border-color .15s;
+}
+
+.filters__btn {
+	background: transparent;
+	color: var(--color-black);
+	&:hover {
+		border-color: var(--color-red);
+		color: var(--color-red);
+	}
+	&.is-active {
+		background: var(--color-red);
+		border-color: var(--color-red);
+		color: var(--color-white);
+	}
+}
+
+.filters__all {
+	margin-left: auto;
+	border-color: var(--color-red);
+	color: var(--color-red);
+	&:hover {
+		background: var(--color-red);
+		color: var(--color-white);
+	}
+}
+</style>

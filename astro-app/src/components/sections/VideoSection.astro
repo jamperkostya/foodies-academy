@@ -1,0 +1,16 @@
+---
+import VideoGrid from '../videos/VideoGrid.astro';
+import type { Video } from '../../types/video';
+
+interface Props {
+	videos: Video[];
+	href?: string;
+}
+const { videos, href } = Astro.props;
+---
+<section class="section-item">
+	<div class="section-head">
+		<h2 class="section-title"><slot name="title" /></h2>
+	</div>
+	<VideoGrid videos={videos} href={href} />
+</section>

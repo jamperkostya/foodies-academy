@@ -6,11 +6,13 @@ import type { Recipe } from "../../types/recipe";
 
 interface Props {
   recipe: Recipe;
+  // Filter groups this card matches, when its carousel has filters.
+  groups?: string[];
 }
 
-const { recipe } = Astro.props;
+const { recipe, groups } = Astro.props;
 ---
-<a href={`/recipes/${recipe.slug}`} class="recipe-card">
+<a href={`/recipes/${recipe.slug}`} class="recipe-card" data-groups={groups && JSON.stringify(groups)}>
 	<div class="recipe-card__media">
 		<div class="recipe-card__img" style={`background-image: url('${recipe.image}')`}></div>
 		<span class="badge">{recipe.category}</span>

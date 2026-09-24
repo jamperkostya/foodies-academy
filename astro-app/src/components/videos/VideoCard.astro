@@ -1,0 +1,79 @@
+---
+import Icon from "../ui/Icon.astro";
+import type { Video } from "../../types/video";
+
+interface Props {
+	video: Video;
+}
+
+const { video } = Astro.props;
+---
+<a href={`/video/${video.slug}`} class="video-card" data-groups={JSON.stringify([video.category])}>
+	<div class="video-card__media">
+		<div class="video-card__img" style={`background-image: url('${video.image}')`}></div>
+		<span class="badge">{video.category}</span>
+		<span class="video-card__play"><Icon name="youtube-play" width={56} height={40} /></span>
+		<span class="video-card__duration">{video.duration}</span>
+	</div>
+	<h3 class="video-card__title video-name">{video.title}</h3>
+</a>
+
+<style lang="less">
+.video-card {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	color: var(--color-black);
+	.video-card__media {
+		position: relative;
+		aspect-ratio: 16/9;
+		border-radius: var(--border-radius-25);
+		overflow: hidden;
+		transition: box-shadow .25s var(--ease), transform .25s var(--ease);
+	}
+	.video-card__img {
+		position: absolute;
+		inset: 0;
+		background-size: cover;
+		background-position: center;
+		transition: transform .5s var(--ease);
+	}
+	.video-card__play {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--color-red);
+		background: var(--color-black-20);
+		transition: background .25s;
+	}
+	.video-card__duration {
+		position: absolute;
+		right: 14px;
+		bottom: 14px;
+		z-index: 2;
+		padding: 4px 10px;
+		border-radius: var(--border-radius-100);
+		background: var(--color-black-70);
+		color: var(--color-white);
+		font-size: 12px;
+		line-height: 15px;
+		font-weight: 500;
+	}
+	&:hover {
+		color: var(--color-black);
+		.video-card__media {
+			transform: translateY(-6px);
+			box-shadow: 0 20px 36px rgba(29,27,32,.12);
+		}
+		.video-card__img {
+			transform: scale(1.09);
+		}
+		.video-card__play {
+			background: var(--color-black-10);
+		}
+	}
+}
+</style>

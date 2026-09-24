@@ -4,14 +4,8 @@
 	--recipe-card-w: 285px;
 
 	position: relative;
-
-	// full-bleed: below 1500px the row breaks out of `.container`'s side
-	// padding and spans edge-to-edge to the viewport, same as .hero.
-	@media (max-width: 1499px) {
-		width: 100vw;
-		margin-left: calc(50% - 50vw);
-		margin-right: calc(50% - 50vw);
-	}
+	// Lets the track measure the carousel's (= container's) width in cqw.
+	container-type: inline-size;
 
 	.carousel__track {
 		display: flex;
@@ -25,6 +19,19 @@
 		overflow-clip-margin: 40px;
 		padding: 20px 0 56px;
 		margin: -20px 0 -56px;
+
+		// full-bleed below 1500px: the track runs edge-to-edge to the viewport,
+		// but its padding keeps the first card (and every snapped page) lined up
+		// with `.container` and the filters above. cqw rather than % because
+		// scroll-padding percentages resolve against the track itself.
+		@media (max-width: 1499px) {
+			--bleed: calc(50vw - 50cqw);
+			margin-left: calc(-1 * var(--bleed));
+			margin-right: calc(-1 * var(--bleed));
+			padding-left: var(--bleed);
+			padding-right: var(--bleed);
+			scroll-padding-inline: var(--bleed);
+		}
 
 		// RecipeCard.astro owns its own scoped styles, so its root class isn't
 		// reachable from here without :global — this is only the carousel's

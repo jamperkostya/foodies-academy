@@ -1,0 +1,88 @@
+// src/data/videos.ts
+
+import type { Video } from '../types/video';
+
+// Mock data until videos come from the CMS. Images are placeholders.
+export const videos: Video[] = [
+	{
+		id: '1',
+		slug: 'perfect-steak',
+		title: 'Идеальный стейк на сковороде',
+		image: 'https://foodies.academy/wp-content/uploads/2018/09/DSC02931-1-300x300.jpg',
+		category: 'Основные блюда',
+		duration: '12:40',
+		views: 15400,
+	},
+	{
+		id: '2',
+		slug: 'homemade-pasta',
+		title: 'Домашняя паста без машинки',
+		image: 'https://foodies.academy/wp-content/uploads/2018/09/DSC06146-1-300x300.jpg',
+		category: 'Основные блюда',
+		duration: '9:15',
+		views: 8200,
+	},
+	{
+		id: '3',
+		slug: 'borscht-classic',
+		title: 'Классический борщ',
+		image: 'https://foodies.academy/wp-content/uploads/2025/10/zamachau-sous-300x300.webp',
+		category: 'Супы',
+		duration: '18:05',
+		views: 21000,
+	},
+	{
+		id: '4',
+		slug: 'ramen-at-home',
+		title: 'Рамен дома за час',
+		image: 'https://foodies.academy/wp-content/uploads/2018/09/DSC02931-1-300x300.jpg',
+		category: 'Супы',
+		duration: '15:30',
+		views: 6700,
+	},
+	{
+		id: '5',
+		slug: 'caesar-dressing',
+		title: 'Соус для Цезаря',
+		image: 'https://foodies.academy/wp-content/uploads/2018/09/DSC06146-1-300x300.jpg',
+		category: 'Салаты',
+		duration: '5:20',
+		views: 4300,
+	},
+	{
+		id: '6',
+		slug: 'cheesecake-no-cracks',
+		title: 'Чизкейк без трещин',
+		image: 'https://foodies.academy/wp-content/uploads/2025/10/zamachau-sous-300x300.webp',
+		category: 'Десерты',
+		duration: '14:10',
+		views: 19800,
+	},
+	{
+		id: '7',
+		slug: 'chocolate-fondant',
+		title: 'Шоколадный фондан',
+		image: 'https://foodies.academy/wp-content/uploads/2018/09/DSC02931-1-300x300.jpg',
+		category: 'Десерты',
+		duration: '7:45',
+		views: 11200,
+	},
+	{
+		id: '8',
+		slug: 'sourdough-bread',
+		title: 'Хлеб на закваске',
+		image: 'https://foodies.academy/wp-content/uploads/2018/09/DSC06146-1-300x300.jpg',
+		category: 'Выпечка',
+		duration: '22:00',
+		views: 9600,
+	},
+	{
+		id: '9',
+		slug: 'neapolitan-pizza',
+		title: 'Неаполитанская пицца',
+		image: 'https://foodies.academy/wp-content/uploads/2025/10/zamachau-sous-300x300.webp',
+		category: 'Выпечка',
+		duration: '16:25',
+		views: 13500,
+	},
+];

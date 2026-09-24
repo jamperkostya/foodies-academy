@@ -1,40 +1,49 @@
 ---
 import Icon from "../ui/Icon.astro";
+import Filters from "../ui/Filters.astro";
 import RecipeCard from '../recipes/RecipeCard.astro';
 import type { Recipe } from "../../types/recipe";
 
 interface Props {
   recipes: Recipe[];
+  // Turns on the filters row: which filter groups a recipe belongs to.
+  groupsOf?: (recipe: Recipe) => string[];
+  href?: string;
   trackId?: string;
 }
 
-const { recipes, trackId } = Astro.props;
+const { recipes, groupsOf, href, trackId } = Astro.props;
+
+// Filters come from the data itself, so a group never shows up empty.
+const groups = groupsOf && [...new Set(recipes.flatMap(groupsOf))];
 ---
 
-<div class="carousel carousel--recipes">
-	<div class="carousel__track" id={trackId}>
-		{recipes.map((recipe) => (
-			<RecipeCard recipe={recipe} />
-		))}
+<div class="recipe-grid">
+	{groups && <Filters groups={groups} href={href} />}
+	<div class="carousel carousel--recipes">
+		<div class="carousel__track" id={trackId}>
+			{recipes.map((recipe) => (
+				<RecipeCard recipe={recipe} groups={groupsOf?.(recipe)} />
+			))}
+		</div>
+		<button class="carousel__arrow carousel__arrow--prev" aria-label="Назад">
+			<Icon name="arrow-slider" width={12} height={10} />
+		</button>
+		<button class="carousel__arrow carousel__arrow--next" aria-label="Вперёд">
+			<Icon name="arrow-slider" width={12} height={10} />
+		</button>
 	</div>
-	<button class="carousel__arrow carousel__arrow--prev" aria-label="Назад">
-		<Icon name="arrow-slider" width={12} height={10} />
-	</button>
-	<button class="carousel__arrow carousel__arrow--next" aria-label="Вперёд">
-		<Icon name="arrow-slider" width={12} height={10} />
-	</button>
+	<div class="carousel__dots"></div>
 </div>
-<div class="carousel__dots"></div>
 
 <style lang="less">
 	@import "./RecipeGrid.less";
 </style>
 
 <script>
-	import { initDragCarousel } from "../../scripts/dragCarousel";
+	import { initFilterableCarousel } from "../../scripts/filterableCarousel";
 
 	// A page can render several recipe carousels (top 5, new, by ingredient…),
-	// so every ".carousel--recipes" on the page gets its own instance instead
-	// of relying on a single hardcoded id.
-	document.querySelectorAll<HTMLElement>(".carousel--recipes").forEach(initDragCarousel);
+	// so each one gets its own instance instead of relying on a hardcoded id.
+	document.querySelectorAll<HTMLElement>(".recipe-grid").forEach(initFilterableCarousel);
 </script>
