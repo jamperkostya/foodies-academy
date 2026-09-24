@@ -4,14 +4,12 @@
 	<div class="subscribe flex gap-40">
 		<img class="subscribe__img" src="/images/subscribe.jpg" alt="Кулинарная книга Foodies" width="625" height="327" loading="lazy">
 
-		<form method="post" action="#" class="flex gap-15 subscribe__form">
+		<form method="post" action="#" class="subscribe__form flex gap-15">
 			<h2 class="subscribe__title">Подпишись и получи книгу рецептов бесплатно!</h2>
 
-			<label class="sr-only" for="subscribe-name">Имя</label>
-			<input class="subscribe__input" id="subscribe-name" type="text" name="name" placeholder="Имя" autocomplete="given-name" required>
+			<input class="subscribe__input" type="text" name="name" placeholder="Имя" aria-label="Имя" autocomplete="given-name" required>
 
-			<label class="sr-only" for="subscribe-email">E-mail</label>
-			<input class="subscribe__input" id="subscribe-email" type="email" name="email" placeholder="E-mail" autocomplete="email" required>
+			<input class="subscribe__input" type="email" name="email" placeholder="E-mail" aria-label="E-mail" autocomplete="email" required>
 
 			<button type="submit" class="subscribe__btn btn btn--primary">Подписаться</button>
 		</form>
