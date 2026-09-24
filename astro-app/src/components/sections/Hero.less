@@ -12,6 +12,7 @@
 
 	.carousel {
 		position: relative;
+		padding-top: 25px;
 		.carousel__track {
 			display: flex;
 			gap: 16px;
@@ -84,9 +85,9 @@
 		justify-content: center;
 		gap: 6px;
 		margin-top: 20px;
-		// spans are injected client-side by the carousel script, so they never
-		// receive Astro's scoping attribute — style them unscoped.
-		:global(span) {
+		// Injected client-side by dragCarousel.ts, so they never receive
+		// Astro's scoping attribute — hence :global.
+		:global(.carousel__dot) {
 			width: 20px;
 			height: 4px;
 			border-radius: var(--border-radius-100);

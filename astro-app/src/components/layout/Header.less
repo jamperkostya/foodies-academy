@@ -1,22 +1,22 @@
-// (reference): pull in the .btn / .flex-center mixins without re-emitting them.
-@import (reference) "../../styles/utilities.less";
+// (reference): pull in the .btn mixin without re-emitting it.
 @import (reference) "../../styles/buttons.less";
 
 .header {
-	display: flex;
 	background: var(--color-white);
 	padding-top: 3px;
 	padding-bottom: 10px;
 }
 
 .header__right-part {
-	margin-top: 25px;
 	flex: 1;
+	margin-top: 25px;
 }
 
 .header__categories-toggle {
 	.btn();
-	.flex-center();
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	gap: 3px;
 	background: var(--color-black-20);
 	border: var(--border-width) solid var(--color-black-20);

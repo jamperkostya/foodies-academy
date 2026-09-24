@@ -7,7 +7,6 @@ export interface News {
   excerpt: string;
   category: string;
   tags: string[];
-  // Not filled in yet for any seed record (see src/data/news.ts) and not
-  // read anywhere yet — optional until both are true.
+  // Only shown for the featured news; not filled in for any seed record yet.
   image?: string;
 }

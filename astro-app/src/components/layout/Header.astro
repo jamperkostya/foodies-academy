@@ -2,20 +2,20 @@
 import Icon from "../ui/Icon.astro";
 ---
 
-<header class="header container flex gap-40 flex-center justify-between" id="header">
+<header class="header container flex gap-40 flex-center justify-between">
 	<a href="/" class="header__logo">
 		<img src="/images/logotype.jpg" alt="Foodies" width="242" height="81">
 	</a>
 
 	<div class="header__right-part flex gap-20 flex-center">
-		<div class="header__categories" id="categoriesDropdown">
-			<button type="button" class="header__categories-toggle" id="categoriesBtn" aria-haspopup="true" aria-expanded="false">
+		<div class="header__categories">
+			<button type="button" class="header__categories-toggle" aria-haspopup="true" aria-expanded="false">
 				Категории
 				<Icon name="menu-arrow" width={12} height={7} />
 			</button>
 		</div>
 
-		<form class="header__search" id="searchForm" role="search">
+		<form class="header__search" role="search">
 			<input type="search" name="q" class="header__search-input" placeholder="Поиск рецептов..." aria-label="Поиск рецептов">
 			<button type="submit" aria-label="Найти" class="header__search-btn btn">
 				<Icon name="search" width={24} height={24} />
@@ -37,7 +37,7 @@ import Icon from "../ui/Icon.astro";
 				<a href="#" class="header__register-link">Регистрация</a>
 			</div>
 		</div>
-		<button type="button" class="header__burger" id="burgerBtn" aria-label="Меню" aria-expanded="false"><span></span></button>
+		<button type="button" class="header__burger" aria-label="Меню" aria-expanded="false"><span></span></button>
 	</div>
 </header>
 

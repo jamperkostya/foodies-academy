@@ -12,8 +12,6 @@ export interface Recipe {
   rating: number;
   ingredients: string[];
   comments: number;
-  // Not every seed recipe has these yet (see src/data/recipes.ts) — optional
-  // until the data is filled in for all of them.
-  views?: number;
-  likes?: number;
+  views: number;
+  likes: number;
 }

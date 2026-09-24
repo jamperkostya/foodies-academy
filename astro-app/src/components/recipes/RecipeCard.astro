@@ -14,7 +14,7 @@ const { recipe, groups } = Astro.props;
 <a href={`/recipes/${recipe.slug}`} class="recipe-card" data-groups={groups && JSON.stringify(groups)}>
 	<div class="recipe-card__media">
 		<div class="recipe-card__img" style={`background-image: url('${recipe.image}')`}></div>
-		<span class="badge">{recipe.category}</span>
+		<span class="recipe-card__badge badge">{recipe.category}</span>
 	</div>
 	<div class="recipe-card__body">
 		<div class="recipe-card__meta">
@@ -24,7 +24,7 @@ const { recipe, groups } = Astro.props;
 			<Stars rating={recipe.rating} />
 		</div>
 		<h3 class="recipe-card__title">{recipe.title}</h3>
-		<RecipeStats views={recipe.views ?? 0} likes={recipe.likes ?? 0} comments={recipe.comments} time={recipe.time} />
+		<RecipeStats views={recipe.views} likes={recipe.likes} comments={recipe.comments} time={recipe.time} />
 	</div>
 </a>
 
@@ -61,6 +61,17 @@ const { recipe, groups } = Astro.props;
 	background-size: cover;
 	background-position: center;
 	transition: transform .5s var(--ease);
+}
+
+.recipe-card__badge {
+	position: absolute;
+	top: 18px;
+	left: 14px;
+	z-index: 2;
+	padding: 10px 20px;
+	background: var(--color-red);
+	border-radius: var(--border-radius-1000);
+	color: var(--color-white);
 }
 
 .recipe-card__body {

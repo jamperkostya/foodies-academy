@@ -27,6 +27,7 @@ export function initFilterableCarousel(root: HTMLElement) {
 		},
 		{ passive: false }
 	);
+
 	const buttons = root.querySelectorAll<HTMLButtonElement>(".filters__btn");
 	const items = [...track.querySelectorAll<HTMLElement>("[data-groups]")].map((el) => ({
 		el,

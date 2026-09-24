@@ -15,6 +15,8 @@ const recipe = (id: string, category: string, ingredients: string[]): Recipe => 
 	rating: 4,
 	ingredients,
 	comments: 0,
+	views: 0,
+	likes: 0,
 });
 
 const recipes = [recipe("1", "Супы", ["Курица", "Овощи"]), recipe("2", "Салаты", ["Овощи"])];

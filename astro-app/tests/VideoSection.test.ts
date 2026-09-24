@@ -9,7 +9,6 @@ const video = (id: string, category: string): Video => ({
 	title: `Title ${id}`,
 	image: "/img.jpg",
 	category,
-	duration: "1:00",
 	views: 10,
 	likes: 5,
 	comments: 2,

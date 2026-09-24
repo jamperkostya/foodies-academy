@@ -29,10 +29,10 @@ const { views, likes, comments, rating } = Astro.props;
 
 <style lang="less">
 // Always on the right edge of the card, with each row right-aligned, whether
-// or not there's a YouTube button on the left. Lives here rather than in
+// or not there's a YouTube badge on the left. Lives here rather than in
 // VideoCard.less: the card's scoped styles don't reach a child component.
 .video-card__stats {
-	margin-left: auto;
 	justify-items: end;
+	margin-left: auto;
 }
 </style>

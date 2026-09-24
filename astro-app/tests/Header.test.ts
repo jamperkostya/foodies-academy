@@ -29,7 +29,7 @@ describe("Header", () => {
 	});
 
 	it("marks the categories toggle as a collapsed popup trigger", () => {
-		const button = html.match(/<button[^>]*id="categoriesBtn"[^>]*>/)?.[0];
+		const button = html.match(/<button[^>]*class="header__categories-toggle[^>]*>/)?.[0];
 		expect(button).toBeDefined();
 		expect(button).toContain('aria-haspopup="true"');
 		expect(button).toContain('aria-expanded="false"');
