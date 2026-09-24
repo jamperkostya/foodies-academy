@@ -7,13 +7,16 @@
 	flex-direction: column;
 	justify-content: space-between;
 	padding: 32px;
-	transition: box-shadow .25s;
+	transition: transform .25s var(--ease), box-shadow .25s var(--ease);
 	&::after {
 		content: "";
 		position: absolute;
 		inset: 0;
 		z-index: 1;
 		background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.75) 100%);
+	}
+	&:active {
+		transform: translateY(-2px) scale(.98);
 	}
 	& > * {
 		position: relative;

@@ -42,6 +42,10 @@
 			flex: 0 0 var(--recipe-card-w);
 			min-width: 0;
 			scroll-snap-align: start;
+			transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+			&:active {
+				transform: translateY(-2px) scale(.98);
+			}
 		}
 	}
 }

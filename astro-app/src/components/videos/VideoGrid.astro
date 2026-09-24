@@ -85,6 +85,14 @@ const groups = [...new Set(videos.map((video) => video.category))];
 			height: auto;
 			aspect-ratio: 3/4.3;
 			padding: 20px;
+			transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+			&:hover {
+				transform: translateY(-6px);
+				box-shadow: 0 20px 34px rgba(29,27,32,.2);
+			}
+			&:active {
+				transform: translateY(-2px) scale(.98);
+			}
 		}
 		:global(.video-card__title) {
 			font-size: 24px;
