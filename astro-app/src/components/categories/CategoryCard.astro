@@ -78,4 +78,15 @@ const recipeWord = recipesWord(category.recipesCount);
 	display: block;
 	line-height: 24px;
 }
+.card-list-item {
+	aspect-ratio: var(--card-media-ratio, 1/1);
+	align-items: end;
+	justify-content: flex-start;
+	.category-card__label {
+		padding: 25px;
+		.category-card__title {
+			text-align: left;
+		}
+	}
+}
 </style>

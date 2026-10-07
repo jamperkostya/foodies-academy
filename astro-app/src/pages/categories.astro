@@ -6,6 +6,7 @@ import CardGrid from "../components/ui/CardGrid.astro";
 import CategoryCard from "../components/categories/CategoryCard.astro";
 import { categories } from "../data/categories";
 import { plural, recipesWord } from "../utils/plural";
+import SEOTextSection from "../components/sections/SEOTextSection.astro";
 
 // Counted from the data, so the intro never disagrees with the catalogue.
 const totalRecipes = categories.reduce((sum, category) => sum + category.recipesCount, 0);
@@ -25,22 +26,24 @@ const sortOptions = [
 		Все <span class="page-hero__accent">категории</span>
 	</PageHero>
 
-	<section class="catalog">
+	<section class="catalog section-item">
 		<SortBar
 			count={categories.length}
 			countWord={plural(categories.length, ["категория", "категории", "категорий"])}
 			options={sortOptions}
 		/>
 		{/* Category cards are at least 195px wide (325px min-height at 3:5). */}
-		<CardGrid minCardWidth={200}>
-			{categories.map((category) => <CategoryCard category={category} />)}
+		<CardGrid minCardWidth={300}>
+			{categories.map((category) => <CategoryCard category={category} class="card-list-item"/>)}
 		</CardGrid>
 	</section>
+	
+	<SEOTextSection />
 </BaseLayout>
 
 <style lang="less">
 .catalog {
-	padding-top: 56px;
+	padding-top: 25px;
 }
 </style>
 

@@ -19,8 +19,8 @@ const { eyebrow, description } = Astro.props;
 
 <style lang="less">
 .page-hero {
-	padding: 48px 0;
-	background: var(--color-cream);
+	padding: 25px 0;
+	background: var(--color-gradient-violet);
 	text-align: center;
 }
 
@@ -36,16 +36,17 @@ const { eyebrow, description } = Astro.props;
 
 .page-hero__title {
 	margin: 0 0 14px;
-	font-weight: 800;
+	font-weight: 400;
 	font-size: 40px;
 	line-height: 1.2;
 	text-transform: uppercase;
-	@media (max-width: 860px) {
+	/* @media (max-width: 860px) {
 		font-size: 28px;
-	}
+	} */
 	// The accent comes in with the slotted title, outside this component's scope.
 	:global(.page-hero__accent) {
 		color: var(--color-red);
+		font-weight: 800;
 	}
 }
 
