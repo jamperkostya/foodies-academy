@@ -1,7 +1,11 @@
 ---
 // A home page section: its heading, then whatever the section renders below it.
+
+// Render the title up front: wrapper sections forward their own title slot,
+// so Astro.slots.has() is true even when nothing was passed in.
+const title = Astro.slots.has("title") ? (await Astro.slots.render("title")).trim() : "";
 ---
 <section class="section-item">
-	<h2 class="section-title"><slot name="title" /></h2>
+	{title && <h2 class="section-title" set:html={title} />}
 	<slot />
 </section>

@@ -1,11 +1,20 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../../components/layout/PageHero.astro";
+import SortBar from "../../components/ui/SortBar.astro";
 import Section from "../../components/layout/Section.astro";
 import CardGrid from "../../components/ui/CardGrid.astro";
 import RecipeCard from "../../components/recipes/RecipeCard.astro";
 import { categories } from "../../data/categories";
 import { recipes } from "../../data/recipes";
+import { plural, recipesWord } from "../../utils/plural";
 import type { Category } from "../../types/category";
+import SEOTextSection from "../../components/sections/SEOTextSection.astro";
+
+const totalRecipes = categories.reduce((sum, category) => sum + category.recipesCount, 0);
+const description =
+`${totalRecipes.toLocaleString("ru-RU")} ${recipesWord(totalRecipes)}, ` +
+"разложенных по полочкам — от завтрака до праздничного стола. Выберите категорию и найдите то, что приготовите уже сегодня.";
 
 export function getStaticPaths() {
 	return categories.map((category) => ({ params: { slug: category.slug }, props: { category } }));
@@ -20,13 +29,27 @@ const { category } = Astro.props;
 // Mock data has no category ↔ recipe link yet, so show the recipes from the
 // same dish groups (e.g. every "Супы" recipe on the "Борщ" page).
 const categoryRecipes = recipes.filter((recipe) => category.groups.includes(recipe.category));
+// "popular" keeps the data's own order.
+const sortOptions = [
+	{ value: "popular", label: "По популярности" },
+	{ value: "az", label: "По алфавиту" },
+	{ value: "count", label: "По числу рецептов" },
+];
 ---
 <BaseLayout
 	title={category.title}
 	description={`${category.title}: рецепты с пошаговыми фото на Foodies Academy.`}
 	breadcrumbs={[{ label: "Категории", href: "/categories" }, { label: category.title }]}>
-	<Section>
-		<Fragment slot="title">{category.title}</Fragment>
+	<PageHero slot="hero" eyebrow="Категория" description={description}>
+		<span class="page-hero__accent">{category.title}</span>
+	</PageHero>
+	
+	<Section class="catalog">
+		<SortBar
+			count={categories.length}
+			countWord={plural(categories.length, ["категория", "категории", "категорий"])}
+			options={sortOptions}
+		/>
 		{categoryRecipes.length ? (
 			<CardGrid minCardWidth={260}>
 				{categoryRecipes.map((recipe) => <RecipeCard recipe={recipe} />)}
@@ -44,3 +67,26 @@ const categoryRecipes = recipes.filter((recipe) => category.groups.includes(reci
 	color: var(--color-grey);
 }
 </style>
+
+<script>
+	// Sorting only reorders the cards already on the page.
+	const catalog = document.querySelector<HTMLElement>(".catalog");
+	const select = catalog?.querySelector<HTMLSelectElement>(".sort-bar__field");
+	const grid = catalog?.querySelector<HTMLElement>(".card-grid");
+
+	if (select && grid) {
+		const cards = [...grid.querySelectorAll<HTMLElement>(".category-card")];
+		const title = (card: HTMLElement) => card.querySelector(".category-card__title")?.textContent ?? "";
+		const recipes = (card: HTMLElement) => Number(card.dataset.recipesCount);
+
+		const sorters: Record<string, (a: HTMLElement, b: HTMLElement) => number> = {
+			az: (a, b) => title(a).localeCompare(title(b), "ru"),
+			count: (a, b) => recipes(b) - recipes(a),
+		};
+
+		select.addEventListener("change", () => {
+			const sorter = sorters[select.value];
+			grid.append(...(sorter ? [...cards].sort(sorter) : cards));
+		});
+	}
+</script>
