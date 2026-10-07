@@ -10,7 +10,7 @@ describe("/categories", () => {
 		const container = await AstroContainer.create();
 		const html = await container.renderToString(CategoriesPage);
 
-		expect(html.match(/class="category-card"/g)).toHaveLength(categories.length);
+		expect(html.match(/class="category-card[" ]/g)).toHaveLength(categories.length);
 	});
 
 	it("shows how many categories there are and the sort options", async () => {
@@ -58,7 +58,7 @@ describe("/category/[slug]", () => {
 		const expected = recipes.filter((recipe) => category.groups.includes(recipe.category));
 
 		expect(expected.length).toBeGreaterThan(0);
-		expect(html.match(/class="recipe-card"/g)).toHaveLength(expected.length);
+		expect(html.match(/class="recipe-card[" ]/g)).toHaveLength(expected.length);
 		expect(html).toContain(`${category.title} — Foodies.academy`);
 	});
 });
