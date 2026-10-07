@@ -4,7 +4,7 @@ import Section from "../components/layout/Section.astro";
 ---
 <BaseLayout title="Поиск" description="Поиск рецептов, категорий и видео на Foodies Academy." breadcrumbs={[{ label: "Поиск" }]}>
 	<Section>
-		<Fragment slot="title"><span>Результаты</span> поиска</Fragment>
+		<Fragment slot="title"><span class="section-title__accent">Результаты</span> поиска</Fragment>
 		<div class="search-results">
 			<p class="search-results__summary" aria-live="polite">Введите запрос в строку поиска вверху страницы.</p>
 			<ul class="search-results__list"></ul>
@@ -59,7 +59,7 @@ import Section from "../components/layout/Section.astro";
 	font-weight: 600;
 }
 
-.search-results__list :global(mark) {
+.search-results__list :global(.search-results__match) {
 	background: none;
 	color: var(--color-red);
 	font-weight: 700;
@@ -93,7 +93,7 @@ import Section from "../components/layout/Section.astro";
 		list.replaceChildren(
 			...results.map((result) => {
 				const title = el("span", "search-results__title");
-				title.append(...highlight(result.title, query));
+				title.append(...highlight(result.title, query, "search-results__match"));
 				const text = el("span", "search-results__text");
 				text.append(title, el("span", "search-results__meta", result.meta));
 

@@ -19,7 +19,7 @@ const groups = [...new Set(categories.flatMap((category) => category.groups))];
 	<slot name="title" slot="title" />
 	<Carousel variant="categories" groups={groups} href={href}>
 		{categories.map((category) => (
-			<CategoryCard category={category} />
+			<CategoryCard class="carousel__item" category={category} />
 		))}
 	</Carousel>
 </Section>

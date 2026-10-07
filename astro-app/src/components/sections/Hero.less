@@ -1,68 +1,76 @@
+@import "../../styles/carousel-dots.less";
+
 .hero {
 	--hero-item-w: 640px;
 	--hero-item-h: 460px;
 
-	// full-bleed: below 1400px the carousel breaks out of `.container`'s
+	// full-bleed: below 1500px the carousel breaks out of `.container`'s
 	// side padding and spans edge-to-edge to the viewport.
 	@media (max-width: 1499px) {
 		width: 100vw;
 		margin-left: calc(50% - 50vw);
 		margin-right: calc(50% - 50vw);
 	}
+}
 
-	.carousel {
-		position: relative;
-		padding-top: 25px;
-		.carousel__track {
-			display: flex;
-			gap: 16px;
-			overflow-x: auto;
-			overflow-y: clip;
-			scroll-snap-type: x mandatory;
-			scroll-behavior: smooth;
-			-webkit-overflow-scrolling: touch;
-			scrollbar-width: none;
-			overflow-clip-margin: 30px;
-			padding: 20px 0 40px;
-			margin: -20px 0 -40px;
-			&::-webkit-scrollbar {
-				display: none;
-			}
-			&.is-draggable {
-				cursor: grab;
-			}
-			&.is-dragging {
-				cursor: grabbing;
-				scroll-snap-type: none;
-				user-select: none;
-			}
+// Two half-height cards stacked in one column.
+.hero__stack {
+	flex: 0 0 calc(var(--hero-item-w) / 2);
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	height: var(--hero-item-h);
+	scroll-snap-align: start;
+}
+
+// The hero's carousel: fixed-size cards and translucent arrows, unlike the
+// card rows in styles/carousel.less.
+.carousel--hero {
+	position: relative;
+	padding-top: 25px;
+
+	.carousel__track {
+		display: flex;
+		gap: 16px;
+		overflow-x: auto;
+		overflow-y: clip;
+		scroll-snap-type: x mandatory;
+		scroll-behavior: smooth;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+		overflow-clip-margin: 30px;
+		padding: 20px 0 40px;
+		margin: -20px 0 -40px;
+		&::-webkit-scrollbar {
+			display: none;
+		}
+		// States toggled by dragCarousel.ts.
+		&.is-draggable {
+			cursor: grab;
+		}
+		&.is-dragging {
+			cursor: grabbing;
+			scroll-snap-type: none;
+			user-select: none;
 		}
 	}
-	.hero__stack {
-		flex: 0 0 calc(var(--hero-item-w) / 2);
-		min-width: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-		height: var(--hero-item-h);
-		scroll-snap-align: start;
-	}
+
 	.carousel__arrow {
 		position: absolute;
 		top: 50%;
 		transform: translateY(-50%);
+		z-index: 5;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		width: 46px;
 		height: 44px;
 		background: rgba(255, 255, 255, 0.3);
 		backdrop-filter: blur(5px);
 		-webkit-backdrop-filter: blur(5px);
 		border-radius: var(--border-radius-10);
-
-		box-shadow: inset .5px .5px 0 0 rgba(29,27,32,.12),inset -0.5px -0.5px 0 0 rgba(29,27,32,.12);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		z-index: 5;
+		box-shadow: inset .5px .5px 0 0 rgba(29,27,32,.12), inset -0.5px -0.5px 0 0 rgba(29,27,32,.12);
 		color: var(--color-white);
 		transition: background .15s, color .15s, transform .15s, opacity .15s, border-color .15s;
 		&:hover {
@@ -72,35 +80,15 @@
 			opacity: 0;
 			pointer-events: none;
 		}
-		&.carousel__arrow--prev {
-			left: 20px;
-		}
-		&.carousel__arrow--next {
-			right: 20px;
-			transform: translateY(-50%) rotate(180deg);
-		}
 	}
-	.carousel__dots {
-		display: flex;
-		justify-content: center;
-		gap: 6px;
-		margin-top: 20px;
-		// Injected client-side by dragCarousel.ts, so they never receive
-		// Astro's scoping attribute — hence :global.
-		:global(.carousel__dot) {
-			width: 20px;
-			height: 4px;
-			border-radius: var(--border-radius-100);
-			background: var(--color-black-20);
-			cursor: pointer;
-			transition: background .15s, width .2s;
-			&:hover {
-				background: var(--color-grey);
-			}
-			&.is-active {
-				background: var(--color-red);
-				width: 28px;
-			}
-		}
+
+	.carousel__arrow--prev {
+		left: 20px;
+	}
+
+	// The sprite's arrow points left, so the "next" one is turned around.
+	.carousel__arrow--next {
+		right: 20px;
+		transform: translateY(-50%) rotate(180deg);
 	}
 }

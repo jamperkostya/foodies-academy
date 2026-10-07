@@ -13,10 +13,10 @@ const percent = Math.max(0, Math.min(100, (rating / MAX) * 100));
 
 <span class="stars" style={`--stars-fill: ${percent}%`} role="img" aria-label={`Рейтинг ${rating} из ${MAX}`}>
 	<span class="stars__track" aria-hidden="true">
-		{Array.from({ length: MAX }).map(() => <Icon name="star" width={19} height={19} />)}
+		{Array.from({ length: MAX }).map(() => <Icon class="stars__icon" name="star" width={19} height={19} />)}
 	</span>
 	<span class="stars__fill" aria-hidden="true">
-		{Array.from({ length: MAX }).map(() => <Icon name="star" width={19} height={19} />)}
+		{Array.from({ length: MAX }).map(() => <Icon class="stars__icon" name="star" width={19} height={19} />)}
 	</span>
 </span>
 
@@ -28,10 +28,11 @@ const percent = Math.max(0, Math.min(100, (rating / MAX) * 100));
 	&__track,
 	&__fill {
 		display: flex;
+	}
 
-		:global(svg) {
-			flex-shrink: 0;
-		}
+	// Icon's <svg>, outside this component's scope.
+	:global(.stars__icon) {
+		flex-shrink: 0;
 	}
 
 	&__track {

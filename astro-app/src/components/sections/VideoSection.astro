@@ -20,6 +20,7 @@ const groups = [...new Set(videos.map((video) => video.category))];
 	<Carousel variant="videos" groups={groups} href={href}>
 		{videos.map((video) => (
 			<VideoCard
+				class="carousel__item"
 				href={`/video/${video.slug}`}
 				size="compact"
 				image={video.image}

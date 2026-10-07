@@ -113,7 +113,7 @@ import Icon from "../ui/Icon.astro";
 	font-weight: 600;
 }
 
-.search__list :global(mark) {
+.search__list :global(.search__match) {
 	background: none;
 	color: var(--color-red);
 	font-weight: 700;
@@ -215,7 +215,7 @@ import Icon from "../ui/Icon.astro";
 				item.setAttribute("aria-selected", "false");
 
 				const title = el("span", "search__title");
-				title.append(...highlight(result.title, query));
+				title.append(...highlight(result.title, query, "search__match"));
 				const text = el("span", "search__text");
 				text.append(title, el("span", "search__meta", result.meta));
 				item.append(el("span", "search__icon", result.icon), text);

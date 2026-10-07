@@ -1,13 +1,15 @@
 ---
+import { Image } from "astro:assets";
 import Icon from "../ui/Icon.astro";
 import CategoriesMenu from "./CategoriesMenu.astro";
 import SearchForm from "./SearchForm.astro";
+import logo from "../../assets/images/logotype.jpg";
 ---
 
 <header class="header">
 	<div class="header__inner container flex gap-40 flex-center justify-between">
 		<a href="/" class="header__logo">
-			<img src="/images/logotype.jpg" alt="Foodies" width="242" height="81">
+			<Image src={logo} alt="Foodies" width={242} height={81} loading="eager" />
 		</a>
 
 		<div class="header__right-part flex gap-20 flex-center">
@@ -19,7 +21,7 @@ import SearchForm from "./SearchForm.astro";
 			<div class="header__icons flex gap-13 flex-center">
 				<button type="button" class="header__icon-btn flex gap-5 flex-center" aria-label="Избранное">
 					<Icon name="favorites" width={24} height={24} />
-					<span>708</span>
+					<span class="header__count">708</span>
 				</button>
 				<div class="header__register-block flex gap-20 flex-center">
 					<button type="button" class="header__icon-btn" aria-label="Профиль">
@@ -29,7 +31,7 @@ import SearchForm from "./SearchForm.astro";
 					<a href="#" class="header__register-link">Регистрация</a>
 				</div>
 			</div>
-			<button type="button" class="header__burger" aria-label="Меню" aria-expanded="false"><span></span></button>
+			<button type="button" class="header__burger" aria-label="Меню" aria-expanded="false"><span class="header__burger-line"></span></button>
 		</div>
 	</div>
 </header>
@@ -37,3 +39,14 @@ import SearchForm from "./SearchForm.astro";
 <style lang="less">
 	@import "./Header.less";
 </style>
+
+<script>
+	// Shadow under the sticky header once the page is scrolled.
+	const header = document.querySelector<HTMLElement>(".header");
+
+	if (header) {
+		const onScroll = () => header.classList.toggle("is-scrolled", window.scrollY > 8);
+		window.addEventListener("scroll", onScroll, { passive: true });
+		onScroll();
+	}
+</script>

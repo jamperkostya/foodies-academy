@@ -22,11 +22,11 @@ export const findItems = (items: SearchItem[], query: string) =>
 export const el = <K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text = "") =>
 	Object.assign(document.createElement(tag), { className, textContent: text });
 
-// The title with the matched part wrapped in <mark>. Built from text nodes,
-// never innerHTML, so the data can't inject markup.
-export const highlight = (title: string, query: string) => {
+// The title with the matched part wrapped in <mark class={markClass}>. Built
+// from text nodes, never innerHTML, so the data can't inject markup.
+export const highlight = (title: string, query: string, markClass: string) => {
 	const start = normalize(title).indexOf(query);
 	if (start < 0) return [title];
 	const end = start + query.length;
-	return [title.slice(0, start), el("mark", "", title.slice(start, end)), title.slice(end)];
+	return [title.slice(0, start), el("mark", markClass, title.slice(start, end)), title.slice(end)];
 };

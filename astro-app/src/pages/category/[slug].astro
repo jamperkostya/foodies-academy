@@ -32,13 +32,13 @@ const categoryRecipes = recipes.filter((recipe) => category.groups.includes(reci
 				{categoryRecipes.map((recipe) => <RecipeCard recipe={recipe} />)}
 			</CardGrid>
 		) : (
-			<p class="category-page__empty">В этой категории пока нет рецептов.</p>
+			<p class="category-empty">В этой категории пока нет рецептов.</p>
 		)}
 	</Section>
 </BaseLayout>
 
 <style lang="less">
-.category-page__empty {
+.category-empty {
 	font-size: 16px;
 	line-height: 24px;
 	color: var(--color-grey);

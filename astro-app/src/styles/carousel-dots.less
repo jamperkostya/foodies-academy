@@ -1,0 +1,25 @@
+// Dot pagination under a carousel, shared by carousel.less and Hero.less.
+.carousel__dots {
+	display: flex;
+	justify-content: center;
+	gap: 6px;
+	margin-top: 20px;
+}
+
+// Injected client-side by dragCarousel.ts, so they never receive Astro's
+// scoping attribute — hence :global.
+.carousel__dots :global(.carousel__dot) {
+	width: 20px;
+	height: 4px;
+	border-radius: var(--border-radius-100);
+	background: var(--color-black-20);
+	cursor: pointer;
+	transition: background .15s, width .2s;
+	&:hover {
+		background: var(--color-grey);
+	}
+	&:global(.is-active) {
+		background: var(--color-red);
+		width: 28px;
+	}
+}

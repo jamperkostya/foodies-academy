@@ -15,7 +15,8 @@ describe("Header", () => {
 	});
 
 	it("gives the logo a meaningful alt text and explicit dimensions (no CLS)", () => {
-		const img = html.match(/<img[^>]*logotype\.jpg[^>]*>/)?.[0];
+		// Optimised by astro:assets, so the file name keeps "logotype" but not ".jpg".
+		const img = html.match(/<img[^>]*logotype[^>]*>/)?.[0];
 		expect(img).toBeDefined();
 		expect(img).toMatch(/alt="[^"]+"/);
 		expect(img).not.toMatch(/alt=""/);

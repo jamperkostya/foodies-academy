@@ -4,11 +4,14 @@ interface Props {
 	name: string;
 	width?: number;
 	height?: number;
+	// BEM class from the parent, e.g. "stars__icon". The parent styles it with
+	// :global(.stars__icon), since the <svg> is outside its scope.
+	class?: string;
 }
 
-const { name, width = 24, height = 24 } = Astro.props;
+const { name, width = 24, height = 24, class: className } = Astro.props;
 ---
 
-<svg width={width} height={height} aria-hidden="true" focusable="false">
+<svg class={className} width={width} height={height} aria-hidden="true" focusable="false">
 	<use href={`/images/icons/sprite.svg#${name}`}></use>
 </svg>

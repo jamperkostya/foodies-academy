@@ -4,13 +4,15 @@ import type { Category } from "../../types/category";
 
 interface Props {
 	category: Category;
+	// Mix-in class from the parent, e.g. "carousel__item".
+	class?: string;
 }
 
-const { category } = Astro.props;
+const { category, class: className } = Astro.props;
 
 const recipeWord = recipesWord(category.recipesCount);
 ---
-<a href={`/category/${category.slug}`} class="category-card" data-groups={JSON.stringify(category.groups)} data-recipes-count={category.recipesCount}>
+<a href={`/category/${category.slug}`} class:list={["category-card", className]} data-groups={JSON.stringify(category.groups)} data-recipes-count={category.recipesCount}>
 	<div class="category-card__img" style={`background-image:url('${category.image}')`}></div>
 	<div class="category-card__label">
 		<strong class="category-card__title">{category.title}</strong>

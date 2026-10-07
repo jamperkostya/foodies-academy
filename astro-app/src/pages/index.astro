@@ -38,7 +38,7 @@ const lastNews = news.slice(0, 7);
 
 	<RecipeSection recipes={topRecipes}>
 		<Fragment slot="title">
-			<span>ТОП 5</span> рецептов
+			<span class="section-title__accent">ТОП 5</span> рецептов
 		</Fragment>
 	</RecipeSection>
 
@@ -48,25 +48,25 @@ const lastNews = news.slice(0, 7);
 		href="/recipes/new"
 	>
 		<Fragment slot="title">
-			<span>Новые</span> рецепты
+			<span class="section-title__accent">Новые</span> рецепты
 		</Fragment>
 	</RecipeSection>
 	
 	<CategorySection categories={categories} href="/categories">
 		<Fragment slot="title">
-			<span>Популярные</span> категории
+			<span class="section-title__accent">Популярные</span> категории
 		</Fragment>
 	</CategorySection>
 
 	<VideoSection videos={videos} href="/video">
 		<Fragment slot="title">
-			<span>Видео</span>рецепты
+			<span class="section-title__accent">Видео</span>рецепты
 		</Fragment>
 	</VideoSection>
 	
 	<RecipeCollectionsSection>
 		<Fragment slot="title">
-			<span>Подборки</span> Рецептов
+			<span class="section-title__accent">Подборки</span> Рецептов
 		</Fragment>
 	</RecipeCollectionsSection>
 
@@ -76,7 +76,7 @@ const lastNews = news.slice(0, 7);
 		href="/recipes"
 	>
 		<Fragment slot="title">
-			<span>Рецепты</span> по ингредиентам
+			<span class="section-title__accent">Рецепты</span> по ингредиентам
 		</Fragment>
 	</RecipeSection>
 	
@@ -86,7 +86,7 @@ const lastNews = news.slice(0, 7);
 		news={lastNews}
 	>
 		<Fragment slot="title">
-			<span>Последние</span> новости
+			<span class="section-title__accent">Последние</span> новости
 		</Fragment>
 	</LastNewsSection>
 	
@@ -94,7 +94,7 @@ const lastNews = news.slice(0, 7);
 	
 	<TrustSection>
 		<Fragment slot="title">
-			Нам <span>доверяют</span>
+			Нам <span class="section-title__accent">доверяют</span>
 		</Fragment>
 	</TrustSection>
 	

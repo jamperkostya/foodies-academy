@@ -29,7 +29,7 @@ describe("CategorySection", () => {
 		const html = await render([category("1", ["Супы"]), category("2", ["Десерты"])]);
 
 		expect(html).toMatch(/is-active"[^>]*aria-pressed="true"[^>]*data-group=""/);
-		expect(html.match(/class="category-card"/g)).toHaveLength(2);
+		expect(html.match(/class="category-card carousel__item"/g)).toHaveLength(2);
 		expect(html).not.toMatch(/<a[^>]*category-card[^>]*hidden/);
 	});
 

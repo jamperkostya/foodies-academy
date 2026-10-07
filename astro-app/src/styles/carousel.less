@@ -79,11 +79,11 @@
 	}
 }
 
-// The cards are other components, so they're reached with :global. Sizing
-// them is the carousel's job: a fixed --carousel-item-w, or an equal share of
-// the row for --carousel-per-view cards. `.carousel` in front keeps this above
-// the cards' own sizing (e.g. .video-card--tall in the hero).
-.carousel .carousel__track > :global(*) {
+// Each card is mixed with `carousel__item` by the section that renders it; the
+// cards are other components, hence :global. Sizing them is the carousel's
+// job: a fixed --carousel-item-w, or an equal share of the row for
+// --carousel-per-view cards.
+.carousel__track :global(.carousel__item) {
 	flex: 0 0 var(--carousel-item-w, calc((100% - var(--carousel-gap) * (var(--carousel-per-view) - 1)) / var(--carousel-per-view)));
 	min-width: 0;
 	scroll-snap-align: start;
@@ -91,7 +91,7 @@
 
 // Cards filtered out by filterableCarousel.ts. Cards set their own display,
 // which would otherwise beat the UA style for [hidden].
-.carousel .carousel__track > :global([hidden]) {
+.carousel__track :global(.carousel__item[hidden]) {
 	display: none;
 }
 
@@ -143,27 +143,4 @@
 	}
 }
 
-.carousel__dots {
-	display: flex;
-	justify-content: center;
-	gap: 6px;
-	margin-top: 20px;
-}
-
-// Injected client-side by dragCarousel.ts, so they never receive Astro's
-// scoping attribute — hence :global.
-.carousel__dots :global(.carousel__dot) {
-	width: 20px;
-	height: 4px;
-	border-radius: var(--border-radius-100);
-	background: var(--color-black-20);
-	cursor: pointer;
-	transition: background .15s, width .2s;
-	&:hover {
-		background: var(--color-grey);
-	}
-	&:global(.is-active) {
-		background: var(--color-red);
-		width: 28px;
-	}
-}
+@import "./carousel-dots.less";

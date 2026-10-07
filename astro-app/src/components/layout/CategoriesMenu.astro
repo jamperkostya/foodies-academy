@@ -12,7 +12,7 @@ const columns = [...new Set(categories.flatMap((category) => category.groups))].
 <div class="categories-menu">
 	<button type="button" class="categories-menu__toggle" aria-expanded="false" aria-controls="categories-menu-panel">
 		Категории
-		<Icon name="menu-arrow" width={12} height={7} />
+		<Icon class="categories-menu__arrow" name="menu-arrow" width={12} height={7} />
 	</button>
 
 	<nav class="categories-menu__panel" id="categories-menu-panel" aria-label="Категории" hidden>
@@ -54,14 +54,14 @@ const columns = [...new Set(categories.flatMap((category) => category.groups))].
 	font-weight: 600;
 	font-size: 14px;
 	line-height: 16px;
-	// The arrow is Icon's <svg>, outside this component's scope.
-	:global(svg) {
+	// Icon's <svg>, outside this component's scope.
+	:global(.categories-menu__arrow) {
 		transition: transform .2s var(--ease);
 	}
 	&[aria-expanded="true"] {
 		background: var(--color-red);
 		border-color: var(--color-red);
-		:global(svg) {
+		:global(.categories-menu__arrow) {
 			transform: rotate(180deg);
 		}
 	}

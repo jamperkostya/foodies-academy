@@ -15,12 +15,14 @@ interface Props {
 	videoId?: string;
 	// Filter groups this card matches, when its carousel has filters.
 	groups?: string[];
+	// Mix-in class from the parent, e.g. "carousel__item".
+	class?: string;
 }
 
-const { href, size, image, title, views, likes, comments, rating, videoId, groups } = Astro.props;
+const { href, size, image, title, views, likes, comments, rating, videoId, groups, class: className } = Astro.props;
 ---
 
-<a href={href} class={`video-card video-card--${size}`} data-groups={groups && JSON.stringify(groups)}>
+<a href={href} class:list={["video-card", `video-card--${size}`, className]} data-groups={groups && JSON.stringify(groups)}>
 	<div class="video-card__img" style={`background-image:url('${image}')`}></div>
 	<div class="video-card__top">
 		{/* A span, not a button: the whole card is already a link. */}

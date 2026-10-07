@@ -21,7 +21,7 @@ const groups = groupsOf && [...new Set(recipes.flatMap(groupsOf))];
 	<slot name="title" slot="title" />
 	<Carousel variant="recipes" groups={groups} href={href}>
 		{recipes.map((recipe) => (
-			<RecipeCard recipe={recipe} groups={groupsOf?.(recipe)} />
+			<RecipeCard class="carousel__item" recipe={recipe} groups={groupsOf?.(recipe)} />
 		))}
 	</Carousel>
 </Section>

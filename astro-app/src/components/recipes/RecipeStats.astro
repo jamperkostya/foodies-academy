@@ -10,16 +10,15 @@ interface Props {
 
 const { views, likes, comments, time } = Astro.props;
 ---
-<div class="recipe-card__stats">
-	<span class="recipe-card__stat flex gap-3"><Icon name="comment" width={16} height={16} />{comments}</span>
-	<span class="recipe-card__stat flex gap-3"><Icon name="like" width={16} height={16} />{likes}</span>
-	<span class="recipe-card__stat flex gap-3"><Icon name="views" width={16} height={16} />{views}</span>
-	<span class="recipe-card__stat recipe-card__stat--time flex gap-3"><Icon name="clock" width={16} height={16} />{time}</span>
+<div class="recipe-stats">
+	<span class="recipe-stats__item flex gap-3"><Icon name="comment" width={16} height={16} />{comments}</span>
+	<span class="recipe-stats__item flex gap-3"><Icon name="like" width={16} height={16} />{likes}</span>
+	<span class="recipe-stats__item flex gap-3"><Icon name="views" width={16} height={16} />{views}</span>
+	<span class="recipe-stats__item recipe-stats__item--time flex gap-3"><Icon name="clock" width={16} height={16} />{time}</span>
 </div>
 
 <style lang="less">
-// Elements of the .recipe-card block, split out of RecipeCard.astro.
-.recipe-card__stats {
+.recipe-stats {
 	display: flex;
 	border-top: var(--border-width) solid var(--color-black-20);
 	padding-top: 13px;
@@ -31,7 +30,7 @@ const { views, likes, comments, time } = Astro.props;
 	gap: 15px;
 }
 
-.recipe-card__stat--time::before {
+.recipe-stats__item--time::before {
 	content: '';
 	border-left: var(--border-width) solid var(--color-grey);
 	margin-right: 15px;

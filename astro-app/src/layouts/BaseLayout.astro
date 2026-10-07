@@ -2,6 +2,7 @@
 import Header from "../components/layout/Header.astro";
 import Footer from "../components/layout/Footer.astro";
 import Breadcrumbs from "../components/layout/Breadcrumbs.astro";
+import BackToTop from "../components/layout/BackToTop.astro";
 import type { Breadcrumb } from "../types/breadcrumb";
 import "../styles/global.less";
 
@@ -25,6 +26,8 @@ const {
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+		<link rel="icon" href="/favicon.ico" sizes="32x32">
 		<title>{title ? `${title} — Foodies.academy` : "Foodies.academy"}</title>
 		<meta name="description" content={description}>
 	</head>
@@ -35,20 +38,6 @@ const {
 		<slot name="hero" />
 		<main class="container"><slot /></main>
 		<Footer />
+		<BackToTop />
 	</body>
 </html>
-
-<script>
-	// Header shadow once the page is scrolled; "back to top" button further down.
-	const header = document.querySelector<HTMLElement>(".header");
-	const backToTop = document.querySelector<HTMLButtonElement>(".back-to-top");
-
-	const onScroll = () => {
-		header?.classList.toggle("is-scrolled", window.scrollY > 8);
-		backToTop?.classList.toggle("is-visible", window.scrollY > 600);
-	};
-	window.addEventListener("scroll", onScroll, { passive: true });
-	onScroll();
-
-	backToTop?.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
-</script>

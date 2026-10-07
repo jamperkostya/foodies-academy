@@ -35,7 +35,7 @@ describe("VideoSection", () => {
 	it("renders compact video cards tagged with their category", async () => {
 		const html = await render();
 
-		expect(html.match(/class="video-card video-card--compact"/g)).toHaveLength(3);
+		expect(html.match(/class="video-card video-card--compact carousel__item"/g)).toHaveLength(3);
 		expect(html).toContain('data-groups="[&quot;Десерты&quot;]"');
 	});
 
