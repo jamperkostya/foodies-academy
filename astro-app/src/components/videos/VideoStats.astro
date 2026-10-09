@@ -28,10 +28,8 @@ const { views, likes, comments, rating } = Astro.props;
 </div>
 
 <style lang="less">
-// Always on the right edge of the card, with each row right-aligned, whether
-// or not there's a YouTube badge on the left.
+// Each row right-aligned; VideoCard puts the block on the card's right edge.
 .video-stats {
 	justify-items: end;
-	margin-left: auto;
 }
 </style>

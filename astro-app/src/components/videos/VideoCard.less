@@ -36,14 +36,19 @@
 	transition: transform .5s var(--ease);
 }
 
+// Stats stay on the right edge whether or not there's a YouTube badge.
 .video-card__top {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: flex-end;
 	font-weight: 500;
 	font-size: 14px;
 	line-height: 17px;
 	gap: 12px;
+}
+
+.video-card__play-badge {
+	margin-right: auto;
 }
 
 .video-card__title {

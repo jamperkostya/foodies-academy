@@ -1,6 +1,35 @@
 ---
-// Recipe page is not built yet: no paths, so no empty pages go to production.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../../components/layout/PageHero.astro";
+import { recipes } from "../../data/recipes";
+import type { Recipe } from "../../types/recipe";
+import RecipeSection from "../../components/sections/RecipeSection.astro";
+
 export function getStaticPaths() {
-	return [];
+	return recipes.map((recipe) => ({ params: { slug: recipe.slug }, props: { recipe } }));
 }
+
+interface Props {
+	recipe: Recipe;
+}
+const similarRecipes = recipes
+.filter((recipe) => recipe.isTop)
+.slice(0, 10);
+
+const { recipe } = Astro.props;
 ---
+
+<BaseLayout
+	title={recipe.title}
+	description={`${recipe.title}: рецепт с пошаговыми фото на Foodies Academy.`}
+	breadcrumbs={[{ label: "Рецепты", href: "/recipes" }, { label: recipe.title }]}>
+	<PageHero slot="hero" eyebrow={recipe.category}>
+		{recipe.title}
+	</PageHero>
+	
+	<RecipeSection recipes={similarRecipes}>
+		<Fragment slot="title">
+			<span class="section-title__accent">Похожие</span> рецепты
+		</Fragment>
+	</RecipeSection>
+</BaseLayout>

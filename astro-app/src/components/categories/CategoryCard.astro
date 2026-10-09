@@ -4,15 +4,17 @@ import type { Category } from "../../types/category";
 
 interface Props {
 	category: Category;
+	// grid: a square card in the catalogue grid, label at the bottom left.
+	variant?: "grid";
 	// Mix-in class from the parent, e.g. "carousel__item".
 	class?: string;
 }
 
-const { category, class: className } = Astro.props;
+const { category, variant, class: className } = Astro.props;
 
 const recipeWord = recipesWord(category.recipesCount);
 ---
-<a href={`/category/${category.slug}`} class:list={["category-card", className]} data-groups={JSON.stringify(category.groups)} data-recipes-count={category.recipesCount}>
+<a href={`/category/${category.slug}`} class:list={["category-card", variant && `category-card--${variant}`, className]} data-groups={JSON.stringify(category.groups)} data-recipes-count={category.recipesCount}>
 	<div class="category-card__img" style={`background-image:url('${category.image}')`}></div>
 	<div class="category-card__label">
 		<strong class="category-card__title">{category.title}</strong>
@@ -78,15 +80,16 @@ const recipeWord = recipesWord(category.recipesCount);
 	display: block;
 	line-height: 24px;
 }
-.card-list-item {
-	aspect-ratio: var(--card-media-ratio, 1/1);
+
+.category-card--grid {
+	aspect-ratio: 1/1;
 	align-items: end;
 	justify-content: flex-start;
 	.category-card__label {
 		padding: 25px;
-		.category-card__title {
-			text-align: left;
-		}
+	}
+	.category-card__title {
+		text-align: left;
 	}
 }
 </style>

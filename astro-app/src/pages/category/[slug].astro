@@ -2,19 +2,13 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHero from "../../components/layout/PageHero.astro";
 import SortBar from "../../components/ui/SortBar.astro";
-import Section from "../../components/layout/Section.astro";
 import CardGrid from "../../components/ui/CardGrid.astro";
 import RecipeCard from "../../components/recipes/RecipeCard.astro";
 import { categories } from "../../data/categories";
 import { recipes } from "../../data/recipes";
-import { plural, recipesWord } from "../../utils/plural";
+import { recipesWord } from "../../utils/plural";
 import type { Category } from "../../types/category";
 import SEOTextSection from "../../components/sections/SEOTextSection.astro";
-
-const totalRecipes = categories.reduce((sum, category) => sum + category.recipesCount, 0);
-const description =
-`${totalRecipes.toLocaleString("ru-RU")} ${recipesWord(totalRecipes)}, ` +
-"разложенных по полочкам — от завтрака до праздничного стола. Выберите категорию и найдите то, что приготовите уже сегодня.";
 
 export function getStaticPaths() {
 	return categories.map((category) => ({ params: { slug: category.slug }, props: { category } }));
@@ -29,11 +23,11 @@ const { category } = Astro.props;
 // Mock data has no category ↔ recipe link yet, so show the recipes from the
 // same dish groups (e.g. every "Супы" recipe on the "Борщ" page).
 const categoryRecipes = recipes.filter((recipe) => category.groups.includes(recipe.category));
+const description = `${category.recipesCount.toLocaleString("ru-RU")} ${recipesWord(category.recipesCount)} с пошаговыми фото.`;
 // "popular" keeps the data's own order.
 const sortOptions = [
 	{ value: "popular", label: "По популярности" },
 	{ value: "az", label: "По алфавиту" },
-	{ value: "count", label: "По числу рецептов" },
 ];
 ---
 <BaseLayout
@@ -44,10 +38,10 @@ const sortOptions = [
 		<span class="page-hero__accent">{category.title}</span>
 	</PageHero>
 	
-	<Section class="catalog">
+	<section class="catalog section-item">
 		<SortBar
-			count={categories.length}
-			countWord={plural(categories.length, ["категория", "категории", "категорий"])}
+			count={categoryRecipes.length}
+			countWord={recipesWord(categoryRecipes.length)}
 			options={sortOptions}
 		/>
 		{categoryRecipes.length ? (
@@ -57,11 +51,15 @@ const sortOptions = [
 		) : (
 			<p class="category-empty">В этой категории пока нет рецептов.</p>
 		)}
-	</Section>
+	</section>
 	<SEOTextSection />
 </BaseLayout>
 
 <style lang="less">
+.catalog {
+	padding-top: 25px;
+}
+
 .category-empty {
 	font-size: 16px;
 	line-height: 24px;
@@ -76,13 +74,11 @@ const sortOptions = [
 	const grid = catalog?.querySelector<HTMLElement>(".card-grid");
 
 	if (select && grid) {
-		const cards = [...grid.querySelectorAll<HTMLElement>(".category-card")];
-		const title = (card: HTMLElement) => card.querySelector(".category-card__title")?.textContent ?? "";
-		const recipes = (card: HTMLElement) => Number(card.dataset.recipesCount);
+		const cards = [...grid.querySelectorAll<HTMLElement>(".recipe-card")];
+		const title = (card: HTMLElement) => card.querySelector(".recipe-card__title")?.textContent ?? "";
 
 		const sorters: Record<string, (a: HTMLElement, b: HTMLElement) => number> = {
 			az: (a, b) => title(a).localeCompare(title(b), "ru"),
-			count: (a, b) => recipes(b) - recipes(a),
 		};
 
 		select.addEventListener("change", () => {
