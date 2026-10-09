@@ -23,7 +23,7 @@ export const GET: APIRoute = () => {
 			title: recipe.title,
 			meta: `${recipe.time} мин · ${recipe.category}`,
 			icon: icon(recipe.category),
-			href: `/recipes/${recipe.slug}`,
+			href: `/recipe/${recipe.slug}`,
 		})),
 		...categories.map((category) => ({
 			title: category.title,

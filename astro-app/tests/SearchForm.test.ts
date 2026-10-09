@@ -46,7 +46,7 @@ describe("/search-index.json", () => {
 	it("describes each suggestion with a meta line, an icon and a link", () => {
 		const recipe = recipes[0];
 		expect(index).toContainEqual(
-			expect.objectContaining({ title: recipe.title, meta: `${recipe.time} мин · ${recipe.category}`, href: `/recipes/${recipe.slug}` })
+			expect.objectContaining({ title: recipe.title, meta: `${recipe.time} мин · ${recipe.category}`, href: `/recipe/${recipe.slug}` })
 		);
 		expect(index).toContainEqual(expect.objectContaining({ title: videos[0].title, href: `/video/${videos[0].slug}`, icon: "🎬" }));
 		for (const item of index) expect(item.icon).not.toBe("");

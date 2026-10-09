@@ -13,7 +13,7 @@ interface Props {
 
 const { recipe, groups, class: className } = Astro.props;
 ---
-<a href={`/recipes/${recipe.slug}`} class:list={["recipe-card", className]} data-groups={groups && JSON.stringify(groups)}>
+<a href={`/recipe/${recipe.slug}`} class:list={["recipe-card", className]} data-groups={groups && JSON.stringify(groups)}>
 	<div class="recipe-card__media">
 		<div class="recipe-card__img" style={`background-image: url('${recipe.image}')`}></div>
 		<span class="recipe-card__badge badge">{recipe.category}</span>

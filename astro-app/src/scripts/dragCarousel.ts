@@ -44,15 +44,22 @@ class DragCarousel {
 			this.startX = e.clientX;
 			this.startScroll = t.scrollLeft;
 			t.classList.add("is-dragging");
-			t.setPointerCapture(e.pointerId);
 		});
 
 		t.addEventListener("pointermove", (e) => {
 			if (!this.isDown) return;
 			const dx = e.clientX - this.startX;
-			if (Math.abs(dx) > 4) this.dragged = true;
+			// Capture only once it's a real drag: a captured pointer sends the
+			// click to the track instead of the card, so links wouldn't open.
+			if (!this.dragged && Math.abs(dx) > 4) {
+				this.dragged = true;
+				t.setPointerCapture(e.pointerId);
+			}
 			t.scrollLeft = this.startScroll - dx;
 		});
+
+		// Cards are links: stop the browser's own link drag from taking over.
+		t.addEventListener("dragstart", (e) => e.preventDefault());
 
 		const end = () => {
 			if (!this.isDown) return;
