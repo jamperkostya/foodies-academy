@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import PageHero from "../../components/layout/PageHero.astro";
+import RecipeHero from "../../components/sections/RecipeHero.astro";
+import Icon from "../../components/ui/Icon.astro";
 import { recipes } from "../../data/recipes";
 import type { Recipe } from "../../types/recipe";
 import RecipeSection from "../../components/sections/RecipeSection.astro";
@@ -23,13 +24,113 @@ const { recipe } = Astro.props;
 	title={recipe.title}
 	description={`${recipe.title}: рецепт с пошаговыми фото на Foodies Academy.`}
 	breadcrumbs={[{ label: "Рецепты", href: "/recipes" }, { label: recipe.title }]}>
-	<PageHero slot="hero" eyebrow={recipe.category}>
-		{recipe.title}
-	</PageHero>
 	
+	<RecipeHero slot="hero"></RecipeHero>
+	
+	<section class="recipe-quick-facts" slot="hero">
+		<div class="recipe-quick-facts__inner container flex gap-10 items-center justify-between">
+			<div class="quick-fact-item flex gap-10 items-center">
+				<Icon name="clock" width={16} height={16} />
+				<div class="quick-fact-item-data flex">
+					<span class="quick-fact-item__value block">15 мин</span>
+					<span class="quick-fact-item__description block">Подготовка</span>
+				</div>
+			</div>
+			<div class="quick-fact-item flex gap-10 items-center">
+				<Icon name="fire" width={18} height={18} />
+				<div class="quick-fact-item-data flex">
+					<span class="quick-fact-item__value block">45 мин</span>
+					<span class="quick-fact-item__description block">Готовка</span>
+				</div>
+			</div>
+			<div class="quick-fact-item flex gap-10 items-center">
+				<Icon name="total" width={16} height={16} />
+				<div class="quick-fact-item-data flex">
+					<span class="quick-fact-item__value block">45 мин</span>
+					<span class="quick-fact-item__description block">Всего</span>
+				</div>
+			</div>
+			<div class="quick-fact-item flex gap-10 items-center">
+				<Icon name="difficult" width={16} height={16} />
+				<div class="quick-fact-item-data flex">
+					<span class="quick-fact-item__value block">легко</span>
+					<span class="quick-fact-item__description block">Сложность</span>
+				</div>
+			</div>
+			<div class="quick-fact-item flex gap-10 items-center">
+				<Icon name="kcal" width={24} height={24} />
+				<div class="quick-fact-item-data flex">
+					<span class="quick-fact-item__value block">650 ккал</span>
+					<span class="quick-fact-item__description block">На порцию</span>
+				</div>
+			</div>
+			<div class="quick-fact-item flex gap-10 items-center">
+				<Icon name="profile" width={18} height={20} />
+				<div class="quick-fact-item-data quick-fact-item__servings flex">
+					<div class="servings-stepper flex gap-10">
+						<button type="button" id="servingsMinus" aria-label="Уменьшить порции">−</button>
+						<strong id="servingsValue">4</strong>
+						<button type="button" id="servingsPlus" aria-label="Увеличить порции">+</button>
+					</div>
+					<span class="quick-fact-item__description block">Порции</span>
+				</div>
+			</div>
+		</div>
+	</section>
 	<RecipeSection recipes={similarRecipes}>
 		<Fragment slot="title">
 			<span class="section-title__accent">Похожие</span> рецепты
 		</Fragment>
 	</RecipeSection>
 </BaseLayout>
+
+<style lang="less">
+.recipe-quick-facts {
+	background: var(--color-white);
+	border-bottom: var(--border-width) solid var(--color-border-search-form);
+	padding: 10px 5px;
+	.recipe-quick-facts__inner {
+		.quick-fact-item {
+			.quick-fact-item-data {
+				flex-wrap: wrap;
+				.quick-fact-item__description, .quick-fact-item__value {
+					width: 100%;
+				}
+				.quick-fact-item__value {
+					font-weight: 700;
+					font-size: 16px;
+				}
+				.quick-fact-item__description {
+					color: var(--color-grey);
+					text-transform: uppercase;
+					letter-spacing: .5px;
+					font-size: 10px;
+				}
+				.quick-fact-item__servings {
+					
+				}
+			}
+			button {
+				width: 26px;
+				height: 26px;
+				border-radius: var(--border-radius-1000);
+				border: var(--border-width) solid var(--color-grey);
+				background: var(--gray-white);
+				font-size: 16px;
+				line-height: 1;
+				font-weight: 700;
+				color: var(--color-black);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				transition: background .15s, color .15s;
+				&:hover {
+					background: var(--color-red);
+					color: var(--color-white);
+					border-color: var(--color-red);
+				}
+			}
+		}
+	}
+}
+</style>

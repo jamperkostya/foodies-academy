@@ -1,0 +1,122 @@
+---
+import Icon from "../ui/Icon.astro";
+import Stars from "../ui/Stars.astro";
+---
+<section class="recipe-hero">
+	<div class="recipe-hero__container container grid gap-40 items-center">
+		<div class="recipe-hero__content grid gap-30">
+			<div class="recipe-hero__tags flex gap-10 items-center">
+				<span class="badge badge--static">Основные блюда</span>
+				<span class="recipe-hero__cuisine">🇮🇹 Итальянская кухня</span>
+			</div>
+			<h1 class="recipe-hero__title section-title">Спагетти Алла Карбонара<br><span class="recipe-hero__accent section-title__accent">(Spaghetti alla Carbonara)</span></h1>
+			<div class="recipe-hero__desc">
+				<p>Классическая римская паста без единой капли сливок: только яйца, панчетта, пекорино и много свежемолотого перца. Секрет кремового соуса — в технике, а не в лишних ингредиентах.</p>
+			</div>
+			<div class="recipe-hero__meta flex items-center gap-10">
+				<Stars rating="4.2" />
+				<strong>4.8</strong>
+				<a href="#reviews" class="recipe-hero__reviews-link">1 243 отзыва</a>
+			</div>
+			<div class="recipe-hero__actions flex items-center gap-20">
+				<button class="btn">
+					Перейти к рецепту ↓
+				</button>
+				<button class="icon-round-btn" id="saveBtn" aria-label="Сохранить в избранное">
+					<Icon name="bookmark" width={18} height={18} />
+				</button>
+				<button class="icon-round-btn" id="shareBtn" aria-label="Поделиться">
+					<Icon name="share" width={18} height={18} />
+				</button>
+				<button class="icon-round-btn" id="printBtn" aria-label="Распечатать">
+					<Icon name="print" width={18} height={18} />
+				</button>
+			</div>
+		</div>
+		<div class="recipe-hero__media">
+			<div class="recipe-hero__img" style="background-image:url('https://foodies.academy/wp-content/uploads/2018/09/DSC06146-1-601x601.jpg')"></div>
+			<button class="recipe-hero__play" data-video-id="1">
+				<Icon name="youtube-play" width={42} height={29} />
+				Смотреть видео
+			</button>
+		</div>
+	</div>
+</section>
+
+<style lang="less">
+.recipe-hero {
+	padding: 25px 0;
+	background: var(--color-gradient-violet);
+	text-align: center;
+	.recipe-hero__container {
+		grid-template-columns: 1fr 1fr;
+		text-align: left;
+	}
+	.recipe-hero__content {
+		.recipe-hero__tags {
+			
+		}
+		.recipe-hero__title {
+			line-height: 36px;
+			margin: 0;
+			.recipe-hero__accent {
+				font-size: 16px;
+			}
+		}
+		.recipe-hero__desc {
+			color: var(--color-dark-grey);
+		}
+		.recipe-hero__reviews-link {
+			text-decoration: underline;
+		}
+		.icon-round-btn {
+			border-radius: var(--border-radius-1000);
+			background: var(--color-white);
+			width: 46px;
+			height: 46px;
+			border: var(--border-width) solid var(--color-border-search-form);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: background .15s, color .15s, border-color .15s, transform .15s;
+			&:hover {
+				background: var(--color-red);
+				color: var(--color-white);
+			}
+		}
+	}
+	.recipe-hero__media {
+		position: relative;
+		border-radius: var(--border-radius-25);
+		overflow: hidden;
+		aspect-ratio: 4/3;
+		.recipe-hero__img {
+			position: absolute;
+			inset: 0;
+			background-size: cover;
+			background-position: center;
+			transition: transform .6s var(--ease);
+		}
+		&:hover .recipe-hero__img {
+			transform: scale(1.04);
+		}
+		.recipe-hero__play {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 10px;
+			background: none;
+			border: none;
+			color: var(--color-white);
+			font-size: 16px;
+			font-weight: 700;
+			text-shadow: 0 2px 10px rgba(0,0,0,.4);
+			z-index: 7;
+		}
+	}
+}
+</style>
