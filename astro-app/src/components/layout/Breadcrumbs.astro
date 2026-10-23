@@ -8,7 +8,7 @@ interface Props {
 
 const trail: Breadcrumb[] = [{ label: "Главная", href: "/" }, ...Astro.props.items];
 ---
-<div class="breadcrumbs">
+<div class="breadcrumbs no-print">
 	<nav class="container" aria-label="Хлебные крошки">
 		<ol class="breadcrumbs__list">
 			{trail.map((item, i) => (

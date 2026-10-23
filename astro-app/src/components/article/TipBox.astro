@@ -1,0 +1,43 @@
+---
+// Highlighted advice: "Совет от шефа", "Главное правило". The text goes in the slot.
+import Icon from "../ui/Icon.astro";
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+<div class="tip-box flex gap-15 items-center">
+	<span class="tip-box__icon flex-center">
+		<Icon name="chef" width={24} height={24} />
+	</span>
+	<div class="tip-box__body">
+		<strong class="tip-box__title">{title}</strong>
+		<p class="tip-box__text"><slot /></p>
+	</div>
+</div>
+
+<style lang="less">
+.tip-box {
+	margin-top: 30px;
+	background: var(--color-pink-20);
+	padding: 15px 20px;
+	border-radius: var(--border-radius-25);
+	&__icon {
+		width: 48px;
+		height: 48px;
+		flex-shrink: 0;
+		border-radius: var(--border-radius-50percents);
+		background: var(--color-white);
+	}
+	&__title {
+		display: block;
+		margin-bottom: 4px;
+	}
+	&__text {
+		font-size: 14px;
+		color: var(--color-grey-dark);
+	}
+}
+</style>

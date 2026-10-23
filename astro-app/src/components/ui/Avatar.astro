@@ -1,0 +1,35 @@
+---
+import { initials } from "../../utils/initials";
+
+interface Props {
+	// Shown as initials.
+	name: string;
+	size?: "md" | "lg";
+}
+
+const { name, size = "md" } = Astro.props;
+---
+<span class:list={["avatar", `avatar--${size}`]} aria-hidden="true">{initials(name)}</span>
+
+<style lang="less">
+.avatar {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	border-radius: var(--border-radius-50percents);
+	background: var(--color-black);
+	color: var(--color-white);
+	font-weight: 700;
+	&--md {
+		width: 38px;
+		height: 38px;
+		font-size: 13px;
+	}
+	&--lg {
+		width: 56px;
+		height: 56px;
+		font-size: 18px;
+	}
+}
+</style>

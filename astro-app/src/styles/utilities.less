@@ -78,3 +78,10 @@
 	line-clamp: 3;
 	overflow: hidden;
 }
+
+// Hidden when the page is printed (header, footer, page actions, sidebars).
+@media print {
+	.no-print {
+		display: none !important;
+	}
+}

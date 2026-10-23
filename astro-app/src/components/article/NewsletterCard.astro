@@ -1,0 +1,60 @@
+---
+// Newsletter sign-up in the article sidebar. Nothing is sent anywhere yet:
+// on submit the form is swapped for the success message.
+import SidebarCard from "./SidebarCard.astro";
+
+interface Props {
+	title: string;
+	text?: string;
+}
+
+const { title, text = "Раз в неделю — только лучшее, без спама." } = Astro.props;
+---
+<SidebarCard title={title} accent>
+	<p class="newsletter-card__text">{text}</p>
+	<form class="newsletter-card__form">
+		<input class="newsletter-card__input" type="email" placeholder="E-mail" aria-label="E-mail" required>
+		<button type="submit" class="btn newsletter-card__btn">Подписаться</button>
+	</form>
+	<p class="newsletter-card__success" hidden><strong>Готово!</strong> Первое письмо придёт в понедельник.</p>
+</SidebarCard>
+
+<script>
+	document.querySelectorAll<HTMLFormElement>(".newsletter-card__form").forEach((form) => {
+		form.addEventListener("submit", (event) => {
+			event.preventDefault();
+			form.hidden = true;
+			form.nextElementSibling?.removeAttribute("hidden");
+		});
+	});
+</script>
+
+<style lang="less">
+.newsletter-card {
+	&__text {
+		font-size: 13px;
+		color: var(--color-grey-dark);
+		margin-bottom: 16px;
+	}
+	&__input {
+		width: 100%;
+		padding: 12px 16px;
+		border-radius: var(--border-radius-1000);
+		border: var(--border-width) solid var(--color-border-search-form);
+		margin-bottom: 10px;
+		font-family: inherit;
+		font-size: 13px;
+		outline: none;
+		&:focus {
+			border-color: var(--color-red);
+		}
+	}
+	&__btn {
+		width: 100%;
+		padding: 14px 20px;
+	}
+	&__success {
+		font-size: 14px;
+	}
+}
+</style>
