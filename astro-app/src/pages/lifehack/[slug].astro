@@ -83,7 +83,7 @@ const similar = lifehacks
 			</ContentBlock>
 
 			<Fragment slot="sidebar">
-				<AuthorCard name={lifehack.author.name} info={lifehack.author.info} buttonLabel="Профиль автора" href="/author" />
+				<AuthorCard name={lifehack.author.name} info={lifehack.author.info} buttonLabel="Профиль автора" href={`/author/${lifehack.author.slug}`} />
 				<SidebarList title="Похожие лайфхаки" items={similar} />
 				<NewsletterCard title="Лайфхак недели на почту" />
 			</Fragment>

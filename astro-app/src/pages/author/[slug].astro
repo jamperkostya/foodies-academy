@@ -1,0 +1,277 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Section from "../../components/layout/Section.astro";
+import CardGrid from "../../components/ui/CardGrid.astro";
+import Avatar from "../../components/ui/Avatar.astro";
+import Icon from "../../components/ui/Icon.astro";
+import RecipeCard from "../../components/recipes/RecipeCard.astro";
+import PostCard from "../../components/blog/PostCard.astro";
+import { authors } from "../../data/authors";
+import { recipes } from "../../data/recipes";
+import { posts } from "../../data/posts";
+import type { Author } from "../../types/author";
+
+export function getStaticPaths() {
+	return authors.map((author) => ({ params: { slug: author.slug }, props: { author } }));
+}
+
+interface Props {
+	author: Author;
+}
+
+const { author } = Astro.props;
+
+// Mock recipes have no author yet, so the profile shows the first eight.
+const authorRecipes = recipes.slice(0, 8);
+const authorPosts = posts.filter((post) => post.author === author.name);
+
+const stats = [
+	{ value: author.stats.recipes, label: "Рецептов" },
+	{ value: author.stats.posts, label: "Статей" },
+	{ value: author.stats.followers, label: "Подписчиков" },
+	{ value: author.stats.rating, label: "Средний рейтинг" },
+];
+
+const tabs = [
+	{ id: "recipes", label: "Рецепты", count: authorRecipes.length },
+	{ id: "posts", label: "Статьи блога", count: authorPosts.length },
+];
+---
+<BaseLayout
+	title={author.name}
+	description={`${author.name} — рецепты и статьи автора на Foodies Academy.`}
+	breadcrumbs={[{ label: author.name }]}>
+
+	<section slot="hero" class="author-hero">
+		<div class="author-hero__inner container">
+			<Avatar name={author.name} size="xl" />
+			<div>
+				<h1 class="author-hero__name">{author.name}</h1>
+				<p class="author-hero__role">{author.role}</p>
+
+				<ul class="author-hero__stats">
+					{stats.map((stat) => (
+						<li class="author-hero__stat">
+							<strong class="author-hero__stat-value">{stat.value}</strong>
+							<span class="author-hero__stat-label">{stat.label}</span>
+						</li>
+					))}
+				</ul>
+
+				<div class="author-hero__actions flex items-center gap-12">
+					<button type="button" class="author-hero__follow btn" aria-pressed="false">Подписаться</button>
+					<a href="#" class="author-hero__icon-btn" aria-label="Написать автору">
+						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+					</a>
+					<a href="#" class="author-hero__icon-btn" aria-label="Instagram">
+						<Icon name="social-instagram" width={18} height={18} />
+					</a>
+					<a href="#" class="author-hero__icon-btn" aria-label="Telegram">
+						<Icon name="social-telegram" width={18} height={18} />
+					</a>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<Section>
+		<p class="author-bio">{author.bio}</p>
+
+		<div class="author-tabs" role="tablist" aria-label="Материалы автора">
+			{tabs.map((tab, i) => (
+				<button
+					type="button"
+					class:list={["author-tabs__btn", { "is-active": i === 0 }]}
+					role="tab"
+					id={`tab-${tab.id}`}
+					aria-controls={`panel-${tab.id}`}
+					aria-selected={String(i === 0)}
+					tabindex={i === 0 ? undefined : "-1"}
+				>
+					{tab.label} <span class="author-tabs__count">({tab.count})</span>
+				</button>
+			))}
+		</div>
+
+		<div class="author-tabs__panel" role="tabpanel" id="panel-recipes" aria-labelledby="tab-recipes">
+			<CardGrid minCardWidth={260}>
+				{authorRecipes.map((recipe) => <RecipeCard recipe={recipe} />)}
+			</CardGrid>
+		</div>
+		<div class="author-tabs__panel" role="tabpanel" id="panel-posts" aria-labelledby="tab-posts" hidden>
+			<CardGrid minCardWidth={400}>
+				{authorPosts.map((post) => <PostCard post={post} />)}
+			</CardGrid>
+		</div>
+	</Section>
+</BaseLayout>
+
+<style lang="less">
+.author-hero {
+	padding: 48px 0;
+	background: var(--color-cream);
+}
+
+.author-hero__inner {
+	display: flex;
+	align-items: center;
+	gap: 32px;
+	@media (max-width: 860px) {
+		flex-direction: column;
+		text-align: center;
+	}
+}
+
+.author-hero__name {
+	margin-bottom: 6px;
+	font-weight: 800;
+	font-size: 28px;
+}
+
+.author-hero__role {
+	margin-bottom: 16px;
+	font-size: 14px;
+	color: var(--color-grey-dark);
+}
+
+.author-hero__stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 32px;
+	margin-bottom: 18px;
+	@media (max-width: 860px) {
+		justify-content: center;
+		gap: 20px 32px;
+	}
+}
+
+.author-hero__stat-value {
+	display: block;
+	font-weight: 800;
+	font-size: 20px;
+	line-height: 1.3;
+}
+
+.author-hero__stat-label {
+	font-size: 12px;
+	letter-spacing: .5px;
+	text-transform: uppercase;
+	color: var(--color-grey-dark);
+}
+
+.author-hero__actions {
+	flex-wrap: wrap;
+	@media (max-width: 860px) {
+		justify-content: center;
+	}
+}
+
+.author-hero__follow {
+	padding: 14px 28px;
+	&.is-active {
+		background: var(--color-white);
+		color: var(--color-red);
+	}
+}
+
+.author-hero__icon-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 46px;
+	height: 46px;
+	background: var(--color-white);
+	border: var(--border-width) solid var(--color-border-search-form);
+	border-radius: var(--border-radius-1000);
+	transition: background .15s, color .15s, border-color .15s, transform .15s;
+	&:hover {
+		background: var(--color-red);
+		border-color: var(--color-red);
+		color: var(--color-white);
+		transform: translateY(-2px);
+	}
+}
+
+.author-bio {
+	max-width: 760px;
+	margin-bottom: 40px;
+	font-size: 16px;
+	line-height: 1.7;
+	color: var(--color-grey-dark);
+}
+
+.author-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 32px;
+	margin-bottom: 32px;
+	border-bottom: 2px solid var(--color-black-10);
+}
+
+.author-tabs__btn {
+	position: relative;
+	padding: 14px 4px;
+	background: none;
+	border: none;
+	font-weight: 700;
+	font-size: 14px;
+	text-transform: uppercase;
+	color: var(--color-grey-dark);
+	cursor: pointer;
+	&::after {
+		content: "";
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -2px;
+		height: 2px;
+		background: transparent;
+		transition: background .15s;
+	}
+	&:hover,
+	&.is-active {
+		color: var(--color-black);
+	}
+	&.is-active::after {
+		background: var(--color-red);
+	}
+}
+
+.author-tabs__count {
+	font-weight: 400;
+}
+</style>
+
+<script>
+	// Tabs: click or ←/→ switches the visible panel.
+	const tablist = document.querySelector<HTMLElement>(".author-tabs");
+	const tabs = [...(tablist?.querySelectorAll<HTMLButtonElement>(".author-tabs__btn") ?? [])];
+
+	const select = (tab: HTMLButtonElement) => {
+		tabs.forEach((t) => {
+			const isActive = t === tab;
+			t.classList.toggle("is-active", isActive);
+			t.setAttribute("aria-selected", String(isActive));
+			t.tabIndex = isActive ? 0 : -1;
+			const panel = document.getElementById(t.getAttribute("aria-controls") ?? "");
+			if (panel) panel.hidden = !isActive;
+		});
+	};
+
+	tabs.forEach((tab, i) => {
+		tab.addEventListener("click", () => select(tab));
+		tab.addEventListener("keydown", (e) => {
+			if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+			const next = tabs[(i + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length];
+			select(next);
+			next.focus();
+		});
+	});
+
+	const follow = document.querySelector<HTMLButtonElement>(".author-hero__follow");
+	follow?.addEventListener("click", () => {
+		const following = follow.classList.toggle("is-active");
+		follow.setAttribute("aria-pressed", String(following));
+		follow.textContent = following ? "Вы подписаны ✓" : "Подписаться";
+	});
+</script>
