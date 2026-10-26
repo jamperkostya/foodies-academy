@@ -35,7 +35,7 @@ const { badge, label, title, titleAccent, description, image, anchor, withVideo 
 			</h1>
 			<p class="article-hero__desc">{description}</p>
 			{Astro.slots.has("meta") && <div class="article-hero__meta flex items-center gap-10"><slot name="meta" /></div>}
-			<div class="article-hero__actions flex items-center gap-20 no-print">
+			<div class="article-hero__actions flex flex-wrap items-center gap-20 no-print">
 				<a href={anchor.href} class="btn">{anchor.label}</a>
 				<button type="button" class="article-hero__icon-btn" data-hero-save aria-label="Сохранить в избранное" aria-pressed="false">
 					<Icon name="bookmark" width={18} height={18} />
@@ -95,10 +95,11 @@ const { badge, label, title, titleAccent, description, image, anchor, withVideo 
 .article-hero {
 	padding: 25px 0;
 	background: var(--color-gradient-violet);
+	// minmax(0, …): long content may not widen a column past the screen.
 	&__container {
-		grid-template-columns: 1fr;
+		grid-template-columns: minmax(0, 1fr);
 		@media @desktop {
-			grid-template-columns: 1fr 1fr;
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 		}
 	}
 	&__title {

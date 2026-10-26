@@ -83,6 +83,10 @@ const recipeWord = recipesWord(category.recipesCount);
 
 .category-card--grid {
 	aspect-ratio: 1/1;
+	// With aspect-ratio the min-height would also set a 325px minimum width.
+	@media (max-width: 520px) {
+		min-height: 0;
+	}
 	align-items: end;
 	justify-content: flex-start;
 	.category-card__label {

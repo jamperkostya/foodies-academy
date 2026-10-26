@@ -149,6 +149,10 @@ const isOpen = (id: string) => tabs[0]?.id === id;
 		justify-content: center;
 		gap: 20px 32px;
 	}
+	@media (max-width: 520px) {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+	}
 }
 
 .author-hero__stat-value {
@@ -174,6 +178,9 @@ const isOpen = (id: string) => tabs[0]?.id === id;
 
 .author-hero__follow {
 	padding: 14px 28px;
+	@media (max-width: 520px) {
+		padding: 14px 20px;
+	}
 	&.is-active {
 		background: var(--color-white);
 		color: var(--color-red);

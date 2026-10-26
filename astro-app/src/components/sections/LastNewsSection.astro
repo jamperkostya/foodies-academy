@@ -56,6 +56,9 @@ const featuredImage = featured?.image ?? "https://foodies.academy/wp-content/upl
 	grid-template-columns: 1fr 1fr;
 	align-items: stretch;
 	gap: 40px;
+	@media (max-width: 860px) {
+		grid-template-columns: 1fr;
+	}
 }
 
 .news__list {
@@ -64,6 +67,10 @@ const featuredImage = featured?.image ?? "https://foodies.academy/wp-content/upl
 	gap: 40px;
 	border-right: var(--border-width) solid var(--color-black-50);
 	counter-reset: item;
+	@media (max-width: 860px) {
+		gap: 24px;
+		border-right: none;
+	}
 }
 
 .news__item {
@@ -96,6 +103,10 @@ const featuredImage = featured?.image ?? "https://foodies.academy/wp-content/upl
 	display: flex;
 	flex-direction: column;
 	gap: 30px;
+	min-width: 0;
+	@media (max-width: 860px) {
+		order: -1;
+	}
 	&:hover {
 		.news__img {
 			transform: scale(1.06);

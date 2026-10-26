@@ -3,6 +3,11 @@
 .hero {
 	--hero-item-w: 640px;
 	--hero-item-h: 460px;
+	// One card per screen, with the next one peeking in.
+	@media (max-width: 860px) {
+		--hero-item-w: 82vw;
+		--hero-item-h: 380px;
+	}
 
 	// full-bleed: below 1500px the carousel breaks out of `.container`'s
 	// side padding and spans edge-to-edge to the viewport.
@@ -22,6 +27,10 @@
 	gap: 16px;
 	height: var(--hero-item-h);
 	scroll-snap-align: start;
+	// The two half cards become full cards of the row.
+	@media (max-width: 860px) {
+		display: contents;
+	}
 }
 
 // The hero's carousel: fixed-size cards and translucent arrows, unlike the
