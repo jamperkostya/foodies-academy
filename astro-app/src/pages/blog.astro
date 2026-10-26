@@ -1,0 +1,122 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/layout/PageHero.astro";
+import Section from "../components/layout/Section.astro";
+import FilterableGrid from "../components/ui/FilterableGrid.astro";
+import PostCard from "../components/blog/PostCard.astro";
+import Avatar from "../components/ui/Avatar.astro";
+import SubscribeSection from "../components/sections/SubscribeSection.astro";
+import { posts } from "../data/posts";
+
+const PAGE_SIZE = 6;
+const [featured, ...rest] = posts;
+const groups = [...new Set(rest.map((post) => post.tag))];
+const description =
+	"Истории про еду, разборы кухонной техники, интервью с шеф-поварами и всё, что не поместилось в рецепт. Новые материалы — каждую неделю.";
+---
+<BaseLayout title="Блог" description={description} breadcrumbs={[{ label: "Блог" }]}>
+	<PageHero slot="hero" eyebrow="Журнал" description={description}>
+		Блог <span class="page-hero__accent">Foodies Academy</span>
+	</PageHero>
+
+	<Section>
+		<a href={`/blog/${featured.slug}`} class="blog-featured">
+			<div class="blog-featured__media">
+				<div class="blog-featured__img" style={`background-image: url('${featured.image}')`}></div>
+			</div>
+			<div class="blog-featured__content">
+				<span class="blog-featured__tag">{featured.tag}</span>
+				<h2 class="blog-featured__title">{featured.title}</h2>
+				<p class="blog-featured__excerpt">{featured.excerpt}</p>
+				<div class="blog-featured__meta flex items-center gap-10">
+					<Avatar name={featured.author} />
+					<span>{featured.author} · {featured.date} · {featured.readTime} мин чтения</span>
+				</div>
+			</div>
+		</a>
+
+		<FilterableGrid groups={groups} pageSize={PAGE_SIZE} total={rest.length} moreLabel="Показать больше статей" minCardWidth={400}>
+			{rest.map((post, i) => <PostCard post={post} hidden={i >= PAGE_SIZE} />)}
+		</FilterableGrid>
+	</Section>
+
+	<SubscribeSection title="Новые статьи блога — раз в неделю на почту" />
+</BaseLayout>
+
+<style lang="less">
+.blog-featured {
+	display: grid;
+	grid-template-columns: 1.1fr 1fr;
+	align-items: center;
+	gap: 40px;
+	margin-bottom: 48px;
+	padding-bottom: 48px;
+	border-bottom: var(--border-width) solid var(--color-black-10);
+	@media (max-width: 860px) {
+		grid-template-columns: 1fr;
+		gap: 24px;
+	}
+}
+
+.blog-featured__media {
+	position: relative;
+	aspect-ratio: 4/3;
+	overflow: hidden;
+	border-radius: var(--border-radius-25);
+}
+
+.blog-featured__img {
+	position: absolute;
+	inset: 0;
+	background-size: cover;
+	background-position: center;
+	transition: transform .6s var(--ease);
+}
+
+.blog-featured:hover .blog-featured__img {
+	transform: scale(1.04);
+}
+
+.blog-featured__content {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 14px;
+}
+
+.blog-featured__tag {
+	padding: 5px 12px;
+	background: var(--color-pink-20);
+	border-radius: var(--border-radius-1000);
+	font-weight: 700;
+	font-size: 11px;
+	line-height: 14px;
+	text-transform: uppercase;
+	color: var(--color-red);
+}
+
+.blog-featured__title {
+	font-weight: 800;
+	font-size: 30px;
+	line-height: 1.25;
+	transition: color .15s;
+	@media (max-width: 860px) {
+		font-size: 24px;
+	}
+}
+
+.blog-featured:hover .blog-featured__title {
+	color: var(--color-red);
+}
+
+.blog-featured__excerpt {
+	font-size: 15px;
+	line-height: 1.7;
+	color: var(--color-grey-dark);
+}
+
+.blog-featured__meta {
+	font-size: 12px;
+	color: var(--color-grey-dark);
+}
+</style>
