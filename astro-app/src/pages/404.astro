@@ -1,0 +1,319 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Section from "../components/layout/Section.astro";
+import SearchForm from "../components/layout/SearchForm.astro";
+import CardGrid from "../components/ui/CardGrid.astro";
+import RecipeCard from "../components/recipes/RecipeCard.astro";
+import { recipes } from "../data/recipes";
+
+const JOKES = [
+	"Мы искали её по всему холодильнику — не нашли.",
+	"Похоже, эту страницу съели раньше вас.",
+	"Шеф уронил эту страницу на пол. Правило пяти секунд не спасло.",
+	"Рецепт этой страницы утерян ещё в 2019-м.",
+	"Мы бы предложили её заменить, но замены тоже нет.",
+	"Кто-то забыл эту страницу на плите. Есть уже нельзя.",
+	"404: страница подгорела с обеих сторон.",
+	"Такой страницы нет в меню. И, кажется, никогда не было.",
+];
+
+// Floating ingredients around the hero; x/y in % of the hero, delay staggers the bobbing.
+const floats = [
+	{ emoji: "🍅", x: 8, y: 18, delay: 0 },
+	{ emoji: "🥑", x: 88, y: 22, delay: 0.6 },
+	{ emoji: "🧅", x: 14, y: 72, delay: 1.2 },
+	{ emoji: "🌿", x: 84, y: 70, delay: 0.3 },
+	{ emoji: "🧀", x: 6, y: 45, delay: 0.9 },
+	{ emoji: "🍋", x: 93, y: 48, delay: 1.5 },
+];
+
+const recipeHrefs = recipes.map((recipe) => `/recipe/${recipe.slug}`);
+const suggestions = [...recipes].sort((a, b) => b.rating - a.rating).slice(0, 4);
+---
+<BaseLayout title="Страница не найдена" description="Такой страницы нет — но есть сотни рецептов.">
+	<section slot="hero" class="error-hero">
+		{floats.map((item) => (
+			<span class="error-hero__float" style={`--x: ${item.x}%; --y: ${item.y}%; --delay: ${item.delay}s`} aria-hidden="true">{item.emoji}</span>
+		))}
+
+		<div class="error-hero__inner container">
+			<p class="error-hero__code">
+				<span aria-hidden="true">4</span>
+				<button type="button" class="error-hero__egg" aria-label="Пасхалка: яичница вместо нуля">
+					<span class="error-hero__steam"></span>
+					<span class="error-hero__steam error-hero__steam--late"></span>
+					<span class="error-hero__white"></span>
+					<span class="error-hero__yolk"></span>
+				</button>
+				<span aria-hidden="true">4</span>
+				<span class="sr-only">Ошибка 404</span>
+			</p>
+
+			<h1 class="error-hero__title">Ой! Эта страница пригорела</h1>
+			<p class="error-hero__joke" aria-live="polite" data-jokes={JSON.stringify(JOKES)}>{JOKES[0]}</p>
+			<button type="button" class="error-hero__joke-btn">🔄 Другая шутка</button>
+
+			<div class="error-hero__search">
+				<SearchForm />
+			</div>
+
+			<div class="error-hero__actions flex items-center gap-15">
+				<a href="/" class="btn">На главную</a>
+				<a href={recipeHrefs[0]} class="error-hero__random btn btn--secondary" data-hrefs={JSON.stringify(recipeHrefs)}>🎲 Случайный рецепт</a>
+			</div>
+		</div>
+	</section>
+
+	<Section>
+		<Fragment slot="title">Может, вам <span class="section-title__accent">понравится</span></Fragment>
+		<CardGrid minCardWidth={260}>
+			{suggestions.map((recipe) => <RecipeCard recipe={recipe} />)}
+		</CardGrid>
+	</Section>
+</BaseLayout>
+
+<style lang="less">
+.error-hero {
+	position: relative;
+	overflow: hidden;
+	padding: 88px 0 72px;
+	background: var(--color-cream);
+	text-align: center;
+	@media (max-width: 640px) {
+		padding: 64px 0 48px;
+	}
+}
+
+.error-hero__float {
+	position: absolute;
+	left: var(--x);
+	top: var(--y);
+	font-size: 40px;
+	opacity: .9;
+	filter: drop-shadow(0 8px 12px var(--color-black-10));
+	animation: error-float 5s ease-in-out infinite;
+	animation-delay: var(--delay);
+	@media (max-width: 640px) {
+		font-size: 28px;
+	}
+}
+
+@keyframes error-float {
+	0%, 100% { transform: translateY(0) rotate(-4deg); }
+	50% { transform: translateY(-18px) rotate(4deg); }
+}
+
+.error-hero__inner {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.error-hero__code {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 14px;
+	margin-bottom: 20px;
+	font-weight: 800;
+	font-size: 140px;
+	line-height: 1;
+	@media (max-width: 1180px) {
+		font-size: 110px;
+	}
+	@media (max-width: 640px) {
+		gap: 8px;
+		font-size: 76px;
+	}
+}
+
+.error-hero__egg {
+	position: relative;
+	flex-shrink: 0;
+	width: 118px;
+	height: 118px;
+	padding: 0;
+	background: none;
+	border: none;
+	cursor: pointer;
+	transform-origin: center 70%;
+	transition: transform .2s var(--ease);
+	&:hover {
+		transform: scale(1.06) rotate(-3deg);
+	}
+	&.is-wobbling {
+		animation: egg-wobble .6s ease;
+	}
+	@media (max-width: 1180px) {
+		width: 96px;
+		height: 96px;
+	}
+	@media (max-width: 640px) {
+		width: 66px;
+		height: 66px;
+	}
+}
+
+@keyframes egg-wobble {
+	0% { transform: rotate(0); }
+	20% { transform: rotate(-14deg) scale(1.08); }
+	40% { transform: rotate(10deg) scale(.96); }
+	60% { transform: rotate(-6deg) scale(1.04); }
+	80% { transform: rotate(3deg); }
+	100% { transform: rotate(0); }
+}
+
+.error-hero__white {
+	position: absolute;
+	inset: 4px;
+	background: var(--color-egg-white);
+	border-radius: 46% 54% 62% 38% / 52% 44% 56% 48%;
+	box-shadow: 0 14px 26px var(--color-black-10), inset 0 -8px 14px var(--color-black-5);
+}
+
+.error-hero__yolk {
+	position: absolute;
+	left: 56%;
+	top: 46%;
+	width: 44%;
+	height: 44%;
+	transform: translate(-50%, -50%);
+	background: radial-gradient(circle at 35% 30%, var(--color-yolk-light), var(--color-yolk) 72%);
+	border-radius: var(--border-radius-50percents);
+	box-shadow: inset -5px -7px 10px var(--color-black-10);
+}
+
+.error-hero__steam {
+	position: absolute;
+	top: -6px;
+	left: 38%;
+	width: 3px;
+	height: 20px;
+	background: var(--color-black-10);
+	border-radius: 3px;
+	animation: egg-steam 2.6s ease-in-out infinite;
+	&--late {
+		left: 56%;
+		animation-delay: .8s;
+	}
+}
+
+@keyframes egg-steam {
+	0% { transform: translateY(0) scaleY(1); opacity: 0; }
+	30% { opacity: .5; }
+	100% { transform: translateY(-26px) scaleY(1.4); opacity: 0; }
+}
+
+.error-hero__title {
+	margin-bottom: 10px;
+	font-weight: 800;
+	font-size: 28px;
+	text-transform: uppercase;
+	@media (max-width: 640px) {
+		font-size: 22px;
+	}
+}
+
+.error-hero__joke {
+	min-height: 22px;
+	margin-bottom: 10px;
+	font-size: 15px;
+	color: var(--color-grey-dark);
+	transition: opacity .15s;
+	&.is-changing {
+		opacity: 0;
+	}
+}
+
+.error-hero__joke-btn {
+	margin-bottom: 32px;
+	padding: 4px 8px;
+	background: none;
+	border: none;
+	border-radius: var(--border-radius-1000);
+	font-weight: 700;
+	font-size: 13px;
+	color: var(--color-red);
+	cursor: pointer;
+	transition: background .15s;
+	&:hover {
+		background: var(--color-pink-20);
+	}
+}
+
+.error-hero__search {
+	display: flex;
+	width: 100%;
+	max-width: 420px;
+	margin-bottom: 24px;
+	text-align: left;
+}
+
+.error-hero__actions {
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.error-hero__random.is-shuffling {
+	pointer-events: none;
+	animation: shuffle .38s ease;
+}
+
+@keyframes shuffle {
+	0%, 100% { transform: translateX(0) rotate(0); }
+	25% { transform: translateX(-4px) rotate(-2deg); }
+	50% { transform: translateX(4px) rotate(2deg); }
+	75% { transform: translateX(-3px) rotate(-1deg); }
+}
+</style>
+
+<script>
+	import { showToast } from "../scripts/toast";
+
+	// Another food pun, never the same one twice in a row.
+	const joke = document.querySelector<HTMLElement>(".error-hero__joke");
+	const jokes = JSON.parse(joke?.dataset.jokes ?? "[]") as string[];
+	let current = 0;
+
+	document.querySelector(".error-hero__joke-btn")?.addEventListener("click", () => {
+		if (!joke || jokes.length < 2) return;
+		let next = current;
+		while (next === current) next = Math.floor(Math.random() * jokes.length);
+		current = next;
+		joke.classList.add("is-changing");
+		setTimeout(() => {
+			joke.textContent = jokes[next];
+			joke.classList.remove("is-changing");
+		}, 150);
+	});
+
+	// The "0" is a fried egg that wobbles and talks back.
+	const egg = document.querySelector<HTMLButtonElement>(".error-hero__egg");
+	const replies: Record<number, string> = {
+		3: "Ладно-ладно, это просто пасхалка 🍳",
+		7: "Вы очень настойчивы. Уважаем.",
+		12: "Яйцо сдалось. Идите уже готовить что-нибудь 👨‍🍳",
+	};
+	let clicks = 0;
+
+	egg?.addEventListener("click", () => {
+		clicks += 1;
+		egg.classList.remove("is-wobbling");
+		void egg.offsetWidth; // restart the animation
+		egg.classList.add("is-wobbling");
+		const reply = replies[Math.min(clicks, 12)];
+		if (reply) showToast(reply);
+	});
+
+	// Shuffle the button for a moment, then open a random recipe.
+	const random = document.querySelector<HTMLAnchorElement>(".error-hero__random");
+	random?.addEventListener("click", (e) => {
+		e.preventDefault();
+		const hrefs = JSON.parse(random.dataset.hrefs ?? "[]") as string[];
+		const href = hrefs[Math.floor(Math.random() * hrefs.length)] ?? random.href;
+		random.classList.add("is-shuffling");
+		setTimeout(() => (window.location.href = href), 380);
+	});
+</script>
