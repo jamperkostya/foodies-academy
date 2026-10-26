@@ -1,0 +1,115 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Section from "../../components/layout/Section.astro";
+import ArticleHero from "../../components/article/ArticleHero.astro";
+import ArticleLayout from "../../components/article/ArticleLayout.astro";
+import ContentBlock from "../../components/article/ContentBlock.astro";
+import TipBox from "../../components/article/TipBox.astro";
+import Reviews from "../../components/article/Reviews.astro";
+import AuthorCard from "../../components/article/AuthorCard.astro";
+import SidebarList from "../../components/article/SidebarList.astro";
+import NewsletterCard from "../../components/article/NewsletterCard.astro";
+import Avatar from "../../components/ui/Avatar.astro";
+import { posts } from "../../data/posts";
+import { authors } from "../../data/authors";
+import type { Post } from "../../types/post";
+import { plural } from "../../utils/plural";
+
+export function getStaticPaths() {
+	return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}
+
+interface Props {
+	post: Post;
+}
+
+const { post } = Astro.props;
+const author = authors.find((item) => item.name === post.author)!;
+
+const commentForms: [string, string, string] = ["комментарий", "комментария", "комментариев"];
+const commentsCount = `${post.comments.length} ${plural(post.comments.length, commentForms)}`;
+const authorInfo = `${author.title} · ${author.stats.posts} ${plural(author.stats.posts, ["статья", "статьи", "статей"])}`;
+
+// Same rubric first, then the newest of the rest.
+const others = posts.filter((item) => item.slug !== post.slug);
+const similar = [...others.filter((item) => item.tag === post.tag), ...others.filter((item) => item.tag !== post.tag)]
+	.slice(0, 3)
+	.map((item) => ({ title: item.title, meta: `${item.tag} · ${item.readTime} мин`, image: item.image, href: `/blog/${item.slug}` }));
+---
+
+<BaseLayout
+	title={post.title}
+	description={post.excerpt}
+	breadcrumbs={[{ label: "Блог", href: "/blog" }, { label: post.title }]}>
+
+	<ArticleHero
+		slot="hero"
+		badge="Блог"
+		label={post.tag}
+		title={post.title}
+		description={post.excerpt}
+		image={post.image}
+		anchor={{ href: "#comments", label: "К комментариям ↓" }}
+		withVideo={false}
+	>
+		<div slot="meta" class="post-author flex gap-10 items-center">
+			<Avatar name={post.author} />
+			<div>
+				<strong class="post-author__name">{post.author}</strong>
+				<span class="post-author__date">{post.date} · {post.readTime} мин чтения</span>
+			</div>
+		</div>
+	</ArticleHero>
+
+	<Section>
+		<ArticleLayout>
+			<p class="post-intro">{post.intro}</p>
+
+			{post.sections.map((section) => (
+				<ContentBlock title={section.title}>
+					<p class="post-text">{section.text}</p>
+				</ContentBlock>
+			))}
+
+			{post.tip && <TipBox title={post.tip.title}>{post.tip.text}</TipBox>}
+
+			<ContentBlock title="Комментарии" id="comments" class="no-print">
+				<span slot="hint" id="commentsCount">{commentsCount}</span>
+				<Reviews
+					reviews={post.comments}
+					formTitle="Оставить комментарий"
+					placeholder="Что думаете?"
+					submitLabel="Отправить"
+					successMessage="Комментарий опубликован"
+					countId="commentsCount"
+					countForms={commentForms}
+				/>
+			</ContentBlock>
+
+			<Fragment slot="sidebar">
+				<AuthorCard name={author.name} info={authorInfo} buttonLabel="Профиль автора" href={`/author/${author.slug}`} />
+				<SidebarList title="Читайте также" items={similar} />
+				<NewsletterCard title="Новые статьи на почту" />
+			</Fragment>
+		</ArticleLayout>
+	</Section>
+</BaseLayout>
+
+<style lang="less">
+.post-author {
+	&__name {
+		display: block;
+		font-size: 14px;
+	}
+	&__date {
+		font-size: 12px;
+		color: var(--color-grey);
+	}
+}
+
+.post-intro,
+.post-text {
+	line-height: 1.7;
+	color: var(--color-grey-dark);
+}
+</style>

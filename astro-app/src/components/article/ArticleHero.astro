@@ -14,11 +14,13 @@ interface Props {
 	image: string;
 	// Main button: jumps to a section of the page.
 	anchor: { href: string; label: string };
+	// The cover's play button; off for articles without a video.
+	withVideo?: boolean;
 	videoLabel?: string;
 	printable?: boolean;
 }
 
-const { badge, label, title, titleAccent, description, image, anchor, videoLabel = "Смотреть видео", printable = false } = Astro.props;
+const { badge, label, title, titleAccent, description, image, anchor, withVideo = true, videoLabel = "Смотреть видео", printable = false } = Astro.props;
 ---
 <section class="article-hero">
 	<div class="article-hero__container container grid gap-40 items-center">
@@ -50,10 +52,12 @@ const { badge, label, title, titleAccent, description, image, anchor, videoLabel
 		</div>
 		<div class="article-hero__media">
 			<div class="article-hero__img" style={`background-image: url('${image}')`}></div>
-			<button type="button" class="article-hero__play no-print" data-hero-video>
-				<Icon name="youtube-play" width={42} height={29} />
-				{videoLabel}
-			</button>
+			{withVideo && (
+				<button type="button" class="article-hero__play no-print" data-hero-video>
+					<Icon name="youtube-play" width={42} height={29} />
+					{videoLabel}
+				</button>
+			)}
 		</div>
 	</div>
 </section>

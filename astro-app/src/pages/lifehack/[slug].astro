@@ -48,7 +48,8 @@ const similar = lifehacks
 		description={lifehack.description}
 		image={lifehack.image}
 		anchor={{ href: "#comments", label: "К комментариям ↓" }}
-		videoLabel={lifehack.videoMinutes ? `Смотреть видео (${lifehack.videoMinutes} мин)` : undefined}
+		withVideo={Boolean(lifehack.videoMinutes)}
+		videoLabel={`Смотреть видео (${lifehack.videoMinutes} мин)`}
 	>
 		<div slot="meta" class="lifehack-author flex gap-10 items-center">
 			<Avatar name={lifehack.author.name} />

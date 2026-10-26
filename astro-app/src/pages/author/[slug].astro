@@ -22,7 +22,7 @@ interface Props {
 const { author } = Astro.props;
 
 // Mock recipes have no author yet, so the profile shows the first eight.
-const authorRecipes = recipes.slice(0, 8);
+const authorRecipes = author.stats.recipes ? recipes.slice(0, 8) : [];
 const authorPosts = posts.filter((post) => post.author === author.name);
 
 const stats = [
@@ -32,10 +32,12 @@ const stats = [
 	{ value: author.stats.rating, label: "Средний рейтинг" },
 ];
 
+// Tabs with nothing to show are left out; the first one is open.
 const tabs = [
 	{ id: "recipes", label: "Рецепты", count: authorRecipes.length },
 	{ id: "posts", label: "Статьи блога", count: authorPosts.length },
-];
+].filter((tab) => tab.count > 0);
+const isOpen = (id: string) => tabs[0]?.id === id;
 ---
 <BaseLayout
 	title={author.name}
@@ -93,16 +95,20 @@ const tabs = [
 			))}
 		</div>
 
-		<div class="author-tabs__panel" role="tabpanel" id="panel-recipes" aria-labelledby="tab-recipes">
-			<CardGrid minCardWidth={260}>
-				{authorRecipes.map((recipe) => <RecipeCard recipe={recipe} />)}
-			</CardGrid>
-		</div>
-		<div class="author-tabs__panel" role="tabpanel" id="panel-posts" aria-labelledby="tab-posts" hidden>
-			<CardGrid minCardWidth={400}>
-				{authorPosts.map((post) => <PostCard post={post} />)}
-			</CardGrid>
-		</div>
+		{authorRecipes.length > 0 && (
+			<div class="author-tabs__panel" role="tabpanel" id="panel-recipes" aria-labelledby="tab-recipes" hidden={!isOpen("recipes")}>
+				<CardGrid minCardWidth={260}>
+					{authorRecipes.map((recipe) => <RecipeCard recipe={recipe} />)}
+				</CardGrid>
+			</div>
+		)}
+		{authorPosts.length > 0 && (
+			<div class="author-tabs__panel" role="tabpanel" id="panel-posts" aria-labelledby="tab-posts" hidden={!isOpen("posts")}>
+				<CardGrid minCardWidth={400}>
+					{authorPosts.map((post) => <PostCard post={post} />)}
+				</CardGrid>
+			</div>
+		)}
 	</Section>
 </BaseLayout>
 

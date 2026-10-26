@@ -4,6 +4,7 @@ import LifehacksPage from "../src/pages/lifehacks.astro";
 import BlogPage from "../src/pages/blog.astro";
 import AuthorPage, { getStaticPaths as authorPaths } from "../src/pages/author/[slug].astro";
 import NotFoundPage from "../src/pages/404.astro";
+import PostPage, { getStaticPaths as postPaths } from "../src/pages/blog/[slug].astro";
 import { lifehacks } from "../src/data/lifehacks";
 import { posts } from "../src/data/posts";
 import { authors } from "../src/data/authors";
@@ -42,6 +43,23 @@ describe("/blog", () => {
 	});
 });
 
+describe("/blog/[slug]", () => {
+	it("builds a page for every post, each with an author profile", () => {
+		expect(postPaths().map((path) => path.params.slug)).toEqual(posts.map((post) => post.slug));
+		for (const post of posts) expect(authors.map((author) => author.name)).toContain(post.author);
+	});
+
+	it("shows the article sections, comments and a link to the author", async () => {
+		const post = posts[1];
+		const html = await render(PostPage, { props: { post }, params: { slug: post.slug } });
+
+		expect(html.match(/<h1/g)).toHaveLength(1);
+		expect(count(html, /class="post-text"/g)).toBe(post.sections.length);
+		for (const comment of post.comments) expect(html).toContain(comment.text);
+		expect(html).toContain('href="/author/salad-konstantin"');
+	});
+});
+
 describe("/author/[slug]", () => {
 	it("builds a page for every author", () => {
 		expect(authorPaths().map((path) => path.params.slug)).toEqual(authors.map((author) => author.slug));
@@ -56,6 +74,14 @@ describe("/author/[slug]", () => {
 		expect(count(html, /class="post-card"/g)).toBe(own.length);
 		expect(html).toMatch(/role="tab"[^>]*aria-selected="true"/);
 		expect(html).toMatch(/id="panel-posts"[^>]*hidden/);
+	});
+
+	it("leaves out a tab with nothing in it", async () => {
+		const author = authors.find((item) => item.stats.recipes === 0)!;
+		const html = await render(AuthorPage, { props: { author }, params: { slug: author.slug } });
+
+		expect(html).not.toContain('id="panel-recipes"');
+		expect(html).toMatch(/id="panel-posts"(?![^>]*hidden)[^>]*>/);
 	});
 });
 
