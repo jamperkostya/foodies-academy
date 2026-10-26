@@ -11,6 +11,10 @@ interface Props {
 	placeholder?: string;
 	submitLabel?: string;
 	successMessage?: string;
+	// Element (e.g. in the ContentBlock hint) that shows "N комментариев",
+	// kept up to date as reviews are posted. `countForms` are the plural forms.
+	countId?: string;
+	countForms?: [string, string, string];
 }
 
 const {
@@ -20,11 +24,13 @@ const {
 	placeholder = "Расскажите, как получилось...",
 	submitLabel = "Опубликовать",
 	successMessage = "Спасибо за отзыв!",
+	countId,
+	countForms = ["отзыв", "отзыва", "отзывов"],
 } = Astro.props;
 
 const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 звезды", "5 звёзд"];
 ---
-<div class="reviews" data-success={successMessage}>
+<div class="reviews" data-success={successMessage} data-count-id={countId} data-count-forms={countForms.join(",")}>
 	<form class="review-form no-print" novalidate>
 		<h3 class="review-form__title">{formTitle}</h3>
 		{withRating && (
@@ -52,6 +58,7 @@ const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 з�
 <script>
 	import { showToast } from "../../scripts/toast";
 	import { initials } from "../../utils/initials";
+	import { plural } from "../../utils/plural";
 
 	document.querySelectorAll<HTMLElement>(".reviews").forEach((root) => {
 		const form = root.querySelector<HTMLFormElement>(".review-form")!;
@@ -60,6 +67,14 @@ const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 з�
 		const stars = [...form.querySelectorAll<HTMLButtonElement>(".review-form__star")];
 		const withRating = stars.length > 0;
 		let rating = 0;
+
+		const counter = root.dataset.countId ? document.getElementById(root.dataset.countId) : null;
+		const countForms = root.dataset.countForms!.split(",") as [string, string, string];
+		const updateCount = () => {
+			if (!counter) return;
+			const count = list.children.length;
+			counter.textContent = `${count} ${plural(count, countForms)}`;
+		};
 
 		const paintStars = (value: number) => stars.forEach((star, i) => star.classList.toggle("is-filled", i < value));
 		const setRating = (value: number) => {
@@ -92,6 +107,7 @@ const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 з�
 			review.querySelector(".review__text")!.textContent = text;
 			review.querySelector<HTMLElement>(".stars")?.style.setProperty("--stars-fill", `${(rating / 5) * 100}%`);
 			list.prepend(review);
+			updateCount();
 
 			form.reset();
 			setRating(0);

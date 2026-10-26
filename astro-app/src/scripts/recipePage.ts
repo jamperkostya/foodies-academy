@@ -1,6 +1,8 @@
 // Recipe page: the servings stepper rescales ingredient quantities, and
 // ingredients can be crossed off while cooking.
 
+import { plural } from "../utils/plural";
+
 const BASE_SERVINGS = 4;
 const MIN_SERVINGS = 1;
 const MAX_SERVINGS = 12;
@@ -13,18 +15,10 @@ let servings = BASE_SERVINGS;
 // Snap to quarters, so quantities read like a real recipe: 1.25, not 1.2333.
 const formatQty = (n: number) => String(Math.round(n * 4) / 4);
 
-function pluralizeServings(n: number) {
-	const mod10 = n % 10;
-	const mod100 = n % 100;
-	if (mod10 === 1 && mod100 !== 11) return "порция";
-	if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return "порции";
-	return "порций";
-}
-
 function setServings(value: number) {
 	servings = Math.min(MAX_SERVINGS, Math.max(MIN_SERVINGS, value));
 	if (servingsValue) servingsValue.textContent = String(servings);
-	if (ingredientsServings) ingredientsServings.textContent = `на ${servings} ${pluralizeServings(servings)}`;
+	if (ingredientsServings) ingredientsServings.textContent = `на ${servings} ${plural(servings, ["порцию", "порции", "порций"])}`;
 
 	ingredientList?.querySelectorAll<HTMLElement>("[data-base]").forEach((item) => {
 		const qty = Number(item.dataset.base) * (servings / BASE_SERVINGS);
