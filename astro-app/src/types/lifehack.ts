@@ -8,13 +8,15 @@ export interface Lifehack {
 	// Smaller second line of the title.
 	titleAccent?: string;
 	category: string;
+	// Emoji on the listing card.
+	icon: string;
 	image: string;
 	description: string;
 	intro: string;
 	// Numbered points; `title` is the bold lead-in.
 	points: { title: string; text: string }[];
 	tip: { title: string; text: string };
-	author: { name: string; info: string };
+	author: { slug: string; name: string; info: string };
 	date: string;
 	readTime: number;
 	// Minutes; shown on the video button when set.

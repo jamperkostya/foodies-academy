@@ -1,0 +1,27 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/layout/PageHero.astro";
+import Section from "../components/layout/Section.astro";
+import FilterableGrid from "../components/ui/FilterableGrid.astro";
+import LifehackCard from "../components/lifehacks/LifehackCard.astro";
+import SubscribeSection from "../components/sections/SubscribeSection.astro";
+import { lifehacks } from "../data/lifehacks";
+
+const PAGE_SIZE = 6;
+const groups = [...new Set(lifehacks.map((lifehack) => lifehack.category))];
+const description =
+	"Маленькие хитрости, которые экономят время, продукты и нервы. Проверено редакцией и тысячами читателей на собственной кухне.";
+---
+<BaseLayout title="Лайфхаки для кухни" description={description} breadcrumbs={[{ label: "Лайфхаки" }]}>
+	<PageHero slot="hero" eyebrow="Полезное" description={description}>
+		Лайфхаки <span class="page-hero__accent">для кухни</span>
+	</PageHero>
+
+	<Section>
+		<FilterableGrid groups={groups} pageSize={PAGE_SIZE} total={lifehacks.length} moreLabel="Показать больше лайфхаков" minCardWidth={400}>
+			{lifehacks.map((lifehack, i) => <LifehackCard lifehack={lifehack} hidden={i >= PAGE_SIZE} />)}
+		</FilterableGrid>
+	</Section>
+
+	<SubscribeSection title="Лайфхак недели — прямо на почту" />
+</BaseLayout>
