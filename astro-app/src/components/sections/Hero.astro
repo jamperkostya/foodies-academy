@@ -26,6 +26,9 @@ function groupHeroCards(cards: HeroCard[]): RenderGroup[] {
 }
 
 const heroGroups = groupHeroCards(heroCards);
+
+// A card opens its recipe page.
+const cardProps = ({ recipe, ...card }: HeroCard) => ({ ...card, href: `/recipe/${recipe}` });
 ---
 
 <section class="hero section-item">
@@ -33,11 +36,11 @@ const heroGroups = groupHeroCards(heroCards);
 		<div class="carousel__track">
 			{heroGroups.map((group) =>
 				group.kind === "tall" ? (
-					<VideoCard {...group.card} />
+					<VideoCard {...cardProps(group.card)} />
 				) : (
 					<div class="hero__stack">
 						{group.cards.map((card) => (
-							<VideoCard {...card} />
+							<VideoCard {...cardProps(card)} />
 						))}
 					</div>
 				)

@@ -5,7 +5,7 @@ import type { HeroCard } from '../types/heroCard';
 // Mock data until the hero comes from the CMS. Images are placeholders.
 export const heroCards: HeroCard[] = [
 	{
-		href: "#11",
+		recipe: "mussels-chorizo",
 		size: "tall",
 		image: "https://foodies.academy/wp-content/uploads/2018/09/DSC00328-300x300.jpg",
 		videoId: "video-id-41",
@@ -15,7 +15,7 @@ export const heroCards: HeroCard[] = [
 		title: "Мидии с чоризо в томатном соусе",
 	},
 	{
-		href: "#",
+		recipe: "seafood-paella",
 		size: "half",
 		image: "https://foodies.academy/wp-content/uploads/2025/10/zamachau-sous-300x300.webp",
 		views: 1034,
@@ -25,7 +25,7 @@ export const heroCards: HeroCard[] = [
 		title: "Паэлья с морепродуктами",
 	},
 	{
-		href: "#",
+		recipe: "mussels-chorizo",
 		size: "half",
 		image: "https://foodies.academy/wp-content/uploads/2018/09/DSC00683-300x300.jpg",
 		views: 134,
@@ -35,7 +35,7 @@ export const heroCards: HeroCard[] = [
 		title: "Мидии с чоризо в томатном соусе",
 	},
 	{
-		href: "#12",
+		recipe: "mussels-chorizo",
 		size: "tall",
 		image: "https://foodies.academy/wp-content/uploads/2018/09/DSC00683-300x300.jpg",
 		videoId: "video-id-42",
@@ -46,7 +46,7 @@ export const heroCards: HeroCard[] = [
 		title: "Мидии с чоризо в томатном соусе",
 	},
 	{
-		href: "#",
+		recipe: "mushroom-risotto",
 		size: "half",
 		image: "https://foodies.academy/wp-content/uploads/2018/09/DSC00328-300x300.jpg",
 		views: 845,
@@ -56,7 +56,7 @@ export const heroCards: HeroCard[] = [
 		title: "Ризотто с грибами",
 	},
 	{
-		href: "#",
+		recipe: "philadelphia-rolls",
 		size: "half",
 		image: "https://foodies.academy/wp-content/uploads/2025/10/zamachau-sous-300x300.webp",
 		views: 690,
@@ -66,7 +66,7 @@ export const heroCards: HeroCard[] = [
 		title: "Роллы Филадельфия",
 	},
 	{
-		href: "#13",
+		recipe: "tom-yum",
 		size: "tall",
 		image: "https://foodies.academy/wp-content/uploads/2025/10/zamachau-sous-300x300.webp",
 		videoId: "video-id-43",
@@ -77,7 +77,7 @@ export const heroCards: HeroCard[] = [
 		title: "Том Ям с креветками",
 	},
 	{
-		href: "#",
+		recipe: "uzbek-plov",
 		size: "half",
 		image: "https://foodies.academy/wp-content/uploads/2018/09/DSC00683-300x300.jpg",
 		views: 502,
@@ -87,7 +87,7 @@ export const heroCards: HeroCard[] = [
 		title: "Плов узбекский",
 	},
 	{
-		href: "#",
+		recipe: "pesto-pasta-broccoli",
 		size: "half",
 		image: "https://foodies.academy/wp-content/uploads/2018/09/DSC00328-300x300.jpg",
 		views: 540,
@@ -97,7 +97,7 @@ export const heroCards: HeroCard[] = [
 		title: "Паста Песто с брокколи",
 	},
 	{
-		href: "#14",
+		recipe: "pasta-carbonara",
 		size: "tall",
 		image: "https://foodies.academy/wp-content/uploads/2018/09/DSC00328-300x300.jpg",
 		videoId: "video-id-44",
