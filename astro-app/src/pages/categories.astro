@@ -34,7 +34,7 @@ const sortOptions = [
 		/>
 		{/* Category cards are at least 195px wide (325px min-height at 3:5). */}
 		<CardGrid minCardWidth={300}>
-			{categories.map((category) => <CategoryCard category={category} class="card-list-item"/>)}
+			{categories.map((category) => <CategoryCard category={category} variant="grid" />)}
 		</CardGrid>
 	</section>
 	

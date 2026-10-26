@@ -1,0 +1,72 @@
+---
+// Filters + card grid + "Показать ещё". Cards come in the default slot with
+// `data-groups`; the page renders the ones past the first `pageSize` with
+// `hidden`, so the first screen is right before the script runs.
+import Filters from "./Filters.astro";
+import CardGrid from "./CardGrid.astro";
+
+interface Props {
+	groups: string[];
+	// Cards shown at first and added by each "more" click.
+	pageSize: number;
+	total: number;
+	moreLabel: string;
+	minCardWidth: number;
+}
+
+const { groups, pageSize, total, moreLabel, minCardWidth } = Astro.props;
+---
+<div class="filterable-grid" data-filterable-grid data-page-size={pageSize}>
+	<Filters groups={groups} />
+	<CardGrid minCardWidth={minCardWidth}>
+		<slot />
+	</CardGrid>
+	<button type="button" class="filterable-grid__more btn btn--secondary" hidden={total <= pageSize}>{moreLabel}</button>
+</div>
+
+<style lang="less">
+.filterable-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 30px;
+}
+
+.filterable-grid__more {
+	align-self: center;
+	margin-top: 10px;
+	&[hidden] {
+		display: none;
+	}
+}
+</style>
+
+<script>
+	import { initFilters, groupsOf } from "../../scripts/filters";
+
+	document.querySelectorAll<HTMLElement>("[data-filterable-grid]").forEach((root) => {
+		const more = root.querySelector<HTMLButtonElement>(".filterable-grid__more");
+		const items = [...root.querySelectorAll<HTMLElement>("[data-groups]")].map((el) => ({ el, groups: groupsOf(el) }));
+		const pageSize = Number(root.dataset.pageSize);
+		let group = "";
+		let limit = pageSize;
+
+		// Show the first `limit` cards of the picked group.
+		const render = () => {
+			const matching = items.filter((item) => group === "" || item.groups.includes(group));
+			items.forEach((item) => (item.el.hidden = true));
+			matching.forEach((item, i) => (item.el.hidden = i >= limit));
+			if (more) more.hidden = matching.length <= limit;
+		};
+
+		initFilters(root, (picked) => {
+			group = picked;
+			limit = pageSize;
+			render();
+		});
+
+		more?.addEventListener("click", () => {
+			limit += pageSize;
+			render();
+		});
+	});
+</script>

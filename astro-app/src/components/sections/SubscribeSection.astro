@@ -1,13 +1,19 @@
 ---
 import { Image } from "astro:assets";
 import book from "../../assets/images/subscribe.jpg";
+
+interface Props {
+	title?: string;
+}
+
+const { title = "Подпишись и получи книгу рецептов бесплатно!" } = Astro.props;
 ---
 <section class="section-item">
 	<div class="subscribe flex gap-40">
 		<Image class="subscribe__img" src={book} alt="Кулинарная книга Foodies" />
 
 		<form method="post" action="#" class="subscribe__form flex gap-15">
-			<h2 class="subscribe__title">Подпишись и получи книгу рецептов бесплатно!</h2>
+			<h2 class="subscribe__title">{title}</h2>
 
 			<input class="subscribe__input" type="text" name="name" placeholder="Имя" aria-label="Имя" autocomplete="given-name" required>
 

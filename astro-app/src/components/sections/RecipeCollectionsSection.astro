@@ -17,6 +17,10 @@ import { recipeCollections } from "../../data/recipeCollections";
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr 1fr;
 	gap: 20px;
+	@media (max-width: 860px) {
+		grid-template-columns: 1fr 1fr;
+		gap: 14px;
+	}
 	// Room for the cards' hover lift and shadow, as in the carousels.
 	padding: 20px 0 56px;
 	margin: -20px 0 -56px;

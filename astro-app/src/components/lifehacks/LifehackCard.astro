@@ -1,0 +1,82 @@
+---
+import type { Lifehack } from "../../types/lifehack";
+
+interface Props {
+	lifehack: Lifehack;
+	// Past the first page of a FilterableGrid.
+	hidden?: boolean;
+}
+
+const { lifehack, hidden } = Astro.props;
+---
+<a href={`/lifehack/${lifehack.slug}`} class="lifehack-card" data-groups={JSON.stringify([lifehack.category])} hidden={hidden}>
+	<div class="lifehack-card__top">
+		<span class="lifehack-card__icon" aria-hidden="true">{lifehack.icon}</span>
+		<span class="lifehack-card__tag">{lifehack.category}</span>
+	</div>
+	<h3 class="lifehack-card__title">{lifehack.title}</h3>
+	<p class="lifehack-card__text">{lifehack.description}</p>
+</a>
+
+<style lang="less">
+.lifehack-card {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	padding: 26px;
+	background: var(--color-white);
+	border: var(--border-width) solid var(--color-black-10);
+	border-radius: var(--border-radius-25);
+	transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s;
+	&:hover {
+		transform: translateY(-6px);
+		box-shadow: 0 20px 36px var(--color-black-10);
+		border-color: transparent;
+	}
+	&:active {
+		transform: translateY(-2px) scale(.98);
+	}
+	&[hidden] {
+		display: none;
+	}
+}
+
+.lifehack-card__top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.lifehack-card__icon {
+	font-size: 30px;
+	line-height: 1;
+}
+
+.lifehack-card__tag {
+	padding: 5px 10px;
+	background: var(--color-pink-20);
+	border-radius: var(--border-radius-1000);
+	font-weight: 700;
+	font-size: 11px;
+	line-height: 14px;
+	text-transform: uppercase;
+	color: var(--color-red);
+}
+
+.lifehack-card__title {
+	font-size: 16px;
+	line-height: 1.35;
+	transition: color .15s;
+}
+
+.lifehack-card:hover .lifehack-card__title {
+	color: var(--color-red);
+}
+
+.lifehack-card__text {
+	font-size: 13px;
+	line-height: 1.65;
+	color: var(--color-grey-dark);
+}
+</style>

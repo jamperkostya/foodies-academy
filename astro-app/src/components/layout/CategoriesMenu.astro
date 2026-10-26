@@ -1,13 +1,6 @@
 ---
 import Icon from "../ui/Icon.astro";
-import { categories } from "../../data/categories";
-
-// One column per group, same groups as the category filters. A category that
-// belongs to several groups is listed in each of them.
-const columns = [...new Set(categories.flatMap((category) => category.groups))].map((group) => ({
-	group,
-	items: categories.filter((category) => category.groups.includes(group)),
-}));
+import { categoryColumns } from "../../data/categories";
 ---
 <div class="categories-menu">
 	<button type="button" class="categories-menu__toggle" aria-expanded="false" aria-controls="categories-menu-panel">
@@ -17,7 +10,7 @@ const columns = [...new Set(categories.flatMap((category) => category.groups))].
 
 	<nav class="categories-menu__panel" id="categories-menu-panel" aria-label="Категории" hidden>
 		<div class="categories-menu__columns">
-			{columns.map(({ group, items }) => (
+			{categoryColumns.map(({ group, items }) => (
 				<div class="categories-menu__column">
 					<p class="categories-menu__title">{group}</p>
 					<ul class="categories-menu__list">

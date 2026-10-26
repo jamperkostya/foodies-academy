@@ -1,0 +1,29 @@
+---
+// Toast message holder, one per page. Shown with showToast() from scripts/toast.ts.
+---
+<div class="toast no-print" role="status" aria-live="polite"></div>
+
+<style lang="less">
+.toast {
+	position: fixed;
+	left: 50%;
+	bottom: 30px;
+	transform: translate(-50%, 20px);
+	background: var(--color-black);
+	color: var(--color-white);
+	padding: 14px 24px;
+	border-radius: var(--border-radius-1000);
+	font-size: 14px;
+	font-weight: 600;
+	box-shadow: 0 14px 30px var(--color-black-20);
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity .25s, transform .25s, visibility .25s;
+	z-index: 300;
+	&.is-visible {
+		opacity: 1;
+		visibility: visible;
+		transform: translate(-50%, 0);
+	}
+}
+</style>

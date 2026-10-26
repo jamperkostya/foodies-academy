@@ -7,6 +7,9 @@
 	flex-direction: column;
 	justify-content: space-between;
 	padding: 32px;
+	@media (max-width: 860px) {
+		padding: 20px;
+	}
 	transition: transform .25s var(--ease), box-shadow .25s var(--ease);
 	&::after {
 		content: "";
@@ -36,20 +39,29 @@
 	transition: transform .5s var(--ease);
 }
 
+// Stats stay on the right edge whether or not there's a YouTube badge.
 .video-card__top {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: flex-end;
 	font-weight: 500;
 	font-size: 14px;
 	line-height: 17px;
 	gap: 12px;
 }
 
+.video-card__play-badge {
+	margin-right: auto;
+}
+
 .video-card__title {
 	font-weight: 900;
 	font-size: 32px;
 	line-height: 39px;
+	@media (max-width: 860px) {
+		font-size: 24px;
+		line-height: 29px;
+	}
 }
 
 // Hero layout: a tall card, or one of two stacked half-height cards.
@@ -63,6 +75,19 @@
 .video-card--half {
 	flex: 1 1 0;
 	min-height: 0;
+	// Half as wide as a tall card, so long titles need a smaller size.
+	.video-card__title {
+		font-size: 24px;
+		line-height: 29px;
+		hyphens: auto;
+		overflow-wrap: break-word;
+	}
+	// The hero's stack is unwrapped on small screens (see Hero.less).
+	@media (max-width: 860px) {
+		flex: 0 0 var(--hero-item-w);
+		height: var(--hero-item-h);
+		scroll-snap-align: start;
+	}
 }
 
 // A card in a carousel row: the carousel sets its width, which is ~250px

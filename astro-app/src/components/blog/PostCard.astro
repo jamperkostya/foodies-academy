@@ -1,0 +1,113 @@
+---
+import Avatar from "../ui/Avatar.astro";
+import type { Post } from "../../types/post";
+
+interface Props {
+	post: Post;
+	// Past the first page of a FilterableGrid.
+	hidden?: boolean;
+}
+
+const { post, hidden } = Astro.props;
+---
+<a href={`/blog/${post.slug}`} class="post-card" data-groups={JSON.stringify([post.tag])} hidden={hidden}>
+	<div class="post-card__media">
+		<div class="post-card__img" style={`background-image: url('${post.image}')`}></div>
+	</div>
+	<div class="post-card__body">
+		<span class="post-card__tag">{post.tag}</span>
+		<h3 class="post-card__title">{post.title}</h3>
+		<p class="post-card__excerpt">{post.excerpt}</p>
+		<div class="post-card__meta">
+			<Avatar name={post.author} size="sm" />
+			<span>{post.author} · {post.date} · {post.readTime} мин</span>
+		</div>
+	</div>
+</a>
+
+<style lang="less">
+.post-card {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	background: var(--color-white);
+	border: var(--border-width) solid var(--color-black-10);
+	border-radius: var(--border-radius-25);
+	transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+	&:hover {
+		transform: translateY(-6px);
+		box-shadow: 0 20px 36px var(--color-black-10);
+	}
+	&:active {
+		transform: translateY(-2px) scale(.98);
+	}
+	&[hidden] {
+		display: none;
+	}
+}
+
+.post-card__media {
+	position: relative;
+	aspect-ratio: 16/10;
+	overflow: hidden;
+}
+
+.post-card__img {
+	position: absolute;
+	inset: 0;
+	background-size: cover;
+	background-position: center;
+	transition: transform .5s var(--ease);
+}
+
+.post-card:hover .post-card__img {
+	transform: scale(1.08);
+}
+
+.post-card__body {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 20px;
+}
+
+.post-card__tag {
+	align-self: flex-start;
+	padding: 5px 12px;
+	background: var(--color-pink-20);
+	border-radius: var(--border-radius-1000);
+	font-weight: 700;
+	font-size: 11px;
+	line-height: 14px;
+	text-transform: uppercase;
+	color: var(--color-red);
+}
+
+.post-card__title {
+	font-size: 17px;
+	line-height: 1.35;
+	transition: color .15s;
+}
+
+.post-card:hover .post-card__title {
+	color: var(--color-red);
+}
+
+.post-card__excerpt {
+	flex: 1;
+	font-size: 13px;
+	line-height: 1.6;
+	color: var(--color-grey-dark);
+}
+
+.post-card__meta {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-top: 4px;
+	font-size: 12px;
+	line-height: 1.4;
+	color: var(--color-grey-dark);
+}
+</style>

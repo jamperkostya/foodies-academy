@@ -1,0 +1,257 @@
+---
+// Slide-in menu for phones and small tablets, opened by the header burger
+// (aria-controls="mobile-nav-panel"). Hidden from 861px up.
+import { Image } from "astro:assets";
+import Icon from "../ui/Icon.astro";
+import SearchForm from "./SearchForm.astro";
+import { categoryColumns } from "../../data/categories";
+import logo from "../../assets/images/logotype.jpg";
+---
+<div class="mobile-nav" data-mobile-nav>
+	<div class="mobile-nav__backdrop" data-mobile-nav-close></div>
+
+	<nav class="mobile-nav__panel" id="mobile-nav-panel" aria-label="Меню">
+		<div class="mobile-nav__head">
+			<a href="/" class="mobile-nav__logo">
+				<Image class="mobile-nav__logo-img" src={logo} alt="Foodies" width={150} height={50} />
+			</a>
+			<button type="button" class="mobile-nav__close" aria-label="Закрыть меню" data-mobile-nav-close>✕</button>
+		</div>
+
+		<div class="mobile-nav__search">
+			<SearchForm id="mobile-search-suggestions" />
+		</div>
+
+		<ul class="mobile-nav__list">
+			<li class="mobile-nav__item">
+				<button type="button" class="mobile-nav__link mobile-nav__toggle" aria-expanded="false" aria-controls="mobile-nav-categories">
+					Категории
+					<Icon class="mobile-nav__arrow" name="menu-arrow" width={12} height={7} />
+				</button>
+				<div class="mobile-nav__sub" id="mobile-nav-categories" hidden>
+					{categoryColumns.map(({ group, items }) => (
+						<div class="mobile-nav__group">
+							<p class="mobile-nav__group-title">{group}</p>
+							<ul class="mobile-nav__sub-list">
+								{items.map((category) => (
+									<li><a class="mobile-nav__sub-link" href={`/category/${category.slug}`}>{category.title}</a></li>
+								))}
+							</ul>
+						</div>
+					))}
+					<a class="mobile-nav__all" href="/categories">Все категории →</a>
+				</div>
+			</li>
+			<li class="mobile-nav__item"><a class="mobile-nav__link" href="/blog">Блог</a></li>
+			<li class="mobile-nav__item"><a class="mobile-nav__link" href="/lifehacks">Лайфхаки</a></li>
+			<li class="mobile-nav__item"><a class="mobile-nav__link" href="#">Ai Повар <Icon name="ai-chef" width={16} height={16} /></a></li>
+			<li class="mobile-nav__item"><a class="mobile-nav__link" href="#">Избранное <span class="mobile-nav__count">708</span></a></li>
+			<li class="mobile-nav__item"><a class="mobile-nav__link mobile-nav__link--accent" href="#">Регистрация</a></li>
+		</ul>
+	</nav>
+</div>
+
+<style lang="less">
+.mobile-nav {
+	position: fixed;
+	inset: 0;
+	z-index: 200;
+	visibility: hidden;
+	transition: visibility .3s;
+	&.is-open {
+		visibility: visible;
+	}
+	@media (min-width: 861px) {
+		display: none;
+	}
+}
+
+// The page under an open menu doesn't scroll.
+:global(html.is-scroll-locked) {
+	overflow: hidden;
+}
+
+.mobile-nav__backdrop {
+	position: absolute;
+	inset: 0;
+	background: var(--color-black-50);
+	opacity: 0;
+	transition: opacity .25s;
+}
+
+.mobile-nav.is-open .mobile-nav__backdrop {
+	opacity: 1;
+}
+
+.mobile-nav__panel {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	width: min(360px, 88vw);
+	padding: 20px;
+	overflow-y: auto;
+	background: var(--color-white);
+	box-shadow: -20px 0 50px var(--color-black-20);
+	transform: translateX(100%);
+	transition: transform .3s var(--ease);
+}
+
+.mobile-nav.is-open .mobile-nav__panel {
+	transform: translateX(0);
+}
+
+.mobile-nav__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.mobile-nav__logo-img {
+	width: 150px;
+	height: auto;
+}
+
+// A row, so the search form (flex: 1) fills the width rather than the height.
+.mobile-nav__search {
+	display: flex;
+}
+
+.mobile-nav__close {
+	width: 36px;
+	height: 36px;
+	background: var(--color-light-grey);
+	border: none;
+	border-radius: var(--border-radius-50percents);
+	cursor: pointer;
+	transition: background .15s, color .15s, transform .15s;
+	&:hover {
+		background: var(--color-red);
+		color: var(--color-white);
+		transform: rotate(90deg);
+	}
+}
+
+.mobile-nav__item {
+	border-bottom: var(--border-width) solid var(--color-black-10);
+}
+
+.mobile-nav__link {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	width: 100%;
+	padding: 16px 4px;
+	background: none;
+	border: none;
+	font-weight: 600;
+	font-size: 16px;
+	line-height: 20px;
+	text-align: left;
+	color: var(--color-black);
+	cursor: pointer;
+	transition: color .15s;
+	&:hover {
+		color: var(--color-red);
+	}
+	&--accent {
+		color: var(--color-red);
+	}
+}
+
+.mobile-nav__toggle {
+	justify-content: space-between;
+	// Icon's <svg>, outside this component's scope.
+	:global(.mobile-nav__arrow) {
+		transition: transform .2s var(--ease);
+	}
+	&[aria-expanded="true"] :global(.mobile-nav__arrow) {
+		transform: rotate(180deg);
+	}
+}
+
+.mobile-nav__count {
+	padding: 2px 8px;
+	background: var(--color-pink-20);
+	border-radius: var(--border-radius-1000);
+	font-weight: 700;
+	font-size: 12px;
+	line-height: 16px;
+	color: var(--color-red);
+}
+
+.mobile-nav__sub {
+	display: grid;
+	gap: 14px;
+	padding: 0 4px 16px 14px;
+	&[hidden] {
+		display: none;
+	}
+}
+
+.mobile-nav__group-title {
+	margin-bottom: 4px;
+	font-style: italic;
+	font-weight: 700;
+	font-size: 13px;
+	color: var(--color-grey-dark);
+}
+
+.mobile-nav__sub-link {
+	display: block;
+	padding: 6px 0;
+	font-weight: 500;
+	font-size: 14px;
+	transition: color .15s;
+	&:hover {
+		color: var(--color-red);
+	}
+}
+
+.mobile-nav__all {
+	font-weight: 700;
+	font-size: 14px;
+	color: var(--color-red);
+}
+</style>
+
+<script>
+	const nav = document.querySelector<HTMLElement>("[data-mobile-nav]");
+	const burgers = document.querySelectorAll<HTMLButtonElement>('[aria-controls="mobile-nav-panel"]');
+	const close = nav?.querySelector<HTMLButtonElement>(".mobile-nav__close");
+	let opener: HTMLElement | null = null;
+
+	const setOpen = (open: boolean) => {
+		if (!nav || nav.classList.contains("is-open") === open) return;
+		nav.classList.toggle("is-open", open);
+		document.documentElement.classList.toggle("is-scroll-locked", open);
+		burgers.forEach((burger) => burger.setAttribute("aria-expanded", String(open)));
+		if (open) {
+			opener = document.activeElement as HTMLElement | null;
+			close?.focus();
+		} else {
+			opener?.focus();
+		}
+	};
+
+	burgers.forEach((burger) => burger.addEventListener("click", () => setOpen(true)));
+	nav?.querySelectorAll("[data-mobile-nav-close]").forEach((el) => el.addEventListener("click", () => setOpen(false)));
+	document.addEventListener("keydown", (e) => {
+		if (e.key === "Escape") setOpen(false);
+	});
+	// The menu isn't shown on wider screens, so don't leave the page locked.
+	window.matchMedia("(min-width: 861px)").addEventListener("change", (e) => {
+		if (e.matches) setOpen(false);
+	});
+
+	const toggle = nav?.querySelector<HTMLButtonElement>(".mobile-nav__toggle");
+	const sub = nav?.querySelector<HTMLElement>(".mobile-nav__sub");
+	toggle?.addEventListener("click", () => {
+		if (!sub) return;
+		sub.hidden = !sub.hidden;
+		toggle.setAttribute("aria-expanded", String(!sub.hidden));
+	});
+</script>

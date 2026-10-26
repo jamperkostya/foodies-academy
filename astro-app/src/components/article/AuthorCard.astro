@@ -1,0 +1,47 @@
+---
+// Author in the article sidebar. With `href` the button is a link
+// ("Профиль автора"), without it a plain button ("Подписаться").
+import SidebarCard from "./SidebarCard.astro";
+import Avatar from "../ui/Avatar.astro";
+
+interface Props {
+	name: string;
+	info: string;
+	buttonLabel: string;
+	href?: string;
+}
+
+const { name, info, buttonLabel, href } = Astro.props;
+---
+<SidebarCard class="author-card">
+	<Avatar name={name} size="lg" />
+	<strong class="author-card__name">{name}</strong>
+	<span class="author-card__info">{info}</span>
+	{href
+		? <a href={href} class="btn btn--secondary author-card__btn">{buttonLabel}</a>
+		: <button type="button" class="btn btn--secondary author-card__btn">{buttonLabel}</button>}
+</SidebarCard>
+
+<style lang="less">
+// The root element is SidebarCard's, outside this component's scope.
+:global(.author-card) {
+	text-align: center;
+}
+.author-card {
+	&__name {
+		display: block;
+		font-size: 15px;
+		margin: 12px 0 2px;
+	}
+	&__info {
+		display: block;
+		font-size: 12px;
+		color: var(--color-grey);
+		margin-bottom: 16px;
+	}
+	&__btn {
+		width: 100%;
+		margin-bottom: 0;
+	}
+}
+</style>

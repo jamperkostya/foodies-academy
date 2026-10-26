@@ -1,0 +1,44 @@
+---
+// A titled block of a recipe or lifehack page: "Ингредиенты", "Отзывы", …
+// The "hint" slot goes to the right of the title.
+interface Props {
+	title: string;
+	id?: string;
+	class?: string;
+}
+
+const { title, id, class: className } = Astro.props;
+---
+<section class:list={["content-block", className]} id={id}>
+	<div class="content-block__head flex gap-15">
+		<h2 class="content-block__title">{title}</h2>
+		{Astro.slots.has("hint") && <span class="content-block__hint"><slot name="hint" /></span>}
+	</div>
+	<slot />
+</section>
+
+<style lang="less">
+.content-block {
+	margin-top: 30px;
+	// Keeps the heading clear of the sticky header on anchor jumps.
+	scroll-margin-top: 100px;
+	&__head {
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: space-between;
+		margin-bottom: 20px;
+		border-bottom: 2px solid var(--color-black);
+		padding-bottom: 12px;
+	}
+	&__title {
+		font-size: 22px;
+		text-transform: uppercase;
+	}
+	&__hint {
+		font-size: 13px;
+		font-weight: 600;
+		color: var(--color-grey);
+		white-space: nowrap;
+	}
+}
+</style>

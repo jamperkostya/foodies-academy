@@ -1,0 +1,32 @@
+---
+// Bordered card in the article sidebar. `accent` fills it with the pink background.
+interface Props {
+	title?: string;
+	accent?: boolean;
+	class?: string;
+}
+
+const { title, accent = false, class: className } = Astro.props;
+---
+<div class:list={["sidebar-card", { "sidebar-card--accent": accent }, className]}>
+	{title && <h4 class="sidebar-card__title">{title}</h4>}
+	<slot />
+</div>
+
+<style lang="less">
+.sidebar-card {
+	border: var(--border-width) solid var(--color-border-search-form);
+	border-radius: var(--border-radius-25);
+	padding: 24px;
+	background: var(--color-white);
+	&--accent {
+		background: var(--color-pink-20);
+		border-color: transparent;
+	}
+	&__title {
+		font-size: 14px;
+		text-transform: uppercase;
+		margin-bottom: 16px;
+	}
+}
+</style>

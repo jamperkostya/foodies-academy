@@ -1,6 +1,413 @@
 ---
-// Recipe page is not built yet: no paths, so no empty pages go to production.
+import Section from "../../components/layout/Section.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ArticleHero from "../../components/article/ArticleHero.astro";
+import ArticleLayout from "../../components/article/ArticleLayout.astro";
+import ContentBlock from "../../components/article/ContentBlock.astro";
+import StepList from "../../components/article/StepList.astro";
+import TipBox from "../../components/article/TipBox.astro";
+import Reviews from "../../components/article/Reviews.astro";
+import AuthorCard from "../../components/article/AuthorCard.astro";
+import SidebarList from "../../components/article/SidebarList.astro";
+import NewsletterCard from "../../components/article/NewsletterCard.astro";
+import Icon from "../../components/ui/Icon.astro";
+import Stars from "../../components/ui/Stars.astro";
+import RecipeSection from "../../components/sections/RecipeSection.astro";
+import { recipes } from "../../data/recipes";
+import type { Recipe } from "../../types/recipe";
+import type { Review } from "../../types/review";
+
 export function getStaticPaths() {
-	return [];
+	return recipes.map((recipe) => ({ params: { slug: recipe.slug }, props: { recipe } }));
 }
+
+interface Props {
+	recipe: Recipe;
+}
+
+const { recipe } = Astro.props;
+
+const similarRecipes = recipes.filter((item) => item.isTop).slice(0, 10);
+const sidebarRecipes = recipes
+	.filter((item) => item.slug !== recipe.slug)
+	.slice(0, 3)
+	.map((item) => ({ title: item.title, meta: `${item.time} мин · ${item.category}`, image: item.image, href: `/recipe/${item.slug}` }));
+
+// Mock content until recipes come from the CMS. `base` is the quantity for
+// 4 servings; the servings stepper rescales it on the client.
+const ingredients = [
+	{ base: 400, unit: "г", name: "спагетти" },
+	{ base: 200, unit: "г", name: "гуанчале или панчетты" },
+	{ base: 4, unit: "шт", name: "яичных желтка" },
+	{ base: 1, unit: "шт", name: "яйцо целиком" },
+	{ base: 100, unit: "г", name: "сыра Пекорино Романо, тёртого" },
+	{ base: 50, unit: "г", name: "сыра Пармезан, тёртого" },
+	{ base: 2, unit: "ч.л.", name: "свежемолотого чёрного перца" },
+];
+
+const steps = [
+	"Доведите до кипения большую кастрюлю подсоленной воды и отварите спагетти до состояния al dente согласно инструкции на упаковке.",
+	"Пока варится паста, нарежьте гуанчале небольшими кубиками около 1 см.",
+	"Обжарьте гуанчале на среднем огне до золотистой корочки и вытапливания жира, 5–7 минут.",
+	"В отдельной миске взбейте желтки, целое яйцо, тёртый пекорино и пармезан до однородной массы.",
+	"Добавьте в яичную смесь щедрую порцию свежемолотого чёрного перца.",
+	"Слейте пасту, обязательно оставив около 150 мл воды из-под пасты.",
+	"Снимите сковороду с гуанчале с огня, добавьте горячую пасту и перемешайте, чтобы она впитала жир.",
+	"Влейте яичную смесь, быстро перемешивая и подливая воду из-под пасты до кремовой консистенции. Подавайте немедленно с дополнительным сыром и перцем.",
+].map((text) => ({ text }));
+
+const nutrition = [
+	{ label: "Калории", value: "650 ккал" },
+	{ label: "Белки", value: "28 г" },
+	{ label: "Жиры", value: "32 г" },
+	{ label: "Углеводы", value: "62 г" },
+	{ label: "Клетчатка", value: "3 г" },
+];
+
+const ratingBars = [
+	{ stars: 5, percent: 82 },
+	{ stars: 4, percent: 12 },
+	{ stars: 3, percent: 4 },
+	{ stars: 2, percent: 1 },
+	{ stars: 1, percent: 1 },
+];
+
+const reviews: Review[] = [
+	{ name: "Мария К.", rating: 5, date: "28 июля 2026", text: "Готовила первый раз без сливок — получилось даже кремовее, чем я ожидала! Главное — снять сковороду с огня, как написано." },
+	{ name: "Денис Н.", rating: 4, date: "15 июля 2026", text: "Очень вкусно, но в следующий раз добавлю чуть больше перца. Панчетту заменил на бекон — тоже отлично зашло." },
+	{ name: "Анна С.", rating: 5, date: "2 июля 2026", text: "Наконец рецепт, где паста не превращается в яичницу. Пекорино нашла с трудом, взяла половину пармезана — тоже хорошо." },
+];
 ---
+
+<BaseLayout
+	title={recipe.title}
+	description={`${recipe.title}: рецепт с пошаговыми фото на Foodies Academy.`}
+	breadcrumbs={[{ label: "Рецепты", href: "/categories" }, { label: recipe.title }]}>
+
+	<ArticleHero
+		slot="hero"
+		badge="Основные блюда"
+		label="🇮🇹 Итальянская кухня"
+		title="Спагетти Алла Карбонара"
+		titleAccent="(Spaghetti alla Carbonara)"
+		description="Классическая римская паста без единой капли сливок: только яйца, панчетта, пекорино и много свежемолотого перца. Секрет кремового соуса — в технике, а не в лишних ингредиентах."
+		image="https://foodies.academy/wp-content/uploads/2018/09/DSC06146-1-601x601.jpg"
+		anchor={{ href: "#ingredients", label: "Перейти к рецепту ↓" }}
+		printable
+	>
+		<Fragment slot="meta">
+			<Stars rating={4.8} />
+			<strong>4.8</strong>
+			<a href="#reviews" class="recipe-reviews-link">1 243 отзыва</a>
+		</Fragment>
+	</ArticleHero>
+
+	<section class="recipe-quick-facts" slot="hero">
+		<div class="recipe-quick-facts__inner container flex gap-10 items-center justify-between">
+			<div class="quick-fact-item flex gap-10 items-center">
+				<Icon name="clock" width={16} height={16} />
+				<div class="quick-fact-item-data flex">
+					<span class="quick-fact-item__value block">15 мин</span>
+					<span class="quick-fact-item__description block">Подготовка</span>
+				</div>
+			</div>
+			<div class="quick-fact-item flex gap-10 items-center">
+				<Icon name="fire" width={18} height={18} />
+				<div class="quick-fact-item-data flex">
+					<span class="quick-fact-item__value block">45 мин</span>
+					<span class="quick-fact-item__description block">Готовка</span>
+				</div>
+			</div>
+			<div class="quick-fact-item flex gap-10 items-center">
+				<Icon name="total" width={16} height={16} />
+				<div class="quick-fact-item-data flex">
+					<span class="quick-fact-item__value block">45 мин</span>
+					<span class="quick-fact-item__description block">Всего</span>
+				</div>
+			</div>
+			<div class="quick-fact-item flex gap-10 items-center">
+				<Icon name="difficult" width={16} height={16} />
+				<div class="quick-fact-item-data flex">
+					<span class="quick-fact-item__value block">легко</span>
+					<span class="quick-fact-item__description block">Сложность</span>
+				</div>
+			</div>
+			<div class="quick-fact-item flex gap-10 items-center">
+				<Icon name="kcal" width={24} height={24} />
+				<div class="quick-fact-item-data flex">
+					<span class="quick-fact-item__value block">650 ккал</span>
+					<span class="quick-fact-item__description block">На порцию</span>
+				</div>
+			</div>
+			<div class="quick-fact-item flex gap-10 items-center">
+				<Icon name="profile" width={18} height={20} />
+				<div class="quick-fact-item-data quick-fact-item__servings flex">
+					<div class="servings-stepper flex gap-10 items-center">
+						<button type="button" class="no-print" id="servingsMinus" aria-label="Уменьшить порции">−</button>
+						<strong id="servingsValue" aria-live="polite">4</strong>
+						<button type="button" class="no-print" id="servingsPlus" aria-label="Увеличить порции">+</button>
+					</div>
+					<span class="quick-fact-item__description block">Порции</span>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<Section>
+		<ArticleLayout>
+			<p class="recipe-intro">Карбонара — один из тех рецептов, где легко ошибиться и превратить пасту в омлет со спагетти. Весь секрет — снять сковороду с огня и вмешивать яичную смесь вне прямого жара, постоянно помешивая. Никаких сливок: кремовая текстура получается только за счёт эмульсии из яиц, сыра и крахмалистой воды из-под пасты.</p>
+
+			<ContentBlock title="Ингредиенты" id="ingredients">
+				<span slot="hint" id="ingredientsServings">на 4 порции</span>
+				<ul class="ingredient-list" id="ingredientList">
+					{ingredients.map((item) => (
+						<li class="ingredient-list__item" data-base={item.base} data-unit={item.unit}>
+							<label class="ingredient-list__label">
+								<input class="ingredient-list__checkbox" type="checkbox">
+								<span class="ingredient-list__qty">{item.base} {item.unit}</span> {item.name}
+							</label>
+						</li>
+					))}
+					<li class="ingredient-list__item ingredient-list__item--note">
+						<label class="ingredient-list__label">
+							<input class="ingredient-list__checkbox" type="checkbox">
+							<span>Соль — по вкусу</span>
+						</label>
+					</li>
+				</ul>
+			</ContentBlock>
+
+			<ContentBlock title="Приготовление" id="instructions">
+				<span slot="hint" id="stepsProgress">0 из {steps.length} шагов</span>
+				<StepList steps={steps} progressId="stepsProgress" />
+			</ContentBlock>
+
+			<TipBox title="Совет от шефа">
+				Снимайте сковороду с огня заранее — жар должен быть остаточным. Если яичная смесь попадёт на слишком горячую поверхность, вы получите варёные хлопья вместо кремового соуса.
+			</TipBox>
+
+			<ContentBlock title="Пищевая ценность" id="nutrition">
+				<span slot="hint">на порцию</span>
+				<div class="nutrition-table">
+					{nutrition.map((item) => (
+						<div class="nutrition-table__row">{item.label}<strong class="nutrition-table__value">{item.value}</strong></div>
+					))}
+				</div>
+			</ContentBlock>
+
+			<ContentBlock title="Отзывы" id="reviews" class="no-print">
+				<div class="rating-summary flex gap-40 items-center">
+					<div class="rating-summary__score">
+						<strong class="rating-summary__value">4.8</strong>
+						<Stars rating={4.8} />
+						<span class="rating-summary__count">1 243 отзыва</span>
+					</div>
+					<div class="rating-summary__bars">
+						{ratingBars.map((bar) => (
+							<div class="rating-bar flex gap-10 items-center">
+								<span class="rating-bar__label">{bar.stars}</span>
+								<div class="rating-bar__track"><div class="rating-bar__fill" style={`width: ${bar.percent}%`}></div></div>
+								<span class="rating-bar__percent">{bar.percent}%</span>
+							</div>
+						))}
+					</div>
+				</div>
+				<Reviews
+					reviews={reviews}
+					withRating
+					placeholder="Расскажите, как получился рецепт..."
+					submitLabel="Опубликовать отзыв"
+				/>
+			</ContentBlock>
+
+			<Fragment slot="sidebar">
+				<AuthorCard name="Salad Konstantin" info="Шеф-повар · 214 рецептов" buttonLabel="Подписаться" />
+				<SidebarList title="Похожие рецепты" items={sidebarRecipes} />
+				<NewsletterCard title="Рецепт недели на почту" />
+			</Fragment>
+		</ArticleLayout>
+	</Section>
+
+	<div class="no-print">
+		<RecipeSection recipes={similarRecipes}>
+			<Fragment slot="title">
+				<span class="section-title__accent">Похожие</span> рецепты
+			</Fragment>
+		</RecipeSection>
+	</div>
+</BaseLayout>
+
+<script>
+	import "../../scripts/recipePage.ts";
+</script>
+
+<style lang="less">
+.recipe-reviews-link {
+	text-decoration: underline;
+}
+
+.recipe-quick-facts {
+	background: var(--color-white);
+	border-bottom: var(--border-width) solid var(--color-border-search-form);
+	padding: 10px 5px;
+	.recipe-quick-facts__inner {
+		flex-wrap: wrap;
+		.quick-fact-item {
+			.quick-fact-item-data {
+				flex-wrap: wrap;
+				.quick-fact-item__description, .quick-fact-item__value {
+					width: 100%;
+				}
+				.quick-fact-item__value {
+					font-weight: 700;
+					font-size: 16px;
+				}
+				.quick-fact-item__description {
+					color: var(--color-grey);
+					text-transform: uppercase;
+					letter-spacing: .5px;
+					font-size: 10px;
+				}
+			}
+			button {
+				width: 26px;
+				height: 26px;
+				border-radius: var(--border-radius-1000);
+				border: var(--border-width) solid var(--color-grey);
+				background: var(--color-white);
+				font-size: 16px;
+				line-height: 1;
+				font-weight: 700;
+				color: var(--color-black);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				transition: background .15s, color .15s;
+				&:hover {
+					background: var(--color-red);
+					color: var(--color-white);
+					border-color: var(--color-red);
+				}
+			}
+		}
+	}
+}
+
+.recipe-intro {
+	color: var(--color-grey-dark);
+}
+
+.ingredient-list {
+	&__item {
+		border-bottom: var(--border-width) solid var(--color-border-search-form);
+		padding: 10px 5px;
+		font-size: 14px;
+		&.is-checked .ingredient-list__label {
+			color: var(--color-grey);
+			text-decoration: line-through;
+		}
+		&.is-checked .ingredient-list__qty {
+			color: var(--color-grey);
+		}
+		&--note {
+			font-style: italic;
+		}
+	}
+	&__label {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		cursor: pointer;
+		width: 100%;
+	}
+	&__checkbox {
+		width: 20px;
+		height: 20px;
+		flex-shrink: 0;
+		accent-color: var(--color-red);
+		cursor: pointer;
+	}
+	&__qty {
+		font-weight: 700;
+		color: var(--color-red);
+		min-width: 64px;
+		display: inline-block;
+	}
+}
+
+.nutrition-table {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 12px;
+	@media @tablet {
+		grid-template-columns: repeat(5, 1fr);
+	}
+	&__row {
+		background: var(--color-light-grey);
+		border-radius: var(--border-radius-10);
+		padding: 16px 12px;
+		text-align: center;
+		color: var(--color-black-50);
+		text-transform: uppercase;
+		font-size: 12px;
+	}
+	&__value {
+		font-size: 14px;
+		display: block;
+		color: var(--color-black);
+	}
+}
+
+.rating-summary {
+	flex-direction: column;
+	align-items: flex-start;
+	margin-bottom: 32px;
+	@media @tablet {
+		flex-direction: row;
+		align-items: center;
+	}
+	&__score {
+		text-align: center;
+	}
+	&__value {
+		display: block;
+		font-weight: 800;
+		font-size: 40px;
+		line-height: 1.2;
+	}
+	&__count {
+		display: block;
+		font-size: 12px;
+		color: var(--color-grey);
+		margin-top: 4px;
+	}
+	&__bars {
+		flex: 1;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+}
+
+.rating-bar {
+	font-size: 12px;
+	color: var(--color-grey);
+	&__track {
+		flex: 1;
+		height: 6px;
+		border-radius: 4px;
+		background: var(--color-light-grey);
+		overflow: hidden;
+	}
+	&__fill {
+		height: 100%;
+		background: var(--color-red);
+		border-radius: 4px;
+	}
+	&__percent {
+		min-width: 32px;
+		text-align: right;
+	}
+}
+</style>

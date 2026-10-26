@@ -1,0 +1,178 @@
+---
+// Hero of a recipe or lifehack page: text, actions and the cover with a video button.
+// The "meta" slot goes under the description (rating for a recipe, author for a lifehack).
+import Icon from "../ui/Icon.astro";
+
+interface Props {
+	badge: string;
+	// Next to the badge, e.g. "🇮🇹 Итальянская кухня".
+	label?: string;
+	title: string;
+	// Smaller second line of the title.
+	titleAccent?: string;
+	description: string;
+	image: string;
+	// Main button: jumps to a section of the page.
+	anchor: { href: string; label: string };
+	// The cover's play button; off for articles without a video.
+	withVideo?: boolean;
+	videoLabel?: string;
+	printable?: boolean;
+}
+
+const { badge, label, title, titleAccent, description, image, anchor, withVideo = true, videoLabel = "Смотреть видео", printable = false } = Astro.props;
+---
+<section class="article-hero">
+	<div class="article-hero__container container grid gap-40 items-center">
+		<div class="article-hero__content grid gap-30">
+			<div class="article-hero__tags flex gap-10 items-center">
+				<span class="badge badge--static">{badge}</span>
+				{label && <span class="article-hero__label">{label}</span>}
+			</div>
+			<h1 class="article-hero__title section-title">
+				{title}
+				{titleAccent && <span class="article-hero__accent section-title__accent">{titleAccent}</span>}
+			</h1>
+			<p class="article-hero__desc">{description}</p>
+			{Astro.slots.has("meta") && <div class="article-hero__meta flex items-center gap-10"><slot name="meta" /></div>}
+			<div class="article-hero__actions flex flex-wrap items-center gap-20 no-print">
+				<a href={anchor.href} class="btn">{anchor.label}</a>
+				<button type="button" class="article-hero__icon-btn" data-hero-save aria-label="Сохранить в избранное" aria-pressed="false">
+					<Icon name="bookmark" width={18} height={18} />
+				</button>
+				<button type="button" class="article-hero__icon-btn" data-hero-share aria-label="Поделиться">
+					<Icon name="share" width={18} height={18} />
+				</button>
+				{printable && (
+					<button type="button" class="article-hero__icon-btn" data-hero-print aria-label="Распечатать">
+						<Icon name="print" width={18} height={18} />
+					</button>
+				)}
+			</div>
+		</div>
+		<div class="article-hero__media">
+			<div class="article-hero__img" style={`background-image: url('${image}')`}></div>
+			{withVideo && (
+				<button type="button" class="article-hero__play no-print" data-hero-video>
+					<Icon name="youtube-play" width={42} height={29} />
+					{videoLabel}
+				</button>
+			)}
+		</div>
+	</div>
+</section>
+
+<script>
+	import { showToast } from "../../scripts/toast";
+
+	const saveBtn = document.querySelector<HTMLButtonElement>("[data-hero-save]");
+	saveBtn?.addEventListener("click", () => {
+		const saved = saveBtn.classList.toggle("is-active");
+		saveBtn.setAttribute("aria-pressed", String(saved));
+		showToast(saved ? "Сохранено в избранное" : "Убрано из избранного");
+	});
+
+	document.querySelector("[data-hero-share]")?.addEventListener("click", async () => {
+		const url = window.location.href;
+		try {
+			if (navigator.share) {
+				await navigator.share({ title: document.title, url });
+				return;
+			}
+			await navigator.clipboard.writeText(url);
+			showToast("Ссылка скопирована");
+		} catch {
+			// The user closed the share sheet, or the clipboard is unavailable.
+		}
+	});
+
+	document.querySelector("[data-hero-print]")?.addEventListener("click", () => window.print());
+
+	document.querySelector("[data-hero-video]")?.addEventListener("click", () => showToast("Видео скоро будет доступно"));
+</script>
+
+<style lang="less">
+.article-hero {
+	padding: 25px 0;
+	background: var(--color-gradient-violet);
+	// minmax(0, …): long content may not widen a column past the screen.
+	&__container {
+		grid-template-columns: minmax(0, 1fr);
+		@media @desktop {
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		}
+	}
+	&__title {
+		line-height: 36px;
+		margin: 0;
+	}
+	&__accent {
+		display: block;
+		font-size: 16px;
+	}
+	&__desc {
+		color: var(--color-grey-dark);
+	}
+	&__icon-btn {
+		border-radius: var(--border-radius-1000);
+		background: var(--color-white);
+		width: 46px;
+		height: 46px;
+		border: var(--border-width) solid var(--color-border-search-form);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: background .15s, color .15s, border-color .15s;
+		&:hover,
+		&.is-active {
+			background: var(--color-red);
+			border-color: var(--color-red);
+			color: var(--color-white);
+		}
+	}
+	&__media {
+		position: relative;
+		border-radius: var(--border-radius-25);
+		overflow: hidden;
+		order: -1;
+		aspect-ratio: 16/9;
+		@media @desktop {
+			order: 0;
+			aspect-ratio: 4/3;
+		}
+	}
+	&__img {
+		position: absolute;
+		inset: 0;
+		background-size: cover;
+		background-position: center;
+		transition: transform .6s var(--ease);
+	}
+	&__media:hover &__img {
+		transform: scale(1.04);
+	}
+	&__play {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 10px;
+		background: none;
+		border: none;
+		color: var(--color-white);
+		font-size: 16px;
+		font-weight: 700;
+		text-shadow: 0 2px 10px rgba(0,0,0,.4);
+		z-index: 7;
+	}
+}
+
+@media print {
+	.article-hero {
+		background: none;
+	}
+}
+</style>

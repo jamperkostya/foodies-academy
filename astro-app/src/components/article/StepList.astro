@@ -1,0 +1,96 @@
+---
+// Numbered list: recipe steps or lifehack points. With `progressId`, a click
+// marks a step as done and the element with that id shows "N из M шагов".
+interface Step {
+	text: string;
+	// Bold lead-in before the text.
+	title?: string;
+}
+
+interface Props {
+	steps: Step[];
+	progressId?: string;
+}
+
+const { steps, progressId } = Astro.props;
+---
+<ol class:list={["step-list", { "step-list--checkable": progressId }]} data-progress-id={progressId}>
+	{steps.map((step) => (
+		<li class="step-list__item flex gap-10">
+			<p class="step-list__text">
+				{step.title && <strong>{step.title}</strong>} {step.text}
+			</p>
+		</li>
+	))}
+</ol>
+
+<script>
+	document.querySelectorAll<HTMLElement>(".step-list[data-progress-id]").forEach((list) => {
+		const progress = document.getElementById(list.dataset.progressId!);
+		const update = () => {
+			if (!progress) return;
+			const done = list.querySelectorAll(".is-done").length;
+			progress.textContent = `${done} из ${list.children.length} шагов`;
+		};
+
+		list.addEventListener("click", (event) => {
+			const step = (event.target as HTMLElement).closest(".step-list__item");
+			if (!step) return;
+			step.classList.toggle("is-done");
+			update();
+		});
+		update();
+	});
+</script>
+
+<style lang="less">
+.step-list {
+	counter-reset: step;
+	&__item {
+		margin-bottom: 5px;
+		padding: 16px 8px;
+		border-radius: var(--border-radius-25);
+		&::before {
+			counter-increment: step;
+			content: counter(step);
+			width: 34px;
+			height: 34px;
+			border-radius: var(--border-radius-50percents);
+			background: var(--color-black);
+			color: var(--color-white);
+			font-weight: 800;
+			font-size: 14px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+			transition: background .15s;
+		}
+		&.is-done::before {
+			content: "✓";
+			background: var(--color-red);
+		}
+		&.is-done .step-list__text {
+			text-decoration: line-through;
+			color: var(--color-grey);
+		}
+	}
+	&__text {
+		align-self: center;
+	}
+	&--checkable &__item {
+		cursor: pointer;
+		user-select: none;
+		transition: background .15s;
+		&:hover {
+			background: var(--color-gradient-violet);
+		}
+	}
+}
+
+@media print {
+	.step-list--checkable .step-list__item:hover {
+		background: none;
+	}
+}
+</style>

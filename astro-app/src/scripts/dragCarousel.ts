@@ -44,21 +44,29 @@ class DragCarousel {
 			this.startX = e.clientX;
 			this.startScroll = t.scrollLeft;
 			t.classList.add("is-dragging");
-			t.setPointerCapture(e.pointerId);
 		});
 
 		t.addEventListener("pointermove", (e) => {
 			if (!this.isDown) return;
 			const dx = e.clientX - this.startX;
-			if (Math.abs(dx) > 4) this.dragged = true;
+			// Capture only once it's a real drag: a captured pointer sends the
+			// click to the track instead of the card, so links wouldn't open.
+			if (!this.dragged && Math.abs(dx) > 4) {
+				this.dragged = true;
+				t.setPointerCapture(e.pointerId);
+			}
 			t.scrollLeft = this.startScroll - dx;
 		});
+
+		// Cards are links: stop the browser's own link drag from taking over.
+		t.addEventListener("dragstart", (e) => e.preventDefault());
 
 		const end = () => {
 			if (!this.isDown) return;
 			this.isDown = false;
 			t.classList.remove("is-dragging");
-			this.snapToNearest();
+			// A plain click shouldn't move the track while the link opens.
+			if (this.dragged) this.snapToNearest();
 		};
 		t.addEventListener("pointerup", end);
 		t.addEventListener("pointerleave", end);
@@ -67,9 +75,12 @@ class DragCarousel {
 		t.addEventListener(
 			"click",
 			(e) => {
+				// Swallow only the click that ends a drag; reset so later
+				// keyboard/touch clicks (no mouse pointerdown) still go through.
 				if (this.dragged) {
 					e.preventDefault();
 					e.stopPropagation();
+					this.dragged = false;
 				}
 			},
 			true

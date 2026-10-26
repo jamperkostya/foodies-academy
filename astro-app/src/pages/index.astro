@@ -45,7 +45,7 @@ const lastNews = news.slice(0, 7);
 	<RecipeSection
 		recipes={newRecipes}
 		groupsOf={(recipe) => [recipe.category]}
-		href="/recipes/new"
+		href="/categories"
 	>
 		<Fragment slot="title">
 			<span class="section-title__accent">Новые</span> рецепты
@@ -73,7 +73,7 @@ const lastNews = news.slice(0, 7);
 	<RecipeSection
 		recipes={recipes}
 		groupsOf={(recipe) => recipe.ingredients}
-		href="/recipes"
+		href="/categories"
 	>
 		<Fragment slot="title">
 			<span class="section-title__accent">Рецепты</span> по ингредиентам

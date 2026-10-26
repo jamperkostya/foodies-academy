@@ -1,0 +1,32 @@
+---
+// Two columns of a recipe or lifehack page: content and a sticky sidebar
+// (the "sidebar" slot). One column below desktop.
+---
+<div class="article-layout grid gap-40">
+	<div class="article-layout__main">
+		<slot />
+	</div>
+	<aside class="article-layout__sidebar flex gap-20 no-print">
+		<slot name="sidebar" />
+	</aside>
+</div>
+
+<style lang="less">
+.article-layout {
+	grid-template-columns: 1fr;
+	align-items: start;
+	@media @desktop {
+		grid-template-columns: 1fr 320px;
+	}
+	&__main {
+		min-width: 0;
+	}
+	&__sidebar {
+		flex-direction: column;
+		@media @desktop {
+			position: sticky;
+			top: 88px;
+		}
+	}
+}
+</style>

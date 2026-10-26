@@ -10,9 +10,19 @@
 	grid-template-columns: 1fr 1fr;
 	align-items: stretch;
 	gap: 7px;
+	// Image on top, text under it.
+	@media (max-width: 860px) {
+		grid-template-columns: 1fr;
+		gap: 20px;
+		padding: 13px 13px 24px;
+	}
 
 	&__text {
 		align-content: center;
+		@media (max-width: 860px) {
+			order: 2;
+			padding: 0 7px;
+		}
 	}
 	&__text-title {
 		margin: 0;
@@ -21,10 +31,18 @@
 		margin: 12px 0;
 		font-size: 20px;
 		line-height: 24px;
+		@media (max-width: 860px) {
+			font-size: 16px;
+			line-height: 22px;
+		}
 	}
 	&__media {
 		position: relative;
 		min-height: 400px;
+		@media (max-width: 860px) {
+			order: 1;
+			min-height: 220px;
+		}
 		overflow: hidden;
 		border-radius: 20px;
 	}

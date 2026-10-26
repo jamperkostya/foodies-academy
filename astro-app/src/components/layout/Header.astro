@@ -3,21 +3,24 @@ import { Image } from "astro:assets";
 import Icon from "../ui/Icon.astro";
 import CategoriesMenu from "./CategoriesMenu.astro";
 import SearchForm from "./SearchForm.astro";
+import MobileNav from "./MobileNav.astro";
 import logo from "../../assets/images/logotype.jpg";
 ---
 
-<header class="header">
-	<div class="header__inner container flex gap-40 flex-center justify-between">
+<header class="header no-print">
+	<div class="header__inner container">
 		<a href="/" class="header__logo">
-			<Image src={logo} alt="Foodies" width={242} height={81} loading="eager" />
+			<Image class="header__logo-img" src={logo} alt="Foodies" width={242} height={81} loading="eager" />
 		</a>
 
-		<div class="header__right-part flex gap-20 flex-center">
-			<CategoriesMenu />
-			<SearchForm />
-	
-			<a href="#" class="header__ai-chef flex gap-3">Ai Повар <Icon name="ai-chef" width={16} height={16} /></a>
-	
+		<div class="header__right-part">
+			{/* Moves into the mobile menu on small screens. */}
+			<div class="header__nav">
+				<CategoriesMenu />
+				<SearchForm />
+				<a href="#" class="header__ai-chef flex gap-3">Ai Повар <Icon name="ai-chef" width={16} height={16} /></a>
+			</div>
+
 			<div class="header__icons flex gap-13 flex-center">
 				<button type="button" class="header__icon-btn flex gap-5 flex-center" aria-label="Избранное">
 					<Icon name="favorites" width={24} height={24} />
@@ -31,9 +34,10 @@ import logo from "../../assets/images/logotype.jpg";
 					<a href="#" class="header__register-link">Регистрация</a>
 				</div>
 			</div>
-			<button type="button" class="header__burger" aria-label="Меню" aria-expanded="false"><span class="header__burger-line"></span></button>
+			<button type="button" class="header__burger" aria-label="Меню" aria-expanded="false" aria-controls="mobile-nav-panel"><span class="header__burger-line"></span></button>
 		</div>
 	</div>
+	<MobileNav />
 </header>
 
 <style lang="less">

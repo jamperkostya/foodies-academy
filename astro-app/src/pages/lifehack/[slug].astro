@@ -1,0 +1,110 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Section from "../../components/layout/Section.astro";
+import ArticleHero from "../../components/article/ArticleHero.astro";
+import ArticleLayout from "../../components/article/ArticleLayout.astro";
+import ContentBlock from "../../components/article/ContentBlock.astro";
+import StepList from "../../components/article/StepList.astro";
+import TipBox from "../../components/article/TipBox.astro";
+import Reviews from "../../components/article/Reviews.astro";
+import AuthorCard from "../../components/article/AuthorCard.astro";
+import SidebarList from "../../components/article/SidebarList.astro";
+import NewsletterCard from "../../components/article/NewsletterCard.astro";
+import Avatar from "../../components/ui/Avatar.astro";
+import { lifehacks } from "../../data/lifehacks";
+import type { Lifehack } from "../../types/lifehack";
+import { plural } from "../../utils/plural";
+
+export function getStaticPaths() {
+	return lifehacks.map((lifehack) => ({ params: { slug: lifehack.slug }, props: { lifehack } }));
+}
+
+interface Props {
+	lifehack: Lifehack;
+}
+
+const { lifehack } = Astro.props;
+
+const commentForms: [string, string, string] = ["комментарий", "комментария", "комментариев"];
+const commentsCount = `${lifehack.comments.length} ${plural(lifehack.comments.length, commentForms)}`;
+
+const similar = lifehacks
+	.filter((item) => item.slug !== lifehack.slug)
+	.slice(0, 3)
+	.map((item) => ({ title: item.title, meta: item.category, image: item.image, href: `/lifehack/${item.slug}` }));
+---
+
+<BaseLayout
+	title={lifehack.title}
+	description={lifehack.description}
+	breadcrumbs={[{ label: "Лайфхаки", href: "/lifehacks" }, { label: lifehack.title }]}>
+
+	<ArticleHero
+		slot="hero"
+		badge="Лайфхаки"
+		label={lifehack.category}
+		title={lifehack.title}
+		titleAccent={lifehack.titleAccent}
+		description={lifehack.description}
+		image={lifehack.image}
+		anchor={{ href: "#comments", label: "К комментариям ↓" }}
+		withVideo={Boolean(lifehack.videoMinutes)}
+		videoLabel={`Смотреть видео (${lifehack.videoMinutes} мин)`}
+	>
+		<div slot="meta" class="lifehack-author flex gap-10 items-center">
+			<Avatar name={lifehack.author.name} />
+			<div>
+				<strong class="lifehack-author__name">{lifehack.author.name}</strong>
+				<span class="lifehack-author__date">{lifehack.date} · {lifehack.readTime} мин чтения</span>
+			</div>
+		</div>
+	</ArticleHero>
+
+	<Section>
+		<ArticleLayout>
+			<p class="lifehack-intro">{lifehack.intro}</p>
+
+			<ContentBlock title="Разбор" id="points">
+				<StepList steps={lifehack.points} />
+			</ContentBlock>
+
+			<TipBox title={lifehack.tip.title}>{lifehack.tip.text}</TipBox>
+
+			<ContentBlock title="Комментарии" id="comments" class="no-print">
+				<span slot="hint" id="commentsCount">{commentsCount}</span>
+				<Reviews
+					reviews={lifehack.comments}
+					formTitle="Оставить комментарий"
+					placeholder="Что думаете?"
+					submitLabel="Отправить"
+					successMessage="Комментарий опубликован"
+					countId="commentsCount"
+					countForms={commentForms}
+				/>
+			</ContentBlock>
+
+			<Fragment slot="sidebar">
+				<AuthorCard name={lifehack.author.name} info={lifehack.author.info} buttonLabel="Профиль автора" href={`/author/${lifehack.author.slug}`} />
+				<SidebarList title="Похожие лайфхаки" items={similar} />
+				<NewsletterCard title="Лайфхак недели на почту" />
+			</Fragment>
+		</ArticleLayout>
+	</Section>
+</BaseLayout>
+
+<style lang="less">
+.lifehack-author {
+	&__name {
+		display: block;
+		font-size: 14px;
+	}
+	&__date {
+		font-size: 12px;
+		color: var(--color-grey);
+	}
+}
+
+.lifehack-intro {
+	color: var(--color-grey-dark);
+}
+</style>

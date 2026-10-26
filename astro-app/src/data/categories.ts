@@ -197,3 +197,10 @@ export const categories: Category[] = [
 		recipesCount: 14,
 	},
 ];
+
+// Categories by dish group, for the menus. A category that belongs to several
+// groups is listed in each of them.
+export const categoryColumns = [...new Set(categories.flatMap((category) => category.groups))].map((group) => ({
+	group,
+	items: categories.filter((category) => category.groups.includes(group)),
+}));

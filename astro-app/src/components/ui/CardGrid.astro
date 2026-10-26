@@ -12,6 +12,7 @@ const { minCardWidth } = Astro.props;
 
 <style lang="less">
 .card-grid {
-	grid-template-columns: repeat(auto-fill, minmax(var(--card-grid-min), 1fr));
+	// min() keeps a single column inside narrow screens.
+	grid-template-columns: repeat(auto-fill, minmax(min(var(--card-grid-min), 100%), 1fr));
 }
 </style>

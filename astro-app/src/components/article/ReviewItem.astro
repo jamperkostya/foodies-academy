@@ -1,0 +1,53 @@
+---
+// One review (with stars) or comment (without).
+import Avatar from "../ui/Avatar.astro";
+import Stars from "../ui/Stars.astro";
+import type { Review } from "../../types/review";
+
+interface Props {
+	review: Review;
+	// Highlights a review the visitor has just posted.
+	isNew?: boolean;
+}
+
+const { review, isNew = false } = Astro.props;
+---
+<div class:list={["review flex gap-15", { "review--new": isNew }]}>
+	<Avatar name={review.name} />
+	<div class="review__body">
+		<div class="review__head flex gap-10 items-center">
+			<strong class="review__name">{review.name}</strong>
+			{review.rating !== undefined && <Stars rating={review.rating} />}
+		</div>
+		<span class="review__date">{review.date}</span>
+		<p class="review__text">{review.text}</p>
+	</div>
+</div>
+
+<style lang="less">
+.review {
+	&__date {
+		display: block;
+		font-size: 12px;
+		color: var(--color-grey);
+		margin: 2px 0 8px;
+	}
+	&__text {
+		font-size: 14px;
+		line-height: 1.6;
+	}
+	&--new {
+		background: var(--color-pink-20);
+		border-radius: var(--border-radius-25);
+		padding: 14px;
+		animation: review-in .3s var(--ease);
+	}
+}
+
+@keyframes review-in {
+	from {
+		opacity: 0;
+		transform: translateY(-6px);
+	}
+}
+</style>

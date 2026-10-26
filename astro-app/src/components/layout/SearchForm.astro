@@ -1,5 +1,12 @@
 ---
 import Icon from "../ui/Icon.astro";
+
+interface Props {
+	// Id of the suggestion list; unique per form when a page has several.
+	id?: string;
+}
+
+const { id = "search-suggestions" } = Astro.props;
 ---
 <form class="search" role="search" action="/search">
 	<input
@@ -11,14 +18,14 @@ import Icon from "../ui/Icon.astro";
 		role="combobox"
 		aria-autocomplete="list"
 		aria-expanded="false"
-		aria-controls="search-suggestions"
+		aria-controls={id}
 		autocomplete="off"
 	>
 	<button type="submit" aria-label="Найти" class="search__btn btn">
 		<Icon name="search" width={24} height={24} />
 	</button>
 	<div class="search__suggest">
-		<div class="search__list" id="search-suggestions" role="listbox" aria-label="Подсказки"></div>
+		<div class="search__list" id={id} role="listbox" aria-label="Подсказки"></div>
 		<p class="search__empty" hidden></p>
 		<a class="search__all" href="/search" hidden></a>
 	</div>
@@ -209,7 +216,7 @@ import Icon from "../ui/Icon.astro";
 			items = results.map((result, i) => {
 				const item = el("a", "search__item");
 				item.href = result.href;
-				item.id = `search-option-${i}`;
+				item.id = `${list.id}-option-${i}`;
 				item.tabIndex = -1;
 				item.setAttribute("role", "option");
 				item.setAttribute("aria-selected", "false");
