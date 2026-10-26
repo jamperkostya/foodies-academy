@@ -4,7 +4,7 @@ import { initials } from "../../utils/initials";
 interface Props {
 	// Shown as initials.
 	name: string;
-	size?: "md" | "lg";
+	size?: "sm" | "md" | "lg" | "xl";
 }
 
 const { name, size = "md" } = Astro.props;
@@ -21,6 +21,11 @@ const { name, size = "md" } = Astro.props;
 	background: var(--color-black);
 	color: var(--color-white);
 	font-weight: 700;
+	&--sm {
+		width: 26px;
+		height: 26px;
+		font-size: 10px;
+	}
 	&--md {
 		width: 38px;
 		height: 38px;
@@ -30,6 +35,11 @@ const { name, size = "md" } = Astro.props;
 		width: 56px;
 		height: 56px;
 		font-size: 18px;
+	}
+	&--xl {
+		width: 108px;
+		height: 108px;
+		font-size: 34px;
 	}
 }
 </style>
