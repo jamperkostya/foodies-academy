@@ -1,7 +1,8 @@
 // src/types/heroCard.ts
 
 export interface HeroCard {
-  href: string;
+  // Slug of the recipe the card opens.
+  recipe: string;
   // tall: a full-height card; half: stacked two per column.
   size: "tall" | "half";
   image: string;
