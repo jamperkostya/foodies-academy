@@ -54,4 +54,22 @@ describe("Header", () => {
 		expect(svg).toContain('width="12"');
 		expect(svg).toContain('height="7"');
 	});
+	it("opens the mobile menu from the burger", () => {
+		expect(html).toMatch(/class="header__burger"[^>]*aria-expanded="false"[^>]*aria-controls="mobile-nav-panel"/);
+		expect(html).toMatch(/<nav[^>]*id="mobile-nav-panel"[^>]*aria-label="[^"]+"/);
+	});
+
+	it("gives the mobile menu the site sections and a collapsed categories list", () => {
+		expect(html).toMatch(/class="mobile-nav__link"[^>]*href="\/blog"/);
+		expect(html).toMatch(/class="mobile-nav__link"[^>]*href="\/lifehacks"/);
+		expect(html).toMatch(/aria-expanded="false"[^>]*aria-controls="mobile-nav-categories"/);
+		expect(html).toMatch(/id="mobile-nav-categories"[^>]*hidden/);
+	});
+
+	it("keeps the two search forms' suggestion lists apart", () => {
+		const ids = [...html.matchAll(/role="listbox"/g)].length;
+		const listIds = [...html.matchAll(/class="search__list"[^>]*id="([^"]+)"/g)].map((m) => m[1]);
+		expect(ids).toBe(2);
+		expect(new Set(listIds).size).toBe(2);
+	});
 });
