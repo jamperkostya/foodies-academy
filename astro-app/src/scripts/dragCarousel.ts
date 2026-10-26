@@ -65,7 +65,8 @@ class DragCarousel {
 			if (!this.isDown) return;
 			this.isDown = false;
 			t.classList.remove("is-dragging");
-			this.snapToNearest();
+			// A plain click shouldn't move the track while the link opens.
+			if (this.dragged) this.snapToNearest();
 		};
 		t.addEventListener("pointerup", end);
 		t.addEventListener("pointerleave", end);
@@ -74,9 +75,12 @@ class DragCarousel {
 		t.addEventListener(
 			"click",
 			(e) => {
+				// Swallow only the click that ends a drag; reset so later
+				// keyboard/touch clicks (no mouse pointerdown) still go through.
 				if (this.dragged) {
 					e.preventDefault();
 					e.stopPropagation();
+					this.dragged = false;
 				}
 			},
 			true
