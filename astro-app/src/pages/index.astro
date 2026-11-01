@@ -1,8 +1,14 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const API_URL = import.meta.env.API_URL ?? 'http://localhost:8000/api';
+
 import Hero from "../components/sections/Hero.astro";
 
 import { recipes } from '../data/recipes';
+const { data: topRecipes } = await fetch(`${API_URL}/recipes/top?limit=10`).then(r => r.json());
+const { data: newRecipes } = await fetch(`${API_URL}/recipes/new?limit=10`).then(r => r.json());
+
 import { news } from '../data/news';
 import { categories } from '../data/categories';
 import { videos } from '../data/videos';
@@ -22,12 +28,6 @@ import SEOTextSection from "../components/sections/SEOTextSection.astro";
 import TrustSection from "../components/sections/TrustSection.astro";
 
 import SubscribeSection from "../components/sections/SubscribeSection.astro";
-
-const API_URL = import.meta.env.API_URL ?? 'http://localhost:8000/api';
-
-const { data: topRecipes } = await fetch(`${API_URL}/recipes/top?limit=10`).then(r => r.json());
-
-const { data: newRecipes } = await fetch(`${API_URL}/recipes/new?limit=10`).then(r => r.json());
 
 // 1 featured (shown on the right) + 6 in the list on the left
 const lastNews = news.slice(0, 7);

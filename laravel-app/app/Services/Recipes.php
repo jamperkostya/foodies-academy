@@ -17,106 +17,39 @@ class Recipes
 
     public function __construct()
     {
-        $this->db = DB::connection('academy');
+        $this->db = DB::connection('site');
     }
 
     /** Most liked recipes (the like_post meta of the like button plugin). */
-    public function getTopRecipes(int $limit = 10, string $lang = 'ru'): array
+    public function getTopRecipes(int $limit = 10): array
     {
-        $posts = $this->query($lang)
-            ->orderByRaw('CAST('.$this->db->getQueryGrammar()->wrap('likes.meta_value').' AS UNSIGNED) DESC')
-            ->orderByDesc('p.post_date')
-            ->limit($limit)
-            ->get($this->columns());
-
-        return $this->present($posts, isTop: true);
-    }
-
-    /** Latest published recipes, newest first. */
-    public function getNewRecipes(int $limit = 10, string $lang = 'ru'): array
-    {
-        $posts = $this->query($lang)
-            ->orderByDesc('p.post_date')
-            ->limit($limit)
-            ->get($this->columns());
-
+        $posts = $this->db->table('posts')->where('post_type', 'recipe')->where('post_status', 'publish')->limit($limit)->get();
+        dd($this->present($posts));
         return $this->present($posts);
     }
 
-    /** Newest recipes of one category (course term id, e.g. 257 = "Вторые блюда"). */
-    public function getRecipesByCategoryId(int $categoryId, int $limit = 12, int $page = 1, string $lang = 'ru'): array
+    /** attachment_id => URL of the 601px "medium" size (or the original) */
+    private function images(array $attachmentIds): array
     {
-        $posts = $this->query($lang)
-            ->whereExists(fn ($q) => $q->selectRaw('1')
-                ->from('term_relationships as r')
-                ->join('term_taxonomy as tt', 'tt.term_taxonomy_id', '=', 'r.term_taxonomy_id')
-                ->whereColumn('r.object_id', 'p.ID')
-                ->where('tt.taxonomy', 'course')
-                ->where('tt.term_id', $categoryId))
-            ->orderByDesc('p.post_date')
-            ->forPage($page, $limit)
-            ->get($this->columns());
-
-        return $this->present($posts);
-    }
-
-    /** Published recipes of one WPML language, with their like count joined as "likes". */
-    private function query(string $lang): Builder
-    {
-        return $this->db->table('posts as p')
-            ->leftJoin('postmeta as likes', function ($join) {
-                $join->on('likes.post_id', '=', 'p.ID')->where('likes.meta_key', 'like_post');
-            })
-            ->join('icl_translations as tr', function ($join) use ($lang) {
-                $join->on('tr.element_id', '=', 'p.ID')
-                    ->where('tr.element_type', 'post_recipe')
-                    ->where('tr.language_code', $lang);
-            })
-            ->where('p.post_type', 'recipe')
-            ->where('p.post_status', 'publish');
-    }
-
-    private function columns(): array
-    {
-        return ['p.ID', 'p.post_name', 'p.post_title', 'p.post_date', 'p.comment_count', 'likes.meta_value as likes'];
-    }
-
-    /** Turns rows from query() into Astro Recipe objects. */
-    private function present(Collection $posts, bool $isTop = false): array
-    {
-        if ($posts->isEmpty()) {
+        if (! $attachmentIds) {
             return [];
         }
+        $base = rtrim(config('services.academy.uploads_url'), '/');
+        return $this->db->table('postmeta')
+            ->whereIn('post_id', $attachmentIds)
+            ->where('meta_key', '_wp_attachment_metadata')
+            ->pluck('meta_value', 'post_id')
+            ->map(function ($value) use ($base) {
+                $data = @unserialize($value, ['allowed_classes' => false]);
+                if (! is_array($data) || empty($data['file'])) {
+                    return '';
+                }
+                $dir = dirname($data['file']);
+                $file = $data['sizes']['medium']['file'] ?? basename($data['file']);
 
-        $ids = $posts->pluck('ID')->all();
-        $meta = $this->meta($ids);
-        $terms = $this->terms($ids);
-        $images = $this->images($meta->map(fn ($m) => (int) ($m['_thumbnail_id'] ?? 0))->filter()->all());
-        $views = $this->views($ids);
-
-        return $posts->map(function ($post) use ($meta, $terms, $images, $views, $isTop) {
-            $m = $meta->get($post->ID, []);
-            $t = $terms->get($post->ID, []);
-            $primaryCourse = (int) ($m['_yoast_wpseo_primary_course'] ?? 0);
-
-            return [
-                'id' => (string) $post->ID,
-                'slug' => $post->post_name,
-                'title' => html_entity_decode($post->post_title, ENT_QUOTES | ENT_HTML5),
-                'image' => $images[(int) ($m['_thumbnail_id'] ?? 0)] ?? '',
-                'category' => $t['course'][$primaryCourse] ?? (array_values($t['course'] ?? [])[0] ?? ''),
-                'time' => $this->minutes($m['recipe_prep_time'] ?? '', $m['recipe_prep_time_text'] ?? '')
-                    + $this->minutes($m['recipe_cook_time'] ?? '', $m['recipe_cook_time_text'] ?? '')
-                    + $this->minutes($m['recipe_passive_time'] ?? '', $m['recipe_passive_time_text'] ?? ''),
-                'isNew' => strtotime($post->post_date) > strtotime('-30 days'),
-                'isTop' => $isTop,
-                'rating' => (float) ($m['recipe_rating'] ?? 0),
-                'ingredients' => array_values($t['ingredient'] ?? []),
-                'comments' => (int) $post->comment_count,
-                'views' => $views[$post->ID] ?? 0,
-                'likes' => (int) $post->likes,
-            ];
-        })->values()->all();
+                return $base.'/'.($dir === '.' ? '' : $dir.'/').rawurlencode($file);
+            })
+            ->all();
     }
 
     /** post_id => [meta_key => value] */
@@ -135,7 +68,7 @@ class Recipes
             ->map(fn ($rows) => $rows->pluck('meta_value', 'meta_key')->all());
     }
 
-    /** post_id => [taxonomy => [term_id => name]] */
+    //     /** post_id => [taxonomy => [term_id => name]] */
     private function terms(array $ids): Collection
     {
         return $this->db->table('term_relationships as r')
@@ -153,64 +86,121 @@ class Recipes
                 ->all());
     }
 
-    /** attachment_id => URL of the 601px "medium" size (or the original) */
-    private function images(array $attachmentIds): array
+    /** Turns rows from query() into Astro Recipe objects. */
+    private function present(Collection $posts): array
     {
-        if (! $attachmentIds) {
+        if($posts->isEmpty())
+        {
             return [];
         }
+        else
+        {
+            $ids = $posts->pluck('ID')->all();
+            $meta = $this->meta($ids);
+            $terms = $this->terms($ids);
+            $images = $this->images($meta->map(fn ($m) => (int) ($m['_thumbnail_id'] ?? 0))->filter()->all());
+            $views = $this->views($ids);
 
-        $base = rtrim(config('services.academy.uploads_url'), '/');
+            return $posts->map(function($post) use ($meta, $terms, $images, $views) {
+                $post_meta = $meta->get($post->ID, []);
+                $post_terms = $terms->get($post->ID, []);
+                return [
+                    'id' => (integer) $post->ID,
+                    'slug' => $post->post_name,
+                    'title' => html_entity_decode($post->post_title, ENT_QUOTES | ENT_HTML5),
+                    'image' => $images[(int) ($post_meta['_thumbnail_id'] ?? 0)] ?? '',
+                    'category' => '',
+                    'time' => '',
+                    // 'time' => $this->minutes($m['recipe_prep_time'] ?? '', $m['recipe_prep_time_text'] ?? '')
+                    //     + $this->minutes($m['recipe_cook_time'] ?? '', $m['recipe_cook_time_text'] ?? '')
+                    //     + $this->minutes($m['recipe_passive_time'] ?? '', $m['recipe_passive_time_text'] ?? ''),
+                    'isNew' => strtotime($post->post_date) > strtotime('-30 days'),
+                    'isTop' => '',
+                    'rating' => (float) ($post_meta['recipe_rating'] ?? 0),
+                    'ingredients' => [],
+                    'comments' => (int) $post->comment_count,
+                    'views' => $views[$post->ID] ?? 0,
+                    'likes' => '',
+                ];
 
-        return $this->db->table('postmeta')
-            ->whereIn('post_id', $attachmentIds)
-            ->where('meta_key', '_wp_attachment_metadata')
-            ->pluck('meta_value', 'post_id')
-            ->map(function ($value) use ($base) {
-                $data = @unserialize($value, ['allowed_classes' => false]);
-                if (! is_array($data) || empty($data['file'])) {
-                    return '';
-                }
-                $dir = dirname($data['file']);
-                $file = $data['sizes']['medium']['file'] ?? basename($data['file']);
-
-                return $base.'/'.($dir === '.' ? '' : $dir.'/').rawurlencode($file);
-            })
-            ->all();
+            })->values()->all();
+        }
     }
 
-    /**
-     * Human views of the full recipe page, summed over all years.
-     * Each post_views_year value looks like "-1,350": -1 is a placeholder, the rest are counts.
-     */
     private function views(array $ids): array
     {
-        return $this->db->table('post_views_history')
-            ->whereIn('post_id', $ids)
-            ->where('view_type', 'normal')
-            ->where('output_type', 'content')
-            ->get(['post_id', 'post_views_year'])
-            ->groupBy('post_id')
-            ->map(fn ($rows) => $rows->sum(fn ($row) => array_sum(array_filter(
-                array_map('intval', explode(',', $row->post_views_year)),
-                fn ($n) => $n > 0,
-            ))))
-            ->all();
+        return $this->db->table('post_views_realtime')
+        ->whereIn('post_id', $ids)
+        ->where('view_type', 'normal')
+        ->where('output_type', 'content')
+        ->pluck('post_views_total', 'post_id')
+        ->all();
     }
 
-    /** "20" + "минут" → 20, "1,5" + "часа" → 90, "1 час" + "" → 60 */
-    private function minutes(string $value, string $unit): int
-    {
-        if (! preg_match('/(\d+(?:[.,]\d+)?)/u', $value, $m)) {
-            return 0;
-        }
-        $number = (float) str_replace(',', '.', $m[1]);
-        $text = mb_strtolower($value.' '.$unit);
-
-        return (int) round(match (true) {
-            str_contains($text, 'час') => $number * 60,
-            (bool) preg_match('/\bд(ень|ня|ней)/u', $text) => $number * 1440,
-            default => $number,
-        });
-    }
+//
+//     /** Latest published recipes, newest first. */
+//     public function getNewRecipes(int $limit = 10, string $lang = 'ru'): array
+//     {
+//         $posts = $this->query($lang)
+//             ->orderByDesc('p.post_date')
+//             ->limit($limit)
+//             ->get($this->columns());
+//
+//         return $this->present($posts);
+//     }
+//
+//     /** Newest recipes of one category (course term id, e.g. 257 = "Вторые блюда"). */
+//     public function getRecipesByCategoryId(int $categoryId, int $limit = 12, int $page = 1, string $lang = 'ru'): array
+//     {
+//         $posts = $this->query($lang)
+//             ->whereExists(fn ($q) => $q->selectRaw('1')
+//                 ->from('term_relationships as r')
+//                 ->join('term_taxonomy as tt', 'tt.term_taxonomy_id', '=', 'r.term_taxonomy_id')
+//                 ->whereColumn('r.object_id', 'p.ID')
+//                 ->where('tt.taxonomy', 'course')
+//                 ->where('tt.term_id', $categoryId))
+//             ->orderByDesc('p.post_date')
+//             ->forPage($page, $limit)
+//             ->get($this->columns());
+//
+//         return $this->present($posts);
+//     }
+//
+//     /** Published recipes of one WPML language, with their like count joined as "likes". */
+//     private function query(string $lang): Builder
+//     {
+//         return $this->db->table('posts as p')
+//             ->leftJoin('postmeta as likes', function ($join) {
+//                 $join->on('likes.post_id', '=', 'p.ID')->where('likes.meta_key', 'like_post');
+//             })
+//             ->join('icl_translations as tr', function ($join) use ($lang) {
+//                 $join->on('tr.element_id', '=', 'p.ID')
+//                     ->where('tr.element_type', 'post_recipe')
+//                     ->where('tr.language_code', $lang);
+//             })
+//             ->where('p.post_type', 'recipe')
+//             ->where('p.post_status', 'publish');
+//     }
+//
+//     private function columns(): array
+//     {
+//         return ['p.ID', 'p.post_name', 'p.post_title', 'p.post_date', 'p.comment_count', 'likes.meta_value as likes'];
+//     }
+//
+//
+//     /** "20" + "минут" → 20, "1,5" + "часа" → 90, "1 час" + "" → 60 */
+//     private function minutes(string $value, string $unit): int
+//     {
+//         if (! preg_match('/(\d+(?:[.,]\d+)?)/u', $value, $m)) {
+//             return 0;
+//         }
+//         $number = (float) str_replace(',', '.', $m[1]);
+//         $text = mb_strtolower($value.' '.$unit);
+//
+//         return (int) round(match (true) {
+//             str_contains($text, 'час') => $number * 60,
+//             (bool) preg_match('/\bд(ень|ня|ней)/u', $text) => $number * 1440,
+//             default => $number,
+//         });
+//     }
 }

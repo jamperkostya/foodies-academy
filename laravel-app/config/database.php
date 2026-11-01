@@ -65,17 +65,17 @@ return [
         ],
 
         // Read-only WordPress database of foodies.academy (MAMP locally).
-        'academy' => [
+        'site' => [
             'driver' => 'mysql',
-            'host' => env('ACADEMY_DB_HOST', '127.0.0.1'),
-            'port' => env('ACADEMY_DB_PORT', '3306'),
-            'database' => env('ACADEMY_DB_DATABASE', 'foodies.academy_with_content'),
-            'username' => env('ACADEMY_DB_USERNAME', 'root'),
-            'password' => env('ACADEMY_DB_PASSWORD', ''),
-            'unix_socket' => env('ACADEMY_DB_SOCKET', ''),
+            'host' => env('SITE_DB_HOST', '127.0.0.1'),
+            'port' => env('SITE_DB_PORT', '3306'),
+            'database' => env('SITE_DB_DATABASE', 'foodies.academy_with_content'),
+            'username' => env('SITE_DB_USERNAME', 'root'),
+            'password' => env('SITE_DB_PASSWORD', ''),
+            'unix_socket' => env('SITE_DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => env('ACADEMY_DB_PREFIX', 'artit_'),
+            'prefix' => env('SITE_DB_PREFIX', 'artit_'),
             'prefix_indexes' => true,
             'strict' => false,
             'engine' => null,
