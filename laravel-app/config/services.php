@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'academy' => [
+        'uploads_url' => env('ACADEMY_UPLOADS_URL', 'https://foodies.academy/wp-content/uploads'),
+    ],
+
 ];

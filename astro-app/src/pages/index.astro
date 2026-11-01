@@ -23,11 +23,11 @@ import TrustSection from "../components/sections/TrustSection.astro";
 
 import SubscribeSection from "../components/sections/SubscribeSection.astro";
 
-const topRecipes = recipes
-	.filter((recipe) => recipe.isTop)
-	.slice(0, 5);
+const API_URL = import.meta.env.API_URL ?? 'http://localhost:8000/api';
 
-const newRecipes = recipes.filter((recipe) => recipe.isNew);
+const { data: topRecipes } = await fetch(`${API_URL}/recipes/top?limit=10`).then(r => r.json());
+
+const { data: newRecipes } = await fetch(`${API_URL}/recipes/new?limit=10`).then(r => r.json());
 
 // 1 featured (shown on the right) + 6 in the list on the left
 const lastNews = news.slice(0, 7);

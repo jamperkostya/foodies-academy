@@ -57,8 +57,12 @@ services:
     volumes:
       - ./astro-app:/app
       - astro_node_modules:/app/node_modules
+    depends_on:
+      - laravel
+    environment:
+      API_URL: http://laravel:8000/api
     ports:
-      - "80:4321"
+      - "8082:4321"
 
 volumes:
   db_data:
