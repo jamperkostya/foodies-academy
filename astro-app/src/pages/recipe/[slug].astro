@@ -6,6 +6,7 @@ import ArticleLayout from "../../components/article/ArticleLayout.astro";
 import ContentBlock from "../../components/article/ContentBlock.astro";
 import StepList from "../../components/article/StepList.astro";
 import TipBox from "../../components/article/TipBox.astro";
+import OriginStory from "../../components/article/OriginStory.astro";
 import Reviews from "../../components/article/Reviews.astro";
 import AuthorCard from "../../components/article/AuthorCard.astro";
 import SidebarList from "../../components/article/SidebarList.astro";
@@ -14,6 +15,7 @@ import Icon from "../../components/ui/Icon.astro";
 import Stars from "../../components/ui/Stars.astro";
 import RecipeSection from "../../components/sections/RecipeSection.astro";
 import { recipes } from "../../data/recipes";
+import { originStoryHtml } from "../../data/originStory";
 import type { Recipe } from "../../types/recipe";
 import type { Review } from "../../types/review";
 import { plural } from "../../utils/plural";
@@ -220,6 +222,8 @@ const recipeSchema = jsonLd({
 					))}
 				</div>
 			</ContentBlock>
+
+			<OriginStory html={originStoryHtml} />
 
 			<ContentBlock title="Отзывы" id="reviews" class="no-print">
 				<div class="rating-summary flex gap-40 items-center">

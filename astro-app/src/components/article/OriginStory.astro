@@ -1,0 +1,249 @@
+---
+// "История происхождения": HTML of the "foodies/origin-story" block pattern
+// from WordPress (wp-content/mu-plugins/foodies-origin-story.php), styled by
+// its origin-story__* classes. Parts the editor deleted simply don't render.
+import ContentBlock from "./ContentBlock.astro";
+
+interface Props {
+	html: string;
+}
+
+const { html } = Astro.props;
+---
+<ContentBlock title="История происхождения" id="origin">
+	<Fragment set:html={html} />
+</ContentBlock>
+
+<style lang="less" is:global>
+.origin-story {
+	counter-reset: theory;
+	> * + * {
+		margin-top: 28px;
+	}
+	h3 {
+		font-size: 18px;
+		text-transform: uppercase;
+		letter-spacing: .5px;
+		& + * {
+			margin-top: 14px;
+		}
+	}
+	h4 {
+		font-size: 16px;
+		margin-bottom: 4px;
+	}
+
+	&__lead {
+		color: var(--color-grey-dark);
+		&::first-letter {
+			float: left;
+			font-size: 56px;
+			line-height: .85;
+			font-weight: 800;
+			color: var(--color-red);
+			margin: 6px 10px 0 0;
+		}
+	}
+
+	&__facts {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+		gap: 12px;
+	}
+	&__fact {
+		padding: 18px 14px;
+		border-radius: var(--border-radius-25);
+		background: var(--color-light-grey);
+		text-align: center;
+	}
+	&__fact-value {
+		font-size: 32px;
+		font-weight: 800;
+		line-height: 1.1;
+		color: var(--color-red);
+		letter-spacing: -.5px;
+	}
+	&__fact-label {
+		margin-top: 4px;
+		font-size: 12px;
+		text-transform: uppercase;
+		letter-spacing: .5px;
+		color: var(--color-black-50);
+	}
+
+	&__theories {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+		gap: 14px;
+	}
+	&__theory {
+		position: relative;
+		overflow: hidden;
+		padding: 20px;
+		border-radius: var(--border-radius-25);
+		border: var(--border-width) solid var(--color-black-10);
+		background: var(--color-white);
+		transition: transform .2s, box-shadow .2s;
+		counter-increment: theory;
+		// Big faint number in the corner: 01, 02, …
+		&::after {
+			content: counter(theory, decimal-leading-zero);
+			position: absolute;
+			right: 14px;
+			top: 6px;
+			font-size: 48px;
+			font-weight: 800;
+			line-height: 1;
+			color: var(--color-black-5);
+		}
+		&:hover {
+			transform: translateY(-3px);
+			box-shadow: 0 12px 30px var(--color-black-10);
+		}
+		p:not(.origin-story__tag) {
+			font-size: 14px;
+			color: var(--color-grey-dark);
+		}
+	}
+	&__tag {
+		display: inline-block;
+		margin-bottom: 12px;
+		padding: 4px 12px;
+		border-radius: var(--border-radius-1000);
+		background: var(--color-pink-20);
+		color: var(--color-red);
+		font-size: 11px;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: .5px;
+	}
+
+	&__timeline {
+		padding: 24px 18px;
+		border-radius: var(--border-radius-25);
+		background: var(--color-cream);
+		display: flex;
+		flex-direction: column;
+		gap: 22px;
+		@media @tablet {
+			padding: 32px;
+		}
+	}
+	&__item {
+		position: relative;
+		display: grid;
+		gap: 4px;
+		padding-left: 26px;
+		// Dot and the line to the next one.
+		&::before {
+			content: "";
+			position: absolute;
+			left: 0;
+			top: 7px;
+			width: 12px;
+			height: 12px;
+			border-radius: var(--border-radius-50percents);
+			background: var(--color-red);
+			box-shadow: 0 0 0 4px var(--color-pink-20);
+		}
+		&:not(:last-child)::after {
+			content: "";
+			position: absolute;
+			left: 5px;
+			top: 26px;
+			bottom: -18px;
+			width: 2px;
+			background: var(--color-pink-20);
+		}
+		@media @tablet {
+			grid-template-columns: 124px 1fr;
+			column-gap: 20px;
+			> :not(.origin-story__year) {
+				grid-column: 2;
+			}
+			.origin-story__year {
+				grid-row: span 2;
+			}
+		}
+		p:not(.origin-story__year) {
+			font-size: 14px;
+			color: var(--color-grey-dark);
+		}
+	}
+	&__year {
+		font-size: 26px;
+		font-weight: 800;
+		line-height: 1;
+		color: var(--color-red);
+		letter-spacing: -.5px;
+		font-variant-numeric: tabular-nums;
+	}
+
+	&__note {
+		position: relative;
+		padding: 20px 20px 20px 64px;
+		border-radius: var(--border-radius-25);
+		background: var(--color-yellow);
+		&::before {
+			content: "💡";
+			position: absolute;
+			left: 20px;
+			top: 18px;
+			font-size: 28px;
+			line-height: 1;
+		}
+		p {
+			font-size: 14px;
+			color: var(--color-grey-dark);
+		}
+	}
+
+	&__quote {
+		position: relative;
+		padding: 22px 22px 22px 56px;
+		border-radius: var(--border-radius-25);
+		background: var(--color-black);
+		color: var(--color-white);
+		font-size: 16px;
+		font-weight: 600;
+		line-height: 1.5;
+		&::before {
+			content: "“";
+			position: absolute;
+			left: 18px;
+			top: 8px;
+			font-size: 64px;
+			line-height: 1;
+			font-weight: 800;
+			color: var(--color-red);
+		}
+		cite {
+			display: block;
+			margin-top: 10px;
+			font-size: 12px;
+			font-style: normal;
+			font-weight: 400;
+			text-transform: uppercase;
+			letter-spacing: .5px;
+			color: var(--color-grey);
+		}
+	}
+}
+
+@media print {
+	.origin-story__timeline,
+	.origin-story__note {
+		background: none;
+		padding-left: 0;
+		padding-right: 0;
+	}
+	.origin-story__note::before {
+		content: none;
+	}
+	.origin-story__quote {
+		background: none;
+		color: var(--color-black);
+		border-left: 3px solid var(--color-red);
+	}
+}
+</style>

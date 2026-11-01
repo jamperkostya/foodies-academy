@@ -20,6 +20,14 @@ describe("/recipe/[slug]", () => {
 		expect(html).toContain(`>${recipe.comments} отзыв`);
 	});
 
+	it("renders the origin story from the CMS markup", async () => {
+		const { html } = await renderRecipe("borscht");
+
+		expect(html).toContain('id="origin"');
+		expect(html).toContain("История происхождения");
+		expect(html).toMatch(/class="[^"]*origin-story__timeline/);
+	});
+
 	it("describes the recipe as schema.org Recipe structured data", async () => {
 		const { recipe, schema } = await renderRecipe("borscht");
 
