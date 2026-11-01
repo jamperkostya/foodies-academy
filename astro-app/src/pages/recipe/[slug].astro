@@ -16,6 +16,8 @@ import RecipeSection from "../../components/sections/RecipeSection.astro";
 import { recipes } from "../../data/recipes";
 import type { Recipe } from "../../types/recipe";
 import type { Review } from "../../types/review";
+import { plural } from "../../utils/plural";
+import { jsonLd } from "../../utils/jsonLd";
 
 export function getStaticPaths() {
 	return recipes.map((recipe) => ({ params: { slug: recipe.slug }, props: { recipe } }));
@@ -72,33 +74,57 @@ const ratingBars = [
 	{ stars: 1, percent: 1 },
 ];
 
+const reviewsCount = `${recipe.comments.toLocaleString("ru-RU")} ${plural(recipe.comments, ["отзыв", "отзыва", "отзывов"])}`;
+const description = `${recipe.title}: рецепт с пошаговыми фото на Foodies Academy.`;
+const servings = 4;
+const cuisine = "Итальянская";
+const author = "Salad Konstantin";
+
 const reviews: Review[] = [
 	{ name: "Мария К.", rating: 5, date: "28 июля 2026", text: "Готовила первый раз без сливок — получилось даже кремовее, чем я ожидала! Главное — снять сковороду с огня, как написано." },
 	{ name: "Денис Н.", rating: 4, date: "15 июля 2026", text: "Очень вкусно, но в следующий раз добавлю чуть больше перца. Панчетту заменил на бекон — тоже отлично зашло." },
 	{ name: "Анна С.", rating: 5, date: "2 июля 2026", text: "Наконец рецепт, где паста не превращается в яичницу. Пекорино нашла с трудом, взяла половину пармезана — тоже хорошо." },
 ];
+
+// Recipe rich result in Google (rating, time, calories). Every value here is
+// also shown on the page, as Google requires.
+const recipeSchema = jsonLd({
+	"@type": "Recipe",
+	name: recipe.title,
+	image: [recipe.image],
+	description,
+	author: { "@type": "Person", name: author },
+	recipeCategory: recipe.category,
+	recipeCuisine: cuisine,
+	totalTime: `PT${recipe.time}M`,
+	recipeYield: `${servings} ${plural(servings, ["порция", "порции", "порций"])}`,
+	nutrition: { "@type": "NutritionInformation", calories: nutrition[0].value },
+	recipeIngredient: [...ingredients.map((item) => `${item.base} ${item.unit} ${item.name}`), "Соль — по вкусу"],
+	recipeInstructions: steps.map((step) => ({ "@type": "HowToStep", text: step.text })),
+	aggregateRating: { "@type": "AggregateRating", ratingValue: recipe.rating, ratingCount: recipe.comments },
+});
 ---
 
 <BaseLayout
 	title={recipe.title}
-	description={`${recipe.title}: рецепт с пошаговыми фото на Foodies Academy.`}
+	description={description}
 	breadcrumbs={[{ label: "Рецепты", href: "/categories" }, { label: recipe.title }]}>
+	<script type="application/ld+json" is:inline set:html={recipeSchema} />
 
 	<ArticleHero
 		slot="hero"
-		badge="Основные блюда"
-		label="🇮🇹 Итальянская кухня"
-		title="Спагетти Алла Карбонара"
-		titleAccent="(Spaghetti alla Carbonara)"
+		badge={recipe.category}
+		label={`🇮🇹 ${cuisine} кухня`}
+		title={recipe.title}
 		description="Классическая римская паста без единой капли сливок: только яйца, панчетта, пекорино и много свежемолотого перца. Секрет кремового соуса — в технике, а не в лишних ингредиентах."
-		image="https://foodies.academy/wp-content/uploads/2018/09/DSC06146-1-601x601.jpg"
+		image={recipe.image}
 		anchor={{ href: "#ingredients", label: "Перейти к рецепту ↓" }}
 		printable
 	>
 		<Fragment slot="meta">
-			<Stars rating={4.8} />
-			<strong>4.8</strong>
-			<a href="#reviews" class="recipe-reviews-link">1 243 отзыва</a>
+			<Stars rating={recipe.rating} />
+			<strong>{recipe.rating}</strong>
+			<a href="#reviews" class="recipe-reviews-link">{reviewsCount}</a>
 		</Fragment>
 	</ArticleHero>
 
@@ -121,7 +147,7 @@ const reviews: Review[] = [
 			<div class="quick-fact-item flex gap-10 items-center">
 				<Icon name="total" width={16} height={16} />
 				<div class="quick-fact-item-data flex">
-					<span class="quick-fact-item__value block">45 мин</span>
+					<span class="quick-fact-item__value block">{recipe.time} мин</span>
 					<span class="quick-fact-item__description block">Всего</span>
 				</div>
 			</div>
@@ -144,7 +170,7 @@ const reviews: Review[] = [
 				<div class="quick-fact-item-data quick-fact-item__servings flex">
 					<div class="servings-stepper flex gap-10 items-center">
 						<button type="button" class="no-print" id="servingsMinus" aria-label="Уменьшить порции">−</button>
-						<strong id="servingsValue" aria-live="polite">4</strong>
+						<strong id="servingsValue" aria-live="polite">{servings}</strong>
 						<button type="button" class="no-print" id="servingsPlus" aria-label="Увеличить порции">+</button>
 					</div>
 					<span class="quick-fact-item__description block">Порции</span>
@@ -198,9 +224,9 @@ const reviews: Review[] = [
 			<ContentBlock title="Отзывы" id="reviews" class="no-print">
 				<div class="rating-summary flex gap-40 items-center">
 					<div class="rating-summary__score">
-						<strong class="rating-summary__value">4.8</strong>
-						<Stars rating={4.8} />
-						<span class="rating-summary__count">1 243 отзыва</span>
+						<strong class="rating-summary__value">{recipe.rating}</strong>
+						<Stars rating={recipe.rating} />
+						<span class="rating-summary__count">{reviewsCount}</span>
 					</div>
 					<div class="rating-summary__bars">
 						{ratingBars.map((bar) => (
@@ -221,7 +247,7 @@ const reviews: Review[] = [
 			</ContentBlock>
 
 			<Fragment slot="sidebar">
-				<AuthorCard name="Salad Konstantin" info="Шеф-повар · 214 рецептов" buttonLabel="Подписаться" />
+				<AuthorCard name={author} info="Шеф-повар · 214 рецептов" buttonLabel="Подписаться" />
 				<SidebarList title="Похожие рецепты" items={sidebarRecipes} />
 				<NewsletterCard title="Рецепт недели на почту" />
 			</Fragment>
