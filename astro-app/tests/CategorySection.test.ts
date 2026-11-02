@@ -3,13 +3,15 @@ import { describe, expect, it } from "vitest";
 import CategorySection from "../src/components/sections/CategorySection.astro";
 import type { Category } from "../src/types/category";
 
-const category = (id: string, groups: string[], recipesCount = 10): Category => ({
-	id,
+const category = (id: string, groups: string[], count = 10): Category => ({
+	id: Number(id),
+	name: `Title ${id}`,
 	slug: `slug-${id}`,
-	title: `Title ${id}`,
+	type: "course",
+	count,
 	image: "/img.jpg",
+	meta: {},
 	groups,
-	recipesCount,
 });
 
 const render = async (categories: Category[], href?: string) => {

@@ -1,16 +1,16 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 
-const API_URL = import.meta.env.API_URL ?? 'http://localhost:8000/api';
-
 import Hero from "../components/sections/Hero.astro";
 
 import { recipes } from '../data/recipes';
-const { data: topRecipes } = await fetch(`${API_URL}/recipes/top?limit=10`).then(r => r.json());
+const API_URL = import.meta.env.API_URL ?? 'http://localhost:8000/api';
+const { data: topRecipes } = await fetch(`${API_URL}/recipes/top?limit=5`).then(r => r.json());
+const { data: featuredRecipes } = await fetch(`${API_URL}/recipes/featured?limit=10`).then(r => r.json());
+const { data: ingredientRecipes } = await fetch(`${API_URL}/recipes/by-ingredients?ingredients=5&limit=20`).then(r => r.json());
 const { data: newRecipes } = await fetch(`${API_URL}/recipes/new?limit=10`).then(r => r.json());
 
-import { news } from '../data/news';
-import { categories } from '../data/categories';
+const { data: popularCategories } = await fetch(`${API_URL}/categories/popular?type=course&limit=10`).then(r => r.json());
 import { videos } from '../data/videos';
 
 import RecipeSection from "../components/sections/RecipeSection.astro";
@@ -30,11 +30,14 @@ import TrustSection from "../components/sections/TrustSection.astro";
 import SubscribeSection from "../components/sections/SubscribeSection.astro";
 
 // 1 featured (shown on the right) + 6 in the list on the left
-const lastNews = news.slice(0, 7);
+const { data: lastNews } = await fetch(`${API_URL}/news?limit=7`).then(r => r.json());
+// The home grid has 4 columns, so the first 4 here; the footer lists them all.
+const { data: allCollections } = await fetch(`${API_URL}/collections`).then(r => r.json());
+const collections = allCollections.slice(0, 4);
 ---
 
 <BaseLayout>
-	<Hero />
+	<Hero recipes={featuredRecipes} />
 
 	<RecipeSection recipes={topRecipes}>
 		<Fragment slot="title">
@@ -52,7 +55,7 @@ const lastNews = news.slice(0, 7);
 		</Fragment>
 	</RecipeSection>
 	
-	<CategorySection categories={categories} href="/categories">
+	<CategorySection categories={popularCategories} href="/categories">
 		<Fragment slot="title">
 			<span class="section-title__accent">Популярные</span> категории
 		</Fragment>
@@ -64,15 +67,15 @@ const lastNews = news.slice(0, 7);
 		</Fragment>
 	</VideoSection>
 	
-	<RecipeCollectionsSection>
+	<RecipeCollectionsSection collections={collections}>
 		<Fragment slot="title">
 			<span class="section-title__accent">Подборки</span> Рецептов
 		</Fragment>
 	</RecipeCollectionsSection>
 
 	<RecipeSection
-		recipes={recipes}
-		groupsOf={(recipe) => recipe.ingredients}
+		recipes={ingredientRecipes}
+		groupsOf={(recipe) => recipe.groups ?? []}
 		href="/categories"
 	>
 		<Fragment slot="title">

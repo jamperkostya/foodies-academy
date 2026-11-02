@@ -1,6 +1,7 @@
 ---
 // Review form and list: recipe reviews (withRating) or lifehack comments.
-// A posted review is added to the top of the list; nothing is sent anywhere yet.
+// With `action` the review is POSTed there ({name, text, rating}) and shown only if
+// the server accepts it; without it, it is just added to the top of the list.
 import ReviewItem from "./ReviewItem.astro";
 import type { Review } from "../../types/review";
 
@@ -15,6 +16,8 @@ interface Props {
 	// kept up to date as reviews are posted. `countForms` are the plural forms.
 	countId?: string;
 	countForms?: [string, string, string];
+	// API endpoint that saves the review, e.g. ".../api/recipes/borscht/comments".
+	action?: string;
 }
 
 const {
@@ -26,11 +29,12 @@ const {
 	successMessage = "Спасибо за отзыв!",
 	countId,
 	countForms = ["отзыв", "отзыва", "отзывов"],
+	action,
 } = Astro.props;
 
 const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 звезды", "5 звёзд"];
 ---
-<div class="reviews" data-success={successMessage} data-count-id={countId} data-count-forms={countForms.join(",")}>
+<div class="reviews" data-success={successMessage} data-count-id={countId} data-count-forms={countForms.join(",")} data-action={action}>
 	<form class="review-form no-print" novalidate>
 		<h3 class="review-form__title">{formTitle}</h3>
 		{withRating && (
@@ -89,7 +93,7 @@ const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 з�
 		});
 		form.querySelector(".review-form__rating")?.addEventListener("mouseleave", () => paintStars(rating));
 
-		form.addEventListener("submit", (event) => {
+		form.addEventListener("submit", async (event) => {
 			event.preventDefault();
 			const data = new FormData(form);
 			const name = String(data.get("name") ?? "").trim();
@@ -98,6 +102,28 @@ const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 з�
 			if (!name || !text || (withRating && !rating)) {
 				showToast(withRating ? "Заполните имя, отзыв и поставьте оценку" : "Заполните имя и комментарий");
 				return;
+			}
+
+			if (root.dataset.action) {
+				const button = form.querySelector<HTMLButtonElement>("[type=submit]")!;
+				button.disabled = true;
+				try {
+					const response = await fetch(root.dataset.action, {
+						method: "POST",
+						headers: { "Content-Type": "application/json", Accept: "application/json" },
+						body: JSON.stringify({ name, text, rating: rating || null }),
+					});
+					if (!response.ok) {
+						const error = await response.json().catch(() => ({}));
+						showToast(response.status === 429 ? "Слишком много отзывов, попробуйте через минуту" : error.message ?? "Не удалось отправить отзыв");
+						return;
+					}
+				} catch {
+					showToast("Не удалось отправить отзыв, проверьте интернет");
+					return;
+				} finally {
+					button.disabled = false;
+				}
 			}
 
 			// User text only ever goes in through textContent.

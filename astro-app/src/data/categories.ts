@@ -1,6 +1,15 @@
 // src/data/categories.ts
 
-import type { Category } from '../types/category';
+// Mock categories in the old format, still used by /category/[slug].
+// The other pages get categories from Laravel (see src/types/category.ts).
+export interface Category {
+	id: string;
+	slug: string;
+	title: string;
+	image: string;
+	groups: string[];
+	recipesCount: number;
+}
 
 // Mock data until categories come from the CMS. Images are placeholders.
 export const categories: Category[] = [

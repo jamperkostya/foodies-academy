@@ -1,12 +1,18 @@
 ---
 import Section from "../layout/Section.astro";
 import CollectionCard from "../collections/CollectionCard.astro";
-import { recipeCollections } from "../../data/recipeCollections";
+import type { RecipeCollection } from "../../types/recipeCollection";
+
+interface Props {
+	collections: RecipeCollection[];
+}
+
+const { collections } = Astro.props;
 ---
 <Section>
 	<slot name="title" slot="title" />
 	<div class="collections">
-		{recipeCollections.map((collection) => (
+		{collections.map((collection) => (
 			<CollectionCard collection={collection} />
 		))}
 	</div>

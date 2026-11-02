@@ -3,13 +3,14 @@
 
 import { plural } from "../utils/plural";
 
-const BASE_SERVINGS = 4;
 const MIN_SERVINGS = 1;
 const MAX_SERVINGS = 12;
 
 const servingsValue = document.getElementById("servingsValue");
 const ingredientsServings = document.getElementById("ingredientsServings");
 const ingredientList = document.getElementById("ingredientList");
+// The servings the recipe's amounts are written for.
+const BASE_SERVINGS = Number(ingredientList?.dataset.servings) || 4;
 let servings = BASE_SERVINGS;
 
 // Snap to quarters, so quantities read like a real recipe: 1.25, not 1.2333.

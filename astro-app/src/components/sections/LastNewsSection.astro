@@ -11,8 +11,8 @@ const { news } = Astro.props;
 const [featured, ...restNews] = news;
 const listNews = restNews.slice(0, 6);
 
-// No news item has an image yet (see src/data/news.ts).
-const featuredImage = featured?.image ?? "https://foodies.academy/wp-content/uploads/2025/11/mat-300x300.jpeg";
+// Not every post has a featured image in WordPress.
+const featuredImage = featured?.image || "https://foodies.academy/wp-content/uploads/2025/11/mat-300x300.jpeg";
 ---
 
 <Section>

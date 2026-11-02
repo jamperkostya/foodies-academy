@@ -11,10 +11,37 @@ interface Props {
 const { html } = Astro.props;
 ---
 <ContentBlock title="История происхождения" id="origin">
-	<Fragment set:html={html} />
+	{/* Either plain paragraphs (the recipe's history field) or the origin-story block. */}
+	<div class="origin-story-content" set:html={html} />
 </ContentBlock>
 
 <style lang="less" is:global>
+.origin-story-content {
+	color: var(--color-grey-dark);
+	line-height: 1.6;
+	> p, > ul, > ol, > figure, > blockquote {
+		margin-bottom: 16px;
+	}
+	> ul, > ol {
+		padding-left: 20px;
+	}
+	> ul {
+		list-style: disc;
+	}
+	> ol {
+		list-style: decimal;
+	}
+	img {
+		max-width: 100%;
+		height: auto;
+		border-radius: var(--border-radius-10);
+	}
+	a {
+		color: var(--color-red);
+		text-decoration: underline;
+	}
+}
+
 .origin-story {
 	counter-reset: theory;
 	> * + * {

@@ -8,8 +8,9 @@ interface Props {
 	size: "tall" | "half" | "compact";
 	image: string;
 	title: string;
-	views?: number;
-	likes?: number;
+	// Plain numbers or short strings from the API ("10.8K").
+	views?: number | string;
+	likes?: number | string;
 	comments?: number;
 	rating: number;
 	videoId?: string;

@@ -3,8 +3,9 @@ import Icon from "../ui/Icon.astro";
 import Stars from "../ui/Stars.astro";
 
 interface Props {
-	views?: number;
-	likes?: number;
+	// Plain numbers or short strings from the API ("10.8K").
+	views?: number | string;
+	likes?: number | string;
 	comments?: number;
 	rating: number;
 }

@@ -1,8 +1,27 @@
 ---
 import Icon from "../ui/Icon.astro";
 import VideoCard from "../videos/VideoCard.astro";
-import { heroCards } from "../../data/heroCards";
 import type { HeroCard } from "../../types/heroCard";
+import type { Recipe } from "../../types/recipe";
+
+interface Props {
+	// Recipes marked as "top" in WordPress.
+	recipes: Recipe[];
+}
+
+const { recipes } = Astro.props;
+
+// Tall, half, half, tall, half, half…: every third card is a full-height one.
+const heroCards: HeroCard[] = recipes.map((recipe, i) => ({
+	recipe: recipe.slug,
+	size: i % 3 === 0 ? "tall" : "half",
+	image: recipe.image,
+	title: recipe.title,
+	views: recipe.views.short,
+	likes: recipe.likes.short,
+	comments: recipe.comments,
+	rating: recipe.rating,
+}));
 
 // Adjacent "half" cards render stacked inside one column; this grouping is
 // derived from each card's own `size`, not authored separately in the data.
