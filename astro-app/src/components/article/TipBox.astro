@@ -1,5 +1,6 @@
 ---
-// Highlighted advice: "Совет от шефа", "Главное правило". The text goes in the slot.
+// Highlighted advice: "Совет от шефа", "Главное правило". The text goes in the slot:
+// plain text, or HTML with paragraphs and lists (a recipe's notes from WordPress).
 import Icon from "../ui/Icon.astro";
 
 interface Props {
@@ -14,7 +15,7 @@ const { title } = Astro.props;
 	</span>
 	<div class="tip-box__body">
 		<strong class="tip-box__title">{title}</strong>
-		<p class="tip-box__text"><slot /></p>
+		<div class="tip-box__text"><slot /></div>
 	</div>
 </div>
 
@@ -38,6 +39,18 @@ const { title } = Astro.props;
 	&__text {
 		font-size: 14px;
 		color: var(--color-grey-dark);
+		:global(p + p), :global(p + ul), :global(p + ol), :global(ul + p), :global(ol + p) {
+			margin-top: 8px;
+		}
+		:global(ul), :global(ol) {
+			padding-left: 18px;
+		}
+		:global(ul) {
+			list-style: disc;
+		}
+		:global(ol) {
+			list-style: decimal;
+		}
 	}
 }
 </style>

@@ -18,6 +18,8 @@ interface Props {
 	countForms?: [string, string, string];
 	// API endpoint that saves the review, e.g. ".../api/recipes/borscht/comments".
 	action?: string;
+	// Shown instead of the list while there are no reviews yet.
+	emptyText?: string;
 }
 
 const {
@@ -30,6 +32,7 @@ const {
 	countId,
 	countForms = ["отзыв", "отзыва", "отзывов"],
 	action,
+	emptyText,
 } = Astro.props;
 
 const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 звезды", "5 звёзд"];
@@ -48,6 +51,8 @@ const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 з�
 		<textarea class="review-form__field" name="comment" rows="3" placeholder={placeholder} aria-label={formTitle} required></textarea>
 		<button type="submit" class="btn">{submitLabel}</button>
 	</form>
+
+	{emptyText && reviews.length === 0 && <p class="reviews__empty">{emptyText}</p>}
 
 	<div class="reviews__list flex">
 		{reviews.map((review) => <ReviewItem review={review} />)}
@@ -133,6 +138,7 @@ const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 з�
 			review.querySelector(".review__text")!.textContent = text;
 			review.querySelector<HTMLElement>(".stars")?.style.setProperty("--stars-fill", `${(rating / 5) * 100}%`);
 			list.prepend(review);
+			root.querySelector(".reviews__empty")?.remove();
 			updateCount();
 
 			form.reset();
@@ -143,6 +149,13 @@ const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 з�
 </script>
 
 <style lang="less">
+.reviews__empty {
+	font-size: 15px;
+	line-height: 1.5;
+	color: var(--color-grey);
+	text-align: center;
+}
+
 .reviews__list {
 	flex-direction: column;
 	gap: 24px;

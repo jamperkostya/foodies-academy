@@ -6,16 +6,28 @@ import Avatar from "../ui/Avatar.astro";
 
 interface Props {
 	name: string;
+	// Photo; without it the avatar shows initials.
+	avatar?: string;
 	info: string;
 	buttonLabel: string;
 	href?: string;
 }
 
-const { name, info, buttonLabel, href } = Astro.props;
+const { name, avatar, info, buttonLabel, href } = Astro.props;
 ---
 <SidebarCard class="author-card">
-	<Avatar name={name} size="lg" />
-	<strong class="author-card__name">{name}</strong>
+	{/* With a profile, the photo and the name lead there too, not only the button. */}
+	{href ? (
+		<a href={href} class="author-card__link">
+			<Avatar name={name} src={avatar} size="lg" />
+			<strong class="author-card__name">{name}</strong>
+		</a>
+	) : (
+		<Fragment>
+			<Avatar name={name} src={avatar} size="lg" />
+			<strong class="author-card__name">{name}</strong>
+		</Fragment>
+	)}
 	<span class="author-card__info">{info}</span>
 	{href
 		? <a href={href} class="btn btn--secondary author-card__btn">{buttonLabel}</a>
@@ -28,6 +40,13 @@ const { name, info, buttonLabel, href } = Astro.props;
 	text-align: center;
 }
 .author-card {
+	&__link {
+		display: inline-block;
+		transition: color .15s;
+		&:hover {
+			color: var(--color-red);
+		}
+	}
 	&__name {
 		display: block;
 		font-size: 15px;

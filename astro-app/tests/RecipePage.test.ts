@@ -33,6 +33,8 @@ const apiRecipe: Recipe = {
 		{ text: "Снять пену.", group: "Бульон" },
 		{ text: "Обжарить свёклу.", group: "Зажарка" },
 	],
+	author: { id: 18, slug: "mariana", name: "Mariana Demidova", avatar: "https://foodies.academy/mariana.jpg", recipes: 368 },
+	tip: "<p>Свёклу добавляйте в самом конце.</p><ul><li>Подавайте с пампушками.</li></ul>",
 	history: '<div class="wp-block-group origin-story"><p class="origin-story__lead">Борщ известен с XVI века.</p></div>',
 	views: { count: 3512, short: "3.5K" },
 	likes: { count: 940, short: "940" },
@@ -91,6 +93,60 @@ describe("/recipe/[slug]", () => {
 
 		expect(html).toContain('href="/recipe/shchi"');
 		expect(html.indexOf("Похожий shchi")).toBeLessThan(html.indexOf("Похожий rassolnik"));
+	});
+
+	it("leaves out the rating summary when there are no reviews or star ratings", async () => {
+		const { html: empty, schema } = await renderRecipe("borscht", { reviews: [], comments: 0 });
+		expect(empty).not.toContain('class="rating-summary');
+		expect(schema.aggregateRating).toBeUndefined();
+
+		const { html } = await renderRecipe("borscht");
+		expect(html).toContain('class="rating-summary');
+	});
+
+	it("splits the stars by the reviews' own ratings, without bars when there are none", async () => {
+		const reviews = [
+			{ name: "А", date: "1 мая 2024", text: "…", rating: 5 },
+			{ name: "Б", date: "1 мая 2024", text: "…", rating: 5 },
+			{ name: "В", date: "1 мая 2024", text: "…", rating: 3 },
+			{ name: "Г", date: "1 мая 2024", text: "…", rating: 4 },
+		];
+		const { html } = await renderRecipe("borscht", { reviews, comments: 4 });
+		const bars = [...html.matchAll(/rating-bar__label[^>]*>(\d)<[\s\S]*?rating-bar__percent[^>]*>(\d+)%/g)].map((m) => [m[1], m[2]]);
+		expect(bars).toEqual([["5", "50"], ["4", "25"], ["3", "25"], ["2", "0"], ["1", "0"]]);
+
+		const { html: unrated } = await renderRecipe("borscht");
+		expect(unrated).toContain('class="rating-summary');
+		expect(unrated).not.toContain("rating-summary__bars");
+	});
+
+	it("invites the first comment when there are none yet", async () => {
+		const { html: empty } = await renderRecipe("borscht", { reviews: [], comments: 0 });
+		expect(empty).toContain("Станьте первым, кто оставит комментарий для этого рецепта");
+
+		const { html } = await renderRecipe("borscht");
+		expect(html).not.toContain("Станьте первым");
+	});
+
+	it("shows the recipe's author with their recipe count", async () => {
+		const { html, schema } = await renderRecipe("borscht");
+
+		expect(html).toMatch(/author-card__name[^>]*>Mariana Demidova</);
+		// The photo, the name and the button all lead to the author's page.
+		expect(html).toMatch(/<a href="\/author\/mariana" class="author-card__link"[^>]*>\s*<img[^>]*src="https:\/\/foodies\.academy\/mariana\.jpg"[^>]*>\s*<strong[^>]*>Mariana Demidova</);
+		expect(html).toMatch(/<a href="\/author\/mariana" class="btn btn--secondary author-card__btn"[^>]*>Профиль автора</);
+		expect(html).toMatch(/author-card__info[^>]*>368 рецептов</);
+		expect(schema.author).toEqual({ "@type": "Person", name: "Mariana Demidova" });
+	});
+
+	it("shows the chef's tip from recipe_notes, and only when there is one", async () => {
+		const { html } = await renderRecipe("borscht");
+
+		expect(html).toContain("Совет от шефа");
+		expect(html).toMatch(/tip-box__text[^>]*><p>Свёклу добавляйте в самом конце\.<\/p><ul><li>Подавайте с пампушками\.<\/li><\/ul>/);
+
+		const { html: withoutTip } = await renderRecipe("borscht", { tip: null });
+		expect(withoutTip).not.toContain("Совет от шефа");
 	});
 
 	it("renders the origin story from the CMS markup, and only when there is one", async () => {

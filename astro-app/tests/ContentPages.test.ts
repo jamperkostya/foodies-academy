@@ -2,7 +2,6 @@ import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { describe, expect, it } from "vitest";
 import LifehacksPage from "../src/pages/lifehacks.astro";
 import BlogPage from "../src/pages/blog.astro";
-import AuthorPage, { getStaticPaths as authorPaths } from "../src/pages/author/[slug].astro";
 import NotFoundPage from "../src/pages/404.astro";
 import PostPage, { getStaticPaths as postPaths } from "../src/pages/blog/[slug].astro";
 import { lifehacks } from "../src/data/lifehacks";
@@ -57,31 +56,6 @@ describe("/blog/[slug]", () => {
 		expect(count(html, /class="post-text"/g)).toBe(post.sections.length);
 		for (const comment of post.comments) expect(html).toContain(comment.text);
 		expect(html).toContain('href="/author/salad-konstantin"');
-	});
-});
-
-describe("/author/[slug]", () => {
-	it("builds a page for every author", () => {
-		expect(authorPaths().map((path) => path.params.slug)).toEqual(authors.map((author) => author.slug));
-	});
-
-	it("shows the author's posts in the second tab", async () => {
-		const author = authors[0];
-		const html = await render(AuthorPage, { props: { author }, params: { slug: author.slug } });
-		const own = posts.filter((post) => post.author === author.name);
-
-		expect(html).toMatch(/<h1[^>]*>Salad Konstantin<\/h1>/);
-		expect(count(html, /class="post-card"/g)).toBe(own.length);
-		expect(html).toMatch(/role="tab"[^>]*aria-selected="true"/);
-		expect(html).toMatch(/id="panel-posts"[^>]*hidden/);
-	});
-
-	it("leaves out a tab with nothing in it", async () => {
-		const author = authors.find((item) => item.stats.recipes === 0)!;
-		const html = await render(AuthorPage, { props: { author }, params: { slug: author.slug } });
-
-		expect(html).not.toContain('id="panel-recipes"');
-		expect(html).toMatch(/id="panel-posts"(?![^>]*hidden)[^>]*>/);
 	});
 });
 

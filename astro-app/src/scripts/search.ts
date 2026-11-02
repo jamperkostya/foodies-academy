@@ -2,7 +2,14 @@
 // /search results page. The index is /search-index.json (see
 // pages/search-index.json.ts).
 
-export type SearchItem = { title: string; meta: string; icon: string; href: string };
+export type SearchItem = {
+	title: string;
+	meta: string;
+	icon: string;
+	href: string;
+	// Recipes only: also found by any of these.
+	ingredients?: string[];
+};
 
 // Fetched once, on first use, then shared by every caller on the page.
 let index: Promise<SearchItem[]> | undefined;
@@ -15,9 +22,17 @@ export const loadIndex = () =>
 // positions stay valid in the original title.
 export const normalize = (text: string) => text.toLowerCase().replaceAll("ё", "е");
 
-// Items whose title contains the (normalized) query.
-export const findItems = (items: SearchItem[], query: string) =>
-	items.filter((item) => normalize(item.title).includes(query));
+// Items whose title contains the (normalized) query, then recipes with a
+// matching ingredient; their meta line says which ingredient matched.
+export const findItems = (items: SearchItem[], query: string): SearchItem[] => {
+	const byTitle = items.filter((item) => normalize(item.title).includes(query));
+	const byIngredient = items.flatMap((item) => {
+		if (byTitle.includes(item)) return [];
+		const ingredient = item.ingredients?.find((name) => normalize(name).includes(query));
+		return ingredient ? [{ ...item, meta: `${item.meta} · с ингредиентом «${ingredient}»` }] : [];
+	});
+	return [...byTitle, ...byIngredient];
+};
 
 export const el = <K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text = "") =>
 	Object.assign(document.createElement(tag), { className, textContent: text });

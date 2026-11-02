@@ -62,8 +62,7 @@ export const footerColumns: FooterColumn[] = [
 		title: 'Информация',
 		items: [
 			{ title: 'О проекте', href: '/about' },
-			// There is no authors list yet: the first author's page.
-			{ title: 'Авторы', href: '/author/salad-konstantin' },
+			{ title: 'Авторы', href: '/authors' },
 			{ title: 'Новости', href: '/news' },
 			{ title: 'Лайфхаки', href: '/lifehacks' },
 			{ title: 'Видеорецепты', href: '/video' },

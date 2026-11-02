@@ -26,6 +26,12 @@ class News
         return $this->present($this->query()->orderByDesc('p.post_date')->limit($limit)->get(['p.*']));
     }
 
+    /** News written by one WordPress user, newest first. */
+    public function getByAuthor(int $userId): array
+    {
+        return $this->present($this->query()->where('p.post_author', $userId)->orderByDesc('p.post_date')->get(['p.*']));
+    }
+
     /** Slugs of all news, for building the news pages. */
     public function getSlugs(): array
     {

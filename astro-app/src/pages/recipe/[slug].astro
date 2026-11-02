@@ -17,7 +17,7 @@ import RecipeSection from "../../components/sections/RecipeSection.astro";
 
 import type { Recipe } from "../../types/recipe";
 import type { Review } from "../../types/review";
-import { plural } from "../../utils/plural";
+import { plural, recipesWord } from "../../utils/plural";
 import { jsonLd } from "../../utils/jsonLd";
 
 const API_URL = import.meta.env.API_URL ?? 'http://localhost:8000/api';
@@ -73,19 +73,21 @@ const quickFacts = [
 // Only calories are stored in WordPress; the block is hidden without them.
 const nutrition = recipe.calories ? [{ label: "Калории", value: `${recipe.calories} ккал` }] : [];
 
-const ratingBars = [
-	{ stars: 5, percent: 82 },
-	{ stars: 4, percent: 12 },
-	{ stars: 3, percent: 4 },
-	{ stars: 2, percent: 1 },
-	{ stars: 1, percent: 1 },
-];
+// Star split from the reviews that have a rating; nothing to show without them.
+const ratedReviews = (recipe.reviews ?? []).filter((review) => review.rating);
+const ratingBars = ratedReviews.length
+	? [5, 4, 3, 2, 1].map((stars) => ({
+			stars,
+			percent: Math.round((ratedReviews.filter((review) => review.rating === stars).length / ratedReviews.length) * 100),
+		}))
+	: [];
+// No reviews and no star ratings: the rating summary is left out.
+const hasRating = recipe.comments > 0 || ratedReviews.length > 0;
 
 const reviewsCount = `${recipe.comments.toLocaleString("ru-RU")} ${plural(recipe.comments, ["отзыв", "отзыва", "отзывов"])}`;
 const description = `${recipe.title}: рецепт с пошаговыми фото на Foodies Academy.`;
 // Recipes without servings in WordPress keep the old default of 4.
 const servings = recipe.servings || 4;
-const author = "Salad Konstantin";
 
 const reviews: Review[] = recipe.reviews ?? [];
 // The browser posts reviews straight to Laravel, so it needs the public URL,
@@ -99,7 +101,7 @@ const recipeSchema = jsonLd({
 	name: recipe.title,
 	image: [recipe.image],
 	description,
-	author: { "@type": "Person", name: author },
+	author: recipe.author ? { "@type": "Person", name: recipe.author.name } : undefined,
 	recipeCategory: course,
 	recipeCuisine: country,
 	totalTime: `PT${recipe.minutes}M`,
@@ -107,7 +109,8 @@ const recipeSchema = jsonLd({
 	nutrition: recipe.calories ? { "@type": "NutritionInformation", calories: `${recipe.calories} ккал` } : undefined,
 	recipeIngredient: recipe.ingredients.map((item) => [item.amount, item.unit, item.name, item.notes].filter(Boolean).join(" ")),
 	recipeInstructions: steps.map((step) => ({ "@type": "HowToStep", text: step.text })),
-	aggregateRating: { "@type": "AggregateRating", ratingValue: recipe.rating, ratingCount: recipe.comments },
+	// Google rejects a rating with ratingCount 0.
+	aggregateRating: hasRating ? { "@type": "AggregateRating", ratingValue: recipe.rating, ratingCount: recipe.comments } : undefined,
 });
 ---
 
@@ -188,9 +191,12 @@ const recipeSchema = jsonLd({
 				<StepList steps={steps} progressId="stepsProgress" />
 			</ContentBlock>
 
-			<TipBox title="Совет от шефа">
-				Снимайте сковороду с огня заранее — жар должен быть остаточным. Если яичная смесь попадёт на слишком горячую поверхность, вы получите варёные хлопья вместо кремового соуса.
-			</TipBox>
+			{recipe.tip && (
+				<TipBox title="Совет от шефа">
+					{/* HTML from our own WordPress (recipe_notes). */}
+					<Fragment set:html={recipe.tip} />
+				</TipBox>
+			)}
 
 			{nutrition.length > 0 && (
 				<ContentBlock title="Пищевая ценность" id="nutrition">
@@ -206,34 +212,47 @@ const recipeSchema = jsonLd({
 			{recipe.history && <OriginStory html={recipe.history} />}
 
 			<ContentBlock title="Отзывы" id="reviews" class="no-print">
-				<div class="rating-summary flex gap-40 items-center">
-					<div class="rating-summary__score">
-						<strong class="rating-summary__value">{recipe.rating}</strong>
-						<Stars rating={recipe.rating} />
-						<span class="rating-summary__count">{reviewsCount}</span>
-					</div>
-					<div class="rating-summary__bars">
-						{ratingBars.map((bar) => (
-							<div class="rating-bar flex gap-10 items-center">
-								<span class="rating-bar__label">{bar.stars}</span>
-								<div class="rating-bar__track"><div class="rating-bar__fill" style={`width: ${bar.percent}%`}></div></div>
-								<span class="rating-bar__percent">{bar.percent}%</span>
+				{hasRating && (
+					<div class="rating-summary flex gap-40 items-center">
+						<div class="rating-summary__score">
+							<strong class="rating-summary__value">{recipe.rating}</strong>
+							<Stars rating={recipe.rating} />
+							<span class="rating-summary__count">{reviewsCount}</span>
+						</div>
+						{ratingBars.length > 0 && (
+							<div class="rating-summary__bars">
+								{ratingBars.map((bar) => (
+									<div class="rating-bar flex gap-10 items-center">
+										<span class="rating-bar__label">{bar.stars}</span>
+										<div class="rating-bar__track"><div class="rating-bar__fill" style={`width: ${bar.percent}%`}></div></div>
+										<span class="rating-bar__percent">{bar.percent}%</span>
+									</div>
+								))}
 							</div>
-						))}
+						)}
 					</div>
-				</div>
+				)}
 				<Reviews
 					reviews={reviews}
 					withRating
 					placeholder="Расскажите, как получился рецепт..."
 					submitLabel="Опубликовать отзыв"
 					successMessage="Спасибо! Отзыв появится после проверки модератором"
+					emptyText="Станьте первым, кто оставит комментарий для этого рецепта"
 					action={`${PUBLIC_API_URL}/recipes/${recipe.slug}/comments`}
 				/>
 			</ContentBlock>
 
 			<Fragment slot="sidebar">
-				<AuthorCard name={author} info="Шеф-повар · 214 рецептов" buttonLabel="Подписаться" />
+				{recipe.author && (
+					<AuthorCard
+						name={recipe.author.name}
+						avatar={recipe.author.avatar}
+						info={`${recipe.author.recipes.toLocaleString("ru-RU")} ${recipesWord(recipe.author.recipes)}`}
+						buttonLabel="Профиль автора"
+						href={`/author/${recipe.author.slug}`}
+					/>
+				)}
 				<SidebarList title="Похожие рецепты" items={sidebarRecipes} />
 				<NewsletterCard title="Рецепт недели на почту" />
 			</Fragment>

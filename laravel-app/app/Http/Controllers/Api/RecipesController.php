@@ -78,6 +78,12 @@ class RecipesController extends Controller
         );
     }
 
+    // GET /api/recipes/search-index: every recipe's title and ingredients for the site search
+    public function searchIndex(): JsonResponse
+    {
+        return $this->cached('recipes:search-index', fn () => $this->recipes->getSearchIndex());
+    }
+
     // GET /api/recipes/slugs
     public function slugs(): JsonResponse
     {

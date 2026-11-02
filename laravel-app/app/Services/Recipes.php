@@ -68,7 +68,7 @@ class Recipes
         return $this->db->table('postmeta')
             ->whereIn('post_id', $ids)
             ->whereIn('meta_key', [
-                '_thumbnail_id', 'recipe_rating', '_yoast_wpseo_primary_course', 'like_post', 'type', 'recipe_servings', 'complexity', 'calorific_value',
+                '_thumbnail_id', 'recipe_rating', '_yoast_wpseo_primary_course', 'like_post', 'type', 'recipe_servings', 'complexity', 'calorific_value', 'recipe_notes',
                 'recipe_prep_time', 'recipe_prep_time_text',
                 'recipe_cook_time', 'recipe_cook_time_text',
                 'recipe_passive_time', 'recipe_passive_time_text',
@@ -271,6 +271,43 @@ class Recipes
     }
 
     /** One published Russian recipe by slug, or null. */
+    /**
+     * Every published Russian recipe for the site search: {slug, title, time, course, ingredients}.
+     * Lighter than present(): no images, views or likes.
+     */
+    public function getSearchIndex(): array
+    {
+        $posts = $this->db->table('posts as p')
+            ->join('icl_translations as tr', function ($join) {
+                $join->on('tr.element_id', '=', 'p.ID')
+                    ->where('tr.element_type', 'post_recipe')
+                    ->where('tr.language_code', 'ru');
+            })
+            ->where('p.post_type', 'recipe')
+            ->where('p.post_status', 'publish')
+            ->orderBy('p.post_title')
+            ->get(['p.ID', 'p.post_name', 'p.post_title']);
+        $ids = $posts->pluck('ID')->all();
+        $meta = $this->meta($ids);
+        // post_id => [taxonomy => [names]]
+        $terms = $this->db->table('term_relationships as r')
+            ->join('term_taxonomy as tt', 'tt.term_taxonomy_id', '=', 'r.term_taxonomy_id')
+            ->join('terms as t', 't.term_id', '=', 'tt.term_id')
+            ->whereIn('r.object_id', $ids)
+            ->whereIn('tt.taxonomy', ['course', 'ingredient'])
+            ->get(['r.object_id', 'tt.taxonomy', 't.name'])
+            ->groupBy(['object_id', 'taxonomy']);
+        $names = fn ($rows) => collect($rows)->map(fn ($row) => html_entity_decode($row->name, ENT_QUOTES | ENT_HTML5))->unique()->values()->all();
+
+        return $posts->map(fn ($post) => [
+            'slug' => $post->post_name,
+            'title' => html_entity_decode($post->post_title, ENT_QUOTES | ENT_HTML5),
+            'time' => $this->totalTime($meta->get($post->ID, [])),
+            'course' => $names($terms[$post->ID]['course'] ?? [])[0] ?? '',
+            'ingredients' => $names($terms[$post->ID]['ingredient'] ?? []),
+        ])->all();
+    }
+
     /** Slugs of all published Russian recipes, for building the recipe pages. */
     public function getSlugs(): array
     {
@@ -331,7 +368,11 @@ class Recipes
         $recipe['complexity'] = trim($meta['complexity'] ?? '');
         $recipe['calories'] = is_numeric($meta['calorific_value'] ?? null) && $meta['calorific_value'] > 0 ? (int) $meta['calorific_value'] : null;
         $recipe['steps'] = $this->steps($post->ID);
+        // "Совет от шефа": HTML from WordPress, null when empty.
+        $notes = trim($meta['recipe_notes'] ?? '');
+        $recipe['tip'] = trim(strip_tags($notes)) !== '' ? $notes : null;
         $recipe['similar'] = $this->getSimilarRecipes($post->ID);
+        $recipe['author'] = $this->author((int) $post->post_author);
         // The history is a Carbon Fields field; older posts may have the block in their content instead.
         $history = trim((string) $this->db->table('postmeta')
             ->where('post_id', $post->ID)
@@ -456,6 +497,14 @@ class Recipes
         $posts = $this->db->table('posts')->whereIn('ID', $shared)->get()->sortBy(fn ($post) => $shared->search($post->ID));
 
         return $this->present($posts->values());
+    }
+
+    /** The recipe's WordPress author (posts.post_author): {id, slug, name, avatar, recipes}. */
+    private function author(int $userId): ?array
+    {
+        $slug = $this->db->table('users')->where('ID', $userId)->value('user_nicename');
+
+        return collect(app(Authors::class)->getAll())->firstWhere('slug', $slug);
     }
 
     /** Cooking steps of one recipe (WP Ultimate Recipe "recipe_instructions"): [{text, group}]. */

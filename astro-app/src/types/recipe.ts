@@ -1,5 +1,6 @@
 // src/types/recipe.ts
 
+import type { AuthorSummary } from './author';
 import type { Review } from './review';
 
 /** term_id => name, e.g. { 257: "Вторые блюда" } */
@@ -46,6 +47,8 @@ export interface Recipe {
   calories?: number | null; // per serving
   steps?: { text: string; group: string }[];
   history?: string | null; // HTML of the "История происхождения" block
+  tip?: string | null; // "Совет от шефа": HTML of recipe_notes
+  author?: AuthorSummary | null; // posts.post_author
   similar?: Recipe[]; // recipes sharing the most ingredients, most first
   comments: number;
   views: Counter;

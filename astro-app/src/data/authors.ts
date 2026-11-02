@@ -1,6 +1,17 @@
 // src/data/authors.ts
 
-import type { Author } from "../types/author";
+// Mock authors of the mock blog posts. Recipe authors come from Laravel (see src/types/author.ts).
+export interface Author {
+	slug: string;
+	// Matches Post.author, so the profile can list the author's posts.
+	name: string;
+	// Short, for the author card: "Шеф-повар".
+	title: string;
+	role: string;
+	bio: string;
+	// Site-wide totals, beyond the mock recipes and posts shown on the profile.
+	stats: { recipes: number; posts: number; followers: string; rating: number };
+}
 
 // Mock data until authors come from the CMS.
 export const authors: Author[] = [

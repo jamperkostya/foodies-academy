@@ -1,10 +1,8 @@
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
-import { beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import SearchForm from "../src/components/layout/SearchForm.astro";
 import { GET } from "../src/pages/search-index.json";
-import { recipes } from "../src/data/recipes";
-import { categories } from "../src/data/categories";
-import { videos } from "../src/data/videos";
+import { findItems, normalize, type SearchItem } from "../src/scripts/search";
 
 describe("SearchForm", () => {
 	let html: string;
@@ -26,36 +24,66 @@ describe("SearchForm", () => {
 	});
 
 	it("doesn't embed the suggestions in the page", () => {
-		expect(html).not.toContain(recipes[0].title);
+		expect(html).not.toContain("search__suggestion-item");
+		expect(html).not.toContain("/recipe/");
 	});
 });
 
 describe("/search-index.json", () => {
-	type Item = { title: string; meta: string; icon: string; href: string };
-	let index: Item[];
+	// What the Laravel API returns for the index.
+	const api: Record<string, unknown> = {
+		"/recipes/search-index": [
+			{ slug: "borscht", title: "Украинский борщ", time: "3 ч", course: "Супы", ingredients: ["Свёкла", "Говядина"] },
+			{ slug: "olivier", title: "Салат Оливье", time: "", course: "", ingredients: ["Рябчики*"] },
+		],
+		"/categories?type=course": [{ id: 1, name: "Супы", slug: "soups", type: "course", count: 21, image: "", meta: {} }],
+		"/categories?type=country": [{ id: 2, name: "Италия", slug: "italiya", type: "country", count: 67, image: "", meta: {} }],
+		"/authors": [{ id: 18, slug: "mariana", name: "Mariana Demidova", avatar: "", recipes: 366 }],
+	};
+	let index: SearchItem[];
 
 	beforeAll(async () => {
-		const response = await GET({} as Parameters<typeof GET>[0]);
-		index = await response.json();
+		vi.stubGlobal("fetch", async (url: string) => {
+			const path = Object.keys(api).find((key) => url.endsWith(key))!;
+			return new Response(JSON.stringify({ data: api[path] }));
+		});
+		index = await (await GET({} as Parameters<typeof GET>[0])).json();
+	});
+	afterAll(() => vi.unstubAllGlobals());
+
+	it("lists the recipes with their ingredients, the categories, the cuisines and the authors", () => {
+		expect(index.map((item) => item.href)).toEqual(["/recipe/borscht", "/recipe/olivier", "/category/soups", "/category/italiya", "/author/mariana"]);
+		expect(index[0]).toEqual({ title: "Украинский борщ", meta: "3 ч · Супы", icon: "🍲", href: "/recipe/borscht", ingredients: ["Свёкла", "Говядина"] });
+		expect(index[1].meta).toBe("Рецепт");
 	});
 
-	it("lists every recipe, category and video", () => {
-		expect(index).toHaveLength(recipes.length + categories.length + videos.length);
+	it("searches categories and authors by name only", () => {
+		expect(index.find((item) => item.href === "/category/soups")).toEqual({ title: "Супы", meta: "Категория · 21 рецепт", icon: "🍲", href: "/category/soups" });
+		expect(index.find((item) => item.href === "/category/italiya")?.meta).toBe("Кухня мира · 67 рецептов");
+		expect(index.find((item) => item.href === "/author/mariana")).toEqual({ title: "Mariana Demidova", meta: "Автор · 366 рецептов", icon: "👨‍🍳", href: "/author/mariana" });
+	});
+});
+
+describe("findItems", () => {
+	const items: SearchItem[] = [
+		{ title: "Говядина по-бургундски", meta: "3 ч", icon: "🍖", href: "/recipe/beef", ingredients: ["Вино"] },
+		{ title: "Украинский борщ", meta: "3 ч · Супы", icon: "🍲", href: "/recipe/borscht", ingredients: ["Свёкла", "Говядина"] },
+		{ title: "Говядина", meta: "Категория", icon: "🍖", href: "/category/beef" },
+	];
+	const find = (query: string) => findItems(items, normalize(query));
+
+	it("finds by title first, then recipes by ingredient, saying which ingredient matched", () => {
+		const found = find("говяд");
+
+		expect(found.map((item) => item.href)).toEqual(["/recipe/beef", "/category/beef", "/recipe/borscht"]);
+		expect(found[2].meta).toBe("3 ч · Супы · с ингредиентом «Говядина»");
 	});
 
-	it("describes each suggestion with a meta line, an icon and a link", () => {
-		const recipe = recipes[0];
-		expect(index).toContainEqual(
-			expect.objectContaining({ title: recipe.title, meta: `${recipe.time} мин · ${recipe.category}`, href: `/recipe/${recipe.slug}` })
-		);
-		expect(index).toContainEqual(expect.objectContaining({ title: videos[0].title, href: `/video/${videos[0].slug}`, icon: "🎬" }));
-		for (const item of index) expect(item.icon).not.toBe("");
+	it("ignores case and ё", () => {
+		expect(find("СВЕКЛА").map((item) => item.href)).toEqual(["/recipe/borscht"]);
 	});
 
-	it("declines the recipe count for categories", () => {
-		const category = categories.find((c) => c.recipesCount % 10 === 1 && c.recipesCount % 100 !== 11);
-		if (category) {
-			expect(index).toContainEqual(expect.objectContaining({ title: category.title, meta: `Категория · ${category.recipesCount} рецепт` }));
-		}
+	it("doesn't list a recipe twice when both its title and an ingredient match", () => {
+		expect(find("борщ")).toHaveLength(1);
 	});
 });
