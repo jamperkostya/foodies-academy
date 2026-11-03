@@ -12,6 +12,10 @@ const totalRecipes = categories.reduce((sum, category) => sum + category.count, 
 
 import { plural, recipesWord } from "../utils/plural";
 import SEOTextSection from "../components/sections/SEOTextSection.astro";
+import { wpPage } from "../utils/wpPage";
+
+// "SEO-текст" and Yoast SEO of the WordPress page "kuhni-mira".
+const { seoText, seo } = await wpPage("kuhni-mira");
 
 // Counted from the data, so the intro never disagrees with the catalogue.
 const description =
@@ -25,7 +29,7 @@ const sortOptions = [
 	{ value: "count", label: "По числу рецептов" },
 ];
 ---
-<BaseLayout title="Кухни мира" description={description} breadcrumbs={[{ label: "Кухни мира" }]}>
+<BaseLayout seo={seo} title="Кухни мира" description={description} breadcrumbs={[{ label: "Кухни мира" }]}>
 	<PageHero slot="hero" eyebrow="Каталог" description={description}>
 		Кухни <span class="page-hero__accent">мира</span>
 	</PageHero>
@@ -42,7 +46,7 @@ const sortOptions = [
 		</CardGrid>
 	</section>
 	
-	<SEOTextSection />
+	<SEOTextSection html={seoText} />
 </BaseLayout>
 
 <style lang="less">

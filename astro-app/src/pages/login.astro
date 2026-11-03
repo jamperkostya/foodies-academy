@@ -1,0 +1,48 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Section from "../components/layout/Section.astro";
+import AuthCard from "../components/account/AuthCard.astro";
+import FormField from "../components/account/FormField.astro";
+---
+<BaseLayout title="Вход" description="Вход в аккаунт Foodies Academy." breadcrumbs={[{ label: "Вход" }]} noindex>
+	<Section>
+		<AuthCard title="Вход" footer="Нет аккаунта?" footerLink={{ href: "/register", label: "Зарегистрироваться" }}>
+			<form class="auth-form" novalidate>
+				<FormField name="email" label="E-mail" type="email" autocomplete="email" required />
+				<FormField name="password" label="Пароль" type="password" autocomplete="current-password" required />
+				<button type="submit" class="btn auth-form__submit">Войти</button>
+			</form>
+		</AuthCard>
+	</Section>
+</BaseLayout>
+
+<script>
+	import { api, isLoggedIn, safeNext, startSession, type User } from "../scripts/account";
+	import { clearErrors, formValues, showError } from "../scripts/accountForm";
+
+	if (isLoggedIn()) location.replace(safeNext());
+
+	const form = document.querySelector<HTMLFormElement>(".auth-form")!;
+	form.addEventListener("submit", async (event) => {
+		event.preventDefault();
+		clearErrors(form);
+		const button = form.querySelector<HTMLButtonElement>("[type=submit]")!;
+		button.disabled = true;
+		try {
+			const { token } = await api<{ token: string; user: User }>("/auth/login", { method: "POST", body: formValues(form) });
+			startSession(token);
+			location.href = safeNext();
+		} catch (error) {
+			showError(form, error);
+		} finally {
+			button.disabled = false;
+		}
+	});
+</script>
+
+<style lang="less">
+.auth-form__submit {
+	width: 100%;
+	margin-top: 8px;
+}
+</style>

@@ -17,12 +17,13 @@ const recipe = (slug: string): Recipe => ({
 	time: "1 ч", minutes: 60, isNew: false, isTop: false, rating: 5, servings: 2, ingredients: [], comments: 0,
 	views: { count: 0, short: "0" }, likes: { count: 0, short: "0" },
 });
-const news: News = { id: 7, slug: "krevetki", title: "Что полезно знать о креветках", excerpt: "…", category: "Новости", tags: [], image: "", date: "2022-05-23" };
+const news: News = { id: 7, slug: "krevetki", title: "Что полезно знать о креветках", excerpt: "…", category: "Новости", tags: [], image: "", date: "2022-05-23", dateText: "23 мая 2022", author: { slug: "re_editor", name: "Редактор" }, readTime: 2, commentCount: 0 };
+const post: News = { ...news, id: 8, slug: "mango", title: "Как сушить манго" };
 const profile = (author: AuthorSummary, extra: Partial<AuthorProfile>): AuthorProfile => ({
-	...author, bio: "", since: 2019, rating: 4.8, news: [], recipes: [recipe("borscht")], total: author.recipes, page: 1, pages: 1, ...extra,
+	...author, bio: "", since: 2019, rating: 4.8, news: [], posts: [], recipes: [recipe("borscht")], total: author.recipes, page: 1, pages: 1, ...extra,
 });
 const mariana = profile(authors[0], { pages: 3, recipes: [recipe("borscht"), recipe("paella")] });
-const platon = profile(authors[1], { bio: "Пишу о кухне.", rating: null, news: [news] });
+const platon = profile(authors[1], { bio: "Пишу о кухне.", rating: null, news: [news], posts: [post] });
 
 const requested: string[] = [];
 beforeAll(() =>
@@ -74,6 +75,7 @@ describe("/author/[slug]", () => {
 		const html = await render("mariana");
 
 		expect(html).not.toContain('id="panel-posts"');
+		expect(html).not.toContain('id="panel-news"');
 		expect(html).not.toContain('class="author-bio');
 		expect(html).toMatch(/author-hero__stat-value[^>]*>4\.8</);
 		expect(html).not.toContain("Подписчиков");
@@ -84,6 +86,9 @@ describe("/author/[slug]", () => {
 
 		expect(html).toMatch(/role="tab"[^>]*>\s*Новости/);
 		expect(html).toContain('href="/news/krevetki"');
+		// Blog posts get their own tab and link into the blog.
+		expect(html).toMatch(/role="tab"[^>]*>\s*Блог/);
+		expect(html).toContain('href="/blog/mango"');
 		expect(html).toContain("Пишу о кухне.");
 		expect(html).not.toContain("средний рейтинг");
 	});

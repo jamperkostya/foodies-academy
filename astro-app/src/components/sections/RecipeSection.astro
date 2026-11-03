@@ -8,18 +8,19 @@ interface Props {
 	recipes: Recipe[];
 	// Turns on the filters row: which filter groups a recipe belongs to.
 	groupsOf?: (recipe: Recipe) => string[];
-	// "Смотреть все" link, shown at the end of the filters row.
+	// "Смотреть все" link: at the end of the filters row, or next to the title without filters.
 	href?: string;
 }
 
 const { recipes, groupsOf, href } = Astro.props;
 
 // Filters come from the data itself, so a group never shows up empty.
-const groups = groupsOf && [...new Set(recipes.flatMap(groupsOf))];
+const groups = groupsOf ? [...new Set(recipes.flatMap(groupsOf))].filter(Boolean) : [];
+const hasFilters = groups.length > 1;
 ---
-<Section>
+<Section href={hasFilters ? undefined : href}>
 	<slot name="title" slot="title" />
-	<Carousel variant="recipes" groups={groups} href={href}>
+	<Carousel variant="recipes" groups={hasFilters ? groups : undefined} href={href}>
 		{recipes.map((recipe) => (
 			<RecipeCard class="carousel__item" recipe={recipe} groups={groupsOf?.(recipe)} />
 		))}

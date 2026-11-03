@@ -29,7 +29,9 @@ class Authors
         $users = $this->db->table('users')->whereIn('ID', $counts->keys())->get()->keyBy('ID');
         $avatars = $this->avatars($counts->keys()->all());
 
-        return $counts->map(fn ($recipes, $id) => $this->card($users[$id], (int) $recipes, $avatars[$id] ?? ''))
+        // Recipes can outlive their author's account: skip authors whose user is gone.
+        return $counts->filter(fn ($recipes, $id) => $users->has($id))
+            ->map(fn ($recipes, $id) => $this->card($users[$id], (int) $recipes, $avatars[$id] ?? ''))
             ->values()->all();
     }
 
@@ -60,6 +62,8 @@ class Authors
             ->map(fn ($value) => (float) $value)
             ->filter();
 
+        $visitors = app(AuthorRatings::class)->get((int) $user->ID);
+
         $bio = trim((string) $this->db->table('usermeta')
             ->where('user_id', $user->ID)->where('meta_key', 'description')->value('meta_value'));
 
@@ -67,30 +71,37 @@ class Authors
         return array_merge($this->card($user, $list['total'], $this->avatars([$user->ID])[$user->ID] ?? ''), [
             'bio' => $bio,
             'since' => (int) substr($user->user_registered, 0, 4),
-            'rating' => $ratings->isEmpty() ? null : round($ratings->avg(), 1),
+            // Visitors' stars; until someone rates the author, the average of their recipes' ratings.
+            'rating' => $visitors['average'] ?? ($ratings->isEmpty() ? null : round($ratings->avg(), 1)),
+            'ratingCount' => $visitors['count'],
             'news' => app(News::class)->getByAuthor((int) $user->ID),
+            'posts' => app(Blog::class)->getByAuthor((int) $user->ID),
+            'seo' => app(Seo::class)->forUser($user->user_nicename),
         ], $list);
+    }
+
+    /** WordPress user id of an author with published recipes, or null. */
+    public function getId(string $slug): ?int
+    {
+        $id = $this->db->table('users')->where('user_nicename', $slug)->value('ID');
+
+        return $id && $this->recipesQuery()->where('p.post_author', $id)->exists() ? (int) $id : null;
     }
 
     /** Published Russian recipes, without a select. */
     private function recipesQuery(): Builder
     {
         return $this->db->table('posts as p')
-            ->join('icl_translations as tr', function ($join) {
-                $join->on('tr.element_id', '=', 'p.ID')
-                    ->where('tr.element_type', 'post_recipe')
-                    ->where('tr.language_code', 'ru');
-            })
             ->where('p.post_type', 'recipe')
             ->where('p.post_status', 'publish');
     }
 
-    /** user_id => avatar URL ("_crb_user_avatar" is an attachment id). */
+    /** user_id => avatar URL ("artit_user_avatar" is an attachment id). */
     private function avatars(array $userIds): array
     {
         $ids = $this->db->table('usermeta')
             ->whereIn('user_id', $userIds)
-            ->where('meta_key', '_crb_user_avatar')
+            ->where('meta_key', 'artit_user_avatar')
             ->pluck('meta_value', 'user_id')
             ->map(fn ($id) => (int) $id)
             ->filter();

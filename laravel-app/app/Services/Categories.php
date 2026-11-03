@@ -76,11 +76,6 @@ class Categories
         }
 
         $posts = $this->db->table('posts as p')
-            ->join('icl_translations as tr', function ($join) {
-                $join->on('tr.element_id', '=', 'p.ID')
-                    ->where('tr.element_type', 'post_recipe')
-                    ->where('tr.language_code', 'ru');
-            })
             ->join('term_relationships as r', function ($join) use ($term) {
                 $join->on('r.object_id', '=', 'p.ID')->where('r.term_taxonomy_id', $term->term_taxonomy_id);
             })
@@ -96,6 +91,7 @@ class Categories
         $type = array_search($term->taxonomy, self::TAXONOMIES, true);
 
         return $this->present(collect([$term]), $type)[0]
+            + ['seoText' => app(SeoText::class)->forTerm((int) $term->term_id), 'seo' => app(Seo::class)->forTerm($term->taxonomy, $term->slug)]
             + app(Recipes::class)->paginate($posts, $page, $perPage);
     }
 

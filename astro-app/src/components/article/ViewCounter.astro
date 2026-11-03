@@ -1,0 +1,27 @@
+---
+// Reports that a recipe or video page was viewed (the pages are static, so the browser does it).
+// One view per page per browser a day, like Post Views Counter's default.
+interface Props {
+	// Laravel endpoint, e.g. ".../api/recipes/borscht/view".
+	action: string;
+}
+
+const { action } = Astro.props;
+---
+<div class="view-counter" data-action={action} hidden></div>
+
+<script>
+	const DAY = 24 * 60 * 60 * 1000;
+
+	document.querySelectorAll<HTMLElement>(".view-counter").forEach((counter) => {
+		const action = counter.dataset.action!;
+		const key = `viewed:${action}`;
+		try {
+			if (Date.now() - Number(localStorage.getItem(key) ?? 0) < DAY) return;
+			localStorage.setItem(key, String(Date.now()));
+		} catch {
+			// No storage: count every visit rather than none.
+		}
+		fetch(action, { method: "POST", headers: { Accept: "application/json" }, keepalive: true }).catch(() => {});
+	});
+</script>

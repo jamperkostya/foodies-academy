@@ -8,7 +8,8 @@ interface Props {
 	name: string;
 	// Photo; without it the avatar shows initials.
 	avatar?: string;
-	info: string;
+	// Small line under the name, e.g. "243 рецепта"; omitted when empty.
+	info?: string;
 	buttonLabel: string;
 	href?: string;
 }
@@ -28,7 +29,7 @@ const { name, avatar, info, buttonLabel, href } = Astro.props;
 			<strong class="author-card__name">{name}</strong>
 		</Fragment>
 	)}
-	<span class="author-card__info">{info}</span>
+	{info && <span class="author-card__info">{info}</span>}
 	{href
 		? <a href={href} class="btn btn--secondary author-card__btn">{buttonLabel}</a>
 		: <button type="button" class="btn btn--secondary author-card__btn">{buttonLabel}</button>}

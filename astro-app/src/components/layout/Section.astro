@@ -1,11 +1,59 @@
 ---
 // A home page section: its heading, then whatever the section renders below it.
+// With `href`, a "Смотреть все" link sits on the heading's row (sections without filters;
+// with filters the link ends the filters row instead).
+interface Props {
+	href?: string;
+}
+
+const { href } = Astro.props;
 
 // Render the title up front: wrapper sections forward their own title slot,
 // so Astro.slots.has() is true even when nothing was passed in.
 const title = Astro.slots.has("title") ? (await Astro.slots.render("title")).trim() : "";
 ---
 <section class="section-item">
-	{title && <h2 class="section-title" set:html={title} />}
+	{href ? (
+		<div class="section-head">
+			{title && <h2 class="section-title section-head__title" set:html={title} />}
+			<a href={href} class="section-head__all filter-name">Смотреть все</a>
+		</div>
+	) : (
+		title && <h2 class="section-title" set:html={title} />
+	)}
 	<slot />
 </section>
+
+<style lang="less">
+.section-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	// A long title leaves no room on phones: the link then drops below it.
+	flex-wrap: wrap;
+	gap: 12px 20px;
+	margin-bottom: 40px;
+	@media (max-width: 860px) {
+		margin-bottom: 24px;
+	}
+	&__title {
+		margin-bottom: 0;
+		min-width: 0;
+		overflow-wrap: anywhere;
+	}
+	// Same pill as "Смотреть все" in the filters row.
+	&__all {
+		flex: none;
+		padding: 10px 20px;
+		border: var(--border-width) solid var(--color-red);
+		border-radius: var(--border-radius-100);
+		color: var(--color-red);
+		white-space: nowrap;
+		transition: background .15s, color .15s;
+		&:hover {
+			background: var(--color-red);
+			color: var(--color-white);
+		}
+	}
+}
+</style>

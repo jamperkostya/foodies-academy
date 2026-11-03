@@ -1,0 +1,55 @@
+---
+// Card for the log-in and sign-up forms: title, the form (default slot), a link to the other one.
+interface Props {
+	title: string;
+	footer: string;
+	footerLink: { href: string; label: string };
+}
+
+const { title, footer, footerLink } = Astro.props;
+---
+<section class="auth-card">
+	<h1 class="auth-card__title">{title}</h1>
+	<slot />
+	<p class="auth-card__footer">{footer} <a class="auth-card__link" href={footerLink.href} data-keep-next>{footerLink.label}</a></p>
+</section>
+
+<script>
+	// Keep ?next= when switching between log-in and sign-up.
+	const next = new URLSearchParams(location.search).get("next");
+	if (next) {
+		document.querySelectorAll<HTMLAnchorElement>("[data-keep-next]").forEach((link) => {
+			link.href += `?next=${encodeURIComponent(next)}`;
+		});
+	}
+</script>
+
+<style lang="less">
+.auth-card {
+	max-width: 440px;
+	margin: 40px auto 60px;
+	padding: 32px;
+	background: var(--color-white);
+	border: var(--border-width) solid var(--color-border-search-form);
+	border-radius: var(--border-radius-25);
+	@media (max-width: 640px) {
+		margin: 20px auto 40px;
+		padding: 24px 18px;
+	}
+	&__title {
+		font-size: 26px;
+		margin-bottom: 24px;
+		text-align: center;
+	}
+	&__footer {
+		margin-top: 20px;
+		font-size: 14px;
+		text-align: center;
+		color: var(--color-grey-dark);
+	}
+	&__link {
+		color: var(--color-red);
+		text-decoration: underline;
+	}
+}
+</style>

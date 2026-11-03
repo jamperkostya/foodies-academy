@@ -20,7 +20,7 @@ class Recipes
         $this->db = DB::connection('site');
     }
 
-    /** Most liked recipes (the like_post meta of the like button plugin). */
+    /** Most viewed recipes (post_views_realtime). */
     public function getTopRecipes(int $limit = 10): array
     {
         $posts = $this->db->table('posts as p')
@@ -68,7 +68,7 @@ class Recipes
         return $this->db->table('postmeta')
             ->whereIn('post_id', $ids)
             ->whereIn('meta_key', [
-                '_thumbnail_id', 'recipe_rating', '_yoast_wpseo_primary_course', 'like_post', 'type', 'recipe_servings', 'complexity', 'calorific_value', 'recipe_notes',
+                '_thumbnail_id', 'recipe_rating', '_yoast_wpseo_primary_course', 'pld_like_count', 'pld_dislike_count', 'type', 'recipe_servings', 'complexity', 'calorific_value', 'recipe_notes',
                 'recipe_prep_time', 'recipe_prep_time_text',
                 'recipe_cook_time', 'recipe_cook_time_text',
                 'recipe_passive_time', 'recipe_passive_time_text',
@@ -130,8 +130,9 @@ class Recipes
             $images = $this->images($meta->map(fn ($m) => (int) ($m['_thumbnail_id'] ?? 0))->filter()->all());
             $views = $this->views($ids);
             $categories = $this->categories($ids);
+            $ratings = app(Comments::class)->ratings($ids);
 
-            return $posts->map(function($post) use ($meta, $terms, $images, $views, $categories) {
+            return $posts->map(function($post) use ($meta, $terms, $images, $views, $categories, $ratings) {
                 $post_meta = $meta->get($post->ID, []);
                 $post_terms = $terms->get($post->ID, []);
                 return [
@@ -149,7 +150,10 @@ class Recipes
                     // ACF checkbox "type" on the recipe, stored as a:1:{i:0;s:3:"top";}
                     'isTop' => in_array('top', (array) @unserialize($post_meta['type'] ?? '', ['allowed_classes' => false]), true),
                     'servings' => (int) ($post_meta['recipe_servings'] ?? 0),
-                    'rating' => (float) ($post_meta['recipe_rating'] ?? 0),
+                    // Average of the stars in approved reviews; recipes nobody has rated yet keep
+                    // the rating set in WP Ultimate Recipe, so the catalogue isn't left without stars.
+                    'rating' => $ratings[$post->ID]['average'] ?? (float) ($post_meta['recipe_rating'] ?? 0),
+                    'ratingCount' => $ratings[$post->ID]['count'] ?? 0,
                     'ingredients' => [],
                     'comments' => (int) $post->comment_count,
                     'views' => [
@@ -157,8 +161,8 @@ class Recipes
                         'short' => $this->shortNumber((int) ($views[$post->ID] ?? 0)),
                     ],
                     'likes' => [
-                        'count' => (int) ($post_meta['like_post'] ?? 0),
-                        'short' => $this->shortNumber((int) ($post_meta['like_post'] ?? 0)),
+                        'count' => $this->netLikes($post_meta),
+                        'short' => $this->shortNumber($this->netLikes($post_meta)),
                     ],
                 ];
 
@@ -186,6 +190,33 @@ class Recipes
             ->all();
     }
 
+    /**
+     * Likes minus dislikes (Posts Like Dislike). Dislikes are stored as positive numbers;
+     * abs() keeps the result right if some were written with a minus.
+     */
+    public static function netLikes(array $meta): int
+    {
+        return (int) ($meta['pld_like_count'] ?? 0) - abs((int) ($meta['pld_dislike_count'] ?? 0));
+    }
+
+    /** Dish types and countries of a recipe with slugs for /category/{slug}: {course: [{name, slug}], country: [...]}. */
+    private function categoryLinks(int $postId): array
+    {
+        $rows = $this->db->table('term_relationships as r')
+            ->join('term_taxonomy as tt', 'tt.term_taxonomy_id', '=', 'r.term_taxonomy_id')
+            ->join('terms as t', 't.term_id', '=', 'tt.term_id')
+            ->where('r.object_id', $postId)
+            ->whereIn('tt.taxonomy', ['course', 'cuisine'])
+            ->orderBy('r.term_order')
+            ->get(['tt.taxonomy', 't.name', 't.slug']);
+        $links = fn (string $taxonomy) => $rows->where('taxonomy', $taxonomy)
+            ->map(fn ($row) => ['name' => html_entity_decode($row->name, ENT_QUOTES | ENT_HTML5), 'slug' => $row->slug])
+            ->values()
+            ->all();
+
+        return ['course' => $links('course'), 'country' => $links('cuisine')];
+    }
+
     private function views(array $ids): array
     {
         return $this->db->table('post_views_realtime')
@@ -199,13 +230,16 @@ class Recipes
     /** 950 → "950", 3512 → "3.5K", 107726 → "107.7K", 1250000 → "1.3M" */
     private function shortNumber(int $n): string
     {
+        // Likes minus dislikes can be negative: shorten the size, keep the sign.
+        $sign = $n < 0 ? '-' : '';
+        $n = abs($n);
         foreach (['M' => 1_000_000, 'K' => 1_000] as $suffix => $size) {
             if ($n >= $size * 0.99995) { // 999 950 already rounds to 1M, not 1000K
-                return round($n / $size, 1).$suffix;
+                return $sign.round($n / $size, 1).$suffix;
             }
         }
 
-        return (string) $n;
+        return $sign.$n;
     }
 
     /** Prep + cook + passive time as text: "15 минут", "1 час 40 минут", "2 дня 3 часа". */
@@ -278,11 +312,6 @@ class Recipes
     public function getSearchIndex(): array
     {
         $posts = $this->db->table('posts as p')
-            ->join('icl_translations as tr', function ($join) {
-                $join->on('tr.element_id', '=', 'p.ID')
-                    ->where('tr.element_type', 'post_recipe')
-                    ->where('tr.language_code', 'ru');
-            })
             ->where('p.post_type', 'recipe')
             ->where('p.post_status', 'publish')
             ->orderBy('p.post_title')
@@ -312,11 +341,6 @@ class Recipes
     public function getSlugs(): array
     {
         return $this->db->table('posts as p')
-            ->join('icl_translations as tr', function ($join) {
-                $join->on('tr.element_id', '=', 'p.ID')
-                    ->where('tr.element_type', 'post_recipe')
-                    ->where('tr.language_code', 'ru');
-            })
             ->where('p.post_type', 'recipe')
             ->where('p.post_status', 'publish')
             ->orderBy('p.ID')
@@ -324,15 +348,45 @@ class Recipes
             ->all();
     }
 
+    /** Published recipes by id, in the order of $ids (a visitor's favourites). */
+    public function getByIds(array $ids): array
+    {
+        if (! $ids) {
+            return [];
+        }
+        $order = array_flip($ids);
+        $posts = $this->publishedQuery()->whereIn('p.ID', $ids)->get(['p.*'])->sortBy(fn ($post) => $order[$post->ID]);
+
+        return $this->present($posts->values());
+    }
+
+    /** Recipes of the authors published after $sinceGmt ("Y-m-d H:i:s"), newest first. */
+    public function getByAuthorsSince(array $authorIds, string $sinceGmt, int $limit = 24): array
+    {
+        if (! $authorIds) {
+            return [];
+        }
+
+        return $this->present($this->publishedQuery()
+            ->whereIn('p.post_author', $authorIds)
+            ->where('p.post_date_gmt', '>', $sinceGmt)
+            ->orderByDesc('p.post_date_gmt')
+            ->limit($limit)
+            ->get(['p.*']));
+    }
+
+    /** Published Russian recipes, without a select. */
+    private function publishedQuery(): Builder
+    {
+        return $this->db->table('posts as p')
+            ->where('p.post_type', 'recipe')
+            ->where('p.post_status', 'publish');
+    }
+
     /** Post id of a published Russian recipe, or null. */
     public function getRecipeId(string $slug): ?int
     {
         $id = $this->db->table('posts as p')
-            ->join('icl_translations as tr', function ($join) {
-                $join->on('tr.element_id', '=', 'p.ID')
-                    ->where('tr.element_type', 'post_recipe')
-                    ->where('tr.language_code', 'ru');
-            })
             ->where('p.post_type', 'recipe')
             ->where('p.post_status', 'publish')
             ->where('p.post_name', $slug)
@@ -344,11 +398,6 @@ class Recipes
     public function getRecipeBySlug(string $slug): ?array
     {
         $post = $this->db->table('posts as p')
-            ->join('icl_translations as tr', function ($join) {
-                $join->on('tr.element_id', '=', 'p.ID')
-                    ->where('tr.element_type', 'post_recipe')
-                    ->where('tr.language_code', 'ru');
-            })
             ->where('p.post_type', 'recipe')
             ->where('p.post_status', 'publish')
             ->where('p.post_name', $slug)
@@ -360,6 +409,10 @@ class Recipes
         $recipe = $this->present(collect([$post]))[0];
         $recipe['ingredients'] = $this->ingredients($post->ID);
         $recipe['reviews'] = app(Comments::class)->getForPost($post->ID);
+        $recipe['votes'] = app(Likes::class)->get($post->ID);
+        $recipe['seoText'] = app(SeoText::class)->forPost($post->ID);
+        $recipe['categoryLinks'] = $this->categoryLinks($post->ID);
+        $recipe['seo'] = app(Seo::class)->forPost('recipe', $post->post_name);
 
         // Quick facts: an empty value means "not filled in WordPress", and the page hides it.
         $meta = $this->meta([$post->ID])->get($post->ID, []);
@@ -404,11 +457,6 @@ class Recipes
         foreach ($terms as $term) {
             $name = html_entity_decode($term->name, ENT_QUOTES | ENT_HTML5);
             $found = $this->db->table('posts as p')
-                ->join('icl_translations as tr', function ($join) {
-                    $join->on('tr.element_id', '=', 'p.ID')
-                        ->where('tr.element_type', 'post_recipe')
-                        ->where('tr.language_code', 'ru');
-                })
                 ->join('term_relationships as r', function ($join) use ($term) {
                     $join->on('r.object_id', '=', 'p.ID')->where('r.term_taxonomy_id', $term->term_taxonomy_id);
                 })
@@ -438,11 +486,6 @@ class Recipes
     public function getFeaturedRecipes(int $limit = 10): array
     {
         $posts = $this->db->table('posts as p')
-            ->join('icl_translations as tr', function ($join) {
-                $join->on('tr.element_id', '=', 'p.ID')
-                    ->where('tr.element_type', 'post_recipe')
-                    ->where('tr.language_code', 'ru');
-            })
             ->join('postmeta as type', function ($join) {
                 $join->on('type.post_id', '=', 'p.ID')
                     ->where('type.meta_key', 'type')
@@ -473,11 +516,6 @@ class Recipes
 
         $shared = $this->db->table('term_relationships as r')
             ->join('posts as p', 'p.ID', '=', 'r.object_id')
-            ->join('icl_translations as tr', function ($join) {
-                $join->on('tr.element_id', '=', 'p.ID')
-                    ->where('tr.element_type', 'post_recipe')
-                    ->where('tr.language_code', 'ru');
-            })
             ->leftJoin('post_views_realtime as v', function ($join) {
                 $join->on('v.post_id', '=', 'p.ID')
                     ->where('v.view_type', 'normal')

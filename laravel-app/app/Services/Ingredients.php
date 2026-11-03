@@ -40,17 +40,12 @@ class Ingredients
             ->join('terms as t', 't.term_id', '=', 'tt.term_id')
             ->where('tt.taxonomy', 'ingredient')
             ->where('t.slug', $slug)
-            ->first(['tt.term_taxonomy_id', 't.name', 't.slug', 'tt.count']);
+            ->first(['tt.term_taxonomy_id', 't.term_id', 't.name', 't.slug', 'tt.count']);
         if (! $term) {
             return null;
         }
 
         $posts = $this->db->table('posts as p')
-            ->join('icl_translations as tr', function ($join) {
-                $join->on('tr.element_id', '=', 'p.ID')
-                    ->where('tr.element_type', 'post_recipe')
-                    ->where('tr.language_code', 'ru');
-            })
             ->join('term_relationships as r', function ($join) use ($term) {
                 $join->on('r.object_id', '=', 'p.ID')->where('r.term_taxonomy_id', $term->term_taxonomy_id);
             })
@@ -67,6 +62,8 @@ class Ingredients
             'name' => html_entity_decode($term->name, ENT_QUOTES | ENT_HTML5),
             'slug' => $term->slug,
             'count' => (int) $term->count,
+            'seoText' => app(SeoText::class)->forTerm((int) $term->term_id),
+            'seo' => app(Seo::class)->forTerm('ingredient', $term->slug),
         ] + $this->recipes->paginate($posts, $page, $perPage);
     }
 }

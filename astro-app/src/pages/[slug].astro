@@ -1,0 +1,53 @@
+---
+// WordPress pages marked "Отдельная страница сайта" (wp-content/mu-plugins/foodies-site-pages.php):
+// privacy policy, terms, contacts, the home page promo guides… Title, text and image come from the admin.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/layout/PageHero.astro";
+import PageContent from "../components/article/PageContent.astro";
+import SEOTextSection from "../components/sections/SEOTextSection.astro";
+import type { SitePage } from "../types/page";
+
+const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+
+export async function getStaticPaths() {
+	// getStaticPaths can't see the constants above, so the URL is read again here.
+	const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+	// Pages with their own Astro file keep it (it takes the WordPress text itself).
+	const OWN_PAGES = new Set(["about"]);
+	const { data: pages }: { data: { slug: string }[] } = await fetch(`${API_URL}/pages`).then((r) => r.json());
+
+	return pages.filter((page) => !OWN_PAGES.has(page.slug)).map((page) => ({ params: { slug: page.slug } }));
+}
+
+const { slug } = Astro.params;
+const response = await fetch(`${API_URL}/pages/${slug}`);
+if (!response.ok) {
+	throw new Error(`Page "${slug}" from ${API_URL}: HTTP ${response.status}`);
+}
+const { data: page }: { data: SitePage } = await response.json();
+---
+<BaseLayout seo={page.seo} image={page.image || undefined} title={page.title} description={page.excerpt || undefined} breadcrumbs={[{ label: page.title }]}>
+	<PageHero slot="hero" description={page.excerpt || undefined}>{page.title}</PageHero>
+
+	<section class="site-page section-item">
+		{page.image && <img class="site-page__image" src={page.image} alt="" loading="eager" />}
+		<PageContent html={page.content} />
+	</section>
+
+	<SEOTextSection html={page.seoText} />
+</BaseLayout>
+
+<style lang="less">
+.site-page {
+	padding-top: 25px;
+	&__image {
+		display: block;
+		width: 100%;
+		max-width: 820px;
+		max-height: 420px;
+		object-fit: cover;
+		margin-bottom: 30px;
+		border-radius: var(--border-radius-25);
+	}
+}
+</style>

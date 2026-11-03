@@ -5,7 +5,7 @@ import { Image } from "astro:assets";
 import Icon from "../ui/Icon.astro";
 import SearchForm from "./SearchForm.astro";
 import { menuColumns, menuLinks } from "../../data/menu";
-import logo from "../../assets/images/logotype.jpg";
+import logo from "../../assets/images/logotype.png";
 ---
 <div class="mobile-nav" data-mobile-nav>
 	<div class="mobile-nav__backdrop" data-mobile-nav-close></div>
@@ -42,13 +42,12 @@ import logo from "../../assets/images/logotype.jpg";
 					))}
 				</div>
 			</li>
-			<li class="mobile-nav__item"><a class="mobile-nav__link" href="/blog">Блог</a></li>
 			{menuLinks.map((link) => (
 				<li class="mobile-nav__item"><a class="mobile-nav__link" href={link.href}>{link.label}</a></li>
 			))}
 			<li class="mobile-nav__item"><a class="mobile-nav__link" href="#">Ai Повар <Icon name="ai-chef" width={16} height={16} /></a></li>
-			<li class="mobile-nav__item"><a class="mobile-nav__link" href="#">Избранное <span class="mobile-nav__count">708</span></a></li>
-			<li class="mobile-nav__item"><a class="mobile-nav__link mobile-nav__link--accent" href="#">Регистрация</a></li>
+			<li class="mobile-nav__item"><a class="mobile-nav__link" href="/login?next=%2Fprofile%23favorites" data-account-favorites>Избранное <span class="mobile-nav__count" data-account-count hidden>0</span></a></li>
+			<li class="mobile-nav__item"><a class="mobile-nav__link mobile-nav__link--accent" href="/register" data-account-link>Регистрация</a></li>
 		</ul>
 	</nav>
 </div>

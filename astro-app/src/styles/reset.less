@@ -55,3 +55,8 @@ ol {
 table {
 	border-collapse: collapse;
 }
+
+// Components set their own display, which would beat the browser style for [hidden].
+[hidden] {
+	display: none !important;
+}

@@ -20,17 +20,10 @@ const render = async (categories: Category[], href?: string) => {
 };
 
 describe("CategorySection", () => {
-	it("renders an 'all' filter plus one filter per distinct group, in order of first appearance", async () => {
-		const html = await render([category("1", ["Супы"]), category("2", ["Десерты", "Супы"]), category("3", ["Выпечка"])]);
-		const labels = [...html.matchAll(/filters__btn[^>]*>([^<]+)</g)].map((m) => m[1]);
-
-		expect(labels).toEqual(["Все", "Супы", "Десерты", "Выпечка"]);
-	});
-
-	it("starts with 'all' active and every card visible", async () => {
+	it("has no filters: the row of categories is shown as is", async () => {
 		const html = await render([category("1", ["Супы"]), category("2", ["Десерты"])]);
 
-		expect(html).toMatch(/is-active"[^>]*aria-pressed="true"[^>]*data-group=""/);
+		expect(html).not.toContain('class="filters');
 		expect(html.match(/class="category-card carousel__item"/g)).toHaveLength(2);
 		expect(html).not.toMatch(/<a[^>]*category-card[^>]*hidden/);
 	});
@@ -49,11 +42,11 @@ describe("CategorySection", () => {
 		expect(html).toContain("11 рецептов<");
 	});
 
-	it("ends the filters row with a 'Смотреть все' link when href is given", async () => {
+	it("puts the 'Смотреть все' link on the title's row when href is given", async () => {
 		const html = await render([category("1", ["Супы"])], "/categories");
-		const filters = html.slice(html.indexOf('class="filters'), html.indexOf('class="carousel'));
+		const head = html.slice(html.indexOf('class="section-head"'), html.indexOf("data-filterable-carousel"));
 
-		expect(filters).toMatch(/<a href="\/categories"[^>]*filters__all[^>]*>Смотреть все<\/a>\s*<\/div>/);
+		expect(head).toMatch(/<a href="\/categories" class="section-head__all[^"]*"[^>]*>Смотреть все<\/a>/);
 	});
 
 	it("has no 'Смотреть все' link without href", async () => {

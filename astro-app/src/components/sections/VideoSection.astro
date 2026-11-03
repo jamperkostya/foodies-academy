@@ -11,13 +11,10 @@ interface Props {
 }
 
 const { videos, href } = Astro.props;
-
-// Filters come from the data itself, so a group never shows up empty.
-const groups = [...new Set(videos.map((video) => video.category))];
 ---
-<Section>
+<Section href={href}>
 	<slot name="title" slot="title" />
-	<Carousel variant="videos" groups={groups} href={href}>
+	<Carousel variant="videos">
 		{videos.map((video) => (
 			<VideoCard
 				class="carousel__item"
@@ -25,11 +22,11 @@ const groups = [...new Set(videos.map((video) => video.category))];
 				size="compact"
 				image={video.image}
 				title={video.title}
+				views={video.views}
 				likes={video.likes}
 				comments={video.comments}
 				rating={video.rating}
-				videoId={video.videoId}
-				groups={[video.category]}
+				videoId={video.youtubeId}
 			/>
 		))}
 	</Carousel>

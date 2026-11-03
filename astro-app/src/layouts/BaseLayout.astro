@@ -5,6 +5,8 @@ import Breadcrumbs from "../components/layout/Breadcrumbs.astro";
 import BackToTop from "../components/layout/BackToTop.astro";
 import Toast from "../components/ui/Toast.astro";
 import type { Breadcrumb } from "../types/breadcrumb";
+import type { Seo } from "../types/seo";
+import { jsonLd } from "../utils/jsonLd";
 import "../styles/global.less";
 
 interface Props {
@@ -14,13 +16,51 @@ interface Props {
 	description?: string;
 	// Trail shown under the header, after "Главная". Omit on the home page.
 	breadcrumbs?: Breadcrumb[];
+	// Pages search engines shouldn't list (log-in, profile).
+	noindex?: boolean;
+	// Yoast SEO fields of the WordPress object behind the page; they win over title/description.
+	seo?: Seo | null;
+	// Picture for social networks when Yoast has none (a recipe's photo, a video's thumbnail).
+	image?: string;
+	// og:type when Yoast has none: "article" for recipes and news, "website" otherwise.
+	type?: string;
 }
 
 const {
 	title,
 	description = "Foodies Academy — рецепты с пошаговыми фото и видео: основные блюда, супы, салаты, десерты и выпечка.",
 	breadcrumbs,
+	noindex = false,
+	seo,
+	image,
+	type = "website",
 } = Astro.props;
+
+const SITE_NAME = "Foodies.academy";
+// `site` from astro.config; unset when a component is rendered on its own (tests).
+const site = Astro.site ?? new URL("https://foodies.academy");
+// Yoast titles already end with the site name.
+const fullTitle = seo?.title ?? (title ? `${title} — ${SITE_NAME}` : SITE_NAME);
+const metaDescription = seo?.description ?? description;
+// Canonical: this page's address on the site, without ?query; Yoast's points at WordPress.
+const canonical = new URL(Astro.url.pathname, site).href;
+const robots = [noindex || seo?.index === false ? "noindex" : "index", noindex || seo?.follow === false ? "nofollow" : "follow"];
+const ogImage = seo?.og.image ?? (image ? { url: new URL(image, site).href, width: null, height: null, type: null } : null);
+const ogTitle = seo?.og.title ?? fullTitle;
+const ogDescription = seo?.og.description ?? metaDescription;
+
+// The breadcrumb trail for Google: "Главная" first, the current page (no href) last.
+const breadcrumbSchema = breadcrumbs?.length
+	? jsonLd({
+			"@type": "BreadcrumbList",
+			itemListElement: [{ label: "Главная", href: "/" }, ...breadcrumbs].map((crumb, i) => ({
+				"@type": "ListItem",
+				position: i + 1,
+				name: crumb.label,
+				item: new URL(crumb.href ?? Astro.url.pathname, site).href,
+			})),
+		})
+	: null;
 ---
 
 <html lang="ru">
@@ -31,8 +71,30 @@ const {
 		<link rel="icon" href="/favicon.ico" sizes="32x32">
 		{/* Every page uses the upright font; fetch it before the CSS asks for it. */}
 		<link rel="preload" href="/fonts/Montserrat-Variable.woff2" as="font" type="font/woff2" crossorigin>
-		<title>{title ? `${title} — Foodies.academy` : "Foodies.academy"}</title>
-		<meta name="description" content={description}>
+		<title>{fullTitle}</title>
+		<meta name="description" content={metaDescription}>
+		<meta name="robots" content={`${robots.join(", ")}${robots[0] === "index" ? ", max-snippet:-1, max-image-preview:large, max-video-preview:-1" : ""}`}>
+		<link rel="canonical" href={canonical}>
+
+		{/* Open Graph and Twitter: Yoast's fields, or the page's own title, description and picture. */}
+		<meta property="og:locale" content="ru_RU">
+		<meta property="og:type" content={seo?.og.type ?? type}>
+		<meta property="og:title" content={ogTitle}>
+		<meta property="og:description" content={ogDescription}>
+		<meta property="og:url" content={canonical}>
+		<meta property="og:site_name" content={seo?.og.siteName ?? SITE_NAME}>
+		{ogImage && <meta property="og:image" content={ogImage.url}>}
+		{ogImage?.width && <meta property="og:image:width" content={String(ogImage.width)}>}
+		{ogImage?.height && <meta property="og:image:height" content={String(ogImage.height)}>}
+		{ogImage?.type && <meta property="og:image:type" content={ogImage.type}>}
+		{seo?.og.publishedTime && <meta property="article:published_time" content={seo.og.publishedTime}>}
+		{seo?.og.modifiedTime && <meta property="article:modified_time" content={seo.og.modifiedTime}>}
+		<meta name="twitter:card" content={seo?.twitter.card ?? "summary_large_image"}>
+		<meta name="twitter:title" content={seo?.twitter.title ?? ogTitle}>
+		<meta name="twitter:description" content={seo?.twitter.description ?? ogDescription}>
+		{(seo?.twitter.image ?? ogImage?.url) && <meta name="twitter:image" content={seo?.twitter.image ?? ogImage?.url}>}
+		<link rel="sitemap" href="/sitemap.xml">
+		{breadcrumbSchema && <script type="application/ld+json" is:inline set:html={breadcrumbSchema} />}
 	</head>
 	<body>
 		<Header />

@@ -6,18 +6,15 @@ import type { Category } from "../../types/category";
 
 interface Props {
 	categories: Category[];
-	// "Смотреть все" link, shown at the end of the filters row.
+	// "Смотреть все" link, next to the section title.
 	href?: string;
 }
 
 const { categories, href } = Astro.props;
-
-// Filters come from the data itself, so a group never shows up empty.
-const groups = [...new Set(categories.flatMap((category) => category.groups))];
 ---
-<Section>
+<Section href={href}>
 	<slot name="title" slot="title" />
-	<Carousel variant="categories" groups={groups} href={href}>
+	<Carousel variant="categories">
 		{categories.map((category) => (
 			<CategoryCard class="carousel__item" category={category} />
 		))}

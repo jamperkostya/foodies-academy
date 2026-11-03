@@ -2,6 +2,7 @@
 
 import type { AuthorSummary } from './author';
 import type { Review } from './review';
+import type { Seo } from './seo';
 
 /** term_id => name, e.g. { 257: "Вторые блюда" } */
 export type Terms = Record<number, string>;
@@ -35,11 +36,13 @@ export interface Recipe {
   minutes: number; // total time as a number, e.g. for schema.org "PT100M"
   isNew: boolean;
   isTop: boolean;
-  rating: number;
+  rating: number; // average stars of approved reviews; WP Ultimate Recipe rating when nobody rated yet
+  ratingCount?: number; // approved reviews with stars
   servings: number; // the ingredient amounts are for this many servings, 0 if unknown
   ingredients: Ingredient[]; // only in GET /api/recipes/{slug}, empty in lists
   groups?: string[]; // carousel filters, only in GET /api/recipes/by-ingredients
   reviews?: Review[]; // approved WordPress comments, only in GET /api/recipes/{slug}
+  votes?: { like: number; dislike: number }; // Posts Like Dislike counts, only in GET /api/recipes/{slug}
   // The rest is only in GET /api/recipes/{slug}; "" / null / [] when not filled in WordPress.
   prepTime?: string; // "15 мин"
   cookTime?: string; // "1 ч 5 мин"
@@ -48,6 +51,10 @@ export interface Recipe {
   steps?: { text: string; group: string }[];
   history?: string | null; // HTML of the "История происхождения" block
   tip?: string | null; // "Совет от шефа": HTML of recipe_notes
+  seoText?: string; // "SEO-текст" HTML from the WordPress admin, "" when empty
+  // Dish types and countries with their /category/{slug} pages, only in GET /api/recipes/{slug}.
+  seo?: Seo | null; // Yoast SEO, only in GET /api/recipes/{slug}
+  categoryLinks?: { course: { name: string; slug: string }[]; country: { name: string; slug: string }[] };
   author?: AuthorSummary | null; // posts.post_author
   similar?: Recipe[]; // recipes sharing the most ingredients, most first
   comments: number;

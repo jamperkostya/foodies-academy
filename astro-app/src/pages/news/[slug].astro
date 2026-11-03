@@ -1,15 +1,10 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import Section from "../../components/layout/Section.astro";
-import ArticleHero from "../../components/article/ArticleHero.astro";
-import ArticleLayout from "../../components/article/ArticleLayout.astro";
-import SidebarList from "../../components/article/SidebarList.astro";
-import NewsletterCard from "../../components/article/NewsletterCard.astro";
-import type { News } from "../../types/news";
+import ArticlePage from "../../components/article/ArticlePage.astro";
+import type { Article } from "../../types/article";
 
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
 
-// One page per published news item in Laravel.
+// One page per news item (WordPress post type "news").
 export async function getStaticPaths() {
 	// getStaticPaths can't see the constants above, so the URL is read again here.
 	const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
@@ -21,85 +16,9 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const response = await fetch(`${API_URL}/news/${slug}`);
 if (!response.ok) {
-	throw new Error(`News "${slug}" from ${API_URL}: HTTP ${response.status}`);
+	throw new Error(`news "${slug}" from ${API_URL}: HTTP ${response.status}`);
 }
-const { data: news }: { data: News } = await response.json();
-
-const { data: latest }: { data: News[] } = await fetch(`${API_URL}/news?limit=4`).then((r) => r.json());
-const formatDate = (date: string) => new Date(date).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
-const others = latest
-	.filter((item) => item.slug !== news.slug)
-	.slice(0, 3)
-	.map((item) => ({ title: item.title, meta: formatDate(item.date), image: item.image, href: `/news/${item.slug}` }));
-
-// Same placeholder the news block on the home page uses for posts without a cover.
-const image = news.image || "https://foodies.academy/wp-content/uploads/2025/11/mat-300x300.jpeg";
+const { data: article }: { data: Article } = await response.json();
+const { data: others }: { data: Article[] } = await fetch(`${API_URL}/news?limit=20`).then((r) => r.json());
 ---
-
-<BaseLayout
-	title={news.title}
-	description={news.excerpt}
-	breadcrumbs={[{ label: "Новости", href: "/news" }, { label: news.title }]}>
-
-	<ArticleHero
-		slot="hero"
-		badge={news.category || "Новости"}
-		label={[formatDate(news.date), ...news.tags].join(" · ")}
-		title={news.title}
-		description={news.excerpt}
-		image={image}
-		anchor={{ href: "#content", label: "Читать ↓" }}
-		withVideo={false}
-	/>
-
-	<Section>
-		<ArticleLayout>
-			{/* HTML from our own WordPress, so it is rendered as is. */}
-			<div class="news-content" id="content" set:html={news.content} />
-
-			<Fragment slot="sidebar">
-				{others.length > 0 && <SidebarList title="Другие новости" items={others} />}
-				<NewsletterCard title="Новости на почту" />
-			</Fragment>
-		</ArticleLayout>
-	</Section>
-</BaseLayout>
-
-<style lang="less">
-.news-content {
-	color: var(--color-grey-dark);
-	line-height: 1.6;
-	:global(p), :global(ul), :global(ol), :global(figure) {
-		margin-bottom: 16px;
-	}
-	:global(h2), :global(h3) {
-		margin: 32px 0 12px;
-		color: var(--color-black);
-		font-weight: 700;
-	}
-	:global(h2) {
-		font-size: 24px;
-	}
-	:global(h3) {
-		font-size: 18px;
-	}
-	:global(ul), :global(ol) {
-		padding-left: 20px;
-	}
-	:global(ul) {
-		list-style: disc;
-	}
-	:global(ol) {
-		list-style: decimal;
-	}
-	:global(img) {
-		max-width: 100%;
-		height: auto;
-		border-radius: var(--border-radius-10);
-	}
-	:global(a) {
-		color: var(--color-red);
-		text-decoration: underline;
-	}
-}
-</style>
+<ArticlePage article={article} others={others} section={{ label: "Новости", href: "/news", api: "news" }} />

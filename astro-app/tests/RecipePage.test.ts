@@ -47,8 +47,9 @@ const renderRecipe = async (slug: string, changes: Partial<Recipe> = {}) => {
 	vi.stubGlobal("fetch", fetch);
 	const recipe = apiRecipe;
 	const html = await (await AstroContainer.create()).renderToString(RecipePage, { params: { slug } });
-	const json = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1];
-	return { recipe, html, fetch, schema: json && JSON.parse(json) };
+	// The page also has BreadcrumbList data (from the layout): pick the Recipe.
+	const schemas = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
+	return { recipe, html, fetch, schema: schemas.find((data) => data["@type"] === "Recipe") };
 };
 
 describe("/recipe/[slug]", () => {

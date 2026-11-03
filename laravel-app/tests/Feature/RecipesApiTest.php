@@ -1,0 +1,84 @@
+<?php
+
+namespace Tests\Feature;
+
+use Illuminate\Support\Facades\Http;
+use Tests\SiteTestCase;
+
+class RecipesApiTest extends SiteTestCase
+{
+    public function test_recipe_page_data(): void
+    {
+        $id = $this->recipe('borscht', ['post_title' => 'Борщ'], [
+            'recipe_servings' => '4',
+            'recipe_ingredients' => serialize([['ingredient' => 'Свёкла', 'amount' => '2', 'amount_normalized' => '2', 'unit' => 'шт', 'notes' => '', 'group' => '']]),
+            'pld_like_count' => '10',
+            'pld_dislike_count' => '3',
+            'seo_text' => "Первый абзац\n\nВторой",
+        ]);
+        $this->term('course', 'soups', 'Супы', [$id]);
+        $this->term('cuisine', 'ukraina', 'Украина', [$id]);
+
+        $this->getJson('/api/recipes/borscht')
+            ->assertOk()
+            ->assertJsonPath('data.title', 'Борщ')
+            ->assertJsonPath('data.servings', 4)
+            ->assertJsonPath('data.ingredients.0.name', 'Свёкла')
+            ->assertJsonPath('data.votes', ['like' => 10, 'dislike' => 3])
+            // Cards show likes minus dislikes.
+            ->assertJsonPath('data.likes.count', 7)
+            ->assertJsonPath('data.seoText', '<p>Первый абзац</p>'."\n".'<p>Второй</p>')
+            ->assertJsonPath('data.categoryLinks.course.0', ['name' => 'Супы', 'slug' => 'soups'])
+            ->assertJsonPath('data.categoryLinks.country.0', ['name' => 'Украина', 'slug' => 'ukraina']);
+    }
+
+    public function test_slug_with_underscore_and_unknown_recipe(): void
+    {
+        $this->recipe('fua_gra-terrine');
+
+        $this->getJson('/api/recipes/slugs')->assertJsonPath('data', ['fua_gra-terrine']);
+        $this->getJson('/api/recipes/fua_gra-terrine')->assertOk();
+        $this->getJson('/api/recipes/no-such-recipe')->assertNotFound();
+    }
+
+    public function test_rating_is_the_average_of_approved_reviews(): void
+    {
+        $id = $this->recipe('pasta', [], ['recipe_rating' => '3']);
+        $this->comment($id, 'Анна', [], 5);
+        $this->comment($id, 'Олег', [], 4);
+        $this->comment($id, 'Спам', ['comment_approved' => '0'], 1);
+
+        $this->getJson('/api/recipes/pasta')
+            ->assertJsonPath('data.rating', 4.5)
+            ->assertJsonPath('data.ratingCount', 2);
+    }
+
+    public function test_unrated_recipe_keeps_the_wp_ultimate_recipe_rating(): void
+    {
+        $this->recipe('salad', [], ['recipe_rating' => '3']);
+
+        $this->getJson('/api/recipes/salad')->assertJsonPath('data.rating', 3)->assertJsonPath('data.ratingCount', 0);
+    }
+
+    public function test_yoast_seo_fields(): void
+    {
+        $this->recipe('borscht');
+        Http::fake(['wordpress.test/wp-json/wp/v2/recipe*' => Http::response([[
+            'yoast_head_json' => [
+                'title' => 'Борщ — рецепт',
+                'description' => 'Как сварить борщ',
+                'robots' => ['index' => 'noindex', 'follow' => 'follow'],
+                'og_title' => 'Борщ',
+                'og_image' => [['url' => 'https://img.test/borscht.jpg', 'width' => 1200, 'height' => 630, 'type' => 'image/jpeg']],
+                'twitter_card' => 'summary_large_image',
+            ],
+        ]])]);
+
+        $this->getJson('/api/recipes/borscht')
+            ->assertJsonPath('data.seo.title', 'Борщ — рецепт')
+            ->assertJsonPath('data.seo.description', 'Как сварить борщ')
+            ->assertJsonPath('data.seo.index', false)
+            ->assertJsonPath('data.seo.og.image.url', 'https://img.test/borscht.jpg');
+        Http::assertSent(fn ($request) => str_contains($request->url(), 'slug=borscht'));
+    }
+}

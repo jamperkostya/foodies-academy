@@ -1,0 +1,114 @@
+---
+// Page of one news item or blog post (WordPress), shared by /news/[slug] and /blog/[slug].
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Section from "../layout/Section.astro";
+import ArticleHero from "./ArticleHero.astro";
+import ArticleLayout from "./ArticleLayout.astro";
+import ContentBlock from "./ContentBlock.astro";
+import PageContent from "./PageContent.astro";
+import Reviews from "./Reviews.astro";
+import AuthorCard from "./AuthorCard.astro";
+import SidebarList from "./SidebarList.astro";
+import NewsletterCard from "./NewsletterCard.astro";
+import SEOTextSection from "../sections/SEOTextSection.astro";
+import Avatar from "../ui/Avatar.astro";
+import type { Article } from "../../types/article";
+import { plural } from "../../utils/plural";
+
+interface Props {
+	article: Article;
+	// Other articles of the section, for "Похожие" (same rubric first).
+	others: Article[];
+	section: { label: string; href: "/news" | "/blog"; api: "news" | "blog" };
+}
+
+const { article, others, section } = Astro.props;
+// Comments are posted straight from the browser, so it needs Laravel's public URL.
+const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/api";
+
+const comments = article.comments ?? [];
+const commentForms: [string, string, string] = ["комментарий", "комментария", "комментариев"];
+const commentsCount = `${comments.length} ${plural(comments.length, commentForms)}`;
+
+const similar = others
+	.filter((item) => item.slug !== article.slug)
+	.sort((a, b) => Number(b.category === article.category) - Number(a.category === article.category))
+	.slice(0, 3)
+	.map((item) => ({ title: item.title, meta: [item.category, item.dateText].filter(Boolean).join(" · "), image: item.image, href: `${section.href}/${item.slug}` }));
+
+// Same placeholder as the cards use for posts without a cover.
+const image = article.image || "https://foodies.academy/wp-content/uploads/2025/11/mat-300x300.jpeg";
+---
+
+<BaseLayout
+	seo={article.seo}
+	image={article.image || undefined}
+	type="article"
+	title={article.title}
+	description={article.excerpt}
+	breadcrumbs={[{ label: section.label, href: section.href }, { label: article.title }]}>
+
+	<ArticleHero
+		slot="hero"
+		badge={section.label}
+		label={[article.category, ...article.tags].filter(Boolean).join(" · ") || undefined}
+		title={article.title}
+		description={article.excerpt}
+		image={image}
+		anchor={{ href: "#content", label: "Читать ↓" }}
+		withVideo={false}
+	>
+		<div slot="meta" class="article-author flex gap-10 items-center">
+			<Avatar name={article.author.name} />
+			<div>
+				<strong class="article-author__name">{article.author.name}</strong>
+				<span class="article-author__date">{article.dateText} · {article.readTime} мин чтения</span>
+			</div>
+		</div>
+	</ArticleHero>
+
+	<Section>
+		<ArticleLayout>
+			<div id="content">
+				{/* HTML from our own WordPress, prepared by Laravel. */}
+				<PageContent html={article.content ?? ""} />
+			</div>
+
+			<ContentBlock title="Комментарии" id="comments" class="no-print">
+				<span slot="hint" id="commentsCount">{commentsCount}</span>
+				<Reviews
+					reviews={comments}
+					formTitle="Оставить комментарий"
+					placeholder="Что думаете?"
+					submitLabel="Отправить"
+					successMessage="Спасибо! Комментарий появится после проверки модератором"
+					emptyText="Станьте первым, кто оставит комментарий"
+					countId="commentsCount"
+					countForms={commentForms}
+					action={`${PUBLIC_API_URL}/${section.api}/${article.slug}/comments`}
+				/>
+			</ContentBlock>
+
+			<Fragment slot="sidebar">
+				<AuthorCard name={article.author.name} buttonLabel="Профиль автора" href={article.author.slug ? `/author/${article.author.slug}` : undefined} />
+				{similar.length > 0 && <SidebarList title={section.href === "/news" ? "Другие новости" : "Похожие статьи"} items={similar} />}
+				<NewsletterCard title={section.href === "/news" ? "Новости на почту" : "Новые статьи блога на почту"} />
+			</Fragment>
+		</ArticleLayout>
+	</Section>
+
+	<SEOTextSection html={article.seoText} />
+</BaseLayout>
+
+<style lang="less">
+.article-author {
+	&__name {
+		display: block;
+		font-size: 14px;
+	}
+	&__date {
+		font-size: 12px;
+		color: var(--color-grey);
+	}
+}
+</style>

@@ -5,7 +5,11 @@ import Section from "../components/layout/Section.astro";
 import FilterableGrid from "../components/ui/FilterableGrid.astro";
 import LifehackCard from "../components/lifehacks/LifehackCard.astro";
 import SubscribeSection from "../components/sections/SubscribeSection.astro";
-import { lifehacks } from "../data/lifehacks";
+import type { Lifehack } from "../types/lifehack";
+
+// Lifehacks are a post type in the WordPress admin.
+const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+const { data: lifehacks }: { data: Lifehack[] } = await fetch(`${API_URL}/lifehacks`).then((r) => r.json());
 
 const PAGE_SIZE = 6;
 const groups = [...new Set(lifehacks.map((lifehack) => lifehack.category))];

@@ -1,26 +1,28 @@
 ---
 import Avatar from "../ui/Avatar.astro";
-import type { Post } from "../../types/post";
+import type { Article } from "../../types/article";
 
 interface Props {
-	post: Post;
+	post: Article;
 	// Past the first page of a FilterableGrid.
 	hidden?: boolean;
 }
 
 const { post, hidden } = Astro.props;
+// Not every post has a featured image in WordPress.
+const image = post.image || "https://foodies.academy/wp-content/uploads/2025/11/mat-300x300.jpeg";
 ---
-<a href={`/blog/${post.slug}`} class="post-card" data-groups={JSON.stringify([post.tag])} hidden={hidden}>
+<a href={`/blog/${post.slug}`} class="post-card" data-groups={JSON.stringify([post.category])} hidden={hidden}>
 	<div class="post-card__media">
-		<div class="post-card__img" style={`background-image: url('${post.image}')`}></div>
+		<div class="post-card__img" style={`background-image: url('${image}')`}></div>
 	</div>
 	<div class="post-card__body">
-		<span class="post-card__tag">{post.tag}</span>
+		{post.category && <span class="post-card__tag">{post.category}</span>}
 		<h3 class="post-card__title">{post.title}</h3>
 		<p class="post-card__excerpt">{post.excerpt}</p>
 		<div class="post-card__meta">
-			<Avatar name={post.author} size="sm" />
-			<span>{post.author} · {post.date} · {post.readTime} мин</span>
+			<Avatar name={post.author.name} size="sm" />
+			<span>{post.author.name} · {post.dateText} · {post.readTime} мин</span>
 		</div>
 	</div>
 </a>

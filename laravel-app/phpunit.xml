@@ -23,8 +23,11 @@
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
         <env name="CACHE_STORE" value="array"/>
-        <env name="DB_CONNECTION" value="sqlite"/>
-        <env name="DB_DATABASE" value=":memory:"/>
+        <!-- Laravel's own tables in memory. force/server: docker-compose sets DB_DATABASE too. -->
+        <env name="DB_CONNECTION" value="sqlite" force="true"/>
+        <server name="DB_CONNECTION" value="sqlite" force="true"/>
+        <env name="DB_DATABASE" value=":memory:" force="true"/>
+        <server name="DB_DATABASE" value=":memory:" force="true"/>
         <env name="DB_URL" value=""/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
@@ -32,5 +35,21 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <env name="APP_LOCALE" value="ru" force="true"/>
+        <!-- WordPress tables: an empty test database, never the site's (see tests/SiteDatabase.php). -->
+        <env name="SITE_DB_HOST" value="mysql" force="true"/>
+        <env name="SITE_DB_PORT" value="3306" force="true"/>
+        <env name="SITE_DB_DATABASE" value="foodies_site_test" force="true"/>
+        <env name="SITE_DB_USERNAME" value="laravel_user" force="true"/>
+        <env name="SITE_DB_PASSWORD" value="laravel_password" force="true"/>
+        <env name="SITE_DB_PREFIX" value="artit_" force="true"/>
+        <!-- WordPress and YouTube are faked with Http::fake(); these only name the URLs.
+             docker-compose sets the first two in $_SERVER, which <env> doesn't override. -->
+        <env name="WP_INTERNAL_URL" value="http://wordpress.test" force="true"/>
+        <server name="WP_INTERNAL_URL" value="http://wordpress.test" force="true"/>
+        <env name="FOODIES_API_SECRET" value="test-secret-test-secret-test-secret-00" force="true"/>
+        <server name="FOODIES_API_SECRET" value="test-secret-test-secret-test-secret-00" force="true"/>
+        <env name="YOUTUBE_API_KEY" value="" force="true"/>
+        <env name="ACADEMY_UPLOADS_URL" value="https://uploads.test" force="true"/>
     </php>
 </phpunit>

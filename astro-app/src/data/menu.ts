@@ -64,6 +64,8 @@ export const footerColumns: FooterColumn[] = [
 			{ title: 'О проекте', href: '/about' },
 			{ title: 'Авторы', href: '/authors' },
 			{ title: 'Новости', href: '/news' },
+			// The blog is linked from the footer only.
+			{ title: 'Блог', href: '/blog' },
 			{ title: 'Лайфхаки', href: '/lifehacks' },
 			{ title: 'Видеорецепты', href: '/video' },
 		],
@@ -72,6 +74,7 @@ export const footerColumns: FooterColumn[] = [
 
 // Shown after the category columns.
 export const menuLinks = [
+	{ label: 'Новости', href: '/news' },
 	{ label: 'Лайфхаки', href: '/lifehacks' },
 	{ label: 'Видеорецепты', href: '/video' },
 ];

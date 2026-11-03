@@ -4,7 +4,7 @@ import Section from "../components/layout/Section.astro";
 import SearchForm from "../components/layout/SearchForm.astro";
 import CardGrid from "../components/ui/CardGrid.astro";
 import RecipeCard from "../components/recipes/RecipeCard.astro";
-import { recipes } from "../data/recipes";
+import type { Recipe } from "../types/recipe";
 
 const JOKES = [
 	"Мы искали её по всему холодильнику — не нашли.",
@@ -27,8 +27,11 @@ const floats = [
 	{ emoji: "🍋", x: 93, y: 48, delay: 1.5 },
 ];
 
-const recipeHrefs = recipes.map((recipe) => `/recipe/${recipe.slug}`);
-const suggestions = [...recipes].sort((a, b) => b.rating - a.rating).slice(0, 4);
+const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+// The 12 newest recipes, and every recipe for the "random recipe" button.
+const { data: suggestions }: { data: Recipe[] } = await fetch(`${API_URL}/recipes/new?limit=12`).then((r) => r.json());
+const { data: slugs }: { data: string[] } = await fetch(`${API_URL}/recipes/slugs`).then((r) => r.json());
+const recipeHrefs = slugs.map((slug) => `/recipe/${slug}`);
 ---
 <BaseLayout title="Страница не найдена" description="Такой страницы нет — но есть сотни рецептов.">
 	<section slot="hero" class="error-hero">
@@ -65,7 +68,7 @@ const suggestions = [...recipes].sort((a, b) => b.rating - a.rating).slice(0, 4)
 	</section>
 
 	<Section>
-		<Fragment slot="title">Может, вам <span class="section-title__accent">понравится</span></Fragment>
+		<Fragment slot="title"><span class="section-title__accent">Новые</span> рецепты</Fragment>
 		<CardGrid minCardWidth={260}>
 			{suggestions.map((recipe) => <RecipeCard recipe={recipe} />)}
 		</CardGrid>

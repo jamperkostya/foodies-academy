@@ -2,6 +2,7 @@
 
 import type { News } from './news';
 import type { Recipe } from './recipe';
+import type { Seo } from './seo';
 
 // A recipe author (WordPress user) as GET /api/authors returns it.
 export interface AuthorSummary {
@@ -16,8 +17,11 @@ export interface AuthorSummary {
 export interface AuthorProfile extends Omit<AuthorSummary, 'recipes'> {
 	bio: string; // "" when not filled in WordPress
 	since: number; // registration year
-	rating: number | null; // average rating of their recipes
+	rating: number | null; // visitors' stars; average rating of their recipes until someone rates
+	ratingCount: number; // visitors who rated the author
 	news: News[];
+	posts: News[]; // blog posts
+	seo: Seo | null; // Yoast SEO
 	recipes: Recipe[];
 	total: number; // all their recipes
 	page: number;

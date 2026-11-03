@@ -8,3 +8,21 @@ wp-content/uploads/
 
 # OS
 .DS_Store
+
+# Plugins installed by wordpress/install-plugins.sh on container start
+wp-content/plugins/contact-form-7/
+wp-content/plugins/contact-form-cfdb7/
+wp-content/plugins/cyr2lat/
+wp-content/plugins/posts-like-dislike/
+wp-content/plugins/post-views-counter/
+wp-content/plugins/search-meter/
+wp-content/plugins/svg-support/
+wp-content/plugins/wptelegram/
+wp-content/plugins/wp-ultimate-recipe/
+wp-content/plugins/wordpress-seo/
+
+# Local database dumps
+backups/
+
+# Secrets for docker-compose
+.env

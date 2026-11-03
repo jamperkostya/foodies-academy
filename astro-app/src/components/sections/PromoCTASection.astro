@@ -1,20 +1,30 @@
 ---
+// Home page block from a WordPress page (title, excerpt, featured image) with a button to the page.
+import type { SitePage } from "../../types/page";
+
+interface Props {
+	page: SitePage;
+	buttonLabel?: string;
+}
+
+const { page, buttonLabel = "Browse Guide" } = Astro.props;
+// Until a featured image is set in WordPress.
+const image = page.image || "https://foodies.academy/wp-content/uploads/2025/11/1615444442-5347-300x300.jpg";
 ---
 
 <section class="section-item">
 	<div class="promo promo--cta">
 		<div class="promo__text grid gap-30">
-			<h3 class="promo__text-title section-title"><span class="section-title__accent">Ingredient</span> Guide</h3>
-			<h3 class="promo__text-title section-title">Get Started. 10 Ingredients. Hundreds of Recipes</h3>
-			<div class="promo__descriptions">
-				<p class="promo__desc">
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-				</p>
-			</div>
-			<a href="/promo" class="btn btn--primary">Browse Guide</a>
+			<h3 class="promo__text-title section-title">{page.title}</h3>
+			{page.excerpt && (
+				<div class="promo__descriptions">
+					<p class="promo__desc">{page.excerpt}</p>
+				</div>
+			)}
+			<a href={`/${page.slug}`} class="btn btn--primary">{buttonLabel}</a>
 		</div>
 		<div class="promo__media">
-			<div class="promo__img" style="background-image:url('https://foodies.academy/wp-content/uploads/2025/11/1615444442-5347-300x300.jpg')"></div>
+			<div class="promo__img" style={`background-image:url('${image}')`}></div>
 		</div>
 	</div>
 </section>

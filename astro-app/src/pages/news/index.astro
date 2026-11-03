@@ -7,9 +7,12 @@ import type { News } from "../../types/news";
 import { plural } from "../../utils/plural";
 
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
-const { data: news }: { data: News[] } = await fetch(`${API_URL}/news?limit=50`).then((r) => r.json());
+// News: WordPress post type "news".
+const { data: news }: { data: News[] } = await fetch(`${API_URL}/news?limit=200`).then((r) => r.json());
 
-const description = `${news.length} ${plural(news.length, ["статья", "статьи", "статей"])} о еде, продуктах и кулинарных трендах.`;
+const description = news.length
+	? `${news.length} ${plural(news.length, ["новость", "новости", "новостей"])} Foodies Academy: события, продукты и кулинарные тренды.`
+	: "Новости Foodies Academy: события, продукты и кулинарные тренды.";
 ---
 <BaseLayout title="Новости" description={description} breadcrumbs={[{ label: "Новости" }]}>
 	<PageHero slot="hero" eyebrow="Журнал" description={description}>
@@ -17,16 +20,27 @@ const description = `${news.length} ${plural(news.length, ["статья", "ст
 	</PageHero>
 
 	<section class="news-list section-item">
-		<CardGrid minCardWidth={280}>
-			{news.map((item) => (
-				<NewsCard news={item} />
-			))}
-		</CardGrid>
+		{news.length > 0 ? (
+			<CardGrid minCardWidth={280}>
+				{news.map((item) => <NewsCard news={item} />)}
+			</CardGrid>
+		) : (
+			<p class="news-list__empty">Новостей пока нет — загляните в <a href="/blog">блог</a>.</p>
+		)}
 	</section>
 </BaseLayout>
 
 <style lang="less">
 .news-list {
 	padding-top: 25px;
+	&__empty {
+		padding: 40px 0 60px;
+		text-align: center;
+		color: var(--color-grey-dark);
+		a {
+			color: var(--color-red);
+			text-decoration: underline;
+		}
+	}
 }
 </style>

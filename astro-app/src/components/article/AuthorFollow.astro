@@ -1,0 +1,52 @@
+---
+// "Подписаться" on an author's page. Followed authors and their new recipes show up in the
+// visitor's profile; logged-out visitors are sent to log in first.
+interface Props {
+	slug: string;
+	id: number;
+}
+
+const { slug, id } = Astro.props;
+---
+<button type="button" class="author-follow btn no-print" data-slug={slug} data-author-id={id} aria-pressed="false">Подписаться</button>
+
+<script>
+	import { api, goToLogin, loadMe, patchMe } from "../../scripts/account";
+	import { showToast } from "../../scripts/toast";
+
+	document.querySelectorAll<HTMLButtonElement>(".author-follow").forEach((button) => {
+		const authorId = Number(button.dataset.authorId);
+		const paint = (on: boolean) => {
+			button.setAttribute("aria-pressed", String(on));
+			button.textContent = on ? "Вы подписаны" : "Подписаться";
+			button.classList.toggle("btn--secondary", on);
+		};
+		loadMe().then((me) => paint(Boolean(me?.follows.includes(authorId))));
+
+		button.addEventListener("click", async () => {
+			if (!(await loadMe())) {
+				showToast("Войдите, чтобы подписаться на автора");
+				return setTimeout(goToLogin, 900);
+			}
+			const on = button.getAttribute("aria-pressed") !== "true";
+			button.disabled = true;
+			try {
+				const { follows } = await api<{ follows: number[] }>(`/me/follows/${button.dataset.slug}`, { method: on ? "PUT" : "DELETE" });
+				await patchMe({ follows });
+				paint(on);
+				showToast(on ? "Новые рецепты автора появятся в вашем профиле" : "Вы отписались от автора");
+			} catch (error) {
+				showToast(error instanceof Error ? error.message : "Не удалось подписаться");
+			} finally {
+				button.disabled = false;
+			}
+		});
+	});
+</script>
+
+<style lang="less">
+.author-follow {
+	margin-top: 16px;
+	padding: 12px 28px;
+}
+</style>

@@ -95,11 +95,6 @@ class Collections
             ->pluck('tt.term_taxonomy_id');
 
         return $this->db->table('posts as p')
-            ->join('icl_translations as tr', function ($join) {
-                $join->on('tr.element_id', '=', 'p.ID')
-                    ->where('tr.element_type', 'post_recipe')
-                    ->where('tr.language_code', 'ru');
-            })
             ->leftJoin('post_views_realtime as v', function ($join) {
                 $join->on('v.post_id', '=', 'p.ID')
                     ->where('v.view_type', 'normal')

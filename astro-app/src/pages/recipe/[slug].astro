@@ -11,6 +11,9 @@ import Reviews from "../../components/article/Reviews.astro";
 import AuthorCard from "../../components/article/AuthorCard.astro";
 import SidebarList from "../../components/article/SidebarList.astro";
 import NewsletterCard from "../../components/article/NewsletterCard.astro";
+import RecipeLikes from "../../components/article/RecipeLikes.astro";
+import ViewCounter from "../../components/article/ViewCounter.astro";
+import SEOTextSection from "../../components/sections/SEOTextSection.astro";
 import Icon from "../../components/ui/Icon.astro";
 import Stars from "../../components/ui/Stars.astro";
 import RecipeSection from "../../components/sections/RecipeSection.astro";
@@ -110,11 +113,14 @@ const recipeSchema = jsonLd({
 	recipeIngredient: recipe.ingredients.map((item) => [item.amount, item.unit, item.name, item.notes].filter(Boolean).join(" ")),
 	recipeInstructions: steps.map((step) => ({ "@type": "HowToStep", text: step.text })),
 	// Google rejects a rating with ratingCount 0.
-	aggregateRating: hasRating ? { "@type": "AggregateRating", ratingValue: recipe.rating, ratingCount: recipe.comments } : undefined,
+	aggregateRating: hasRating ? { "@type": "AggregateRating", ratingValue: recipe.rating, ratingCount: recipe.ratingCount || recipe.comments } : undefined,
 });
 ---
 
 <BaseLayout
+	seo={recipe.seo}
+	image={recipe.image}
+	type="article"
 	title={recipe.title}
 	description={description}
 	breadcrumbs={[{ label: "Рецепты", href: "/categories" }, { label: recipe.title }]}>
@@ -127,8 +133,11 @@ const recipeSchema = jsonLd({
 		title={recipe.title}
 		description="Классическая римская паста без единой капли сливок: только яйца, панчетта, пекорино и много свежемолотого перца. Секрет кремового соуса — в технике, а не в лишних ингредиентах."
 		image={recipe.image}
+		badgeLinks={recipe.categoryLinks?.course.map((term) => ({ name: term.name, href: `/category/${term.slug}` }))}
+		labelLinks={recipe.categoryLinks?.country.map((term) => ({ name: term.name, href: `/category/${term.slug}` }))}
 		anchor={{ href: "#ingredients", label: "Перейти к рецепту ↓" }}
 		printable
+		favorite={{ slug: recipe.slug, id: recipe.id }}
 	>
 		<Fragment slot="meta">
 			<Stars rating={recipe.rating} />
@@ -211,6 +220,8 @@ const recipeSchema = jsonLd({
 
 			{recipe.history && <OriginStory html={recipe.history} />}
 
+			<RecipeLikes slug={recipe.slug} votes={recipe.votes} action={`${PUBLIC_API_URL}/recipes/${recipe.slug}/likes`} />
+
 			<ContentBlock title="Отзывы" id="reviews" class="no-print">
 				{hasRating && (
 					<div class="rating-summary flex gap-40 items-center">
@@ -266,6 +277,12 @@ const recipeSchema = jsonLd({
 			</Fragment>
 		</RecipeSection>
 	</div>
+
+	<div class="no-print">
+		<SEOTextSection html={recipe.seoText} />
+	</div>
+
+	<ViewCounter action={`${PUBLIC_API_URL}/recipes/${recipe.slug}/view`} />
 </BaseLayout>
 
 <script>

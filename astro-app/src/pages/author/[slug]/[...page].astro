@@ -6,6 +6,8 @@ import Avatar from "../../../components/ui/Avatar.astro";
 import Pagination from "../../../components/ui/Pagination.astro";
 import RecipeCard from "../../../components/recipes/RecipeCard.astro";
 import NewsCard from "../../../components/news/NewsCard.astro";
+import AuthorRating from "../../../components/article/AuthorRating.astro";
+import AuthorFollow from "../../../components/article/AuthorFollow.astro";
 import type { AuthorProfile, AuthorSummary } from "../../../types/author";
 import { pageNumber, pageParams } from "../../../utils/pagination";
 import { plural, recipesWord } from "../../../utils/plural";
@@ -28,21 +30,27 @@ if (!response.ok) {
 	throw new Error(`Author "${slug}" from ${API_URL}: HTTP ${response.status}`);
 }
 const { data: author }: { data: AuthorProfile } = await response.json();
+// The browser rates the author straight in Laravel, so it needs the public URL.
+const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/api";
 
 // Only what WordPress has: no rating without rated recipes, no news tab without news.
 const stats = [
 	{ value: author.total.toLocaleString("ru-RU"), label: recipesWord(author.total) },
-	{ value: author.news.length, label: plural(author.news.length, ["статья", "статьи", "статей"]) },
-	{ value: author.rating, label: "средний рейтинг" },
+	{ value: author.news.length, label: plural(author.news.length, ["новость", "новости", "новостей"]) },
+	{ value: author.posts.length, label: plural(author.posts.length, ["статья", "статьи", "статей"]) + " в блоге" },
+	{ value: author.rating, label: author.ratingCount ? "рейтинг автора" : "средний рейтинг рецептов" },
 ].filter((stat) => stat.value);
 
 // The news tab only on the first page: the other pages are more of the recipes.
 const tabs = [
 	{ id: "recipes", label: "Рецепты", count: author.total },
-	{ id: "posts", label: "Новости", count: page === 1 ? author.news.length : 0 },
+	{ id: "news", label: "Новости", count: page === 1 ? author.news.length : 0 },
+	{ id: "posts", label: "Блог", count: page === 1 ? author.posts.length : 0 },
 ].filter((tab) => tab.count > 0);
 ---
 <BaseLayout
+	seo={page === 1 ? author.seo : null}
+	image={author.avatar || undefined}
 	title={`${author.name}${page > 1 ? ` — страница ${page}` : ""}`}
 	description={`${author.name}: ${author.total} ${recipesWord(author.total)} на Foodies Academy.`}
 	breadcrumbs={[{ label: "Авторы", href: "/authors" }, { label: author.name }]}>
@@ -62,6 +70,9 @@ const tabs = [
 						</li>
 					))}
 				</ul>
+
+				<AuthorRating slug={author.slug} action={`${PUBLIC_API_URL}/authors/${author.slug}/rating`} />
+				<AuthorFollow slug={author.slug} id={author.id} />
 			</div>
 		</div>
 	</section>
@@ -93,10 +104,17 @@ const tabs = [
 			</CardGrid>
 			<Pagination page={page} pages={author.pages} base={`/author/${slug}`} />
 		</div>
+		{tabs.some((tab) => tab.id === "news") && (
+			<div class="author-tabs__panel" role="tabpanel" id="panel-news" aria-labelledby="tab-news" hidden>
+				<CardGrid minCardWidth={280}>
+					{author.news.map((item) => <NewsCard news={item} />)}
+				</CardGrid>
+			</div>
+		)}
 		{tabs.some((tab) => tab.id === "posts") && (
 			<div class="author-tabs__panel" role="tabpanel" id="panel-posts" aria-labelledby="tab-posts" hidden>
 				<CardGrid minCardWidth={280}>
-					{author.news.map((item) => <NewsCard news={item} />)}
+					{author.posts.map((item) => <NewsCard news={item} base="/blog" />)}
 				</CardGrid>
 			</div>
 		)}

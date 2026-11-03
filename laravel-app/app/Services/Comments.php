@@ -16,7 +16,11 @@ class Comments
         $this->db = DB::connection('site');
     }
 
-    /** Approved comments of a post, newest first, as Astro Review objects. */
+    /**
+     * Approved comments of a post as Astro Review objects: threads newest first, each
+     * followed by its replies (any depth) in the order they were written. A reply carries
+     * "replyTo" — the name of the author it answers.
+     */
     public function getForPost(int $postId): array
     {
         $rows = $this->db->table('comments')
@@ -24,18 +28,61 @@ class Comments
             ->where('comment_approved', '1')
             ->whereIn('comment_type', ['comment', ''])
             ->orderByDesc('comment_date')
-            ->get(['comment_ID', 'comment_author', 'comment_date', 'comment_content']);
+            ->get(['comment_ID', 'comment_parent', 'comment_author', 'comment_date', 'comment_content'])
+            ->keyBy('comment_ID');
         $ratings = $this->db->table('commentmeta')
-            ->whereIn('comment_id', $rows->pluck('comment_ID'))
+            ->whereIn('comment_id', $rows->keys())
             ->where('meta_key', 'rating')
             ->pluck('meta_value', 'comment_id');
 
-        return $rows->map(fn ($row) => array_filter([
-            'name' => html_entity_decode($row->comment_author, ENT_QUOTES | ENT_HTML5),
+        // A reply whose parent is not shown (pending, spam, deleted) becomes a thread of its own.
+        $isReply = fn ($row) => $row->comment_parent && $rows->has($row->comment_parent);
+        $replies = $rows->filter($isReply)->reverse()->groupBy('comment_parent');
+
+        $ordered = [];
+        $walk = function ($row) use (&$walk, &$ordered, $replies) {
+            $ordered[] = $row;
+            foreach ($replies->get($row->comment_ID, []) as $reply) {
+                $walk($reply);
+            }
+        };
+        $rows->reject($isReply)->each($walk);
+
+        $name = fn ($row) => html_entity_decode($row->comment_author, ENT_QUOTES | ENT_HTML5);
+
+        return collect($ordered)->map(fn ($row) => array_filter([
+            'name' => $name($row),
             'date' => Carbon::parse($row->comment_date)->locale('ru')->translatedFormat('j F Y'),
             'text' => trim(html_entity_decode(strip_tags($row->comment_content), ENT_QUOTES | ENT_HTML5)),
             'rating' => isset($ratings[$row->comment_ID]) ? (int) $ratings[$row->comment_ID] : null,
+            'replyTo' => $isReply($row) ? $name($rows[$row->comment_parent]) : null,
         ], fn ($value) => $value !== null))->values()->all();
+    }
+
+    /**
+     * Star rating of recipes from their approved reviews: post_id => ['average' => 4.3, 'count' => 12].
+     * Recipes without rated reviews are left out.
+     */
+    public function ratings(array $postIds): array
+    {
+        if (! $postIds) {
+            return [];
+        }
+
+        // Raw SQL needs the prefixed alias ("artit_m"); the query builder adds it everywhere else.
+        $stars = 'CAST('.$this->db->getTablePrefix().'m.meta_value AS UNSIGNED)';
+
+        return $this->db->table('comments as c')
+            ->join('commentmeta as m', function ($join) {
+                $join->on('m.comment_id', '=', 'c.comment_ID')->where('m.meta_key', 'rating');
+            })
+            ->whereIn('c.comment_post_ID', $postIds)
+            ->where('c.comment_approved', '1')
+            ->whereBetween(DB::raw($stars), [1, 5])
+            ->groupBy('c.comment_post_ID')
+            ->get(['c.comment_post_ID as post_id', DB::raw("AVG($stars) as average"), DB::raw('COUNT(*) as count')])
+            ->mapWithKeys(fn ($row) => [(int) $row->post_id => ['average' => round((float) $row->average, 1), 'count' => (int) $row->count]])
+            ->all();
     }
 
     /**

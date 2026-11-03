@@ -1,9 +1,16 @@
 ---
+import { shortCount as short } from "../../utils/shortCount";
+
+// Totals from the WordPress database (GET /api/stats), rounded down for display.
+const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+const totals: { recipes: number; ratings: number; views: number; comments: number } =
+	(await fetch(`${API_URL}/stats`).then((r) => r.json())).data;
+
 const stats = [
-	{ count: 900, suffix: "+", label: "Recipes" },
-	{ count: 12, suffix: "k+", label: "Ratings" },
-	{ count: 1, suffix: "M+", label: "Views" },
-	{ count: 600, suffix: "+", label: "Comments" },
+	{ ...short(totals.recipes), label: "рецептов" },
+	{ ...short(totals.ratings), label: "оценок" },
+	{ ...short(totals.views), label: "просмотров" },
+	{ ...short(totals.comments), label: "комментариев" },
 ];
 ---
 
@@ -14,8 +21,8 @@ const stats = [
 
 		<div class="trust__stats">
 			{stats.map((stat) => (
-				<div class="trust__stat" data-count={stat.count} data-suffix={stat.suffix}>
-					<strong class="trust__value">{stat.count}{stat.suffix}</strong>
+				<div class="trust__stat" data-count={stat.count} data-decimals={stat.decimals} data-suffix={stat.suffix}>
+					<strong class="trust__value">{stat.count.toLocaleString("ru-RU", { minimumFractionDigits: stat.decimals })}{stat.suffix}</strong>
 					<span class="trust__label">{stat.label}</span>
 				</div>
 			))}
@@ -42,21 +49,30 @@ const stats = [
 	text-transform: uppercase;
 }
 
+// One row of four on desktop, two by two on tablets, a column on phones.
 .trust__stats {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
-	gap: 60px;
-	margin: 40px 50px 0;
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 30px;
+	margin: 40px 0 0;
+	@media (max-width: 1199px) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 40px;
+	}
+	@media (max-width: 640px) {
+		grid-template-columns: 1fr;
+	}
 }
 
 .trust__value {
 	text-align: center;
 	font-style: italic;
 	font-weight: 600;
-	font-size: 64px;
+	// Scales with the window so "313 тыс.+" fits its column.
+	font-size: clamp(40px, 3.4vw, 64px);
 	line-height: 120%;
 	color: var(--color-red);
+	white-space: nowrap;
 }
 
 .trust__label {
@@ -80,6 +96,7 @@ const stats = [
 				const value = stat.querySelector<HTMLElement>(".trust__value");
 				const target = Number(stat.dataset.count);
 				const suffix = stat.dataset.suffix ?? "";
+				const decimals = Number(stat.dataset.decimals) || 0;
 				observer.unobserve(stat);
 				if (!value) return;
 
@@ -87,7 +104,7 @@ const stats = [
 				const step = (now: number) => {
 					const progress = Math.min(1, (now - start) / DURATION);
 					const eased = 1 - Math.pow(1 - progress, 3);
-					value.textContent = Math.round(target * eased) + suffix;
+					value.textContent = (target * eased).toLocaleString("ru-RU", { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + suffix;
 					if (progress < 1) requestAnimationFrame(step);
 				};
 				requestAnimationFrame(step);
