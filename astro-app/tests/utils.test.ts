@@ -81,3 +81,17 @@ describe("nextPath (?next= after log-in)", () => {
 		expect(nextPath("?next=%2F%5Cevil.test")).toBe("/profile");
 	});
 });
+
+describe("site pages at /{slug}", () => {
+	it("skip addresses taken by sections of the site and invalid ones", async () => {
+		const { isTakenAddress } = await import("../src/utils/sitePages");
+
+		for (const section of ["blog", "news", "about", "search", "video", "profile", "categories", "sitemap", "robots", "404"]) {
+			expect(isTakenAddress(section), section).toBe(true);
+		}
+		expect(isTakenAddress("contacts")).toBe(false);
+		expect(isTakenAddress("privacy-policy")).toBe(false);
+		expect(isTakenAddress("Контакты")).toBe(true);
+		expect(isTakenAddress("%d0%ba")).toBe(true);
+	});
+});

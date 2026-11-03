@@ -6,17 +6,16 @@ import PageHero from "../components/layout/PageHero.astro";
 import PageContent from "../components/article/PageContent.astro";
 import SEOTextSection from "../components/sections/SEOTextSection.astro";
 import type { SitePage } from "../types/page";
+import { isTakenAddress } from "../utils/sitePages";
 
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
 
 export async function getStaticPaths() {
 	// getStaticPaths can't see the constants above, so the URL is read again here.
 	const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
-	// Pages with their own Astro file keep it (it takes the WordPress text itself).
-	const OWN_PAGES = new Set(["about"]);
 	const { data: pages }: { data: { slug: string }[] } = await fetch(`${API_URL}/pages`).then((r) => r.json());
 
-	return pages.filter((page) => !OWN_PAGES.has(page.slug)).map((page) => ({ params: { slug: page.slug } }));
+	return pages.filter((page) => !isTakenAddress(page.slug)).map((page) => ({ params: { slug: page.slug } }));
 }
 
 const { slug } = Astro.params;
