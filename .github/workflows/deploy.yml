@@ -1,5 +1,7 @@
 name: Deploy Astro to Hestia
 
+# The static site (dev.foodies.academy) built from the Laravel API. Server setup: deploy/hestia/README.md.
+
 on:
   push:
     branches: [main]

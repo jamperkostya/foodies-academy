@@ -1,0 +1,83 @@
+name: Deploy Laravel API to Hestia
+
+# api.dev.foodies.academy: tests, then the code goes to the server by rsync and the server
+# runs migrations and rebuilds Laravel's caches. Server setup: deploy/hestia/README.md.
+on:
+  push:
+    branches: [main]
+    paths: ['laravel-app/**', '.github/workflows/deploy-laravel.yml']
+  workflow_dispatch:
+
+concurrency: deploy-laravel
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: laravel-app
+
+    # The WordPress tables of the feature tests (phpunit.xml: foodies_site_test on host "mysql").
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: foodies_site_test
+          MYSQL_USER: laravel_user
+          MYSQL_PASSWORD: laravel_password
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -proot"
+          --health-interval=5s --health-timeout=5s --health-retries=30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, intl, bcmath, pdo_mysql, pdo_sqlite
+          coverage: none
+
+      - name: Tests
+        run: |
+          # phpunit.xml reaches the test database as "mysql", the Docker service name.
+          echo "127.0.0.1 mysql" | sudo tee -a /etc/hosts
+          composer install --no-interaction --prefer-dist --no-progress
+          cp .env.example .env
+          php artisan key:generate
+          php artisan test
+
+      - name: Production dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-progress
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      # The server keeps its own .env and storage/ (logs, sessions); rsync never touches them.
+      - name: Rsync code to server
+        run: |
+          rsync -az --delete \
+            --exclude='/.env' --exclude='/storage/' --exclude='/bootstrap/cache/*.php' \
+            --exclude='/tests/' --exclude='/phpunit.xml' --exclude='/node_modules/' --exclude='.git' \
+            -e "ssh -p ${{ secrets.SSH_PORT }}" \
+            ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.LARAVEL_PATH }}/
+
+      - name: Migrate and cache
+        env:
+          PHP_BIN: ${{ vars.PHP_BIN || 'php8.3' }}
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} bash -se <<EOF
+          set -e
+          cd '${{ secrets.LARAVEL_PATH }}'
+          mkdir -p storage/app/public storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache
+          $PHP_BIN artisan migrate --force
+          # Also empties the API cache, so the site gets data from the new code at once.
+          $PHP_BIN artisan optimize:clear
+          $PHP_BIN artisan optimize
+          EOF

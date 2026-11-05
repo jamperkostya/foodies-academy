@@ -1,0 +1,15 @@
+# Extra nginx settings of a dev domain (dev.foodies.academy, api.dev…, wp.dev…).
+# Hestia includes every /home/jamper/conf/web/DOMAIN/nginx.ssl.conf_* inside the domain's
+# HTTPS server block, and keeps them when it rebuilds its own config.
+# Install (as root):
+#   cp nginx.ssl.conf_foodies /home/jamper/conf/web/dev.foodies.academy/nginx.ssl.conf_foodies
+#   nginx -t && systemctl reload nginx
+
+# A copy of the site: nothing on these hosts goes into search results.
+add_header X-Robots-Tag "noindex, nofollow" always;
+
+# Optional: only people with the password see the dev site. Not on api.dev / wp.dev: the browser
+# calls the API directly, and Laravel calls WordPress. Create the file with:
+#   htpasswd -c /home/jamper/conf/web/dev.foodies.academy/.htpasswd LOGIN
+# auth_basic "Foodies dev";
+# auth_basic_user_file /home/jamper/conf/web/dev.foodies.academy/.htpasswd;

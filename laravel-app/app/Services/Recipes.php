@@ -56,6 +56,17 @@ class Recipes
         return $this->present($posts);
     }
 
+    /**
+     * Attachment ID of the recipe's cover: the featured image, or the first photo of the "gallery"
+     * field, which is what the old theme showed (the live database has almost no featured images).
+     */
+    private function coverId(array $meta): int
+    {
+        $gallery = @unserialize($meta['gallery'] ?? '', ['allowed_classes' => false]);
+
+        return (int) ($meta['_thumbnail_id'] ?? 0) ?: (int) (is_array($gallery) ? reset($gallery) : 0);
+    }
+
     /** attachment_id => image URL */
     private function images(array $attachmentIds): array
     {
@@ -69,7 +80,7 @@ class Recipes
             ->whereIn('post_id', $ids)
             ->whereIn('meta_key', [
                 '_thumbnail_id', 'recipe_rating', '_yoast_wpseo_primary_course', 'pld_like_count', 'pld_dislike_count', 'type', 'recipe_servings', 'complexity', 'calorific_value', 'recipe_notes',
-                'recipe_description', 'gallery', 'recipe_video_embed',
+                'recipe_description', 'gallery', 'recipe_video_embed', 'video',
                 'recipe_prep_time', 'recipe_prep_time_text',
                 'recipe_cook_time', 'recipe_cook_time_text',
                 'recipe_passive_time', 'recipe_passive_time_text',
@@ -128,20 +139,21 @@ class Recipes
             $ids = $posts->pluck('ID')->all();
             $meta = $this->meta($ids);
             $terms = $this->terms($ids);
-            $images = $this->images($meta->map(fn ($m) => (int) ($m['_thumbnail_id'] ?? 0))->filter()->all());
+            $covers = $meta->map(fn ($m) => $this->coverId($m));
+            $images = $this->images($covers->filter()->all());
             $views = $this->views($ids);
             $categories = $this->categories($ids);
             $ratings = app(Comments::class)->ratings($ids);
             $commentCounts = app(Comments::class)->counts($ids);
 
-            return $posts->map(function($post) use ($meta, $terms, $images, $views, $categories, $ratings, $commentCounts) {
+            return $posts->map(function($post) use ($meta, $terms, $images, $covers, $views, $categories, $ratings, $commentCounts) {
                 $post_meta = $meta->get($post->ID, []);
                 $post_terms = $terms->get($post->ID, []);
                 return [
                     'id' => (integer) $post->ID,
                     'slug' => $post->post_name,
                     'title' => html_entity_decode($post->post_title, ENT_QUOTES | ENT_HTML5),
-                    'image' => $images[(int) ($post_meta['_thumbnail_id'] ?? 0)] ?? '',
+                    'image' => $images[$covers->get($post->ID, 0)] ?? '',
                     'categories' => [
                         'course' => $categories[$post->ID]['course'] ?? [],
                         'country' => $categories[$post->ID]['cuisine'] ?? [],
@@ -157,8 +169,9 @@ class Recipes
                     'rating' => $ratings[$post->ID]['average'] ?? (float) ($post_meta['recipe_rating'] ?? 0),
                     'ratingCount' => $ratings[$post->ID]['count'] ?? 0,
                     'ingredients' => [],
-                    // Video recipe (recipe_video_embed), null without one.
-                    'youtubeId' => $this->youtubeId($post_meta['recipe_video_embed'] ?? ''),
+                    // Video recipe, null without one. recipe_video_embed (WP Ultimate Recipe) or, in
+                    // databases that never moved it there, the old theme's ACF field "video".
+                    'youtubeId' => $this->youtubeId(($post_meta['recipe_video_embed'] ?? '') ?: ($post_meta['video'] ?? '')),
                     'comments' => $commentCounts[$post->ID] ?? 0,
                     'views' => [
                         'count' => (int) ($views[$post->ID] ?? 0),
@@ -433,11 +446,13 @@ class Recipes
         $recipe['gallery'] = $this->gallery($meta, $recipe['image']);
         $recipe['similar'] = $this->getSimilarRecipes($post->ID);
         $recipe['author'] = $this->author((int) $post->post_author);
-        // The history is a Carbon Fields field; older posts may have the block in their content instead.
-        $history = trim((string) $this->db->table('postmeta')
+        // The history: the Carbon Fields field, or the old theme's ACF field "history" (the same text in
+        // databases that never moved it); older posts may have the block in their content instead.
+        $historyMeta = $this->db->table('postmeta')
             ->where('post_id', $post->ID)
-            ->where('meta_key', '_crb_recipe_history')
-            ->value('meta_value'));
+            ->whereIn('meta_key', ['_crb_recipe_history', 'history'])
+            ->pluck('meta_value', 'meta_key');
+        $history = trim((string) (trim($historyMeta['_crb_recipe_history'] ?? '') ?: ($historyMeta['history'] ?? '')));
         $recipe['history'] = $history !== '' ? $history : $this->history($post->post_content);
 
         return $recipe;

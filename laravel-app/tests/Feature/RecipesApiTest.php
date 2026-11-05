@@ -56,6 +56,27 @@ class RecipesApiTest extends SiteTestCase
             ->assertJsonPath('data.description', '');
     }
 
+    public function test_video_history_and_cover_from_the_old_theme_fields(): void
+    {
+        // The live database keeps them in the ACF fields "video" and "history", and has no featured
+        // images: the cover is the first photo of the gallery.
+        $photo = $this->makePost('attachment', 'pasta');
+        $this->meta($photo, '_wp_attachment_metadata', serialize(['file' => '2018/11/pasta.jpg']));
+        $this->recipe('carbonara', [], [
+            'video' => 'https://youtu.be/H89sF9Kdw_4',
+            'history' => '<p>Рим, 1944 год.</p>',
+            'gallery' => serialize([(string) $photo]),
+        ]);
+        $cover = rtrim(config('services.academy.uploads_url'), '/').'/2018/11/pasta.jpg';
+
+        $this->getJson('/api/recipes/carbonara')
+            ->assertJsonPath('data.youtubeId', 'H89sF9Kdw_4')
+            ->assertJsonPath('data.history', '<p>Рим, 1944 год.</p>')
+            ->assertJsonPath('data.image', $cover)
+            ->assertJsonPath('data.gallery', [$cover]);
+        $this->getJson('/api/recipes/new')->assertJsonPath('data.0.image', $cover);
+    }
+
     public function test_slug_with_underscore_and_unknown_recipe(): void
     {
         $this->recipe('fua_gra-terrine');

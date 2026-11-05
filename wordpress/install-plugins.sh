@@ -1,10 +1,17 @@
 #!/bin/bash
 # Installs and activates the plugins foodies.academy relies on. Safe to re-run:
 # plugins already present are only activated. Versions are pinned, like everything else.
+#
+# Docker runs it as root with the defaults; on Hestia the deploy runs it as the site user:
+#   WP_PATH=/home/jamper/web/wp.dev.foodies.academy/public_html WP_CLI="php8.3 $HOME/bin/wp" bash install-plugins.sh
 set -u
-cd /var/www/html
+WP_PATH="${WP_PATH:-/var/www/html}"
+WP_CLI="${WP_CLI:-wp}"
+ALLOW_ROOT=""
+[ "$(id -u)" = 0 ] && ALLOW_ROOT="--allow-root"
+cd "$WP_PATH"
 
-wp() { command wp --allow-root --path=/var/www/html "$@"; }
+wp() { command $WP_CLI $ALLOW_ROOT --path="$WP_PATH" "$@"; }
 
 # Wait for the entrypoint to write wp-config.php and for the database.
 for _ in $(seq 1 60); do
