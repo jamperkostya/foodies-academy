@@ -11,6 +11,7 @@ import Reviews from "../../components/article/Reviews.astro";
 import AuthorCard from "../../components/article/AuthorCard.astro";
 import SidebarList from "../../components/article/SidebarList.astro";
 import NewsletterCard from "../../components/article/NewsletterCard.astro";
+import RecipeGallery from "../../components/article/RecipeGallery.astro";
 import RecipeLikes from "../../components/article/RecipeLikes.astro";
 import ViewCounter from "../../components/article/ViewCounter.astro";
 import SEOTextSection from "../../components/sections/SEOTextSection.astro";
@@ -87,6 +88,10 @@ const ratingBars = ratedReviews.length
 // No reviews and no star ratings: the rating summary is left out.
 const hasRating = recipe.comments > 0 || ratedReviews.length > 0;
 
+// Two or more photos, or a video recipe: the hero cover becomes a carousel.
+const photos = recipe.gallery?.length ? recipe.gallery : [recipe.image];
+const hasGallery = photos.length > 1 || Boolean(recipe.youtubeId);
+
 const reviewsCount = `${recipe.comments.toLocaleString("ru-RU")} ${plural(recipe.comments, ["отзыв", "отзыва", "отзывов"])}`;
 const description = `${recipe.title}: рецепт с пошаговыми фото на Foodies Academy.`;
 // Recipes without servings in WordPress keep the old default of 4.
@@ -102,7 +107,7 @@ const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/
 const recipeSchema = jsonLd({
 	"@type": "Recipe",
 	name: recipe.title,
-	image: [recipe.image],
+	image: photos,
 	description,
 	author: recipe.author ? { "@type": "Person", name: recipe.author.name } : undefined,
 	recipeCategory: course,
@@ -131,14 +136,16 @@ const recipeSchema = jsonLd({
 		badge={course}
 		label={country}
 		title={recipe.title}
-		description="Классическая римская паста без единой капли сливок: только яйца, панчетта, пекорино и много свежемолотого перца. Секрет кремового соуса — в технике, а не в лишних ингредиентах."
+		description={recipe.description}
 		image={recipe.image}
+		withVideo={false}
 		badgeLinks={recipe.categoryLinks?.course.map((term) => ({ name: term.name, href: `/category/${term.slug}` }))}
 		labelLinks={recipe.categoryLinks?.country.map((term) => ({ name: term.name, href: `/category/${term.slug}` }))}
 		anchor={{ href: "#ingredients", label: "Перейти к рецепту ↓" }}
 		printable
 		favorite={{ slug: recipe.slug, id: recipe.id }}
 	>
+		{hasGallery && <RecipeGallery slot="media" title={recipe.title} photos={photos} youtubeId={recipe.youtubeId} />}
 		<Fragment slot="meta">
 			<Stars rating={recipe.rating} />
 			<strong>{recipe.rating}</strong>
@@ -173,8 +180,6 @@ const recipeSchema = jsonLd({
 
 	<Section>
 		<ArticleLayout>
-			<p class="recipe-intro">Карбонара — один из тех рецептов, где легко ошибиться и превратить пасту в омлет со спагетти. Весь секрет — снять сковороду с огня и вмешивать яичную смесь вне прямого жара, постоянно помешивая. Никаких сливок: кремовая текстура получается только за счёт эмульсии из яиц, сыра и крахмалистой воды из-под пасты.</p>
-
 			<ContentBlock title="Ингредиенты" id="ingredients">
 				<span slot="hint" id="ingredientsServings">на {servings} {plural(servings, ["порцию", "порции", "порций"])}</span>
 				<ul class="ingredient-list" id="ingredientList" data-servings={servings}>
@@ -339,10 +344,6 @@ const recipeSchema = jsonLd({
 			}
 		}
 	}
-}
-
-.recipe-intro {
-	color: var(--color-grey-dark);
 }
 
 .ingredient-list {

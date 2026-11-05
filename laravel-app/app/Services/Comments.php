@@ -60,6 +60,28 @@ class Comments
     }
 
     /**
+     * Approved comments per post: post_id => count. Counted here rather than read from
+     * posts.comment_count, which WordPress only updates when a comment changes through
+     * WordPress itself (not when it is approved straight in the database).
+     */
+    public function counts(array $postIds): array
+    {
+        if (! $postIds) {
+            return [];
+        }
+
+        return $this->db->table('comments')
+            ->whereIn('comment_post_ID', $postIds)
+            ->where('comment_approved', '1')
+            ->whereIn('comment_type', ['comment', ''])
+            ->groupBy('comment_post_ID')
+            ->selectRaw('comment_post_ID as post_id, COUNT(*) as count')
+            ->pluck('count', 'post_id')
+            ->map(fn ($count) => (int) $count)
+            ->all();
+    }
+
+    /**
      * Star rating of recipes from their approved reviews: post_id => ['average' => 4.3, 'count' => 12].
      * Recipes without rated reviews are left out.
      */

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Support\Facades\Cache;
 use Tests\SiteTestCase;
 
 class ReviewsTest extends SiteTestCase
@@ -19,6 +20,38 @@ class ReviewsTest extends SiteTestCase
         $this->assertSame('5', $this->site()->table('commentmeta')->where('comment_id', $comment->comment_ID)->value('meta_value'));
         // Pending: not on the site yet.
         $this->getJson('/api/recipes/borscht')->assertJsonCount(0, 'data.reviews');
+    }
+
+    public function test_review_approved_outside_wordpress_counts_on_the_page_and_in_lists(): void
+    {
+        $id = $this->recipe('turkey');
+        $this->postJson('/api/recipes/turkey/comments', ['name' => 'test', 'text' => 'test', 'rating' => 5])->assertCreated();
+        // Approved straight in the database: WordPress leaves posts.comment_count at 0.
+        $this->site()->table('comments')->where('comment_post_ID', $id)->update(['comment_approved' => '1']);
+        $this->assertSame(0, (int) $this->site()->table('posts')->where('ID', $id)->value('comment_count'));
+        Cache::flush();
+
+        $this->getJson('/api/recipes/turkey')
+            ->assertJsonCount(1, 'data.reviews')
+            ->assertJsonPath('data.comments', 1)
+            ->assertJsonPath('data.rating', 5)
+            ->assertJsonPath('data.ratingCount', 1);
+        $card = collect($this->getJson('/api/recipes/new')->json('data'))->firstWhere('slug', 'turkey');
+        $this->assertSame(['comments' => 1, 'rating' => 5, 'ratingCount' => 1], ['comments' => $card['comments'], 'rating' => $card['rating'], 'ratingCount' => $card['ratingCount']]);
+    }
+
+    public function test_pending_and_spam_comments_are_not_counted(): void
+    {
+        $id = $this->recipe('borscht');
+        $this->comment($id, 'Анна', [], 4);
+        $this->comment($id, 'Боб', ['comment_approved' => '0'], 1);
+        $this->comment($id, 'Спам', ['comment_approved' => 'spam']);
+        // A pingback is not a review.
+        $this->comment($id, 'blog.example', ['comment_type' => 'pingback']);
+
+        $this->getJson('/api/recipes/borscht')
+            ->assertJsonPath('data.comments', 1)
+            ->assertJsonPath('data.rating', 4);
     }
 
     public function test_review_validation_is_in_russian(): void

@@ -38,4 +38,12 @@ describe("Hero", () => {
 
 		expect(sizes).toEqual(["tall", "half", "half", "tall"]);
 	});
+
+	it("marks video recipes with the YouTube badge", async () => {
+		const withVideo = [{ ...recipe("borscht"), youtubeId: "H89sF9Kdw_4" }, recipe("paella")];
+		const html = await (await AstroContainer.create()).renderToString(Hero, { props: { recipes: withVideo } });
+
+		expect(html.match(/video-card__play-badge/g)).toHaveLength(1);
+		expect(html).toContain('data-video-id="H89sF9Kdw_4"');
+	});
 });

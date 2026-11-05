@@ -1,0 +1,164 @@
+---
+// Recipe photos as a carousel in the page hero, the video recipe as the first slide.
+// The video slide is only its YouTube preview: the player loads on click (VideoPlayer).
+import Icon from "../ui/Icon.astro";
+import VideoPlayer from "../videos/VideoPlayer.astro";
+
+interface Props {
+	title: string;
+	photos: string[];
+	youtubeId?: string | null;
+}
+
+const { title, photos, youtubeId } = Astro.props;
+---
+<div class="recipe-gallery">
+	<div class="carousel carousel--gallery">
+		<div class="carousel__track">
+			{youtubeId && (
+				<div class="carousel__slide">
+					{/* maxresdefault has no black bars, but not every video has it (see the script). */}
+					<VideoPlayer youtubeId={youtubeId} title={`Видеорецепт: ${title}`} image={`https://i.ytimg.com/vi/${youtubeId}/maxresdefault.jpg`} />
+				</div>
+			)}
+			{photos.map((src, i) => (
+				<div class="carousel__slide">
+					<img
+						class="carousel__photo"
+						src={src}
+						alt={photos.length > 1 ? `${title} — фото ${i + 1}` : title}
+						loading={i === 0 && !youtubeId ? "eager" : "lazy"}
+						decoding="async"
+					/>
+				</div>
+			))}
+		</div>
+		<button type="button" class="carousel__arrow carousel__arrow--prev no-print" aria-label="Предыдущее фото">
+			<Icon name="arrow-slider" width={12} height={10} />
+		</button>
+		<button type="button" class="carousel__arrow carousel__arrow--next no-print" aria-label="Следующее фото">
+			<Icon name="arrow-slider" width={12} height={10} />
+		</button>
+	</div>
+	<div class="carousel__dots no-print"></div>
+</div>
+
+<script>
+	import { initDragCarousel } from "../../scripts/dragCarousel";
+
+	document.querySelectorAll<HTMLElement>(".carousel--gallery").forEach((carousel) => {
+		initDragCarousel(carousel);
+
+		// Without maxresdefault YouTube answers with a 120×90 placeholder: use hqdefault then.
+		const preview = carousel.querySelector<HTMLImageElement>(".video-player__preview");
+		if (!preview) return;
+		const fallback = () => {
+			if (preview.naturalWidth <= 120) preview.src = preview.src.replace("maxresdefault", "hqdefault");
+		};
+		if (preview.complete) fallback();
+		else preview.addEventListener("load", fallback, { once: true });
+	});
+</script>
+
+<style lang="less">
+@import "../../styles/carousel-dots.less";
+
+// Fills ArticleHero's __media box (its size and rounded corners).
+.recipe-gallery {
+	position: absolute;
+	inset: 0;
+}
+
+.carousel--gallery {
+	height: 100%;
+	.carousel__track {
+		display: flex;
+		height: 100%;
+		overflow-x: auto;
+		overflow-y: hidden;
+		scroll-snap-type: x mandatory;
+		scroll-behavior: smooth;
+		scrollbar-width: none;
+		&::-webkit-scrollbar {
+			display: none;
+		}
+		// States toggled by dragCarousel.ts.
+		&.is-draggable {
+			cursor: grab;
+		}
+		&.is-dragging {
+			cursor: grabbing;
+			scroll-snap-type: none;
+			user-select: none;
+		}
+	}
+	.carousel__slide {
+		position: relative;
+		flex: 0 0 100%;
+		height: 100%;
+		scroll-snap-align: start;
+	}
+	.carousel__photo {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		-webkit-user-drag: none;
+	}
+	// VideoPlayer is 16:9 with its own corners; here it takes the whole slide.
+	:global(.video-player) {
+		height: 100%;
+		aspect-ratio: auto;
+		border-radius: 0;
+	}
+	.carousel__arrow {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 40px;
+		height: 40px;
+		border-radius: var(--border-radius-1000);
+		background: rgba(255, 255, 255, .85);
+		color: var(--color-black);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 5;
+		transition: background .15s, color .15s, opacity .15s;
+		&:hover {
+			background: var(--color-red);
+			color: var(--color-white);
+		}
+		&[disabled] {
+			opacity: 0;
+			pointer-events: none;
+		}
+		@media (max-width: 640px) {
+			display: none;
+		}
+	}
+	.carousel__arrow--prev {
+		left: 14px;
+	}
+	// The sprite's arrow points left, so the "next" one is turned around.
+	.carousel__arrow--next {
+		right: 14px;
+		transform: translateY(-50%) rotate(180deg);
+	}
+}
+
+// Over the bottom of the photo rather than under it.
+.recipe-gallery .carousel__dots {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 14px;
+	margin: 0;
+	z-index: 5;
+	pointer-events: none;
+	:global(.carousel__dot) {
+		pointer-events: auto;
+		background: rgba(255, 255, 255, .6);
+		box-shadow: 0 1px 4px rgba(0, 0, 0, .3);
+	}
+}
+</style>

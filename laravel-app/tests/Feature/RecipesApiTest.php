@@ -32,6 +32,30 @@ class RecipesApiTest extends SiteTestCase
             ->assertJsonPath('data.categoryLinks.country.0', ['name' => 'Украина', 'slug' => 'ukraina']);
     }
 
+    public function test_gallery_video_and_description(): void
+    {
+        $photo = fn (string $file) => tap($this->makePost('attachment', $file), fn ($id) => $this->meta($id, '_wp_attachment_metadata', serialize(['file' => "2018/11/$file.jpg"])));
+        [$cover, $second] = [$photo('cover'), $photo('second')];
+        $this->recipe('carbonara', [], [
+            '_thumbnail_id' => (string) $cover,
+            'gallery' => serialize([(string) $cover, (string) $second]),
+            'recipe_video_embed' => 'https://www.youtube.com/watch?v=H89sF9Kdw_4&t=13s',
+            'recipe_description' => ' Паста без сливок. ',
+        ]);
+        $this->recipe('plain', [], ['recipe_video_embed' => '123123123']);
+
+        $uploads = rtrim(config('services.academy.uploads_url'), '/');
+        $this->getJson('/api/recipes/carbonara')
+            ->assertJsonPath('data.gallery', ["$uploads/2018/11/cover.jpg", "$uploads/2018/11/second.jpg"])
+            ->assertJsonPath('data.youtubeId', 'H89sF9Kdw_4')
+            ->assertJsonPath('data.description', 'Паста без сливок.');
+        // Not a YouTube link: no video; no photos: an empty gallery.
+        $this->getJson('/api/recipes/plain')
+            ->assertJsonPath('data.youtubeId', null)
+            ->assertJsonPath('data.gallery', [])
+            ->assertJsonPath('data.description', '');
+    }
+
     public function test_slug_with_underscore_and_unknown_recipe(): void
     {
         $this->recipe('fua_gra-terrine');

@@ -51,12 +51,15 @@ export interface Recipe {
   steps?: { text: string; group: string }[];
   history?: string | null; // HTML of the "История происхождения" block
   tip?: string | null; // "Совет от шефа": HTML of recipe_notes
+  description?: string; // recipe_description: plain text under the title
+  gallery?: string[]; // photo URLs, the cover first (cover + "gallery" field)
   seoText?: string; // "SEO-текст" HTML from the WordPress admin, "" when empty
   // Dish types and countries with their /category/{slug} pages, only in GET /api/recipes/{slug}.
   seo?: Seo | null; // Yoast SEO, only in GET /api/recipes/{slug}
   categoryLinks?: { course: { name: string; slug: string }[]; country: { name: string; slug: string }[] };
   author?: AuthorSummary | null; // posts.post_author
   similar?: Recipe[]; // recipes sharing the most ingredients, most first
+  youtubeId?: string | null; // video recipe from recipe_video_embed
   comments: number;
   views: Counter;
   likes: Counter;

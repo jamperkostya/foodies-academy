@@ -21,6 +21,8 @@ const heroCards: HeroCard[] = recipes.map((recipe, i) => ({
 	likes: recipe.likes.short,
 	comments: recipe.comments,
 	rating: recipe.rating,
+	// YouTube badge on cards of video recipes.
+	videoId: recipe.youtubeId ?? undefined,
 }));
 
 // Adjacent "half" cards render stacked inside one column; this grouping is

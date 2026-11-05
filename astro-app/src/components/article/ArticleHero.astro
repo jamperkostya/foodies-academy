@@ -1,6 +1,7 @@
 ---
 // Hero of a recipe or lifehack page: text, actions and the cover with a video button.
 // The "meta" slot goes under the description (rating for a recipe, author for a lifehack).
+// The "media" slot replaces the cover (a recipe's photo / video carousel).
 import Icon from "../ui/Icon.astro";
 
 interface Props {
@@ -13,7 +14,8 @@ interface Props {
 	title: string;
 	// Smaller second line of the title.
 	titleAccent?: string;
-	description: string;
+	// Hidden when empty.
+	description?: string;
 	image: string;
 	// Main button: jumps to a section of the page.
 	anchor: { href: string; label: string };
@@ -24,6 +26,9 @@ interface Props {
 	// Recipe for the bookmark button (the visitor's favourites). Without it the button is hidden.
 	favorite?: { slug: string; id: number };
 }
+
+// Rendered first: a slot filled by a false condition still "exists", but renders to "".
+const media = Astro.slots.has("media") ? (await Astro.slots.render("media")).trim() : "";
 
 const { badge, label, badgeLinks, labelLinks, title, titleAccent, description, image, anchor, withVideo = true, videoLabel = "Смотреть видео", printable = false, favorite } = Astro.props;
 ---
@@ -42,7 +47,7 @@ const { badge, label, badgeLinks, labelLinks, title, titleAccent, description, i
 				{title}
 				{titleAccent && <span class="article-hero__accent section-title__accent">{titleAccent}</span>}
 			</h1>
-			<p class="article-hero__desc">{description}</p>
+			{description && <p class="article-hero__desc">{description}</p>}
 			{Astro.slots.has("meta") && <div class="article-hero__meta flex items-center gap-10"><slot name="meta" /></div>}
 			<div class="article-hero__actions flex flex-wrap items-center gap-20 no-print">
 				<a href={anchor.href} class="btn">{anchor.label}</a>
@@ -62,12 +67,16 @@ const { badge, label, badgeLinks, labelLinks, title, titleAccent, description, i
 			</div>
 		</div>
 		<div class="article-hero__media">
-			<div class="article-hero__img" style={`background-image: url('${image}')`}></div>
-			{withVideo && (
-				<button type="button" class="article-hero__play no-print" data-hero-video>
-					<Icon name="youtube-play" width={42} height={29} />
-					{videoLabel}
-				</button>
+			{media ? <Fragment set:html={media} /> : (
+				<Fragment>
+					<div class="article-hero__img" style={`background-image: url('${image}')`}></div>
+					{withVideo && (
+						<button type="button" class="article-hero__play no-print" data-hero-video>
+							<Icon name="youtube-play" width={42} height={29} />
+							{videoLabel}
+						</button>
+					)}
+				</Fragment>
 			)}
 		</div>
 	</div>

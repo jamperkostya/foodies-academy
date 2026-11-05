@@ -26,7 +26,7 @@ const country = Object.values(recipe.categories?.country ?? {}).join(', ');
 		<div class="recipe-card__meta">
 			{country && (
 				<div class="recipe-card__country">
-					<span class="recipe-card__flag">🇮🇹</span> {country}
+					{country}
 				</div>
 			)}
 			<Stars rating={recipe.rating} />

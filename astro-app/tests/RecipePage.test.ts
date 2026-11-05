@@ -185,6 +185,43 @@ describe("/recipe/[slug]", () => {
 		expect(schema.recipeIngredient.length).toBeGreaterThan(0);
 		expect(schema.recipeInstructions[0]).toMatchObject({ "@type": "HowToStep" });
 	});
+
+	it("shows recipe_description under the title, nothing when it is empty", async () => {
+		const { html } = await renderRecipe("borscht", { description: "Наваристый борщ на говяжьем бульоне." });
+		expect(html).toMatch(/article-hero__desc[^>]*>Наваристый борщ на говяжьем бульоне\.</);
+
+		const { html: empty } = await renderRecipe("borscht", { description: "" });
+		expect(empty).not.toContain("article-hero__desc");
+		expect(empty).not.toMatch(/Карбонара|римская паста/);
+	});
+
+	it("keeps a single cover photo without a carousel", async () => {
+		const { html } = await renderRecipe("borscht", { gallery: ["https://foodies.academy/a.jpg"], youtubeId: null });
+
+		expect(html).not.toContain("carousel--gallery");
+		expect(html).not.toContain("data-hero-video");
+		expect(html).toContain("article-hero__img");
+	});
+
+	it("puts two or more photos into a carousel", async () => {
+		const gallery = ["https://foodies.academy/a.jpg", "https://foodies.academy/b.jpg"];
+		const { html, schema } = await renderRecipe("borscht", { gallery, youtubeId: null });
+
+		expect(html).toContain("carousel--gallery");
+		expect(html.match(/class="carousel__photo"/g)).toHaveLength(2);
+		expect(html).not.toContain("video-player");
+		expect(schema.image).toEqual(gallery);
+	});
+
+	it("shows the video preview as the first slide and loads no player until clicked", async () => {
+		const { html } = await renderRecipe("borscht", { gallery: ["https://foodies.academy/a.jpg"], youtubeId: "H89sF9Kdw_4" });
+
+		const track = html.match(/carousel__track[\s\S]*$/)![0];
+		expect(track.indexOf("video-player")).toBeLessThan(track.indexOf("carousel__photo"));
+		expect(html).toContain('data-youtube-id="H89sF9Kdw_4"');
+		expect(html).toContain("i.ytimg.com/vi/H89sF9Kdw_4/");
+		expect(html).not.toContain("<iframe");
+	});
 });
 
 describe("jsonLd", () => {

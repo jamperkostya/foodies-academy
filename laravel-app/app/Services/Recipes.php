@@ -69,6 +69,7 @@ class Recipes
             ->whereIn('post_id', $ids)
             ->whereIn('meta_key', [
                 '_thumbnail_id', 'recipe_rating', '_yoast_wpseo_primary_course', 'pld_like_count', 'pld_dislike_count', 'type', 'recipe_servings', 'complexity', 'calorific_value', 'recipe_notes',
+                'recipe_description', 'gallery', 'recipe_video_embed',
                 'recipe_prep_time', 'recipe_prep_time_text',
                 'recipe_cook_time', 'recipe_cook_time_text',
                 'recipe_passive_time', 'recipe_passive_time_text',
@@ -131,8 +132,9 @@ class Recipes
             $views = $this->views($ids);
             $categories = $this->categories($ids);
             $ratings = app(Comments::class)->ratings($ids);
+            $commentCounts = app(Comments::class)->counts($ids);
 
-            return $posts->map(function($post) use ($meta, $terms, $images, $views, $categories, $ratings) {
+            return $posts->map(function($post) use ($meta, $terms, $images, $views, $categories, $ratings, $commentCounts) {
                 $post_meta = $meta->get($post->ID, []);
                 $post_terms = $terms->get($post->ID, []);
                 return [
@@ -155,7 +157,9 @@ class Recipes
                     'rating' => $ratings[$post->ID]['average'] ?? (float) ($post_meta['recipe_rating'] ?? 0),
                     'ratingCount' => $ratings[$post->ID]['count'] ?? 0,
                     'ingredients' => [],
-                    'comments' => (int) $post->comment_count,
+                    // Video recipe (recipe_video_embed), null without one.
+                    'youtubeId' => $this->youtubeId($post_meta['recipe_video_embed'] ?? ''),
+                    'comments' => $commentCounts[$post->ID] ?? 0,
                     'views' => [
                         'count' => (int) ($views[$post->ID] ?? 0),
                         'short' => $this->shortNumber((int) ($views[$post->ID] ?? 0)),
@@ -424,6 +428,9 @@ class Recipes
         // "Совет от шефа": HTML from WordPress, null when empty.
         $notes = trim($meta['recipe_notes'] ?? '');
         $recipe['tip'] = trim(strip_tags($notes)) !== '' ? $notes : null;
+        // Text under the title, "" when empty.
+        $recipe['description'] = trim(html_entity_decode(strip_tags($meta['recipe_description'] ?? ''), ENT_QUOTES | ENT_HTML5));
+        $recipe['gallery'] = $this->gallery($meta, $recipe['image']);
         $recipe['similar'] = $this->getSimilarRecipes($post->ID);
         $recipe['author'] = $this->author((int) $post->post_author);
         // The history is a Carbon Fields field; older posts may have the block in their content instead.
@@ -434,6 +441,26 @@ class Recipes
         $recipe['history'] = $history !== '' ? $history : $this->history($post->post_content);
 
         return $recipe;
+    }
+
+    /**
+     * Photo URLs for the page's carousel: the cover first, then the rest of the
+     * "gallery" field (serialized attachment IDs) in their WordPress order.
+     */
+    private function gallery(array $meta, string $cover): array
+    {
+        $ids = @unserialize($meta['gallery'] ?? '', ['allowed_classes' => false]);
+        $ids = is_array($ids) ? array_map('intval', $ids) : [];
+        $urls = $this->images($ids);
+        $photos = array_map(fn ($id) => $urls[$id] ?? '', $ids);
+
+        return array_values(array_unique(array_filter([$cover, ...$photos])));
+    }
+
+    /** YouTube video ID from a watch / youtu.be / embed link, null for anything else. */
+    private function youtubeId(string $url): ?string
+    {
+        return preg_match('~(?:youtu\.be/|youtube\.com/(?:watch\?(?:.*&)?v=|embed/|shorts/))([A-Za-z0-9_-]{11})~', $url, $m) ? $m[1] : null;
     }
 
     /**
