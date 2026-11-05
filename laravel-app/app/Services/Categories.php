@@ -127,10 +127,12 @@ class Categories
             return [];
         }
         $meta = $this->meta($terms->pluck('term_id')->all());
-        // _crb_category_thumb is an attachment id (Carbon Fields image field).
-        $images = app(Attachments::class)->urls($meta->map(fn ($m) => (int) ($m['_crb_category_thumb'] ?? 0))->filter()->all());
+        // An attachment id: the Carbon Fields image field, or the old theme's ACF field "image"
+        // (the live database has only that one).
+        $imageIds = $meta->map(fn ($m) => (int) ($m['_crb_category_thumb'] ?? 0) ?: (int) ($m['image'] ?? 0));
+        $images = app(Attachments::class)->urls($imageIds->filter()->all());
 
-        return $terms->map(function ($term) use ($meta, $images, $type) {
+        return $terms->map(function ($term) use ($meta, $images, $imageIds, $type) {
             $term_meta = $meta->get($term->term_id, []);
 
             return [
@@ -139,7 +141,7 @@ class Categories
                 'slug' => $term->slug,
                 'type' => $type,
                 'count' => (int) $term->count,
-                'image' => $images[(int) ($term_meta['_crb_category_thumb'] ?? 0)] ?? '',
+                'image' => $images[$imageIds->get($term->term_id, 0)] ?? '',
                 'meta' => $term_meta,
             ];
         })->all();
