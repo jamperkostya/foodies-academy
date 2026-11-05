@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Support\YouTubeUrl;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
@@ -171,7 +172,7 @@ class Recipes
                     'ingredients' => [],
                     // Video recipe, null without one. recipe_video_embed (WP Ultimate Recipe) or, in
                     // databases that never moved it there, the old theme's ACF field "video".
-                    'youtubeId' => $this->youtubeId(($post_meta['recipe_video_embed'] ?? '') ?: ($post_meta['video'] ?? '')),
+                    'youtubeId' => YouTubeUrl::id(($post_meta['recipe_video_embed'] ?? '') ?: ($post_meta['video'] ?? '')),
                     'comments' => $commentCounts[$post->ID] ?? 0,
                     'views' => [
                         'count' => (int) ($views[$post->ID] ?? 0),
@@ -472,11 +473,6 @@ class Recipes
         return array_values(array_unique(array_filter([$cover, ...$photos])));
     }
 
-    /** YouTube video ID from a watch / youtu.be / embed link, null for anything else. */
-    private function youtubeId(string $url): ?string
-    {
-        return preg_match('~(?:youtu\.be/|youtube\.com/(?:watch\?(?:.*&)?v=|embed/|shorts/))([A-Za-z0-9_-]{11})~', $url, $m) ? $m[1] : null;
-    }
 
     /**
      * The most used ingredients and their most viewed recipes, $limit recipes in all:

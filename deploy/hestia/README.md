@@ -175,7 +175,7 @@ wp theme activate twentytwentyfive                #   сайт headless, тем�
 mu-plugins и плагины (Contact Form 7, Yoast, WP Ultimate Recipe…) поставит первый запуск **Deploy WordPress code to Hestia** (шаг 9). Вручную то же самое:
 
 ```bash
-WP_PATH=$PWD WP_CLI="php8.3 $HOME/bin/wp" bash /путь/к/install-plugins.sh
+WP_PATH=$PWD WP_CLI="php8.3 $HOME/bin/wp" bash ~/foodies-install-plugins.sh   # скрипт кладёт туда деплой
 ```
 
 `wp-content/uploads` не нужен: картинки рецептов сайт берёт с foodies.academy (`ACADEMY_UPLOADS_URL`). Поэтому в админке dev старые картинки медиатеки будут без превью, а новые, загруженные на dev, не появятся на dev-сайте — контент с картинками правится на боевом сайте.

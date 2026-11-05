@@ -38,6 +38,28 @@ class PagesAndStatsTest extends SiteTestCase
             ->assertJsonPath('data.recipes.0.slug', 'borscht');
     }
 
+    public function test_category_images_from_both_theme_fields(): void
+    {
+        $image = function (string $file) {
+            $id = $this->makePost('attachment', $file);
+            $this->meta($id, '_wp_attachment_metadata', serialize(['file' => "2018/09/$file.jpg"]));
+
+            return $id;
+        };
+        $id = $this->recipe('borscht');
+        $soups = $this->term('course', 'soups', 'Супы', [$id]);
+        $salads = $this->term('course', 'salads', 'Салаты', [$id]);
+        // Carbon Fields (the site's database) and the old theme's ACF field (the live one).
+        $this->site()->table('termmeta')->insert([
+            ['term_id' => $soups, 'meta_key' => '_crb_category_thumb', 'meta_value' => (string) $image('soups')],
+            ['term_id' => $salads, 'meta_key' => 'image', 'meta_value' => (string) $image('salads')],
+        ]);
+
+        $uploads = rtrim(config('services.academy.uploads_url'), '/');
+        $images = collect($this->getJson('/api/categories?type=course')->json('data'))->pluck('image', 'slug');
+        $this->assertSame(["$uploads/2018/09/salads.jpg", "$uploads/2018/09/soups.jpg"], [$images['salads'], $images['soups']]);
+    }
+
     public function test_trust_block_totals(): void
     {
         $a = $this->recipe('a', [], ['pld_like_count' => '10', 'pld_dislike_count' => '2']);

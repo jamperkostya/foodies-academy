@@ -27,6 +27,23 @@ class NewsAndBlogTest extends SiteTestCase
         $this->getJson('/api/blog/slugs')->assertJsonPath('data', ['mango']);
     }
 
+    public function test_post_cover_falls_back_to_a_text_image_then_the_video(): void
+    {
+        $photo = $this->makePost('attachment', 'grill');
+        $this->meta($photo, '_wp_attachment_metadata', serialize(['file' => '2020/12/grill.jpg']));
+        $this->makePost('post', 'featured', ['post_date' => '2026-01-04 10:00:00'], ['_thumbnail_id' => (string) $photo]);
+        $this->makePost('post', 'in-text', [
+            'post_date' => '2026-01-03 10:00:00',
+            // An outside image first: hotlinked pictures of other sites are not used as covers.
+            'post_content' => '<img src="https://other.site/a.jpg" alt=""/><img src="x" class="wp-image-'.$photo.'"/>',
+        ]);
+        $this->makePost('post', 'with-video', ['post_date' => '2026-01-02 10:00:00'], ['link_to_video' => 'https://www.youtube.com/watch?v=GV3LIDEYkiU']);
+        $this->makePost('post', 'nothing', ['post_date' => '2026-01-01 10:00:00']);
+
+        $cover = rtrim(config('services.academy.uploads_url'), '/').'/2020/12/grill.jpg';
+        $this->getJson('/api/blog')->assertJsonPath('data.*.image', [$cover, $cover, 'https://i.ytimg.com/vi/GV3LIDEYkiU/hqdefault.jpg', '']);
+    }
+
     public function test_comments_on_news_and_blog_wait_for_moderation(): void
     {
         $post = $this->makePost('post', 'mango');

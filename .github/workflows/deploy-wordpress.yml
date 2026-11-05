@@ -28,12 +28,13 @@ jobs:
         run: |
           rsync -az --delete -e "ssh -p ${{ secrets.SSH_PORT }}" \
             wp-content/mu-plugins/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.WP_PATH }}/wp-content/mu-plugins/
+          # In the user's home: Hestia keeps the domain folder itself read-only for the user.
           rsync -az -e "ssh -p ${{ secrets.SSH_PORT }}" \
-            wordpress/install-plugins.sh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.WP_PATH }}/../install-plugins.sh
+            wordpress/install-plugins.sh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:foodies-install-plugins.sh
 
       - name: Install and activate plugins
         env:
           PHP_BIN: ${{ vars.PHP_BIN || 'php8.3' }}
         run: |
           ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-            "WP_PATH='${{ secrets.WP_PATH }}' WP_CLI=\"$PHP_BIN \$HOME/bin/wp\" bash '${{ secrets.WP_PATH }}/../install-plugins.sh'"
+            "WP_PATH='${{ secrets.WP_PATH }}' WP_CLI=\"$PHP_BIN \$HOME/bin/wp\" bash \$HOME/foodies-install-plugins.sh"
