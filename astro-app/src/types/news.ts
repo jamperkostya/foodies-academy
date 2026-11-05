@@ -1,12 +1,2 @@
-// src/types/news.ts
-
-export interface News {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  category: string;
-  tags: string[];
-  // Only shown for the featured news; not filled in for any seed record yet.
-  image?: string;
-}
+// src/types/news.ts — see article.ts: news and blog posts share one shape.
+export type { Article as News } from './article';

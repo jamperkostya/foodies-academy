@@ -7,8 +7,8 @@ export interface HeroCard {
   size: "tall" | "half";
   image: string;
   title: string;
-  views?: number;
-  likes?: number;
+  views?: number | string;
+  likes?: number | string;
   comments?: number;
   rating: number;
   videoId?: string;

@@ -12,13 +12,13 @@ interface Props {
 
 const { category, variant, class: className } = Astro.props;
 
-const recipeWord = recipesWord(category.recipesCount);
+const recipeWord = recipesWord(category.count);
 ---
-<a href={`/category/${category.slug}`} class:list={["category-card", variant && `category-card--${variant}`, className]} data-groups={JSON.stringify(category.groups)} data-recipes-count={category.recipesCount}>
+<a href={`/category/${category.slug}`} class:list={["category-card", variant && `category-card--${variant}`, className]} data-groups={JSON.stringify(category.groups)} data-recipes-count={category.count}>
 	<div class="category-card__img" style={`background-image:url('${category.image}')`}></div>
 	<div class="category-card__label">
-		<strong class="category-card__title">{category.title}</strong>
-		<small class="category-card__count">{category.recipesCount} {recipeWord}</small>
+		<strong class="category-card__title">{category.name}</strong>
+		<small class="category-card__count">{category.count} {recipeWord}</small>
 	</div>
 </a>
 <style lang="less">

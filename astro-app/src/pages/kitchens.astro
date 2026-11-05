@@ -1,0 +1,79 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/layout/PageHero.astro";
+import SortBar from "../components/ui/SortBar.astro";
+import CardGrid from "../components/ui/CardGrid.astro";
+import CategoryCard from "../components/categories/CategoryCard.astro";
+const API_URL = import.meta.env.API_URL ?? 'http://localhost:8000/api';
+// Most recipes first, so the default "popular" order means something.
+const { data: kitchens }: { data: { count: number }[] } = await fetch(`${API_URL}/categories?type=country`).then(r => r.json());
+const categories = kitchens.toSorted((a, b) => b.count - a.count);
+const totalRecipes = categories.reduce((sum, category) => sum + category.count, 0);
+
+import { plural, recipesWord } from "../utils/plural";
+import SEOTextSection from "../components/sections/SEOTextSection.astro";
+import { wpPage } from "../utils/wpPage";
+
+// "SEO-текст" and Yoast SEO of the WordPress page "kuhni-mira".
+const { seoText, seo } = await wpPage("kuhni-mira");
+
+// Counted from the data, so the intro never disagrees with the catalogue.
+const description =
+	`${totalRecipes.toLocaleString("ru-RU")} ${recipesWord(totalRecipes)}, ` +
+	`из ${categories.length} ${plural(categories.length, ["страны", "стран", "стран"])}: от итальянской пасты до азиатского стритфуда. Выберите кухню и отправьтесь в гастрономическое путешествие.`;
+
+// "popular" keeps the data's own order.
+const sortOptions = [
+	{ value: "popular", label: "По популярности" },
+	{ value: "az", label: "По алфавиту" },
+	{ value: "count", label: "По числу рецептов" },
+];
+---
+<BaseLayout seo={seo} title="Кухни мира" description={description} breadcrumbs={[{ label: "Кухни мира" }]}>
+	<PageHero slot="hero" eyebrow="Каталог" description={description}>
+		Кухни <span class="page-hero__accent">мира</span>
+	</PageHero>
+
+	<section class="catalog section-item">
+		<SortBar
+			count={categories.length}
+			countWord={plural(categories.length, ["кухня", "кухни", "кухонь"])}
+			options={sortOptions}
+		/>
+		{/* Category cards are at least 195px wide (325px min-height at 3:5). */}
+		<CardGrid minCardWidth={300}>
+			{categories.map((category) => <CategoryCard category={category} variant="grid" />)}
+		</CardGrid>
+	</section>
+	
+	<SEOTextSection html={seoText} />
+</BaseLayout>
+
+<style lang="less">
+.catalog {
+	padding-top: 25px;
+}
+</style>
+
+<script>
+	// Sorting only reorders the cards already on the page.
+	const catalog = document.querySelector<HTMLElement>(".catalog");
+	const select = catalog?.querySelector<HTMLSelectElement>(".sort-bar__field");
+	const grid = catalog?.querySelector<HTMLElement>(".card-grid");
+
+	if (select && grid) {
+		const cards = [...grid.querySelectorAll<HTMLElement>(".category-card")];
+		const title = (card: HTMLElement) => card.querySelector(".category-card__title")?.textContent ?? "";
+		const recipes = (card: HTMLElement) => Number(card.dataset.recipesCount);
+
+		const sorters: Record<string, (a: HTMLElement, b: HTMLElement) => number> = {
+			az: (a, b) => title(a).localeCompare(title(b), "ru"),
+			count: (a, b) => recipes(b) - recipes(a),
+		};
+
+		select.addEventListener("change", () => {
+			const sorter = sorters[select.value];
+			grid.append(...(sorter ? [...cards].sort(sorter) : cards));
+		});
+	}
+</script>

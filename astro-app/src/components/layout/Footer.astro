@@ -1,7 +1,8 @@
 ---
 import { Image } from "astro:assets";
 import Icon from "../ui/Icon.astro";
-import logo from "../../assets/images/logotype.jpg";
+import logo from "../../assets/images/logotype.png";
+import { footerColumns } from "../../data/menu";
 ---
 
 <footer class="footer container no-print">
@@ -21,56 +22,18 @@ import logo from "../../assets/images/logotype.jpg";
 		</div>
 
 		<nav class="footer__cols" aria-label="Дополнительная навигация">
-			<div class="footer__col">
-				<a href="/kitchenks" class="footer__col-header">Кухни мира</a>
-				<ul class="footer__list">
-					<li class="footer__item"><a href="/" class="footer__link">Главная</a></li>
-					<li class="footer__item"><a href="/categories" class="footer__link">Категории</a></li>
-					<li class="footer__item"><a href="/blog" class="footer__link">Блог</a></li>
-					<li class="footer__item"><a href="/lifehacks" class="footer__link">Лайфхаки</a></li>
-					<li class="footer__item"><a href="/author/salad-konstantin" class="footer__link">Авторы</a></li>
-				</ul>
-			</div>
-			<div class="footer__col">
-				<a href="/dishes" class="footer__col-header">Типы блюд</a>
-				<ul class="footer__list">
-					<li class="footer__item"><a href="/" class="footer__link">Главная</a></li>
-					<li class="footer__item"><a href="/categories" class="footer__link">Категории</a></li>
-					<li class="footer__item"><a href="/blog" class="footer__link">Блог</a></li>
-					<li class="footer__item"><a href="/lifehacks" class="footer__link">Лайфхаки</a></li>
-					<li class="footer__item"><a href="/author/salad-konstantin" class="footer__link">Авторы</a></li>
-				</ul>
-			</div>
-			<div class="footer__col">
-				<a href="/video" class="footer__col-header">Видеорецепты</a>
-				<ul class="footer__list">
-					<li class="footer__item"><a href="/" class="footer__link">Главная</a></li>
-					<li class="footer__item"><a href="/categories" class="footer__link">Категории</a></li>
-					<li class="footer__item"><a href="/blog" class="footer__link">Блог</a></li>
-					<li class="footer__item"><a href="/lifehacks" class="footer__link">Лайфхаки</a></li>
-					<li class="footer__item"><a href="/author/salad-konstantin" class="footer__link">Авторы</a></li>
-				</ul>
-			</div>
-			<div class="footer__col">
-				<a href="/content" class="footer__col-header">Контент</a>
-				<ul class="footer__list">
-					<li class="footer__item"><a href="/" class="footer__link">Главная</a></li>
-					<li class="footer__item"><a href="/categories" class="footer__link">Категории</a></li>
-					<li class="footer__item"><a href="/blog" class="footer__link">Блог</a></li>
-					<li class="footer__item"><a href="/lifehacks" class="footer__link">Лайфхаки</a></li>
-					<li class="footer__item"><a href="/author/salad-konstantin" class="footer__link">Авторы</a></li>
-				</ul>
-			</div>
-			<div class="footer__col">
-				<a href="/authors" class="footer__col-header">Авторы</a>
-				<ul class="footer__list">
-					<li class="footer__item"><a href="/" class="footer__link">Главная</a></li>
-					<li class="footer__item"><a href="/categories" class="footer__link">Категории</a></li>
-					<li class="footer__item"><a href="/blog" class="footer__link">Блог</a></li>
-					<li class="footer__item"><a href="/lifehacks" class="footer__link">Лайфхаки</a></li>
-					<li class="footer__item"><a href="/author/salad-konstantin" class="footer__link">Авторы</a></li>
-				</ul>
-			</div>
+			{footerColumns.map((column) => (
+				<div class="footer__col">
+					{column.href
+						? <a href={column.href} class="footer__col-header">{column.title}</a>
+						: <span class="footer__col-header">{column.title}</span>}
+					<ul class="footer__list">
+						{column.items.map((item) => (
+							<li class="footer__item"><a href={item.href} class="footer__link">{item.title}</a></li>
+						))}
+					</ul>
+				</div>
+			))}
 		</nav>
 	</div>
 	
@@ -80,9 +43,9 @@ import logo from "../../assets/images/logotype.jpg";
 			<a href="#" class="footer__country">Италия</a><a href="#" class="footer__country">Швеция</a><a href="#" class="footer__country">Великобритания</a><a href="#" class="footer__country">Испания</a>
 		</div>
 		<div class="footer__legal">
-			<a href="#" class="footer__legal-link">Политика конфиденциальности</a>
-			<a href="#" class="footer__legal-link">Правила использования</a>
-			<a href="#" class="footer__legal-link">Контакты</a>
+			<a href="/privacy-policy" class="footer__legal-link">Политика конфиденциальности</a>
+			<a href="/terms" class="footer__legal-link">Правила использования</a>
+			<a href="/contacts" class="footer__legal-link">Контакты</a>
 		</div>
 	</div>
 </footer>

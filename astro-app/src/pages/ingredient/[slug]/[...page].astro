@@ -1,0 +1,70 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PageHero from "../../../components/layout/PageHero.astro";
+import CardGrid from "../../../components/ui/CardGrid.astro";
+import RecipeCard from "../../../components/recipes/RecipeCard.astro";
+import SEOTextSection from "../../../components/sections/SEOTextSection.astro";
+import type { Recipe } from "../../../types/recipe";
+import type { Seo } from "../../../types/seo";
+
+interface Ingredient {
+	name: string;
+	slug: string;
+	count: number;
+	recipes?: Recipe[];
+	seoText?: string;
+	seo?: Seo | null;
+}
+import { recipesWord } from "../../../utils/plural";
+import Pagination from "../../../components/ui/Pagination.astro";
+import { pageHref, pageNumber, pageParams } from "../../../utils/pagination";
+
+const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+
+// The popular ingredients the footer links to, split into pages of 24 recipes.
+export async function getStaticPaths() {
+	// getStaticPaths can't see the constants above, so the URL is read again here.
+	const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+	const { data: ingredients }: { data: Ingredient[] } = await fetch(`${API_URL}/ingredients/popular?limit=5`).then((r) => r.json());
+
+	return ingredients.flatMap((ingredient) =>
+		pageParams(ingredient.count).map((page) => ({ params: { slug: ingredient.slug, page } })),
+	);
+}
+
+const { slug } = Astro.params;
+const page = pageNumber(Astro.params.page);
+const response = await fetch(`${API_URL}/ingredients/${slug}?page=${page}`);
+if (!response.ok) {
+	throw new Error(`Ingredient "${slug}" from ${API_URL}: HTTP ${response.status}`);
+}
+const { data: ingredient }: { data: Ingredient & { total: number; pages: number } } = await response.json();
+const recipes = ingredient.recipes ?? [];
+
+const description = `${ingredient.total} ${recipesWord(ingredient.total)} с ингредиентом «${ingredient.name}»: самые популярные у наших читателей — первыми.`;
+---
+<BaseLayout
+	seo={page === 1 ? ingredient.seo : null}
+	title={`Рецепты с ингредиентом «${ingredient.name}»${page > 1 ? ` — страница ${page}` : ""}`}
+	description={description}
+	breadcrumbs={[{ label: "Ингредиенты" }, { label: ingredient.name }]}>
+	<PageHero slot="hero" eyebrow="Рецепты по ингредиентам" description={description}>
+		<span class="page-hero__accent">{ingredient.name}</span>
+	</PageHero>
+
+	<section class="ingredient section-item">
+		<CardGrid minCardWidth={260}>
+			{recipes.map((recipe) => <RecipeCard recipe={recipe} />)}
+		</CardGrid>
+		<Pagination page={page} pages={ingredient.pages} base={`/ingredient/${slug}`} />
+	</section>
+
+	{/* On the first page only: later pages repeat the list, not the text. */}
+	<SEOTextSection html={page === 1 ? ingredient.seoText : ""} />
+</BaseLayout>
+
+<style lang="less">
+.ingredient {
+	padding-top: 25px;
+}
+</style>

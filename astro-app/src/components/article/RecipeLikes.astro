@@ -1,0 +1,147 @@
+---
+// "Понравился рецепт?" — like / dislike buttons. Counts live in the Posts Like Dislike
+// plugin's data in WordPress (via Laravel). The page is built ahead of time, so the
+// browser loads fresh counts on open. One vote per browser, remembered in localStorage;
+// clicking your vote again takes it back, clicking the other one moves it.
+interface Props {
+	slug: string;
+	// Counts at build time, shown until the fresh ones arrive.
+	votes?: { like: number; dislike: number };
+	// Laravel endpoint: GET returns the counts, POST {from, to} moves a vote.
+	action: string;
+	title?: string;
+}
+
+const { slug, votes = { like: 0, dislike: 0 }, action, title = "Понравился рецепт?" } = Astro.props;
+const buttons = [
+	{ type: "like", label: "Нравится", count: votes.like },
+	{ type: "dislike", label: "Не нравится", count: votes.dislike },
+] as const;
+---
+<div class="recipe-likes flex gap-15 items-center no-print" data-slug={slug} data-action={action}>
+	<span class="recipe-likes__title">{title}</span>
+	<div class="flex gap-10">
+		{buttons.map(({ type, label, count }) => (
+			<button type="button" class:list={["recipe-likes__btn flex gap-5 items-center", `recipe-likes__btn--${type}`]} data-type={type} aria-pressed="false" aria-label={label} title={label}>
+				<svg class="recipe-likes__icon" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+					<path d="M2 21h4V9H2v12Zm20-11a2 2 0 0 0-2-2h-6.3l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L13.17 1 6.59 7.59C6.22 7.95 6 8.45 6 9v10a2 2 0 0 0 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2Z" />
+				</svg>
+				<span class="recipe-likes__count" aria-live="polite">{count}</span>
+			</button>
+		))}
+	</div>
+</div>
+
+<script>
+	import { showToast } from "../../scripts/toast";
+
+	type Vote = "like" | "dislike" | null;
+	type Counts = { like: number; dislike: number };
+
+	document.querySelectorAll<HTMLElement>(".recipe-likes").forEach((root) => {
+		const action = root.dataset.action!;
+		// The action URL tells a recipe from a video with the same slug.
+		const storageKey = `vote:${action}`;
+		const buttons = [...root.querySelectorAll<HTMLButtonElement>(".recipe-likes__btn")];
+
+		const readVote = (): Vote => {
+			try {
+				const value = localStorage.getItem(storageKey);
+				return value === "like" || value === "dislike" ? value : null;
+			} catch {
+				return null;
+			}
+		};
+		const saveVote = (value: Vote) => {
+			try {
+				if (value) localStorage.setItem(storageKey, value);
+				else localStorage.removeItem(storageKey);
+			} catch {
+				// No storage: the vote still counts, it just isn't remembered.
+			}
+		};
+
+		let vote = readVote();
+		const render = (counts?: Counts) => {
+			buttons.forEach((button) => {
+				const type = button.dataset.type as "like" | "dislike";
+				button.setAttribute("aria-pressed", String(vote === type));
+				if (counts) button.querySelector(".recipe-likes__count")!.textContent = String(counts[type]);
+			});
+		};
+		render();
+
+		fetch(action, { headers: { Accept: "application/json" } })
+			.then((response) => (response.ok ? response.json() : null))
+			.then((body) => body && render(body.data))
+			.catch(() => {});
+
+		let busy = false;
+		buttons.forEach((button) => {
+			button.addEventListener("click", async () => {
+				if (busy) return;
+				const type = button.dataset.type as "like" | "dislike";
+				const next: Vote = vote === type ? null : type;
+				busy = true;
+				try {
+					const response = await fetch(action, {
+						method: "POST",
+						headers: { "Content-Type": "application/json", Accept: "application/json" },
+						body: JSON.stringify({ from: vote, to: next }),
+					});
+					if (!response.ok) {
+						showToast(response.status === 429 ? "Слишком часто, попробуйте через минуту" : "Не удалось сохранить оценку");
+						return;
+					}
+					vote = next;
+					saveVote(vote);
+					render((await response.json()).data);
+				} catch {
+					showToast("Не удалось сохранить оценку, проверьте интернет");
+				} finally {
+					busy = false;
+				}
+			});
+		});
+	});
+</script>
+
+<style lang="less">
+.recipe-likes {
+	flex-wrap: wrap;
+	padding: 20px 24px;
+	margin-bottom: 40px;
+	background: var(--color-light-grey);
+	border-radius: var(--border-radius-25);
+	&__title {
+		font-weight: 700;
+		font-size: 16px;
+		margin-right: auto;
+	}
+	&__btn {
+		padding: 10px 18px;
+		border: var(--border-width) solid var(--color-border-search-form);
+		border-radius: var(--border-radius-1000);
+		background: var(--color-white);
+		font: inherit;
+		font-weight: 700;
+		color: var(--color-grey-dark);
+		cursor: pointer;
+		transition: border-color .15s, color .15s, background .15s;
+		&:hover {
+			border-color: var(--color-red);
+		}
+		&[aria-pressed="true"] {
+			border-color: var(--color-red);
+			background: var(--color-pink-20);
+			color: var(--color-red);
+		}
+	}
+	&__icon {
+		fill: currentColor;
+	}
+	&__btn--dislike &__icon {
+		transform: rotate(180deg);
+	}
+}
+</style>

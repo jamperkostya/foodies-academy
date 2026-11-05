@@ -1,34 +1,63 @@
 ---
+// SEO text from the WordPress admin ("SEO-текст" field, see wp-content/mu-plugins/foodies-seo-text.php).
+// Renders nothing without text. Paginated lists pass it on their first page only.
+interface Props {
+	// HTML from our own WordPress (sanitized with wp_kses_post when saved).
+	html?: string | null;
+}
+
+const { html } = Astro.props;
 ---
-<section class="section-item">
-	<div class="seo-text">
-		<h3 class="seo-text__title section-title">Lorem ipsum dolor sit amet</h3>
-		<div class="seo-text__body is-clamped">
-			<p class="seo-text__paragraph">
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Lorem ipsum dolor sit amet 
-			</p>
-			<p class="seo-text__paragraph">
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Lorem ipsum dolor sit amet 
-			</p>
+{html && (
+	<section class="section-item">
+		<div class="seo-text">
+			<div class="seo-text__body is-collapsed" set:html={html} />
+			<button type="button" class="seo-text__toggle btn btn--secondary" aria-expanded="false" hidden>Показать больше</button>
 		</div>
-		<button type="button" class="seo-text__toggle btn btn--secondary" aria-expanded="false">Показать больше</button>
-	</div>
-</section>
+	</section>
+)}
 
 <style lang="less">
 .seo-text {
 	max-width: 80%;
 	margin: auto;
+	@media (max-width: 860px) {
+		max-width: 100%;
+	}
 }
 
-.seo-text__paragraph {
-	margin: 12px 0;
+.seo-text__body {
 	font-size: 20px;
-	line-height: 24px;
-}
-
-.seo-text__title {
-	margin: 0;
+	line-height: 1.4;
+	&.is-collapsed {
+		max-height: 7em;
+		overflow: hidden;
+		mask-image: linear-gradient(#000 60%, transparent);
+	}
+	:global(p), :global(ul), :global(ol) {
+		margin: 12px 0;
+	}
+	:global(ul), :global(ol) {
+		padding-left: 1.4em;
+	}
+	:global(ul) {
+		list-style: disc;
+	}
+	:global(ol) {
+		list-style: decimal;
+	}
+	:global(h2), :global(h3), :global(h4) {
+		margin: 24px 0 8px;
+		line-height: 1.2;
+	}
+	:global(a) {
+		color: var(--color-red);
+		text-decoration: underline;
+	}
+	:global(img) {
+		max-width: 100%;
+		height: auto;
+	}
 }
 
 .seo-text__toggle {
@@ -38,14 +67,19 @@
 </style>
 
 <script>
-	// Show more / show less: toggles the 3-line clamp on the text.
+	// Show more / show less, only when the text is longer than the collapsed height.
 	document.querySelectorAll<HTMLElement>(".seo-text").forEach((block) => {
-		const body = block.querySelector(".seo-text__body");
-		const toggle = block.querySelector(".seo-text__toggle");
+		const body = block.querySelector<HTMLElement>(".seo-text__body");
+		const toggle = block.querySelector<HTMLButtonElement>(".seo-text__toggle");
 		if (!body || !toggle) return;
 
+		if (body.scrollHeight <= body.clientHeight + 1) {
+			body.classList.remove("is-collapsed");
+			return;
+		}
+		toggle.hidden = false;
 		toggle.addEventListener("click", () => {
-			const expanded = !body.classList.toggle("is-clamped");
+			const expanded = !body.classList.toggle("is-collapsed");
 			toggle.textContent = expanded ? "Свернуть" : "Показать больше";
 			toggle.setAttribute("aria-expanded", String(expanded));
 		});

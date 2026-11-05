@@ -12,14 +12,17 @@ interface Props {
 
 const { review, isNew = false } = Astro.props;
 ---
-<div class:list={["review flex gap-15", { "review--new": isNew }]}>
+<div class:list={["review flex gap-15", { "review--new": isNew, "review--reply": review.replyTo }]}>
 	<Avatar name={review.name} />
 	<div class="review__body">
 		<div class="review__head flex gap-10 items-center">
 			<strong class="review__name">{review.name}</strong>
 			{review.rating !== undefined && <Stars rating={review.rating} />}
 		</div>
-		<span class="review__date">{review.date}</span>
+		<span class="review__date">
+			{review.replyTo && <span class="review__reply-to">↳ ответ для {review.replyTo} · </span>}
+			{review.date}
+		</span>
 		<p class="review__text">{review.text}</p>
 	</div>
 </div>
@@ -35,6 +38,19 @@ const { review, isNew = false } = Astro.props;
 	&__text {
 		font-size: 14px;
 		line-height: 1.6;
+	}
+	&__reply-to {
+		color: var(--color-red);
+	}
+	// Replies sit indented under the review they answer.
+	&--reply {
+		margin-left: 55px;
+		padding-left: 16px;
+		border-left: 2px solid var(--color-light-grey);
+		@media (max-width: 640px) {
+			margin-left: 20px;
+			padding-left: 12px;
+		}
 	}
 	&--new {
 		background: var(--color-pink-20);

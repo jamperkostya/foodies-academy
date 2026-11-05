@@ -1,0 +1,39 @@
+name: Deploy WordPress code to Hestia
+
+# wp.dev.foodies.academy: the site's mu-plugins and the pinned plugin list. WordPress core,
+# uploads and the database live on the server only. Server setup: deploy/hestia/README.md.
+on:
+  push:
+    branches: [main]
+    paths: ['wp-content/mu-plugins/**', 'wordpress/install-plugins.sh', '.github/workflows/deploy-wordpress.yml']
+  workflow_dispatch:
+
+concurrency: deploy-wordpress
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      # --delete: mu-plugins on the server are exactly the ones in git.
+      - name: Rsync mu-plugins and the plugin installer
+        run: |
+          rsync -az --delete -e "ssh -p ${{ secrets.SSH_PORT }}" \
+            wp-content/mu-plugins/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.WP_PATH }}/wp-content/mu-plugins/
+          rsync -az -e "ssh -p ${{ secrets.SSH_PORT }}" \
+            wordpress/install-plugins.sh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.WP_PATH }}/../install-plugins.sh
+
+      - name: Install and activate plugins
+        env:
+          PHP_BIN: ${{ vars.PHP_BIN || 'php8.3' }}
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "WP_PATH='${{ secrets.WP_PATH }}' WP_CLI=\"$PHP_BIN \$HOME/bin/wp\" bash '${{ secrets.WP_PATH }}/../install-plugins.sh'"

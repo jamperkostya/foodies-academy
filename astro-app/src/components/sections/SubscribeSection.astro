@@ -7,12 +7,14 @@ interface Props {
 }
 
 const { title = "Подпишись и получи книгу рецептов бесплатно!" } = Astro.props;
+// Sent from the browser to Laravel → Contact Form 7 (see scripts/subscribe.ts).
+const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/api";
 ---
 <section class="section-item">
 	<div class="subscribe flex gap-40">
 		<Image class="subscribe__img" src={book} alt="Кулинарная книга Foodies" />
 
-		<form method="post" action="#" class="subscribe__form flex gap-15">
+		<form method="post" class="subscribe__form flex gap-15" data-subscribe={`${PUBLIC_API_URL}/subscribe`}>
 			<h2 class="subscribe__title">{title}</h2>
 
 			<input class="subscribe__input" type="text" name="name" placeholder="Имя" aria-label="Имя" autocomplete="given-name" required>
@@ -23,6 +25,10 @@ const { title = "Подпишись и получи книгу рецептов 
 		</form>
 	</div>
 </section>
+
+<script>
+	import "../../scripts/subscribe";
+</script>
 
 <style lang="less">
 .subscribe {

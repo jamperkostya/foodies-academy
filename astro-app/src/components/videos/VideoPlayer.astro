@@ -1,0 +1,92 @@
+---
+// YouTube video behind its preview: until "play" is clicked the page loads only the
+// thumbnail, no YouTube scripts or iframe. The click swaps in the player, which starts at once.
+interface Props {
+	youtubeId: string;
+	title: string;
+	image: string;
+	duration?: string;
+}
+
+const { youtubeId, title, image, duration } = Astro.props;
+---
+<div class="video-player" data-youtube-id={youtubeId} data-title={title}>
+	<img class="video-player__preview" src={image} alt="" loading="eager" decoding="async" />
+	<button type="button" class="video-player__play flex-center" aria-label={`Смотреть видео: ${title}`}>
+		<svg width="68" height="48" viewBox="0 0 68 48" aria-hidden="true">
+			<path class="video-player__play-bg" d="M66.5 7.7a8.5 8.5 0 0 0-6-6C55.2.2 34 .2 34 .2s-21.2 0-26.5 1.5a8.5 8.5 0 0 0-6 6C0 13 0 24 0 24s0 11 1.5 16.3a8.5 8.5 0 0 0 6 6C12.8 47.8 34 47.8 34 47.8s21.2 0 26.5-1.5a8.5 8.5 0 0 0 6-6C68 35 68 24 68 24s0-11-1.5-16.3Z" />
+			<path d="m45 24-18-10v20z" fill="#fff" />
+		</svg>
+	</button>
+	{duration && <span class="video-player__duration">{duration}</span>}
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>(".video-player").forEach((player) => {
+		player.querySelector(".video-player__play")!.addEventListener("click", () => {
+			const iframe = document.createElement("iframe");
+			// youtube-nocookie: no YouTube cookies until the visitor plays the video.
+			iframe.src = `https://www.youtube-nocookie.com/embed/${player.dataset.youtubeId}?autoplay=1&rel=0`;
+			iframe.title = player.dataset.title ?? "";
+			iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+			iframe.allowFullscreen = true;
+			iframe.className = "video-player__frame";
+			player.replaceChildren(iframe);
+			player.classList.add("is-playing");
+		}, { once: true });
+	});
+</script>
+
+<style lang="less">
+.video-player {
+	position: relative;
+	aspect-ratio: 16 / 9;
+	overflow: hidden;
+	border-radius: var(--border-radius-25);
+	background: #000;
+	&__preview {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+	&__play {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		border: none;
+		background: rgba(0, 0, 0, .15);
+		cursor: pointer;
+		transition: background .2s;
+		&:hover, &:focus-visible {
+			background: rgba(0, 0, 0, .3);
+		}
+		&:hover .video-player__play-bg, &:focus-visible .video-player__play-bg {
+			fill: #f00;
+		}
+	}
+	&__play-bg {
+		fill: #212121;
+		fill-opacity: .85;
+		transition: fill .2s;
+	}
+	&__duration {
+		position: absolute;
+		right: 12px;
+		bottom: 12px;
+		padding: 2px 8px;
+		border-radius: 6px;
+		background: rgba(0, 0, 0, .75);
+		color: #fff;
+		font-size: 13px;
+		font-weight: 700;
+		pointer-events: none;
+	}
+	:global(.video-player__frame) {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		border: 0;
+	}
+}
+</style>

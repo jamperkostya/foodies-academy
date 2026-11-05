@@ -4,8 +4,8 @@
 import { Image } from "astro:assets";
 import Icon from "../ui/Icon.astro";
 import SearchForm from "./SearchForm.astro";
-import { categoryColumns } from "../../data/categories";
-import logo from "../../assets/images/logotype.jpg";
+import { menuColumns, menuLinks } from "../../data/menu";
+import logo from "../../assets/images/logotype.png";
 ---
 <div class="mobile-nav" data-mobile-nav>
 	<div class="mobile-nav__backdrop" data-mobile-nav-close></div>
@@ -29,24 +29,25 @@ import logo from "../../assets/images/logotype.jpg";
 					<Icon class="mobile-nav__arrow" name="menu-arrow" width={12} height={7} />
 				</button>
 				<div class="mobile-nav__sub" id="mobile-nav-categories" hidden>
-					{categoryColumns.map(({ group, items }) => (
+					{menuColumns.map(({ group, items, all }) => (
 						<div class="mobile-nav__group">
 							<p class="mobile-nav__group-title">{group}</p>
 							<ul class="mobile-nav__sub-list">
-								{items.map((category) => (
-									<li><a class="mobile-nav__sub-link" href={`/category/${category.slug}`}>{category.title}</a></li>
+								{items.map((item) => (
+									<li><a class="mobile-nav__sub-link" href={item.href}>{item.title}</a></li>
 								))}
 							</ul>
+							<a class="mobile-nav__all" href={all.href}>{all.label} →</a>
 						</div>
 					))}
-					<a class="mobile-nav__all" href="/categories">Все категории →</a>
 				</div>
 			</li>
-			<li class="mobile-nav__item"><a class="mobile-nav__link" href="/blog">Блог</a></li>
-			<li class="mobile-nav__item"><a class="mobile-nav__link" href="/lifehacks">Лайфхаки</a></li>
+			{menuLinks.map((link) => (
+				<li class="mobile-nav__item"><a class="mobile-nav__link" href={link.href}>{link.label}</a></li>
+			))}
 			<li class="mobile-nav__item"><a class="mobile-nav__link" href="#">Ai Повар <Icon name="ai-chef" width={16} height={16} /></a></li>
-			<li class="mobile-nav__item"><a class="mobile-nav__link" href="#">Избранное <span class="mobile-nav__count">708</span></a></li>
-			<li class="mobile-nav__item"><a class="mobile-nav__link mobile-nav__link--accent" href="#">Регистрация</a></li>
+			<li class="mobile-nav__item"><a class="mobile-nav__link" href="/login?next=%2Fprofile%23favorites" data-account-favorites>Избранное <span class="mobile-nav__count" data-account-count hidden>0</span></a></li>
+			<li class="mobile-nav__item"><a class="mobile-nav__link mobile-nav__link--accent" href="/register" data-account-link>Регистрация</a></li>
 		</ul>
 	</nav>
 </div>

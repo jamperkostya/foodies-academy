@@ -7,4 +7,6 @@ export interface Review {
 	text: string;
 	// Out of 5.
 	rating?: number;
+	// Set on a reply: the name of the author it answers. Replies follow their thread.
+	replyTo?: string;
 }

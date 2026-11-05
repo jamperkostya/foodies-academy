@@ -1,0 +1,383 @@
+---
+// The visitor's account. Built as an empty shell: everything personal is loaded in the
+// browser with the log-in token (scripts/account.ts).
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Section from "../components/layout/Section.astro";
+import FormField from "../components/account/FormField.astro";
+
+const tabs = [
+	{ id: "profile", label: "Профиль" },
+	{ id: "favorites", label: "Избранное" },
+	{ id: "follows", label: "Подписки" },
+];
+---
+<BaseLayout title="Мой профиль" description="Профиль на Foodies Academy." breadcrumbs={[{ label: "Профиль" }]} noindex>
+	<Section>
+		<div class="profile" hidden>
+			<div class="profile__head flex gap-15 items-center">
+				<h1 class="profile__title"></h1>
+				<button type="button" class="profile__logout btn btn--secondary">Выйти</button>
+			</div>
+
+			<div class="profile__tabs flex gap-10" role="tablist" aria-label="Разделы профиля">
+				{tabs.map((tab) => (
+					<button type="button" class="profile__tab" role="tab" id={`tab-${tab.id}`} aria-controls={`panel-${tab.id}`} data-tab={tab.id} aria-selected="false">
+						{tab.label} <span class="profile__tab-count" data-count={tab.id}></span>
+					</button>
+				))}
+			</div>
+
+			<section class="profile__panel" role="tabpanel" id="panel-profile" aria-labelledby="tab-profile" hidden>
+				<form class="profile__form" data-form="details" novalidate>
+					<h2 class="profile__subtitle">Личные данные</h2>
+					<FormField name="name" label="Отображаемое имя" autocomplete="nickname" required minlength={2} hint="Так вас видят в отзывах" />
+					<div class="profile__row">
+						<FormField name="firstName" label="Имя" autocomplete="given-name" />
+						<FormField name="lastName" label="Фамилия" autocomplete="family-name" />
+					</div>
+					<FormField name="description" label="О себе" multiline />
+					<button type="submit" class="btn">Сохранить</button>
+				</form>
+
+				<form class="profile__form" data-form="security" novalidate>
+					<h2 class="profile__subtitle">E-mail и пароль</h2>
+					<FormField name="email" label="E-mail" type="email" autocomplete="email" required />
+					<FormField name="password" label="Новый пароль" type="password" autocomplete="new-password" minlength={8} hint="Оставьте пустым, чтобы не менять" />
+					<FormField name="currentPassword" label="Текущий пароль" type="password" autocomplete="current-password" hint="Нужен, чтобы сменить e-mail или пароль" />
+					<button type="submit" class="btn">Сохранить</button>
+				</form>
+			</section>
+
+			<section class="profile__panel" role="tabpanel" id="panel-favorites" aria-labelledby="tab-favorites" hidden>
+				<p class="profile__empty" data-empty="favorites" hidden>Здесь будут рецепты, которые вы сохраните кнопкой с закладкой на странице рецепта.</p>
+				<ul class="profile__cards" data-list="favorites"></ul>
+			</section>
+
+			<section class="profile__panel" role="tabpanel" id="panel-follows" aria-labelledby="tab-follows" hidden>
+				<h2 class="profile__subtitle">Новые рецепты с прошлого визита</h2>
+				<p class="profile__since" data-since></p>
+				<p class="profile__empty" data-empty="new" hidden>С прошлого визита новых рецептов у ваших авторов нет.</p>
+				<ul class="profile__cards" data-list="new"></ul>
+
+				<h2 class="profile__subtitle">Мои авторы</h2>
+				<p class="profile__empty" data-empty="authors" hidden>Подпишитесь на автора на его странице — его новые рецепты появятся здесь.</p>
+				<ul class="profile__authors" data-list="authors"></ul>
+			</section>
+		</div>
+	</Section>
+</BaseLayout>
+
+<script>
+	import { api, goToLogin, loadMe, logout, patchMe, type Me, type User } from "../scripts/account";
+	import { clearErrors, formValues, showError } from "../scripts/accountForm";
+	import { showToast } from "../scripts/toast";
+	import { recipesWord } from "../utils/plural";
+
+	type RecipeCard = { slug: string; title: string; image: string; time: string; categories: { course: Record<string, string> } };
+	type AuthorCard = { slug: string; name: string; avatar: string; recipes: number };
+
+	const root = document.querySelector<HTMLElement>(".profile")!;
+	const $ = <T extends HTMLElement>(selector: string) => root.querySelector<T>(selector)!;
+	const el = <K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text = "") =>
+		Object.assign(document.createElement(tag), { className, textContent: text });
+
+	loadMe().then((me) => {
+		if (!me) return goToLogin();
+		root.hidden = false;
+		showUser(me.user);
+		setCount("favorites", me.favorites.length);
+		setCount("follows", me.follows.length);
+		selectTab(location.hash.slice(1));
+		setupForms();
+	});
+
+	function showUser(user: User) {
+		$("h1").textContent = user.name;
+		for (const form of root.querySelectorAll<HTMLFormElement>(".profile__form")) {
+			for (const input of form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("input, textarea")) {
+				const value = user[input.name as keyof User];
+				input.value = typeof value === "string" && input.type !== "password" ? value : "";
+			}
+		}
+	}
+
+	function setCount(tab: string, n: number) {
+		$(`[data-count="${tab}"]`).textContent = n ? String(n) : "";
+	}
+
+	// Tabs, remembered in the URL hash (#favorites), so the header's star links straight to them.
+	const loaded = new Set<string>();
+	function selectTab(id: string) {
+		if (!["profile", "favorites", "follows"].includes(id)) id = "profile";
+		root.querySelectorAll<HTMLButtonElement>("[data-tab]").forEach((tab) => tab.setAttribute("aria-selected", String(tab.dataset.tab === id)));
+		root.querySelectorAll<HTMLElement>(".profile__panel").forEach((panel) => (panel.hidden = panel.id !== `panel-${id}`));
+		history.replaceState(null, "", id === "profile" ? location.pathname : `#${id}`);
+		if (!loaded.has(id)) {
+			loaded.add(id);
+			if (id === "favorites") loadFavorites();
+			if (id === "follows") loadFollows();
+		}
+	}
+	root.querySelectorAll<HTMLButtonElement>("[data-tab]").forEach((tab) => tab.addEventListener("click", () => selectTab(tab.dataset.tab!)));
+	window.addEventListener("hashchange", () => selectTab(location.hash.slice(1)));
+
+	function setupForms() {
+		root.querySelectorAll<HTMLFormElement>(".profile__form").forEach((form) => {
+			form.addEventListener("submit", async (event) => {
+				event.preventDefault();
+				clearErrors(form);
+				const values = formValues(form);
+				if (form.dataset.form === "security" && !values.password) delete values.password;
+				const button = form.querySelector<HTMLButtonElement>("[type=submit]")!;
+				button.disabled = true;
+				try {
+					const user = await api<User>("/me", { method: "POST", body: values });
+					showUser(user);
+					await patchMe({ user });
+					showToast("Сохранено");
+				} catch (error) {
+					showError(form, error);
+				} finally {
+					button.disabled = false;
+				}
+			});
+		});
+		$(".profile__logout").addEventListener("click", async () => {
+			await logout();
+			location.href = "/";
+		});
+	}
+
+	function recipeItem(recipe: RecipeCard, onRemove?: () => void) {
+		const item = el("li", "profile-card");
+		const link = el("a", "profile-card__link");
+		link.href = `/recipe/${recipe.slug}`;
+		const image = el("span", "profile-card__img");
+		if (recipe.image) image.style.backgroundImage = `url("${recipe.image}")`;
+		const meta = [recipe.time, ...Object.values(recipe.categories.course)].filter(Boolean).join(" · ");
+		link.append(image, el("span", "profile-card__title", recipe.title), el("span", "profile-card__meta", meta));
+		item.append(link);
+		if (onRemove) {
+			const remove = el("button", "profile-card__remove", "Убрать");
+			remove.type = "button";
+			remove.setAttribute("aria-label", `Убрать «${recipe.title}» из избранного`);
+			remove.addEventListener("click", onRemove);
+			item.append(remove);
+		}
+		return item;
+	}
+
+	function fill(list: string, items: HTMLElement[]) {
+		$(`[data-list="${list}"]`).replaceChildren(...items);
+		$(`[data-empty="${list}"]`).hidden = items.length > 0;
+	}
+
+	async function loadFavorites() {
+		try {
+			const recipes = await api<RecipeCard[]>("/me/favorites");
+			const render = (list: RecipeCard[]) =>
+				fill("favorites", list.map((recipe) => recipeItem(recipe, async () => {
+					try {
+						const { favorites } = await api<Pick<Me, "favorites">>(`/me/favorites/${recipe.slug}`, { method: "DELETE" });
+						await patchMe({ favorites });
+						setCount("favorites", favorites.length);
+						recipes.splice(recipes.indexOf(recipe), 1);
+						render(recipes);
+						showToast("Убрано из избранного");
+					} catch (error) {
+						showToast(error instanceof Error ? error.message : "Не удалось убрать рецепт");
+					}
+				})));
+			render(recipes);
+		} catch {
+			showToast("Не удалось загрузить избранное");
+		}
+	}
+
+	async function loadFollows() {
+		try {
+			const data = await api<{ authors: AuthorCard[]; newRecipes: { since: string; recipes: RecipeCard[] } }>("/me/follows");
+			const since = new Date(data.newRecipes.since).toLocaleString("ru-RU", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
+			$("[data-since]").textContent = `Прошлый визит: ${since}`;
+			fill("new", data.newRecipes.recipes.map((recipe) => recipeItem(recipe)));
+			fill("authors", data.authors.map((author) => {
+				const item = el("li", "profile-author");
+				const link = el("a", "profile-author__link flex gap-12 items-center");
+				link.href = `/author/${author.slug}`;
+				const avatar = el("span", "profile-author__avatar", author.avatar ? "" : author.name.slice(0, 1));
+				if (author.avatar) avatar.style.backgroundImage = `url("${author.avatar}")`;
+				const text = el("span", "profile-author__text");
+				text.append(el("strong", "profile-author__name", author.name), el("span", "profile-author__meta", `${author.recipes} ${recipesWord(author.recipes)}`));
+				link.append(avatar, text);
+				item.append(link);
+				return item;
+			}));
+		} catch {
+			showToast("Не удалось загрузить подписки");
+		}
+	}
+</script>
+
+<style lang="less">
+.profile {
+	padding: 30px 0 60px;
+	&__head {
+		justify-content: space-between;
+		flex-wrap: wrap;
+		margin-bottom: 24px;
+	}
+	&__title {
+		font-size: 30px;
+		@media (max-width: 640px) {
+			font-size: 24px;
+		}
+	}
+	&__logout {
+		padding: 10px 20px;
+	}
+	&__tabs {
+		flex-wrap: wrap;
+		margin-bottom: 30px;
+		border-bottom: var(--border-width) solid var(--color-border-search-form);
+	}
+	&__tab {
+		padding: 12px 18px;
+		border: none;
+		border-bottom: 3px solid transparent;
+		background: none;
+		font: inherit;
+		font-weight: 700;
+		font-size: 15px;
+		color: var(--color-grey-dark);
+		cursor: pointer;
+		&[aria-selected="true"] {
+			color: var(--color-red);
+			border-bottom-color: var(--color-red);
+		}
+	}
+	&__tab-count {
+		font-weight: 400;
+		color: var(--color-grey);
+	}
+	&__form {
+		max-width: 560px;
+		margin-bottom: 40px;
+	}
+	&__row {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0 16px;
+		@media (max-width: 640px) {
+			grid-template-columns: 1fr;
+		}
+	}
+	&__subtitle {
+		font-size: 20px;
+		margin: 0 0 16px;
+	}
+	&__since {
+		margin: -8px 0 16px;
+		font-size: 13px;
+		color: var(--color-grey);
+	}
+	&__empty {
+		margin-bottom: 30px;
+		color: var(--color-grey-dark);
+	}
+	&__cards {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+		gap: 20px;
+		margin-bottom: 40px;
+	}
+	&__authors {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+		gap: 16px;
+	}
+}
+
+// Built by the script, hence :global.
+.profile :global(.profile-card) {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	background: var(--color-white);
+	border: var(--border-width) solid var(--color-border-search-form);
+	border-radius: var(--border-radius-25);
+}
+
+.profile :global(.profile-card__link) {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	gap: 6px;
+	padding-bottom: 14px;
+	&:hover :global(.profile-card__title) {
+		color: var(--color-red);
+	}
+}
+
+.profile :global(.profile-card__img) {
+	aspect-ratio: 4 / 3;
+	background: var(--color-light-grey) center / cover no-repeat;
+}
+
+.profile :global(.profile-card__title) {
+	padding: 6px 16px 0;
+	font-weight: 700;
+	line-height: 1.3;
+}
+
+.profile :global(.profile-card__meta) {
+	padding: 0 16px;
+	font-size: 13px;
+	color: var(--color-grey);
+}
+
+.profile :global(.profile-card__remove) {
+	margin: 0 16px 16px;
+	padding: 8px;
+	border: var(--border-width) solid var(--color-border-search-form);
+	border-radius: var(--border-radius-1000);
+	background: none;
+	font: inherit;
+	font-size: 13px;
+	cursor: pointer;
+	&:hover {
+		border-color: var(--color-red);
+		color: var(--color-red);
+	}
+}
+
+.profile :global(.profile-author__link) {
+	padding: 14px;
+	border: var(--border-width) solid var(--color-border-search-form);
+	border-radius: var(--border-radius-25);
+	background: var(--color-white);
+	&:hover {
+		border-color: var(--color-red);
+	}
+}
+
+.profile :global(.profile-author__avatar) {
+	flex: none;
+	display: grid;
+	place-items: center;
+	width: 52px;
+	height: 52px;
+	border-radius: 50%;
+	background: var(--color-light-grey) center / cover no-repeat;
+	font-weight: 700;
+}
+
+.profile :global(.profile-author__text) {
+	display: flex;
+	flex-direction: column;
+}
+
+.profile :global(.profile-author__meta) {
+	font-size: 13px;
+	color: var(--color-grey);
+}
+</style>

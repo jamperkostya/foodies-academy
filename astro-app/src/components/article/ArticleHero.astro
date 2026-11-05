@@ -1,16 +1,21 @@
 ---
 // Hero of a recipe or lifehack page: text, actions and the cover with a video button.
 // The "meta" slot goes under the description (rating for a recipe, author for a lifehack).
+// The "media" slot replaces the cover (a recipe's photo / video carousel).
 import Icon from "../ui/Icon.astro";
 
 interface Props {
 	badge: string;
 	// Next to the badge, e.g. "🇮🇹 Итальянская кухня".
 	label?: string;
+	// Make the badge / label links, one per item (a recipe's dish types and countries).
+	badgeLinks?: { name: string; href: string }[];
+	labelLinks?: { name: string; href: string }[];
 	title: string;
 	// Smaller second line of the title.
 	titleAccent?: string;
-	description: string;
+	// Hidden when empty.
+	description?: string;
 	image: string;
 	// Main button: jumps to a section of the page.
 	anchor: { href: string; label: string };
@@ -18,28 +23,39 @@ interface Props {
 	withVideo?: boolean;
 	videoLabel?: string;
 	printable?: boolean;
+	// Recipe for the bookmark button (the visitor's favourites). Without it the button is hidden.
+	favorite?: { slug: string; id: number };
 }
 
-const { badge, label, title, titleAccent, description, image, anchor, withVideo = true, videoLabel = "Смотреть видео", printable = false } = Astro.props;
+// Rendered first: a slot filled by a false condition still "exists", but renders to "".
+const media = Astro.slots.has("media") ? (await Astro.slots.render("media")).trim() : "";
+
+const { badge, label, badgeLinks, labelLinks, title, titleAccent, description, image, anchor, withVideo = true, videoLabel = "Смотреть видео", printable = false, favorite } = Astro.props;
 ---
 <section class="article-hero">
 	<div class="article-hero__container container grid gap-40 items-center">
 		<div class="article-hero__content grid gap-30">
 			<div class="article-hero__tags flex gap-10 items-center">
-				<span class="badge badge--static">{badge}</span>
-				{label && <span class="article-hero__label">{label}</span>}
+				{badgeLinks?.length
+					? badgeLinks.map((link) => <a class="badge badge--static article-hero__link" href={link.href}>{link.name}</a>)
+					: <span class="badge badge--static">{badge}</span>}
+				{labelLinks?.length
+					? labelLinks.map((link) => <a class="article-hero__label article-hero__link" href={link.href}>{link.name}</a>)
+					: label && <span class="article-hero__label">{label}</span>}
 			</div>
 			<h1 class="article-hero__title section-title">
 				{title}
 				{titleAccent && <span class="article-hero__accent section-title__accent">{titleAccent}</span>}
 			</h1>
-			<p class="article-hero__desc">{description}</p>
+			{description && <p class="article-hero__desc">{description}</p>}
 			{Astro.slots.has("meta") && <div class="article-hero__meta flex items-center gap-10"><slot name="meta" /></div>}
 			<div class="article-hero__actions flex flex-wrap items-center gap-20 no-print">
 				<a href={anchor.href} class="btn">{anchor.label}</a>
-				<button type="button" class="article-hero__icon-btn" data-hero-save aria-label="Сохранить в избранное" aria-pressed="false">
-					<Icon name="bookmark" width={18} height={18} />
-				</button>
+				{favorite && (
+					<button type="button" class="article-hero__icon-btn" data-hero-save={favorite.slug} data-recipe-id={favorite.id} aria-label="Сохранить в избранное" aria-pressed="false">
+						<Icon name="bookmark" width={18} height={18} />
+					</button>
+				)}
 				<button type="button" class="article-hero__icon-btn" data-hero-share aria-label="Поделиться">
 					<Icon name="share" width={18} height={18} />
 				</button>
@@ -51,12 +67,16 @@ const { badge, label, title, titleAccent, description, image, anchor, withVideo 
 			</div>
 		</div>
 		<div class="article-hero__media">
-			<div class="article-hero__img" style={`background-image: url('${image}')`}></div>
-			{withVideo && (
-				<button type="button" class="article-hero__play no-print" data-hero-video>
-					<Icon name="youtube-play" width={42} height={29} />
-					{videoLabel}
-				</button>
+			{media ? <Fragment set:html={media} /> : (
+				<Fragment>
+					<div class="article-hero__img" style={`background-image: url('${image}')`}></div>
+					{withVideo && (
+						<button type="button" class="article-hero__play no-print" data-hero-video>
+							<Icon name="youtube-play" width={42} height={29} />
+							{videoLabel}
+						</button>
+					)}
+				</Fragment>
 			)}
 		</div>
 	</div>
@@ -64,13 +84,39 @@ const { badge, label, title, titleAccent, description, image, anchor, withVideo 
 
 <script>
 	import { showToast } from "../../scripts/toast";
+	import { api, goToLogin, loadMe, patchMe } from "../../scripts/account";
 
+	// Favourites live in the visitor's account; logged-out visitors are sent to log in first.
 	const saveBtn = document.querySelector<HTMLButtonElement>("[data-hero-save]");
-	saveBtn?.addEventListener("click", () => {
-		const saved = saveBtn.classList.toggle("is-active");
-		saveBtn.setAttribute("aria-pressed", String(saved));
-		showToast(saved ? "Сохранено в избранное" : "Убрано из избранного");
-	});
+	if (saveBtn) {
+		const slug = saveBtn.dataset.heroSave!;
+		const recipeId = Number(saveBtn.dataset.recipeId);
+		const paint = (saved: boolean) => {
+			saveBtn.classList.toggle("is-active", saved);
+			saveBtn.setAttribute("aria-pressed", String(saved));
+			saveBtn.setAttribute("aria-label", saved ? "Убрать из избранного" : "Сохранить в избранное");
+		};
+		loadMe().then((me) => paint(Boolean(me?.favorites.includes(recipeId))));
+
+		saveBtn.addEventListener("click", async () => {
+			if (!(await loadMe())) {
+				showToast("Войдите, чтобы сохранять рецепты");
+				return setTimeout(goToLogin, 900);
+			}
+			const saved = saveBtn.getAttribute("aria-pressed") !== "true";
+			saveBtn.disabled = true;
+			try {
+				const { favorites } = await api<{ favorites: number[] }>(`/me/favorites/${slug}`, { method: saved ? "PUT" : "DELETE" });
+				await patchMe({ favorites });
+				paint(saved);
+				showToast(saved ? "Сохранено в избранное" : "Убрано из избранного");
+			} catch (error) {
+				showToast(error instanceof Error ? error.message : "Не удалось сохранить");
+			} finally {
+				saveBtn.disabled = false;
+			}
+		});
+	}
 
 	document.querySelector("[data-hero-share]")?.addEventListener("click", async () => {
 		const url = window.location.href;
@@ -92,6 +138,22 @@ const { badge, label, title, titleAccent, description, image, anchor, withVideo 
 </script>
 
 <style lang="less">
+.article-hero__tags {
+	flex-wrap: wrap;
+}
+
+// Dish type / country linking to its category page.
+.article-hero__link {
+	transition: opacity .15s, color .15s;
+	&.badge:hover {
+		opacity: .85;
+	}
+	&.article-hero__label:hover {
+		color: var(--color-red);
+		text-decoration: underline;
+	}
+}
+
 .article-hero {
 	padding: 25px 0;
 	background: var(--color-gradient-violet);

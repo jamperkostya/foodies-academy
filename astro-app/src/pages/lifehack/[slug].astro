@@ -11,30 +11,47 @@ import AuthorCard from "../../components/article/AuthorCard.astro";
 import SidebarList from "../../components/article/SidebarList.astro";
 import NewsletterCard from "../../components/article/NewsletterCard.astro";
 import Avatar from "../../components/ui/Avatar.astro";
-import { lifehacks } from "../../data/lifehacks";
+import SEOTextSection from "../../components/sections/SEOTextSection.astro";
 import type { Lifehack } from "../../types/lifehack";
 import { plural } from "../../utils/plural";
 
-export function getStaticPaths() {
-	return lifehacks.map((lifehack) => ({ params: { slug: lifehack.slug }, props: { lifehack } }));
+const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+
+// One page per lifehack in WordPress.
+export async function getStaticPaths() {
+	// getStaticPaths can't see the constants above, so the URL is read again here.
+	const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+	const { data }: { data: Lifehack[] } = await fetch(`${API_URL}/lifehacks`).then((r) => r.json());
+
+	return data.map((lifehack) => ({ params: { slug: lifehack.slug } }));
 }
 
-interface Props {
-	lifehack: Lifehack;
+const { slug } = Astro.params;
+const response = await fetch(`${API_URL}/lifehacks/${slug}`);
+if (!response.ok) {
+	throw new Error(`Lifehack "${slug}" from ${API_URL}: HTTP ${response.status}`);
 }
+const { data: lifehack }: { data: Lifehack } = await response.json();
+const { data: lifehacks }: { data: Lifehack[] } = await fetch(`${API_URL}/lifehacks`).then((r) => r.json());
+// Comments are posted straight from the browser, so it needs Laravel's public URL.
+const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/api";
 
-const { lifehack } = Astro.props;
-
+const comments = lifehack.comments ?? [];
 const commentForms: [string, string, string] = ["комментарий", "комментария", "комментариев"];
-const commentsCount = `${lifehack.comments.length} ${plural(lifehack.comments.length, commentForms)}`;
+const commentsCount = `${comments.length} ${plural(comments.length, commentForms)}`;
 
+// Same category first, then the newest.
 const similar = lifehacks
 	.filter((item) => item.slug !== lifehack.slug)
+	.sort((a, b) => Number(b.category === lifehack.category) - Number(a.category === lifehack.category))
 	.slice(0, 3)
 	.map((item) => ({ title: item.title, meta: item.category, image: item.image, href: `/lifehack/${item.slug}` }));
 ---
 
 <BaseLayout
+	seo={lifehack.seo}
+	image={lifehack.image || undefined}
+	type="article"
 	title={lifehack.title}
 	description={lifehack.description}
 	breadcrumbs={[{ label: "Лайфхаки", href: "/lifehacks" }, { label: lifehack.title }]}>
@@ -44,7 +61,7 @@ const similar = lifehacks
 		badge="Лайфхаки"
 		label={lifehack.category}
 		title={lifehack.title}
-		titleAccent={lifehack.titleAccent}
+		titleAccent={lifehack.titleAccent || undefined}
 		description={lifehack.description}
 		image={lifehack.image}
 		anchor={{ href: "#comments", label: "К комментариям ↓" }}
@@ -62,34 +79,39 @@ const similar = lifehacks
 
 	<Section>
 		<ArticleLayout>
-			<p class="lifehack-intro">{lifehack.intro}</p>
+			{lifehack.intro && <p class="lifehack-intro">{lifehack.intro}</p>}
 
-			<ContentBlock title="Разбор" id="points">
-				<StepList steps={lifehack.points} />
-			</ContentBlock>
+			{lifehack.points.length > 0 && (
+				<ContentBlock title="Разбор" id="points">
+					<StepList steps={lifehack.points} />
+				</ContentBlock>
+			)}
 
-			<TipBox title={lifehack.tip.title}>{lifehack.tip.text}</TipBox>
+			{lifehack.tip.text && <TipBox title={lifehack.tip.title || "Совет"}>{lifehack.tip.text}</TipBox>}
 
 			<ContentBlock title="Комментарии" id="comments" class="no-print">
 				<span slot="hint" id="commentsCount">{commentsCount}</span>
 				<Reviews
-					reviews={lifehack.comments}
+					reviews={comments}
 					formTitle="Оставить комментарий"
 					placeholder="Что думаете?"
 					submitLabel="Отправить"
-					successMessage="Комментарий опубликован"
+					successMessage="Спасибо! Комментарий появится после проверки модератором"
 					countId="commentsCount"
 					countForms={commentForms}
+					action={`${PUBLIC_API_URL}/lifehacks/${lifehack.slug}/comments`}
 				/>
 			</ContentBlock>
 
 			<Fragment slot="sidebar">
-				<AuthorCard name={lifehack.author.name} info={lifehack.author.info} buttonLabel="Профиль автора" href={`/author/${lifehack.author.slug}`} />
+				<AuthorCard name={lifehack.author.name} info={lifehack.author.info} buttonLabel="Профиль автора" href={lifehack.author.info ? `/author/${lifehack.author.slug}` : undefined} />
 				<SidebarList title="Похожие лайфхаки" items={similar} />
 				<NewsletterCard title="Лайфхак недели на почту" />
 			</Fragment>
 		</ArticleLayout>
 	</Section>
+
+	<SEOTextSection html={lifehack.seoText} />
 </BaseLayout>
 
 <style lang="less">

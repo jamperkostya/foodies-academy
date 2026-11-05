@@ -1,10 +1,15 @@
 name: Deploy Astro to Hestia
 
+# The static site (dev.foodies.academy) built from the Laravel API. Server setup: deploy/hestia/README.md.
+
 on:
   push:
     branches: [main]
     paths: ['astro-app/**', '.github/workflows/deploy.yml']
   workflow_dispatch:
+  # Sent by Laravel (php artisan site:rebuild) after WordPress content changes, and every night.
+  repository_dispatch:
+    types: [content-changed]
 
 concurrency: deploy-production
 
@@ -26,6 +31,11 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+        env:
+          # The production Laravel API the pages are built from (repository variables).
+          API_URL: ${{ vars.API_URL }}
+          PUBLIC_API_URL: ${{ vars.PUBLIC_API_URL }}
+          SITE_URL: ${{ vars.SITE_URL }}
 
       - name: Setup SSH
         run: |

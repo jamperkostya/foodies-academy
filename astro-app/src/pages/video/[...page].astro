@@ -1,0 +1,63 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../../components/layout/PageHero.astro";
+import CardGrid from "../../components/ui/CardGrid.astro";
+import Pagination from "../../components/ui/Pagination.astro";
+import VideoCard from "../../components/videos/VideoCard.astro";
+import type { VideoPage } from "../../types/video";
+import { PER_PAGE, pageNumber, pageParams } from "../../utils/pagination";
+import { plural } from "../../utils/plural";
+
+const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+
+// Every video recipe, newest first, split into pages of 24.
+export async function getStaticPaths() {
+	// getStaticPaths can't see the constants above, so the URL is read again here.
+	const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+	const { data }: { data: VideoPage } = await fetch(`${API_URL}/videos?per_page=1`).then((r) => r.json());
+
+	return pageParams(data.total).map((page) => ({ params: { page } }));
+}
+
+const page = pageNumber(Astro.params.page);
+const response = await fetch(`${API_URL}/videos?page=${page}&per_page=${PER_PAGE}`);
+if (!response.ok) {
+	throw new Error(`Videos page ${page} from ${API_URL}: HTTP ${response.status}`);
+}
+const { data }: { data: VideoPage } = await response.json();
+
+const description = `${data.total} ${plural(data.total, ["видеорецепт", "видеорецепта", "видеорецептов"])} с YouTube-канала Foodies Academy: смотрите, как готовить, шаг за шагом.`;
+---
+<BaseLayout
+	title={`Видеорецепты${page > 1 ? ` — страница ${page}` : ""}`}
+	description={description}
+	breadcrumbs={[{ label: "Видеорецепты" }]}>
+	<PageHero slot="hero" eyebrow="YouTube-канал Foodies Academy" description={description}>
+		<span class="page-hero__accent">Видео</span>рецепты
+	</PageHero>
+
+	<section class="video-list section-item">
+		<CardGrid minCardWidth={260}>
+			{data.videos.map((video) => (
+				<VideoCard
+					href={`/video/${video.slug}`}
+					size="compact"
+					image={video.image}
+					title={video.title}
+					views={video.views}
+					likes={video.likes}
+					comments={video.comments}
+					rating={video.rating}
+					videoId={video.youtubeId}
+				/>
+			))}
+		</CardGrid>
+		<Pagination page={page} pages={data.pages} base="/video" />
+	</section>
+</BaseLayout>
+
+<style lang="less">
+.video-list {
+	padding-top: 25px;
+}
+</style>

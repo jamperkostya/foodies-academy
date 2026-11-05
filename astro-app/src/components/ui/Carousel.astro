@@ -7,14 +7,16 @@ interface Props {
 	variant: "recipes" | "categories" | "videos";
 	// Filter pills above the row; each card then needs a `data-groups` attribute.
 	groups?: string[];
-	// "Смотреть все" link at the end of the filters row.
+	// "Смотреть все" link at the end of the filters row. Without filters the section puts it
+	// next to its title instead (Section's href).
 	href?: string;
 }
 
 const { variant, groups, href } = Astro.props;
 ---
 <div data-filterable-carousel>
-	{groups && <Filters groups={groups} href={href} />}
+	{/* One group is no choice: filters need at least two. */}
+	{groups && groups.length > 1 && <Filters groups={groups} href={href} />}
 	<div class={`carousel carousel--${variant}`}>
 		<div class="carousel__track">
 			<slot />

@@ -1,6 +1,7 @@
 ---
 // Review form and list: recipe reviews (withRating) or lifehack comments.
-// A posted review is added to the top of the list; nothing is sent anywhere yet.
+// With `action` the review is POSTed there ({name, text, rating}) and shown only if
+// the server accepts it; without it, it is just added to the top of the list.
 import ReviewItem from "./ReviewItem.astro";
 import type { Review } from "../../types/review";
 
@@ -15,6 +16,10 @@ interface Props {
 	// kept up to date as reviews are posted. `countForms` are the plural forms.
 	countId?: string;
 	countForms?: [string, string, string];
+	// API endpoint that saves the review, e.g. ".../api/recipes/borscht/comments".
+	action?: string;
+	// Shown instead of the list while there are no reviews yet.
+	emptyText?: string;
 }
 
 const {
@@ -26,11 +31,13 @@ const {
 	successMessage = "Спасибо за отзыв!",
 	countId,
 	countForms = ["отзыв", "отзыва", "отзывов"],
+	action,
+	emptyText,
 } = Astro.props;
 
 const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 звезды", "5 звёзд"];
 ---
-<div class="reviews" data-success={successMessage} data-count-id={countId} data-count-forms={countForms.join(",")}>
+<div class="reviews" data-success={successMessage} data-count-id={countId} data-count-forms={countForms.join(",")} data-action={action}>
 	<form class="review-form no-print" novalidate>
 		<h3 class="review-form__title">{formTitle}</h3>
 		{withRating && (
@@ -44,6 +51,8 @@ const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 з�
 		<textarea class="review-form__field" name="comment" rows="3" placeholder={placeholder} aria-label={formTitle} required></textarea>
 		<button type="submit" class="btn">{submitLabel}</button>
 	</form>
+
+	{emptyText && reviews.length === 0 && <p class="reviews__empty">{emptyText}</p>}
 
 	<div class="reviews__list flex">
 		{reviews.map((review) => <ReviewItem review={review} />)}
@@ -89,7 +98,7 @@ const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 з�
 		});
 		form.querySelector(".review-form__rating")?.addEventListener("mouseleave", () => paintStars(rating));
 
-		form.addEventListener("submit", (event) => {
+		form.addEventListener("submit", async (event) => {
 			event.preventDefault();
 			const data = new FormData(form);
 			const name = String(data.get("name") ?? "").trim();
@@ -100,6 +109,28 @@ const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 з�
 				return;
 			}
 
+			if (root.dataset.action) {
+				const button = form.querySelector<HTMLButtonElement>("[type=submit]")!;
+				button.disabled = true;
+				try {
+					const response = await fetch(root.dataset.action, {
+						method: "POST",
+						headers: { "Content-Type": "application/json", Accept: "application/json" },
+						body: JSON.stringify({ name, text, rating: rating || null }),
+					});
+					if (!response.ok) {
+						const error = await response.json().catch(() => ({}));
+						showToast(response.status === 429 ? "Слишком много отзывов, попробуйте через минуту" : error.message ?? "Не удалось отправить отзыв");
+						return;
+					}
+				} catch {
+					showToast("Не удалось отправить отзыв, проверьте интернет");
+					return;
+				} finally {
+					button.disabled = false;
+				}
+			}
+
 			// User text only ever goes in through textContent.
 			const review = template.content.firstElementChild!.cloneNode(true) as HTMLElement;
 			review.querySelector(".avatar")!.textContent = initials(name);
@@ -107,6 +138,7 @@ const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 з�
 			review.querySelector(".review__text")!.textContent = text;
 			review.querySelector<HTMLElement>(".stars")?.style.setProperty("--stars-fill", `${(rating / 5) * 100}%`);
 			list.prepend(review);
+			root.querySelector(".reviews__empty")?.remove();
 			updateCount();
 
 			form.reset();
@@ -117,6 +149,13 @@ const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 з�
 </script>
 
 <style lang="less">
+.reviews__empty {
+	font-size: 15px;
+	line-height: 1.5;
+	color: var(--color-grey);
+	text-align: center;
+}
+
 .reviews__list {
 	flex-direction: column;
 	gap: 24px;

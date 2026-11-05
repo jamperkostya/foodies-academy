@@ -1,0 +1,56 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PageHero from "../../../components/layout/PageHero.astro";
+import CardGrid from "../../../components/ui/CardGrid.astro";
+import RecipeCard from "../../../components/recipes/RecipeCard.astro";
+import type { RecipeCollection } from "../../../types/recipeCollection";
+import { recipesWord } from "../../../utils/plural";
+import Pagination from "../../../components/ui/Pagination.astro";
+import { pageHref, pageNumber, pageParams } from "../../../utils/pagination";
+
+const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+
+// Every collection, split into pages of 24 recipes.
+export async function getStaticPaths() {
+	// getStaticPaths can't see the constants above, so the URL is read again here.
+	const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+	const { data: collections }: { data: RecipeCollection[] } = await fetch(`${API_URL}/collections`).then((r) => r.json());
+
+	return collections.flatMap((collection) =>
+		pageParams(collection.count).map((page) => ({ params: { slug: collection.slug, page } })),
+	);
+}
+
+const { slug } = Astro.params;
+const page = pageNumber(Astro.params.page);
+const response = await fetch(`${API_URL}/collections/${slug}?page=${page}`);
+if (!response.ok) {
+	throw new Error(`Collection "${slug}" from ${API_URL}: HTTP ${response.status}`);
+}
+const { data: collection }: { data: RecipeCollection & { total: number; pages: number } } = await response.json();
+const recipes = collection.recipes ?? [];
+const count = collection.total;
+
+const description = `${count} ${recipesWord(count)} ${collection.title.toLowerCase()}: самые популярные у наших читателей — первыми.`;
+---
+<BaseLayout
+	title={`Рецепты ${collection.title.toLowerCase()}${page > 1 ? ` — страница ${page}` : ""}`}
+	description={description}
+	breadcrumbs={[{ label: "Подборки" }, { label: collection.title }]}>
+	<PageHero slot="hero" eyebrow="Подборка" description={description}>
+		Рецепты <span class="page-hero__accent">{collection.title.toLowerCase()}</span>
+	</PageHero>
+
+	<section class="collection section-item">
+		<CardGrid minCardWidth={260}>
+			{recipes.map((recipe) => <RecipeCard recipe={recipe} />)}
+		</CardGrid>
+		<Pagination page={page} pages={collection.pages} base={`/collections/${slug}`} />
+	</section>
+</BaseLayout>
+
+<style lang="less">
+.collection {
+	padding-top: 25px;
+}
+</style>

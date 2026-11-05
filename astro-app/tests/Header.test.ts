@@ -37,8 +37,9 @@ describe("Header", () => {
 		expect(html).toMatch(/id="categories-menu-panel"[^>]*hidden/);
 	});
 
-	it("gives every icon-only button an accessible name", () => {
-		const iconButtons = [...html.matchAll(/<button[^>]*class="header__icon-btn[^>]*>/g)];
+	it("gives every icon-only link an accessible name", () => {
+		// Favourites and profile are links (to the log-in or profile page).
+		const iconButtons = [...html.matchAll(/<(?:button|a)[^>]*class="header__icon-btn[^>]*>/g)];
 		expect(iconButtons.length).toBeGreaterThan(0);
 		for (const [button] of iconButtons) {
 			expect(button).toMatch(/aria-label="[^"]+"/);
@@ -60,7 +61,9 @@ describe("Header", () => {
 	});
 
 	it("gives the mobile menu the site sections and a collapsed categories list", () => {
-		expect(html).toMatch(/class="mobile-nav__link"[^>]*href="\/blog"/);
+		// The blog is the news section now.
+		expect(html).toMatch(/class="mobile-nav__link"[^>]*href="\/news"/);
+		expect(html).not.toContain('href="/blog"');
 		expect(html).toMatch(/class="mobile-nav__link"[^>]*href="\/lifehacks"/);
 		expect(html).toMatch(/aria-expanded="false"[^>]*aria-controls="mobile-nav-categories"/);
 		expect(html).toMatch(/id="mobile-nav-categories"[^>]*hidden/);

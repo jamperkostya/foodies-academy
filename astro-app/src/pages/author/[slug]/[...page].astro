@@ -1,0 +1,259 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Section from "../../../components/layout/Section.astro";
+import CardGrid from "../../../components/ui/CardGrid.astro";
+import Avatar from "../../../components/ui/Avatar.astro";
+import Pagination from "../../../components/ui/Pagination.astro";
+import RecipeCard from "../../../components/recipes/RecipeCard.astro";
+import NewsCard from "../../../components/news/NewsCard.astro";
+import AuthorRating from "../../../components/article/AuthorRating.astro";
+import AuthorFollow from "../../../components/article/AuthorFollow.astro";
+import type { AuthorProfile, AuthorSummary } from "../../../types/author";
+import { pageNumber, pageParams } from "../../../utils/pagination";
+import { plural, recipesWord } from "../../../utils/plural";
+
+const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+
+// Every author with recipes, split into pages of 24 recipes.
+export async function getStaticPaths() {
+	// getStaticPaths can't see the constants above, so the URL is read again here.
+	const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+	const { data: authors }: { data: AuthorSummary[] } = await fetch(`${API_URL}/authors`).then((r) => r.json());
+
+	return authors.flatMap((author) => pageParams(author.recipes).map((page) => ({ params: { slug: author.slug, page } })));
+}
+
+const { slug } = Astro.params;
+const page = pageNumber(Astro.params.page);
+const response = await fetch(`${API_URL}/authors/${slug}?page=${page}`);
+if (!response.ok) {
+	throw new Error(`Author "${slug}" from ${API_URL}: HTTP ${response.status}`);
+}
+const { data: author }: { data: AuthorProfile } = await response.json();
+// The browser rates the author straight in Laravel, so it needs the public URL.
+const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/api";
+
+// Only what WordPress has: no rating without rated recipes, no news tab without news.
+const stats = [
+	{ value: author.total.toLocaleString("ru-RU"), label: recipesWord(author.total) },
+	{ value: author.news.length, label: plural(author.news.length, ["новость", "новости", "новостей"]) },
+	{ value: author.posts.length, label: plural(author.posts.length, ["статья", "статьи", "статей"]) + " в блоге" },
+	{ value: author.rating, label: author.ratingCount ? "рейтинг автора" : "средний рейтинг рецептов" },
+].filter((stat) => stat.value);
+
+// The news tab only on the first page: the other pages are more of the recipes.
+const tabs = [
+	{ id: "recipes", label: "Рецепты", count: author.total },
+	{ id: "news", label: "Новости", count: page === 1 ? author.news.length : 0 },
+	{ id: "posts", label: "Блог", count: page === 1 ? author.posts.length : 0 },
+].filter((tab) => tab.count > 0);
+---
+<BaseLayout
+	seo={page === 1 ? author.seo : null}
+	image={author.avatar || undefined}
+	title={`${author.name}${page > 1 ? ` — страница ${page}` : ""}`}
+	description={`${author.name}: ${author.total} ${recipesWord(author.total)} на Foodies Academy.`}
+	breadcrumbs={[{ label: "Авторы", href: "/authors" }, { label: author.name }]}>
+
+	<section slot="hero" class="author-hero">
+		<div class="author-hero__inner container">
+			<Avatar name={author.name} src={author.avatar} size="xl" />
+			<div>
+				<h1 class="author-hero__name">{author.name}</h1>
+				<p class="author-hero__role">На Foodies Academy с {author.since} года</p>
+
+				<ul class="author-hero__stats">
+					{stats.map((stat) => (
+						<li class="author-hero__stat">
+							<strong class="author-hero__stat-value">{stat.value}</strong>
+							<span class="author-hero__stat-label">{stat.label}</span>
+						</li>
+					))}
+				</ul>
+
+				<AuthorRating slug={author.slug} action={`${PUBLIC_API_URL}/authors/${author.slug}/rating`} />
+				<AuthorFollow slug={author.slug} id={author.id} />
+			</div>
+		</div>
+	</section>
+
+	<Section>
+		{author.bio && <p class="author-bio">{author.bio}</p>}
+
+		{tabs.length > 1 && (
+			<div class="author-tabs" role="tablist" aria-label="Материалы автора">
+				{tabs.map((tab, i) => (
+					<button
+						type="button"
+						class:list={["author-tabs__btn", { "is-active": i === 0 }]}
+						role="tab"
+						id={`tab-${tab.id}`}
+						aria-controls={`panel-${tab.id}`}
+						aria-selected={String(i === 0)}
+						tabindex={i === 0 ? undefined : "-1"}
+					>
+						{tab.label} <span class="author-tabs__count">({tab.count})</span>
+					</button>
+				))}
+			</div>
+		)}
+
+		<div class="author-tabs__panel" role="tabpanel" id="panel-recipes" aria-labelledby="tab-recipes">
+			<CardGrid minCardWidth={260}>
+				{author.recipes.map((recipe) => <RecipeCard recipe={recipe} />)}
+			</CardGrid>
+			<Pagination page={page} pages={author.pages} base={`/author/${slug}`} />
+		</div>
+		{tabs.some((tab) => tab.id === "news") && (
+			<div class="author-tabs__panel" role="tabpanel" id="panel-news" aria-labelledby="tab-news" hidden>
+				<CardGrid minCardWidth={280}>
+					{author.news.map((item) => <NewsCard news={item} />)}
+				</CardGrid>
+			</div>
+		)}
+		{tabs.some((tab) => tab.id === "posts") && (
+			<div class="author-tabs__panel" role="tabpanel" id="panel-posts" aria-labelledby="tab-posts" hidden>
+				<CardGrid minCardWidth={280}>
+					{author.posts.map((item) => <NewsCard news={item} base="/blog" />)}
+				</CardGrid>
+			</div>
+		)}
+	</Section>
+</BaseLayout>
+
+<style lang="less">
+.author-hero {
+	padding: 48px 0;
+	background: var(--color-cream);
+}
+
+.author-hero__inner {
+	display: flex;
+	align-items: center;
+	gap: 32px;
+	@media (max-width: 860px) {
+		flex-direction: column;
+		text-align: center;
+	}
+}
+
+.author-hero__name {
+	margin-bottom: 6px;
+	font-weight: 800;
+	font-size: 28px;
+}
+
+.author-hero__role {
+	margin-bottom: 16px;
+	font-size: 14px;
+	color: var(--color-grey-dark);
+}
+
+.author-hero__stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 32px;
+	margin-bottom: 18px;
+	@media (max-width: 860px) {
+		justify-content: center;
+		gap: 20px 32px;
+	}
+	@media (max-width: 520px) {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+.author-hero__stat-value {
+	display: block;
+	font-weight: 800;
+	font-size: 20px;
+	line-height: 1.3;
+}
+
+.author-hero__stat-label {
+	font-size: 12px;
+	letter-spacing: .5px;
+	text-transform: uppercase;
+	color: var(--color-grey-dark);
+}
+
+
+
+
+.author-bio {
+	max-width: 760px;
+	margin-bottom: 40px;
+	font-size: 16px;
+	line-height: 1.7;
+	color: var(--color-grey-dark);
+}
+
+.author-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 32px;
+	margin-bottom: 32px;
+	border-bottom: 2px solid var(--color-black-10);
+}
+
+.author-tabs__btn {
+	position: relative;
+	padding: 14px 4px;
+	background: none;
+	border: none;
+	font-weight: 700;
+	font-size: 14px;
+	text-transform: uppercase;
+	color: var(--color-grey-dark);
+	cursor: pointer;
+	&::after {
+		content: "";
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -2px;
+		height: 2px;
+		background: transparent;
+		transition: background .15s;
+	}
+	&:hover,
+	&.is-active {
+		color: var(--color-black);
+	}
+	&.is-active::after {
+		background: var(--color-red);
+	}
+}
+
+.author-tabs__count {
+	font-weight: 400;
+}
+</style>
+
+<script>
+	// Tabs: click or ←/→ switches the visible panel.
+	const tablist = document.querySelector<HTMLElement>(".author-tabs");
+	const tabs = [...(tablist?.querySelectorAll<HTMLButtonElement>(".author-tabs__btn") ?? [])];
+
+	const select = (tab: HTMLButtonElement) => {
+		tabs.forEach((t) => {
+			const isActive = t === tab;
+			t.classList.toggle("is-active", isActive);
+			t.setAttribute("aria-selected", String(isActive));
+			t.tabIndex = isActive ? 0 : -1;
+			const panel = document.getElementById(t.getAttribute("aria-controls") ?? "");
+			if (panel) panel.hidden = !isActive;
+		});
+	};
+
+	tabs.forEach((tab, i) => {
+		tab.addEventListener("click", () => select(tab));
+		tab.addEventListener("keydown", (e) => {
+			if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+			const next = tabs[(i + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length];
+			select(next);
+			next.focus();
+		});
+	});
+</script>

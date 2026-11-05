@@ -12,21 +12,27 @@ interface Props {
 }
 
 const { recipe, groups, class: className } = Astro.props;
+
+// { 257: "Вторые блюда", 260: "Закуски" } → "Вторые блюда, Закуски". Mock recipes have no categories yet.
+const course = Object.values(recipe.categories?.course ?? {}).join(', ');
+const country = Object.values(recipe.categories?.country ?? {}).join(', ');
 ---
 <a href={`/recipe/${recipe.slug}`} class:list={["recipe-card", className]} data-groups={groups && JSON.stringify(groups)}>
 	<div class="recipe-card__media">
 		<div class="recipe-card__img" style={`background-image: url('${recipe.image}')`}></div>
-		<span class="recipe-card__badge badge">{recipe.category}</span>
+		{course && <span class="recipe-card__badge badge">{course}</span>}
 	</div>
 	<div class="recipe-card__body">
 		<div class="recipe-card__meta">
-			<div class="recipe-card__country">
-				<span class="recipe-card__flag">🇮🇹</span> Итальянская
-			</div>
+			{country && (
+				<div class="recipe-card__country">
+					{country}
+				</div>
+			)}
 			<Stars rating={recipe.rating} />
 		</div>
 		<h3 class="recipe-card__title">{recipe.title}</h3>
-		<RecipeStats views={recipe.views} likes={recipe.likes} comments={recipe.comments} time={recipe.time} />
+		<RecipeStats views={recipe.views.short} likes={recipe.likes.short} comments={recipe.comments} time={recipe.time} />
 	</div>
 </a>
 

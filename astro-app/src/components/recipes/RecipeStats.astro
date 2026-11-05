@@ -1,20 +1,24 @@
 ---
 import Icon from "../ui/Icon.astro";
 
+// The API sends counters as short strings ("940", "1.2K"), mock data as numbers.
 interface Props {
-	views: number;
-	likes: number;
-	comments: number;
-	time: number;
+	views?: string | number;
+	likes?: string | number;
+	comments?: string | number;
+	time?: string | number;
 }
 
 const { views, likes, comments, time } = Astro.props;
+
+// Hide a stat when it is missing, empty or zero.
+const has = (value?: string | number) => Boolean(value) && value !== '0';
 ---
 <div class="recipe-stats">
 	<span class="recipe-stats__item flex gap-3"><Icon name="comment" width={16} height={16} />{comments}</span>
-	<span class="recipe-stats__item flex gap-3"><Icon name="like" width={16} height={16} />{likes}</span>
-	<span class="recipe-stats__item flex gap-3"><Icon name="views" width={16} height={16} />{views}</span>
-	<span class="recipe-stats__item recipe-stats__item--time flex gap-3"><Icon name="clock" width={16} height={16} />{time}</span>
+	{has(likes) && <span class="recipe-stats__item flex gap-3"><Icon name="like" width={16} height={16} />{likes}</span>}
+	{has(views) && <span class="recipe-stats__item flex gap-3"><Icon name="views" width={16} height={16} />{views}</span>}
+	{has(time) && <span class="recipe-stats__item recipe-stats__item--time flex gap-3"><Icon name="clock" width={16} height={16} />{time}</span>}
 </div>
 
 <style lang="less">
@@ -27,12 +31,12 @@ const { views, likes, comments, time } = Astro.props;
 	line-height: 17px;
 	color: var(--color-grey);
 	justify-content: space-between;
-	gap: 15px;
+	gap: 5px;
 }
 
 .recipe-stats__item--time::before {
 	content: '';
 	border-left: var(--border-width) solid var(--color-grey);
-	margin-right: 15px;
+	margin-right: 5px;
 }
 </style>

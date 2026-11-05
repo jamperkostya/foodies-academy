@@ -1,6 +1,6 @@
 ---
 import Icon from "../ui/Icon.astro";
-import { categoryColumns } from "../../data/categories";
+import { menuColumns, menuLinks } from "../../data/menu";
 ---
 <div class="categories-menu">
 	<button type="button" class="categories-menu__toggle" aria-expanded="false" aria-controls="categories-menu-panel">
@@ -10,20 +10,27 @@ import { categoryColumns } from "../../data/categories";
 
 	<nav class="categories-menu__panel" id="categories-menu-panel" aria-label="Категории" hidden>
 		<div class="categories-menu__columns">
-			{categoryColumns.map(({ group, items }) => (
+			{menuColumns.map(({ group, items, all }) => (
 				<div class="categories-menu__column">
 					<p class="categories-menu__title">{group}</p>
 					<ul class="categories-menu__list">
-						{items.map((category) => (
+						{items.map((item) => (
 							<li>
-								<a class="categories-menu__link" href={`/category/${category.slug}`}>{category.title}</a>
+								<a class="categories-menu__link" href={item.href}>{item.title}</a>
 							</li>
 						))}
 					</ul>
+					<a class="categories-menu__all" href={all.href}>{all.label}</a>
 				</div>
 			))}
+			<ul class="categories-menu__list categories-menu__list--extra">
+				{menuLinks.map((link) => (
+					<li>
+						<a class="categories-menu__link categories-menu__link--extra" href={link.href}>{link.label}</a>
+					</li>
+				))}
+			</ul>
 		</div>
-		<a class="categories-menu__all" href="/categories">Все категории</a>
 	</nav>
 </div>
 
@@ -79,12 +86,38 @@ import { categoryColumns } from "../../data/categories";
 	}
 }
 
+// Two category columns, each split in two, then the extra links.
 .categories-menu__columns {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-	gap: 20px 24px;
+	grid-template-columns: 1fr 1fr auto;
+	gap: 20px 32px;
 	width: 700px;
 	max-width: 100%;
+	@media (max-width: 860px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.categories-menu__column {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 14px;
+	.categories-menu__list {
+		columns: 2;
+		column-gap: 20px;
+		> li {
+			break-inside: avoid;
+		}
+	}
+}
+
+.categories-menu__list--extra {
+	align-content: start;
+}
+
+.categories-menu__link--extra {
+	font-weight: 700;
 }
 
 .categories-menu__title {

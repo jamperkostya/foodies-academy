@@ -1,0 +1,46 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../../components/layout/PageHero.astro";
+import CardGrid from "../../components/ui/CardGrid.astro";
+import NewsCard from "../../components/news/NewsCard.astro";
+import type { News } from "../../types/news";
+import { plural } from "../../utils/plural";
+
+const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+// News: WordPress post type "news".
+const { data: news }: { data: News[] } = await fetch(`${API_URL}/news?limit=200`).then((r) => r.json());
+
+const description = news.length
+	? `${news.length} ${plural(news.length, ["новость", "новости", "новостей"])} Foodies Academy: события, продукты и кулинарные тренды.`
+	: "Новости Foodies Academy: события, продукты и кулинарные тренды.";
+---
+<BaseLayout title="Новости" description={description} breadcrumbs={[{ label: "Новости" }]}>
+	<PageHero slot="hero" eyebrow="Журнал" description={description}>
+		<span class="page-hero__accent">Новости</span>
+	</PageHero>
+
+	<section class="news-list section-item">
+		{news.length > 0 ? (
+			<CardGrid minCardWidth={280}>
+				{news.map((item) => <NewsCard news={item} />)}
+			</CardGrid>
+		) : (
+			<p class="news-list__empty">Новостей пока нет — загляните в <a href="/blog">блог</a>.</p>
+		)}
+	</section>
+</BaseLayout>
+
+<style lang="less">
+.news-list {
+	padding-top: 25px;
+	&__empty {
+		padding: 40px 0 60px;
+		text-align: center;
+		color: var(--color-grey-dark);
+		a {
+			color: var(--color-red);
+			text-decoration: underline;
+		}
+	}
+}
+</style>

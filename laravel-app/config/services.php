@@ -39,4 +39,29 @@ return [
         'uploads_url' => env('ACADEMY_UPLOADS_URL', 'https://foodies.academy/wp-content/uploads'),
     ],
 
+    // Video recipes: the channel youtube.com/foodies-academy. Without a Data API key only
+    // the latest 15 videos (RSS feed) are imported; with it, the whole channel.
+    'youtube' => [
+        'channel_id' => env('YOUTUBE_CHANNEL_ID', 'UCR7s0mz-4hdJi_Y4BfiiogQ'),
+        'key' => env('YOUTUBE_API_KEY', ''),
+        // WordPress user the imported videos are published by.
+        'author_id' => (int) env('YOUTUBE_AUTHOR_ID', 1),
+    ],
+
+    // WordPress as Laravel reaches it (in Docker: the "wordpress" service).
+    // Static site builds: GitHub Actions workflow started with a repository_dispatch event.
+    // The token needs the repository's "Contents: write" permission (fine-grained token).
+    'github' => [
+        'repo' => env('GITHUB_DEPLOY_REPO'),
+        'token' => env('GITHUB_DEPLOY_TOKEN'),
+    ],
+
+    'wordpress' => [
+        'url' => env('WP_INTERNAL_URL', 'http://wordpress'),
+        // Contact Form 7 form "Подписка на рассылку".
+        'subscribe_form_id' => (int) env('CF7_SUBSCRIBE_FORM_ID', 77),
+        // Key of the user API (wp-content/mu-plugins/foodies-users.php), from the root .env.
+        'api_secret' => env('FOODIES_API_SECRET', ''),
+    ],
+
 ];

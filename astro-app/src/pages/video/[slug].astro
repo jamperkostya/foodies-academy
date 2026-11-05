@@ -1,0 +1,170 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Section from "../../components/layout/Section.astro";
+import ArticleLayout from "../../components/article/ArticleLayout.astro";
+import ContentBlock from "../../components/article/ContentBlock.astro";
+import Reviews from "../../components/article/Reviews.astro";
+import RecipeLikes from "../../components/article/RecipeLikes.astro";
+import SidebarList from "../../components/article/SidebarList.astro";
+import NewsletterCard from "../../components/article/NewsletterCard.astro";
+import SEOTextSection from "../../components/sections/SEOTextSection.astro";
+import VideoPlayer from "../../components/videos/VideoPlayer.astro";
+import ViewCounter from "../../components/article/ViewCounter.astro";
+import type { VideoDetail, VideoPage } from "../../types/video";
+import { plural } from "../../utils/plural";
+import { jsonLd } from "../../utils/jsonLd";
+
+const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+
+// One page per video recipe in WordPress.
+export async function getStaticPaths() {
+	// getStaticPaths can't see the constants above, so the URL is read again here.
+	const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+	const { data: slugs }: { data: string[] } = await fetch(`${API_URL}/videos/slugs`).then((r) => r.json());
+
+	return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const response = await fetch(`${API_URL}/videos/${slug}`);
+if (!response.ok) {
+	throw new Error(`Video "${slug}" from ${API_URL}: HTTP ${response.status}`);
+}
+const { data: video }: { data: VideoDetail } = await response.json();
+
+// Newest videos in the sidebar, without this one.
+const { data: latest }: { data: VideoPage } = await fetch(`${API_URL}/videos?per_page=4`).then((r) => r.json());
+const sidebarVideos = latest.videos
+	.filter((item) => item.slug !== video.slug)
+	.slice(0, 3)
+	.map((item) => ({ title: item.title, meta: item.date, image: item.image, href: `/video/${item.slug}` }));
+
+// The browser posts likes and reviews straight to Laravel, so it needs the public URL.
+const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/api";
+
+const views = video.views.toLocaleString("ru-RU");
+const facts = [
+	{ label: "Опубликовано", value: video.date },
+	{ label: "Длительность", value: video.duration },
+	{ label: plural(video.views, ["просмотр", "просмотра", "просмотров"]) + " на YouTube", value: views },
+	{ label: "Лайков на YouTube", value: video.youtubeLikes ? video.youtubeLikes.toLocaleString("ru-RU") : "" },
+].filter((fact) => fact.value);
+
+const description = `${video.title}: видеорецепт Foodies Academy.`;
+
+// Video rich result in Google: thumbnail, upload date, duration, views.
+const isoDuration = video.duration
+	? "PT" + video.duration.split(":").reverse().map((part, i) => `${Number(part)}${["S", "M", "H"][i]}`).reverse().join("")
+	: undefined;
+const videoSchema = jsonLd({
+	"@type": "VideoObject",
+	name: video.title,
+	description,
+	thumbnailUrl: [video.image],
+	uploadDate: video.publishedAt,
+	duration: isoDuration,
+	embedUrl: `https://www.youtube.com/embed/${video.youtubeId}`,
+	interactionStatistic: { "@type": "InteractionCounter", interactionType: { "@type": "WatchAction" }, userInteractionCount: video.views },
+});
+---
+<BaseLayout
+	seo={video.seo}
+	image={video.image}
+	type="article"
+	title={video.title}
+	description={description}
+	breadcrumbs={[{ label: "Видеорецепты", href: "/video" }, { label: video.title }]}>
+	<script type="application/ld+json" is:inline set:html={videoSchema} />
+
+	<Section>
+		<ArticleLayout>
+			<h1 class="video-page__title">{video.title}</h1>
+			<VideoPlayer youtubeId={video.youtubeId} title={video.title} image={video.image} duration={video.duration} />
+
+			<ul class="video-page__facts flex gap-15">
+				{facts.map((fact) => (
+					<li class="video-page__fact">
+						<strong class="video-page__fact-value">{fact.value}</strong>
+						<span class="video-page__fact-label">{fact.label}</span>
+					</li>
+				))}
+			</ul>
+
+			{video.description && (
+				<ContentBlock title="Описание" id="description">
+					{/* HTML from our own WordPress (YouTube description, links escaped on import). */}
+					<div class="video-page__description" set:html={video.description} />
+				</ContentBlock>
+			)}
+
+			<RecipeLikes slug={video.slug} votes={video.votes} title="Понравился видеорецепт?" action={`${PUBLIC_API_URL}/videos/${video.slug}/likes`} />
+
+			<ContentBlock title="Отзывы" id="reviews" class="no-print">
+				<Reviews
+					reviews={video.reviews}
+					withRating
+					placeholder="Расскажите, как получилось..."
+					submitLabel="Опубликовать отзыв"
+					successMessage="Спасибо! Отзыв появится после проверки модератором"
+					emptyText="Станьте первым, кто оставит комментарий к этому видеорецепту"
+					action={`${PUBLIC_API_URL}/videos/${video.slug}/comments`}
+				/>
+			</ContentBlock>
+
+			<Fragment slot="sidebar">
+				{sidebarVideos.length > 0 && <SidebarList title="Новые видеорецепты" items={sidebarVideos} />}
+				<NewsletterCard title="Новые видеорецепты на почту" />
+			</Fragment>
+		</ArticleLayout>
+	</Section>
+
+	<div class="no-print">
+		<SEOTextSection html={video.seoText} />
+	</div>
+
+	<ViewCounter action={`${PUBLIC_API_URL}/videos/${video.slug}/view`} />
+</BaseLayout>
+
+<style lang="less">
+.video-page__title {
+	font-size: 32px;
+	line-height: 1.2;
+	margin-bottom: 20px;
+	@media (max-width: 640px) {
+		font-size: 24px;
+	}
+}
+
+.video-page__facts {
+	flex-wrap: wrap;
+	margin: 20px 0 40px;
+}
+
+.video-page__fact {
+	display: flex;
+	flex-direction: column;
+	padding: 10px 16px;
+	border-radius: var(--border-radius-10);
+	background: var(--color-light-grey);
+	&-value {
+		font-size: 16px;
+	}
+	&-label {
+		font-size: 12px;
+		color: var(--color-grey);
+	}
+}
+
+.video-page__description {
+	font-size: 15px;
+	line-height: 1.6;
+	overflow-wrap: anywhere;
+	:global(p) {
+		margin-bottom: 12px;
+	}
+	:global(a) {
+		color: var(--color-red);
+		text-decoration: underline;
+	}
+}
+</style>

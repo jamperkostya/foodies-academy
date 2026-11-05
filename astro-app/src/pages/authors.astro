@@ -1,0 +1,63 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/layout/PageHero.astro";
+import CardGrid from "../components/ui/CardGrid.astro";
+import Avatar from "../components/ui/Avatar.astro";
+import type { AuthorSummary } from "../types/author";
+import { plural, recipesWord } from "../utils/plural";
+
+// Authors with published recipes, the most recipes first.
+const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+const { data: authors }: { data: AuthorSummary[] } = await fetch(`${API_URL}/authors`).then((r) => r.json());
+
+const description = `${authors.length} ${plural(authors.length, ["автор", "автора", "авторов"])} рецептов Foodies Academy.`;
+---
+<BaseLayout title="Авторы" description={description} breadcrumbs={[{ label: "Авторы" }]}>
+	<PageHero slot="hero" eyebrow="Команда" description={description}>
+		<span class="page-hero__accent">Авторы</span>
+	</PageHero>
+
+	<section class="authors section-item">
+		<CardGrid minCardWidth={240}>
+			{authors.map((author) => (
+				<a href={`/author/${author.slug}`} class="author-tile">
+					<Avatar name={author.name} src={author.avatar} size="xl" />
+					<strong class="author-tile__name">{author.name}</strong>
+					<span class="author-tile__count">{author.recipes.toLocaleString("ru-RU")} {recipesWord(author.recipes)}</span>
+				</a>
+			))}
+		</CardGrid>
+	</section>
+</BaseLayout>
+
+<style lang="less">
+.authors {
+	padding-top: 25px;
+}
+
+.author-tile {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	padding: 32px 20px;
+	background: var(--color-white);
+	border-radius: var(--border-radius-25);
+	box-shadow: 0 4px 15px var(--color-black-10);
+	text-align: center;
+	transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+	&:hover {
+		transform: translateY(-6px);
+		box-shadow: 0 20px 36px var(--color-black-10);
+	}
+	&__name {
+		margin-top: 6px;
+		font-weight: 800;
+		font-size: 18px;
+	}
+	&__count {
+		font-size: 14px;
+		color: var(--color-grey-dark);
+	}
+}
+</style>

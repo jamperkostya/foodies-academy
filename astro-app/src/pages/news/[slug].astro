@@ -1,0 +1,24 @@
+---
+import ArticlePage from "../../components/article/ArticlePage.astro";
+import type { Article } from "../../types/article";
+
+const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+
+// One page per news item (WordPress post type "news").
+export async function getStaticPaths() {
+	// getStaticPaths can't see the constants above, so the URL is read again here.
+	const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+	const { data: slugs }: { data: string[] } = await fetch(`${API_URL}/news/slugs`).then((r) => r.json());
+
+	return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const response = await fetch(`${API_URL}/news/${slug}`);
+if (!response.ok) {
+	throw new Error(`news "${slug}" from ${API_URL}: HTTP ${response.status}`);
+}
+const { data: article }: { data: Article } = await response.json();
+const { data: others }: { data: Article[] } = await fetch(`${API_URL}/news?limit=20`).then((r) => r.json());
+---
+<ArticlePage article={article} others={others} section={{ label: "Новости", href: "/news", api: "news" }} />

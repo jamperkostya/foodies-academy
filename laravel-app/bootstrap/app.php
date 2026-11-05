@@ -12,8 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias(['visitor' => \App\Http\Middleware\AuthenticateVisitor::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // API errors are JSON even without "Accept: application/json" (Astro's fetch doesn't send it),
+        // so a bad request returns 422 with a message instead of a redirect to an HTML page.
+        $exceptions->shouldRenderJsonWhen(fn ($request) => $request->is('api/*'));
     })->create();

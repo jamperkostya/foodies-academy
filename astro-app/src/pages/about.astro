@@ -1,0 +1,85 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/layout/PageHero.astro";
+import SubscribeSection from "../components/sections/SubscribeSection.astro";
+import PageContent from "../components/article/PageContent.astro";
+import SEOTextSection from "../components/sections/SEOTextSection.astro";
+import type { SitePage } from "../types/page";
+import { plural, recipesWord } from "../utils/plural";
+
+// Title, text and short description come from the WordPress page "О проекте" (editable in
+// the admin). The numbers come from Laravel, so they always match the catalogue.
+const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+const load = async (path: string): Promise<unknown[]> => (await fetch(`${API_URL}${path}`).then((r) => r.json())).data;
+const { data: page }: { data: SitePage } = await fetch(`${API_URL}/pages/about`).then((r) => r.json());
+const [recipes, kitchens, courses] = await Promise.all([
+	load("/recipes/slugs"),
+	load("/categories?type=country"),
+	load("/categories?type=course"),
+]);
+
+const stats = [
+	{ value: recipes.length, label: recipesWord(recipes.length) },
+	{ value: kitchens.length, label: `${plural(kitchens.length, ["кухня", "кухни", "кухонь"])} мира` },
+	{ value: courses.length, label: plural(courses.length, ["тип блюд", "типа блюд", "типов блюд"]) },
+];
+
+// The excerpt is the line under the title; the old one until it's filled in.
+const description = page.excerpt || "Платформа обучения и вдохновения для тех, кто любит готовить: от новичка до шефа сети ресторанов.";
+---
+<BaseLayout seo={page.seo} title={page.title} description={description} breadcrumbs={[{ label: page.title }]}>
+	<PageHero slot="hero" eyebrow="Академия Гурмэ" description={description}>{page.title}</PageHero>
+
+	<section class="about-intro section-item">
+		<PageContent html={page.content} />
+		<ul class="about-stats">
+			{stats.map((stat) => (
+				<li class="about-stats__item">
+					<strong class="about-stats__value">{stat.value.toLocaleString("ru-RU")}</strong>
+					<span class="about-stats__label">{stat.label}</span>
+				</li>
+			))}
+		</ul>
+	</section>
+
+	<SubscribeSection />
+
+	<SEOTextSection html={page.seoText} />
+</BaseLayout>
+
+<style lang="less">
+.about-intro {
+	display: grid;
+	gap: 40px;
+	padding-top: 25px;
+	@media @tablet {
+		grid-template-columns: 3fr 2fr;
+		align-items: start;
+	}
+}
+
+.about-stats {
+	display: grid;
+	gap: 14px;
+	&__item {
+		display: flex;
+		align-items: baseline;
+		gap: 14px;
+		padding: 22px 28px;
+		background: var(--color-light-grey);
+		border-radius: var(--border-radius-25);
+	}
+	&__value {
+		font-weight: 900;
+		font-size: 44px;
+		line-height: 1;
+		color: var(--color-red);
+	}
+	&__label {
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: .5px;
+		font-size: 13px;
+	}
+}
+</style>

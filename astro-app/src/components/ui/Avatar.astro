@@ -2,14 +2,18 @@
 import { initials } from "../../utils/initials";
 
 interface Props {
-	// Shown as initials.
+	// Shown as initials when there is no photo.
 	name: string;
+	// Photo URL; "" or missing falls back to the initials.
+	src?: string;
 	size?: "sm" | "md" | "lg" | "xl";
 }
 
-const { name, size = "md" } = Astro.props;
+const { name, src, size = "md" } = Astro.props;
 ---
-<span class:list={["avatar", `avatar--${size}`]} aria-hidden="true">{initials(name)}</span>
+{src
+	? <img class:list={["avatar", "avatar--photo", `avatar--${size}`]} src={src} alt="" loading="lazy" />
+	: <span class:list={["avatar", `avatar--${size}`]} aria-hidden="true">{initials(name)}</span>}
 
 <style lang="less">
 .avatar {
@@ -21,6 +25,9 @@ const { name, size = "md" } = Astro.props;
 	background: var(--color-black);
 	color: var(--color-white);
 	font-weight: 700;
+	&--photo {
+		object-fit: cover;
+	}
 	&--sm {
 		width: 26px;
 		height: 26px;

@@ -11,103 +11,121 @@ import Reviews from "../../components/article/Reviews.astro";
 import AuthorCard from "../../components/article/AuthorCard.astro";
 import SidebarList from "../../components/article/SidebarList.astro";
 import NewsletterCard from "../../components/article/NewsletterCard.astro";
+import RecipeGallery from "../../components/article/RecipeGallery.astro";
+import RecipeLikes from "../../components/article/RecipeLikes.astro";
+import ViewCounter from "../../components/article/ViewCounter.astro";
+import SEOTextSection from "../../components/sections/SEOTextSection.astro";
 import Icon from "../../components/ui/Icon.astro";
 import Stars from "../../components/ui/Stars.astro";
 import RecipeSection from "../../components/sections/RecipeSection.astro";
-import { recipes } from "../../data/recipes";
-import { originStoryHtml } from "../../data/originStory";
+
 import type { Recipe } from "../../types/recipe";
 import type { Review } from "../../types/review";
-import { plural } from "../../utils/plural";
+import { plural, recipesWord } from "../../utils/plural";
 import { jsonLd } from "../../utils/jsonLd";
 
-export function getStaticPaths() {
-	return recipes.map((recipe) => ({ params: { slug: recipe.slug }, props: { recipe } }));
+const API_URL = import.meta.env.API_URL ?? 'http://localhost:8000/api';
+
+// One page per published recipe in Laravel.
+export async function getStaticPaths() {
+	// getStaticPaths can't see the constants above, so the URL is read again here.
+	const API_URL = import.meta.env.API_URL ?? 'http://localhost:8000/api';
+	const { data: slugs }: { data: string[] } = await fetch(`${API_URL}/recipes/slugs`).then((r) => r.json());
+
+	return slugs.map((slug) => ({ params: { slug } }));
 }
 
-interface Props {
-	recipe: Recipe;
+const { slug } = Astro.params;
+const response = await fetch(`${API_URL}/recipes/${slug}`);
+if (!response.ok) {
+	throw new Error(`Recipe "${slug}" from ${API_URL}: HTTP ${response.status}`);
 }
+const { data: recipe }: { data: Recipe } = await response.json();
 
-const { recipe } = Astro.props;
+// { 257: "Вторые блюда" } → "Вторые блюда"
+const course = Object.values(recipe.categories.course).join(', ');
+const country = Object.values(recipe.categories.country).join(', ');
 
-const similarRecipes = recipes.filter((item) => item.isTop).slice(0, 10);
-const sidebarRecipes = recipes
-	.filter((item) => item.slug !== recipe.slug)
-	.slice(0, 3)
-	.map((item) => ({ title: item.title, meta: `${item.time} мин · ${item.category}`, image: item.image, href: `/recipe/${item.slug}` }));
+// Recipes sharing the most ingredients with this one (from Laravel); the top 3 also go to the sidebar.
+const similarRecipes = recipe.similar ?? [];
+const sidebarRecipes = similarRecipes.slice(0, 3).map((item) => ({
+	title: item.title,
+	meta: [item.time, ...Object.values(item.categories.course)].filter(Boolean).join(" · "),
+	image: item.image,
+	href: `/recipe/${item.slug}`,
+}));
 
-// Mock content until recipes come from the CMS. `base` is the quantity for
-// 4 servings; the servings stepper rescales it on the client.
-const ingredients = [
-	{ base: 400, unit: "г", name: "спагетти" },
-	{ base: 200, unit: "г", name: "гуанчале или панчетты" },
-	{ base: 4, unit: "шт", name: "яичных желтка" },
-	{ base: 1, unit: "шт", name: "яйцо целиком" },
-	{ base: 100, unit: "г", name: "сыра Пекорино Романо, тёртого" },
-	{ base: 50, unit: "г", name: "сыра Пармезан, тёртого" },
-	{ base: 2, unit: "ч.л.", name: "свежемолотого чёрного перца" },
-];
+// Ingredients split by their group ("Для бульона", "Для зажарки"…), in recipe order.
+// The servings stepper rescales every `quantity` on the client.
+const ingredientGroups = Map.groupBy(recipe.ingredients, (item) => item.group);
 
-const steps = [
-	"Доведите до кипения большую кастрюлю подсоленной воды и отварите спагетти до состояния al dente согласно инструкции на упаковке.",
-	"Пока варится паста, нарежьте гуанчале небольшими кубиками около 1 см.",
-	"Обжарьте гуанчале на среднем огне до золотистой корочки и вытапливания жира, 5–7 минут.",
-	"В отдельной миске взбейте желтки, целое яйцо, тёртый пекорино и пармезан до однородной массы.",
-	"Добавьте в яичную смесь щедрую порцию свежемолотого чёрного перца.",
-	"Слейте пасту, обязательно оставив около 150 мл воды из-под пасты.",
-	"Снимите сковороду с гуанчале с огня, добавьте горячую пасту и перемешайте, чтобы она впитала жир.",
-	"Влейте яичную смесь, быстро перемешивая и подливая воду из-под пасты до кремовой консистенции. Подавайте немедленно с дополнительным сыром и перцем.",
-].map((text) => ({ text }));
+// The group name ("ПРИГОТОВЛЕНИЕ ЛАНСПИКА") leads the first step of its group.
+const steps = recipe.steps.map((step, i) => ({
+	text: step.text,
+	title: step.group && step.group !== recipe.steps[i - 1]?.group ? step.group : undefined,
+}));
 
-const nutrition = [
-	{ label: "Калории", value: "650 ккал" },
-	{ label: "Белки", value: "28 г" },
-	{ label: "Жиры", value: "32 г" },
-	{ label: "Углеводы", value: "62 г" },
-	{ label: "Клетчатка", value: "3 г" },
-];
+// Only what is filled in WordPress is shown.
+const quickFacts = [
+	{ icon: "clock", size: 16, value: recipe.prepTime, label: "Подготовка" },
+	{ icon: "fire", size: 18, value: recipe.cookTime, label: "Готовка" },
+	{ icon: "total", size: 16, value: recipe.time, label: "Всего" },
+	{ icon: "difficult", size: 16, value: recipe.complexity, label: "Сложность" },
+	{ icon: "kcal", size: 24, value: recipe.calories ? `${recipe.calories} ккал` : "", label: "На порцию" },
+].filter((fact) => fact.value);
 
-const ratingBars = [
-	{ stars: 5, percent: 82 },
-	{ stars: 4, percent: 12 },
-	{ stars: 3, percent: 4 },
-	{ stars: 2, percent: 1 },
-	{ stars: 1, percent: 1 },
-];
+// Only calories are stored in WordPress; the block is hidden without them.
+const nutrition = recipe.calories ? [{ label: "Калории", value: `${recipe.calories} ккал` }] : [];
+
+// Star split from the reviews that have a rating; nothing to show without them.
+const ratedReviews = (recipe.reviews ?? []).filter((review) => review.rating);
+const ratingBars = ratedReviews.length
+	? [5, 4, 3, 2, 1].map((stars) => ({
+			stars,
+			percent: Math.round((ratedReviews.filter((review) => review.rating === stars).length / ratedReviews.length) * 100),
+		}))
+	: [];
+// No reviews and no star ratings: the rating summary is left out.
+const hasRating = recipe.comments > 0 || ratedReviews.length > 0;
+
+// Two or more photos, or a video recipe: the hero cover becomes a carousel.
+const photos = recipe.gallery?.length ? recipe.gallery : [recipe.image];
+const hasGallery = photos.length > 1 || Boolean(recipe.youtubeId);
 
 const reviewsCount = `${recipe.comments.toLocaleString("ru-RU")} ${plural(recipe.comments, ["отзыв", "отзыва", "отзывов"])}`;
 const description = `${recipe.title}: рецепт с пошаговыми фото на Foodies Academy.`;
-const servings = 4;
-const cuisine = "Итальянская";
-const author = "Salad Konstantin";
+// Recipes without servings in WordPress keep the old default of 4.
+const servings = recipe.servings || 4;
 
-const reviews: Review[] = [
-	{ name: "Мария К.", rating: 5, date: "28 июля 2026", text: "Готовила первый раз без сливок — получилось даже кремовее, чем я ожидала! Главное — снять сковороду с огня, как написано." },
-	{ name: "Денис Н.", rating: 4, date: "15 июля 2026", text: "Очень вкусно, но в следующий раз добавлю чуть больше перца. Панчетту заменил на бекон — тоже отлично зашло." },
-	{ name: "Анна С.", rating: 5, date: "2 июля 2026", text: "Наконец рецепт, где паста не превращается в яичницу. Пекорино нашла с трудом, взяла половину пармезана — тоже хорошо." },
-];
+const reviews: Review[] = recipe.reviews ?? [];
+// The browser posts reviews straight to Laravel, so it needs the public URL,
+// not the Docker-internal API_URL (http://laravel:8000).
+const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/api";
 
 // Recipe rich result in Google (rating, time, calories). Every value here is
 // also shown on the page, as Google requires.
 const recipeSchema = jsonLd({
 	"@type": "Recipe",
 	name: recipe.title,
-	image: [recipe.image],
+	image: photos,
 	description,
-	author: { "@type": "Person", name: author },
-	recipeCategory: recipe.category,
-	recipeCuisine: cuisine,
-	totalTime: `PT${recipe.time}M`,
+	author: recipe.author ? { "@type": "Person", name: recipe.author.name } : undefined,
+	recipeCategory: course,
+	recipeCuisine: country,
+	totalTime: `PT${recipe.minutes}M`,
 	recipeYield: `${servings} ${plural(servings, ["порция", "порции", "порций"])}`,
-	nutrition: { "@type": "NutritionInformation", calories: nutrition[0].value },
-	recipeIngredient: [...ingredients.map((item) => `${item.base} ${item.unit} ${item.name}`), "Соль — по вкусу"],
+	nutrition: recipe.calories ? { "@type": "NutritionInformation", calories: `${recipe.calories} ккал` } : undefined,
+	recipeIngredient: recipe.ingredients.map((item) => [item.amount, item.unit, item.name, item.notes].filter(Boolean).join(" ")),
 	recipeInstructions: steps.map((step) => ({ "@type": "HowToStep", text: step.text })),
-	aggregateRating: { "@type": "AggregateRating", ratingValue: recipe.rating, ratingCount: recipe.comments },
+	// Google rejects a rating with ratingCount 0.
+	aggregateRating: hasRating ? { "@type": "AggregateRating", ratingValue: recipe.rating, ratingCount: recipe.ratingCount || recipe.comments } : undefined,
 });
 ---
 
 <BaseLayout
+	seo={recipe.seo}
+	image={recipe.image}
+	type="article"
 	title={recipe.title}
 	description={description}
 	breadcrumbs={[{ label: "Рецепты", href: "/categories" }, { label: recipe.title }]}>
@@ -115,14 +133,19 @@ const recipeSchema = jsonLd({
 
 	<ArticleHero
 		slot="hero"
-		badge={recipe.category}
-		label={`🇮🇹 ${cuisine} кухня`}
+		badge={course}
+		label={country}
 		title={recipe.title}
-		description="Классическая римская паста без единой капли сливок: только яйца, панчетта, пекорино и много свежемолотого перца. Секрет кремового соуса — в технике, а не в лишних ингредиентах."
+		description={recipe.description}
 		image={recipe.image}
+		withVideo={false}
+		badgeLinks={recipe.categoryLinks?.course.map((term) => ({ name: term.name, href: `/category/${term.slug}` }))}
+		labelLinks={recipe.categoryLinks?.country.map((term) => ({ name: term.name, href: `/category/${term.slug}` }))}
 		anchor={{ href: "#ingredients", label: "Перейти к рецепту ↓" }}
 		printable
+		favorite={{ slug: recipe.slug, id: recipe.id }}
 	>
+		{hasGallery && <RecipeGallery slot="media" title={recipe.title} photos={photos} youtubeId={recipe.youtubeId} />}
 		<Fragment slot="meta">
 			<Stars rating={recipe.rating} />
 			<strong>{recipe.rating}</strong>
@@ -132,41 +155,15 @@ const recipeSchema = jsonLd({
 
 	<section class="recipe-quick-facts" slot="hero">
 		<div class="recipe-quick-facts__inner container flex gap-10 items-center justify-between">
-			<div class="quick-fact-item flex gap-10 items-center">
-				<Icon name="clock" width={16} height={16} />
-				<div class="quick-fact-item-data flex">
-					<span class="quick-fact-item__value block">15 мин</span>
-					<span class="quick-fact-item__description block">Подготовка</span>
+			{quickFacts.map((fact) => (
+				<div class="quick-fact-item flex gap-10 items-center">
+					<Icon name={fact.icon} width={fact.size} height={fact.size} />
+					<div class="quick-fact-item-data flex">
+						<span class="quick-fact-item__value block">{fact.value}</span>
+						<span class="quick-fact-item__description block">{fact.label}</span>
+					</div>
 				</div>
-			</div>
-			<div class="quick-fact-item flex gap-10 items-center">
-				<Icon name="fire" width={18} height={18} />
-				<div class="quick-fact-item-data flex">
-					<span class="quick-fact-item__value block">45 мин</span>
-					<span class="quick-fact-item__description block">Готовка</span>
-				</div>
-			</div>
-			<div class="quick-fact-item flex gap-10 items-center">
-				<Icon name="total" width={16} height={16} />
-				<div class="quick-fact-item-data flex">
-					<span class="quick-fact-item__value block">{recipe.time} мин</span>
-					<span class="quick-fact-item__description block">Всего</span>
-				</div>
-			</div>
-			<div class="quick-fact-item flex gap-10 items-center">
-				<Icon name="difficult" width={16} height={16} />
-				<div class="quick-fact-item-data flex">
-					<span class="quick-fact-item__value block">легко</span>
-					<span class="quick-fact-item__description block">Сложность</span>
-				</div>
-			</div>
-			<div class="quick-fact-item flex gap-10 items-center">
-				<Icon name="kcal" width={24} height={24} />
-				<div class="quick-fact-item-data flex">
-					<span class="quick-fact-item__value block">650 ккал</span>
-					<span class="quick-fact-item__description block">На порцию</span>
-				</div>
-			</div>
+			))}
 			<div class="quick-fact-item flex gap-10 items-center">
 				<Icon name="profile" width={18} height={20} />
 				<div class="quick-fact-item-data quick-fact-item__servings flex">
@@ -183,25 +180,23 @@ const recipeSchema = jsonLd({
 
 	<Section>
 		<ArticleLayout>
-			<p class="recipe-intro">Карбонара — один из тех рецептов, где легко ошибиться и превратить пасту в омлет со спагетти. Весь секрет — снять сковороду с огня и вмешивать яичную смесь вне прямого жара, постоянно помешивая. Никаких сливок: кремовая текстура получается только за счёт эмульсии из яиц, сыра и крахмалистой воды из-под пасты.</p>
-
 			<ContentBlock title="Ингредиенты" id="ingredients">
-				<span slot="hint" id="ingredientsServings">на 4 порции</span>
-				<ul class="ingredient-list" id="ingredientList">
-					{ingredients.map((item) => (
-						<li class="ingredient-list__item" data-base={item.base} data-unit={item.unit}>
-							<label class="ingredient-list__label">
-								<input class="ingredient-list__checkbox" type="checkbox">
-								<span class="ingredient-list__qty">{item.base} {item.unit}</span> {item.name}
-							</label>
-						</li>
+				<span slot="hint" id="ingredientsServings">на {servings} {plural(servings, ["порцию", "порции", "порций"])}</span>
+				<ul class="ingredient-list" id="ingredientList" data-servings={servings}>
+					{[...ingredientGroups].map(([group, items]) => (
+						<Fragment>
+							{group && <li class="ingredient-list__group">{group}</li>}
+							{items.map((item) => (
+								<li class="ingredient-list__item" data-base={item.quantity ?? undefined} data-unit={item.unit}>
+									<label class="ingredient-list__label">
+										<input class="ingredient-list__checkbox" type="checkbox">
+										<span class="ingredient-list__qty">{item.amount} {item.unit}</span>
+										<span>{item.name}{item.notes && <span class="ingredient-list__notes"> {item.notes}</span>}</span>
+									</label>
+								</li>
+							))}
+						</Fragment>
 					))}
-					<li class="ingredient-list__item ingredient-list__item--note">
-						<label class="ingredient-list__label">
-							<input class="ingredient-list__checkbox" type="checkbox">
-							<span>Соль — по вкусу</span>
-						</label>
-					</li>
 				</ul>
 			</ContentBlock>
 
@@ -210,48 +205,70 @@ const recipeSchema = jsonLd({
 				<StepList steps={steps} progressId="stepsProgress" />
 			</ContentBlock>
 
-			<TipBox title="Совет от шефа">
-				Снимайте сковороду с огня заранее — жар должен быть остаточным. Если яичная смесь попадёт на слишком горячую поверхность, вы получите варёные хлопья вместо кремового соуса.
-			</TipBox>
+			{recipe.tip && (
+				<TipBox title="Совет от шефа">
+					{/* HTML from our own WordPress (recipe_notes). */}
+					<Fragment set:html={recipe.tip} />
+				</TipBox>
+			)}
 
-			<ContentBlock title="Пищевая ценность" id="nutrition">
-				<span slot="hint">на порцию</span>
-				<div class="nutrition-table">
-					{nutrition.map((item) => (
-						<div class="nutrition-table__row">{item.label}<strong class="nutrition-table__value">{item.value}</strong></div>
-					))}
-				</div>
-			</ContentBlock>
-
-			<OriginStory html={originStoryHtml} />
-
-			<ContentBlock title="Отзывы" id="reviews" class="no-print">
-				<div class="rating-summary flex gap-40 items-center">
-					<div class="rating-summary__score">
-						<strong class="rating-summary__value">{recipe.rating}</strong>
-						<Stars rating={recipe.rating} />
-						<span class="rating-summary__count">{reviewsCount}</span>
-					</div>
-					<div class="rating-summary__bars">
-						{ratingBars.map((bar) => (
-							<div class="rating-bar flex gap-10 items-center">
-								<span class="rating-bar__label">{bar.stars}</span>
-								<div class="rating-bar__track"><div class="rating-bar__fill" style={`width: ${bar.percent}%`}></div></div>
-								<span class="rating-bar__percent">{bar.percent}%</span>
-							</div>
+			{nutrition.length > 0 && (
+				<ContentBlock title="Пищевая ценность" id="nutrition">
+					<span slot="hint">на порцию</span>
+					<div class="nutrition-table">
+						{nutrition.map((item) => (
+							<div class="nutrition-table__row">{item.label}<strong class="nutrition-table__value">{item.value}</strong></div>
 						))}
 					</div>
-				</div>
+				</ContentBlock>
+			)}
+
+			{recipe.history && <OriginStory html={recipe.history} />}
+
+			<RecipeLikes slug={recipe.slug} votes={recipe.votes} action={`${PUBLIC_API_URL}/recipes/${recipe.slug}/likes`} />
+
+			<ContentBlock title="Отзывы" id="reviews" class="no-print">
+				{hasRating && (
+					<div class="rating-summary flex gap-40 items-center">
+						<div class="rating-summary__score">
+							<strong class="rating-summary__value">{recipe.rating}</strong>
+							<Stars rating={recipe.rating} />
+							<span class="rating-summary__count">{reviewsCount}</span>
+						</div>
+						{ratingBars.length > 0 && (
+							<div class="rating-summary__bars">
+								{ratingBars.map((bar) => (
+									<div class="rating-bar flex gap-10 items-center">
+										<span class="rating-bar__label">{bar.stars}</span>
+										<div class="rating-bar__track"><div class="rating-bar__fill" style={`width: ${bar.percent}%`}></div></div>
+										<span class="rating-bar__percent">{bar.percent}%</span>
+									</div>
+								))}
+							</div>
+						)}
+					</div>
+				)}
 				<Reviews
 					reviews={reviews}
 					withRating
 					placeholder="Расскажите, как получился рецепт..."
 					submitLabel="Опубликовать отзыв"
+					successMessage="Спасибо! Отзыв появится после проверки модератором"
+					emptyText="Станьте первым, кто оставит комментарий для этого рецепта"
+					action={`${PUBLIC_API_URL}/recipes/${recipe.slug}/comments`}
 				/>
 			</ContentBlock>
 
 			<Fragment slot="sidebar">
-				<AuthorCard name={author} info="Шеф-повар · 214 рецептов" buttonLabel="Подписаться" />
+				{recipe.author && (
+					<AuthorCard
+						name={recipe.author.name}
+						avatar={recipe.author.avatar}
+						info={`${recipe.author.recipes.toLocaleString("ru-RU")} ${recipesWord(recipe.author.recipes)}`}
+						buttonLabel="Профиль автора"
+						href={`/author/${recipe.author.slug}`}
+					/>
+				)}
 				<SidebarList title="Похожие рецепты" items={sidebarRecipes} />
 				<NewsletterCard title="Рецепт недели на почту" />
 			</Fragment>
@@ -265,6 +282,12 @@ const recipeSchema = jsonLd({
 			</Fragment>
 		</RecipeSection>
 	</div>
+
+	<div class="no-print">
+		<SEOTextSection html={recipe.seoText} />
+	</div>
+
+	<ViewCounter action={`${PUBLIC_API_URL}/recipes/${recipe.slug}/view`} />
 </BaseLayout>
 
 <script>
@@ -323,10 +346,6 @@ const recipeSchema = jsonLd({
 	}
 }
 
-.recipe-intro {
-	color: var(--color-grey-dark);
-}
-
 .ingredient-list {
 	&__item {
 		border-bottom: var(--border-width) solid var(--color-border-search-form);
@@ -342,6 +361,17 @@ const recipeSchema = jsonLd({
 		&--note {
 			font-style: italic;
 		}
+	}
+	&__group {
+		padding: 16px 5px 6px;
+		font-size: 12px;
+		font-weight: 700;
+		letter-spacing: .5px;
+		text-transform: uppercase;
+		color: var(--color-grey);
+	}
+	&__notes {
+		color: var(--color-grey);
 	}
 	&__label {
 		display: flex;

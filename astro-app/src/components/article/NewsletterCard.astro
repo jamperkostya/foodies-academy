@@ -1,6 +1,6 @@
 ---
-// Newsletter sign-up in the article sidebar. Nothing is sent anywhere yet:
-// on submit the form is swapped for the success message.
+// Newsletter sign-up in the article sidebar. Sent to Laravel → Contact Form 7 (see
+// scripts/subscribe.ts); on success the form is swapped for the message.
 import SidebarCard from "./SidebarCard.astro";
 
 interface Props {
@@ -9,24 +9,20 @@ interface Props {
 }
 
 const { title, text = "Раз в неделю — только лучшее, без спама." } = Astro.props;
+const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/api";
 ---
 <SidebarCard title={title} accent>
 	<p class="newsletter-card__text">{text}</p>
-	<form class="newsletter-card__form">
-		<input class="newsletter-card__input" type="email" placeholder="E-mail" aria-label="E-mail" required>
+	<form class="newsletter-card__form" data-subscribe={`${PUBLIC_API_URL}/subscribe`}>
+		<input class="newsletter-card__input" type="text" name="name" placeholder="Имя" aria-label="Имя" autocomplete="given-name" required>
+		<input class="newsletter-card__input" type="email" name="email" placeholder="E-mail" aria-label="E-mail" autocomplete="email" required>
 		<button type="submit" class="btn newsletter-card__btn">Подписаться</button>
 	</form>
-	<p class="newsletter-card__success" hidden><strong>Готово!</strong> Первое письмо придёт в понедельник.</p>
+	<p class="newsletter-card__success" data-subscribe-done hidden><strong>Готово!</strong> Первое письмо придёт в понедельник.</p>
 </SidebarCard>
 
 <script>
-	document.querySelectorAll<HTMLFormElement>(".newsletter-card__form").forEach((form) => {
-		form.addEventListener("submit", (event) => {
-			event.preventDefault();
-			form.hidden = true;
-			form.nextElementSibling?.removeAttribute("hidden");
-		});
-	});
+	import "../../scripts/subscribe";
 </script>
 
 <style lang="less">

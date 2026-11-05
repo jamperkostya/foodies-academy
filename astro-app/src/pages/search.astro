@@ -1,11 +1,13 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Section from "../components/layout/Section.astro";
+// The browser reports each search to Laravel, which saves it for Search Meter.
+const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/api";
 ---
-<BaseLayout title="Поиск" description="Поиск рецептов, категорий и видео на Foodies Academy." breadcrumbs={[{ label: "Поиск" }]}>
+<BaseLayout noindex title="Поиск" description="Поиск рецептов, категорий, кухонь мира и авторов на Foodies Academy." breadcrumbs={[{ label: "Поиск" }]}>
 	<Section>
 		<Fragment slot="title"><span class="section-title__accent">Результаты</span> поиска</Fragment>
-		<div class="search-results">
+		<div class="search-results" data-log={`${PUBLIC_API_URL}/search-log`}>
 			<p class="search-results__summary" aria-live="polite">Введите запрос в строку поиска вверху страницы.</p>
 			<ul class="search-results__list"></ul>
 		</div>
@@ -106,6 +108,20 @@ import Section from "../components/layout/Section.astro";
 				return item;
 			})
 		);
+		logSearch(results.length);
+	};
+
+	// Saved to Search Meter's statistics (WordPress admin → Dashboard → Search Meter).
+	// Like Search Meter, only searches with a referrer count, so bots opening /search?q= don't.
+	const logSearch = (hits: number) => {
+		const url = document.querySelector<HTMLElement>(".search-results")?.dataset.log;
+		if (!url || !document.referrer) return;
+		fetch(url, {
+			method: "POST",
+			headers: { "Content-Type": "application/json", Accept: "application/json" },
+			body: JSON.stringify({ q: raw, hits }),
+			keepalive: true,
+		}).catch(() => {});
 	};
 
 	if (summary && list && query) showResults(summary, list);

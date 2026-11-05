@@ -12,19 +12,31 @@ services:
       - db_data:/var/lib/mysql
       - ./mysql-init:/docker-entrypoint-initdb.d
     ports:
-      - "3306:3306"
+      # 3307 on the Mac: 3306 belongs to MAMP, where the site database lives.
+      - "3307:3306"
 
   wordpress:
-    image: wordpress:7.0.2-php8.3-apache
+    # The official image plus WP-CLI, which installs the site's plugins on start.
+    build:
+      context: ./wordpress
     container_name: foodies_wordpress
     restart: unless-stopped
-    depends_on:
-      - mysql
+    # The same WordPress database Laravel reads and writes (SITE_DB_* in laravel-app/.env),
+    # so likes, searches and subscriptions from the site show up in this admin.
     environment:
-      WORDPRESS_DB_HOST: mysql
-      WORDPRESS_DB_NAME: foodies_wp
-      WORDPRESS_DB_USER: wp_user
-      WORDPRESS_DB_PASSWORD: wp_password
+      WORDPRESS_DB_HOST: ${SITE_DB_HOST:-host.docker.internal}:${SITE_DB_PORT:-3306}
+      WORDPRESS_DB_NAME: ${SITE_DB_DATABASE:-foodies.academy_with_content}
+      WORDPRESS_DB_USER: ${SITE_DB_USERNAME:-root}
+      WORDPRESS_DB_PASSWORD: ${SITE_DB_PASSWORD:-root}
+      WORDPRESS_TABLE_PREFIX: ${SITE_DB_PREFIX:-artit_}
+      # Key of the user API Laravel calls (register, log in, edit profile).
+      FOODIES_API_SECRET: ${FOODIES_API_SECRET:?set it in .env, see .env.example}
+      # WordPress reports content changes here, so the site gets rebuilt (mu-plugins/foodies-rebuild.php).
+      FOODIES_LARAVEL_URL: http://laravel:8000
+      # The database keeps the production address; open the admin on this port instead.
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_HOME', 'http://localhost:8081');
+        define('WP_SITEURL', 'http://localhost:8081');
     volumes:
       - ./wp-content:/var/www/html/wp-content
     ports:
@@ -38,6 +50,7 @@ services:
     restart: unless-stopped
     depends_on:
       - mysql
+      - wordpress
     volumes:
       - ./laravel-app:/var/www/html
     ports:
@@ -47,6 +60,31 @@ services:
       DB_DATABASE: foodies_laravel
       DB_USERNAME: laravel_user
       DB_PASSWORD: laravel_password
+      # Subscription forms are submitted through Contact Form 7's REST API.
+      WP_INTERNAL_URL: http://wordpress
+      FOODIES_API_SECRET: ${FOODIES_API_SECRET:?set it in .env, see .env.example}
+
+  # Runs Laravel's scheduled commands (routes/console.php), e.g. the YouTube video sync.
+  scheduler:
+    build:
+      context: ./laravel-app
+      dockerfile: Dockerfile.dev
+    container_name: foodies_scheduler
+    restart: unless-stopped
+    command: php artisan schedule:work
+    depends_on:
+      - laravel
+    volumes:
+      - ./laravel-app:/var/www/html
+    environment:
+      DB_HOST: mysql
+      DB_DATABASE: foodies_laravel
+      DB_USERNAME: laravel_user
+      DB_PASSWORD: laravel_password
+      WP_INTERNAL_URL: http://wordpress
+      # Starts site builds (php artisan site:rebuild); unset locally, where nothing is deployed.
+      GITHUB_DEPLOY_REPO: ${GITHUB_DEPLOY_REPO:-}
+      GITHUB_DEPLOY_TOKEN: ${GITHUB_DEPLOY_TOKEN:-}
 
   astro:
     build:

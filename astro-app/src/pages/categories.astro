@@ -4,12 +4,18 @@ import PageHero from "../components/layout/PageHero.astro";
 import SortBar from "../components/ui/SortBar.astro";
 import CardGrid from "../components/ui/CardGrid.astro";
 import CategoryCard from "../components/categories/CategoryCard.astro";
-import { categories } from "../data/categories";
+const API_URL = import.meta.env.API_URL ?? 'http://localhost:8000/api';
+const { data: categories }: { data: { count: number }[] } = await fetch(`${API_URL}/categories?type=course`).then(r => r.json());
+const totalRecipes = categories.reduce((sum, category) => sum + category.count, 0);
+
 import { plural, recipesWord } from "../utils/plural";
 import SEOTextSection from "../components/sections/SEOTextSection.astro";
+import { wpPage } from "../utils/wpPage";
+
+// "SEO-текст" and Yoast SEO of the WordPress page "blyuda".
+const { seoText, seo } = await wpPage("blyuda");
 
 // Counted from the data, so the intro never disagrees with the catalogue.
-const totalRecipes = categories.reduce((sum, category) => sum + category.recipesCount, 0);
 const description =
 	`${totalRecipes.toLocaleString("ru-RU")} ${recipesWord(totalRecipes)}, ` +
 	"разложенных по полочкам — от завтрака до праздничного стола. Выберите категорию и найдите то, что приготовите уже сегодня.";
@@ -21,7 +27,7 @@ const sortOptions = [
 	{ value: "count", label: "По числу рецептов" },
 ];
 ---
-<BaseLayout title="Все категории" description={description} breadcrumbs={[{ label: "Категории" }]}>
+<BaseLayout seo={seo} title="Все категории" description={description} breadcrumbs={[{ label: "Категории" }]}>
 	<PageHero slot="hero" eyebrow="Каталог" description={description}>
 		Все <span class="page-hero__accent">категории</span>
 	</PageHero>
@@ -38,7 +44,7 @@ const sortOptions = [
 		</CardGrid>
 	</section>
 	
-	<SEOTextSection />
+	<SEOTextSection html={seoText} />
 </BaseLayout>
 
 <style lang="less">

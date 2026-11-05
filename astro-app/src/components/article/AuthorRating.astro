@@ -1,0 +1,132 @@
+---
+// "Оцените автора": five star buttons. Saved via Laravel in the author's WordPress usermeta.
+// The page is built ahead of time, so fresh numbers load on open. One vote per browser,
+// remembered in localStorage: clicking other stars changes it, the same stars take it back.
+interface Props {
+	slug: string;
+	// Laravel endpoint: GET returns {average, count}, POST {from, to} moves a vote.
+	action: string;
+}
+
+const { slug, action } = Astro.props;
+const labels = ["1 звезда", "2 звезды", "3 звезды", "4 звезды", "5 звёзд"];
+---
+<div class="author-rating flex gap-10 items-center no-print" data-slug={slug} data-action={action}>
+	<span class="author-rating__title">Оцените автора</span>
+	<div class="author-rating__stars flex" role="group" aria-label="Оценка автора">
+		{labels.map((label, i) => (
+			<button type="button" class="author-rating__star" data-stars={i + 1} aria-label={label} aria-pressed="false">★</button>
+		))}
+	</div>
+	<span class="author-rating__summary" aria-live="polite"></span>
+</div>
+
+<script>
+	import { showToast } from "../../scripts/toast";
+	import { plural } from "../../utils/plural";
+
+	type Rating = { average: number | null; count: number };
+
+	document.querySelectorAll<HTMLElement>(".author-rating").forEach((root) => {
+		const action = root.dataset.action!;
+		const storageKey = `author-vote:${root.dataset.slug}`;
+		const stars = [...root.querySelectorAll<HTMLButtonElement>(".author-rating__star")];
+		const summary = root.querySelector<HTMLElement>(".author-rating__summary")!;
+
+		const readVote = () => {
+			try {
+				const value = Number(localStorage.getItem(storageKey));
+				return value >= 1 && value <= 5 ? value : null;
+			} catch {
+				return null;
+			}
+		};
+		const saveVote = (value: number | null) => {
+			try {
+				if (value) localStorage.setItem(storageKey, String(value));
+				else localStorage.removeItem(storageKey);
+			} catch {
+				// No storage: the vote still counts, it just isn't remembered.
+			}
+		};
+
+		let vote = readVote();
+		const paint = (value: number) => stars.forEach((star, i) => star.classList.toggle("is-filled", i < value));
+		const render = (rating?: Rating) => {
+			stars.forEach((star, i) => star.setAttribute("aria-pressed", String(vote === i + 1)));
+			paint(vote ?? 0);
+			if (rating) {
+				summary.textContent = rating.average
+					? `${rating.average} · ${rating.count} ${plural(rating.count, ["оценка", "оценки", "оценок"])}`
+					: "Пока без оценок";
+			}
+		};
+		render();
+
+		fetch(action, { headers: { Accept: "application/json" } })
+			.then((response) => (response.ok ? response.json() : null))
+			.then((body) => body && render(body.data))
+			.catch(() => {});
+
+		let busy = false;
+		stars.forEach((star, i) => {
+			star.addEventListener("mouseenter", () => paint(i + 1));
+			star.addEventListener("click", async () => {
+				if (busy) return;
+				const next = vote === i + 1 ? null : i + 1;
+				busy = true;
+				try {
+					const response = await fetch(action, {
+						method: "POST",
+						headers: { "Content-Type": "application/json", Accept: "application/json" },
+						body: JSON.stringify({ from: vote, to: next }),
+					});
+					if (!response.ok) {
+						showToast(response.status === 429 ? "Слишком часто, попробуйте через минуту" : "Не удалось сохранить оценку");
+						return;
+					}
+					vote = next;
+					saveVote(vote);
+					render((await response.json()).data);
+					if (vote) showToast("Спасибо за оценку!");
+				} catch {
+					showToast("Не удалось сохранить оценку, проверьте интернет");
+				} finally {
+					busy = false;
+				}
+			});
+		});
+		root.querySelector(".author-rating__stars")!.addEventListener("mouseleave", () => paint(vote ?? 0));
+	});
+</script>
+
+<style lang="less">
+.author-rating {
+	flex-wrap: wrap;
+	margin-top: 16px;
+	&__title {
+		font-weight: 700;
+		font-size: 14px;
+	}
+	&__star {
+		background: none;
+		border: none;
+		padding: 0 2px;
+		font-size: 24px;
+		line-height: 1;
+		color: var(--color-grey);
+		cursor: pointer;
+		transition: color .1s, transform .1s;
+		&:hover {
+			transform: scale(1.15);
+		}
+		&.is-filled {
+			color: var(--color-red);
+		}
+	}
+	&__summary {
+		font-size: 13px;
+		color: var(--color-grey);
+	}
+}
+</style>
