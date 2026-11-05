@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Support\WpHtml;
+use App\Support\YouTubeUrl;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
@@ -102,14 +103,22 @@ abstract class Articles
         }
         $ids = $posts->pluck('ID')->all();
         $terms = $this->terms($ids);
-        $thumbs = $this->db->table('postmeta')
+        $meta = $this->db->table('postmeta')
             ->whereIn('post_id', $ids)
-            ->where('meta_key', '_thumbnail_id')
-            ->pluck('meta_value', 'post_id');
-        $images = app(Attachments::class)->urls($thumbs->map(fn ($id) => (int) $id)->filter()->all());
+            ->whereIn('meta_key', ['_thumbnail_id', 'link_to_video'])
+            ->get(['post_id', 'meta_key', 'meta_value'])
+            ->groupBy('post_id')
+            ->map(fn ($rows) => $rows->pluck('meta_value', 'meta_key'));
+        // The cover: the featured image, or else the first image of the text from the site's own media
+        // library (many old posts have no featured image).
+        $thumbs = $posts->mapWithKeys(fn ($post) => [
+            $post->ID => (int) ($meta[$post->ID]['_thumbnail_id'] ?? 0)
+                ?: (preg_match('/wp-image-(\d+)/', $post->post_content, $m) ? (int) $m[1] : 0),
+        ]);
+        $images = app(Attachments::class)->urls($thumbs->filter()->values()->all());
         $users = $this->db->table('users')->whereIn('ID', $posts->pluck('post_author'))->get(['ID', 'user_nicename', 'display_name'])->keyBy('ID');
 
-        return $posts->map(function ($post) use ($terms, $thumbs, $images, $users) {
+        return $posts->map(function ($post) use ($terms, $meta, $thumbs, $images, $users) {
             $user = $users->get($post->post_author);
 
             return [
@@ -119,7 +128,7 @@ abstract class Articles
                 'excerpt' => $this->excerpt($post),
                 'category' => $terms[$post->ID][static::CATEGORY][0] ?? '',
                 'tags' => $terms[$post->ID]['post_tag'] ?? [],
-                'image' => $images[(int) ($thumbs[$post->ID] ?? 0)] ?? '',
+                'image' => $images[$thumbs[$post->ID]] ?? $this->videoCover((string) ($meta[$post->ID]['link_to_video'] ?? '')),
                 'date' => substr($post->post_date, 0, 10),
                 'dateText' => Carbon::parse($post->post_date)->locale('ru')->translatedFormat('j F Y'),
                 'author' => [
@@ -131,6 +140,14 @@ abstract class Articles
                 'commentCount' => (int) $post->comment_count,
             ];
         })->values()->all();
+    }
+
+    /** Preview of the post's YouTube video ("link_to_video"), "" without one. */
+    private function videoCover(string $url): string
+    {
+        $id = YouTubeUrl::id($url);
+
+        return $id ? "https://i.ytimg.com/vi/$id/hqdefault.jpg" : '';
     }
 
     /** The post's own excerpt, or the start of its text (~160 characters, cut at a word). */
