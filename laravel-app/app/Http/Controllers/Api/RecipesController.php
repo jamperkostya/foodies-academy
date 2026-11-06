@@ -90,6 +90,12 @@ class RecipesController extends Controller
         return $this->cached('recipes:slugs', fn () => $this->recipes->getSlugs());
     }
 
+    // GET /api/recipes/sitemap: every recipe with its last change and photos
+    public function sitemap(): JsonResponse
+    {
+        return $this->cached('recipes:sitemap', fn () => $this->recipes->getSitemap());
+    }
+
     // POST /api/recipes/{slug}/comments  {name, text, rating?}
     // Saved as pending: it appears on the site after approval in the WordPress admin.
     public function comment(Request $request, string $slug, Comments $comments): JsonResponse

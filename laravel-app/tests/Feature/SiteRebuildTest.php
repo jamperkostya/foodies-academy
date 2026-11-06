@@ -67,6 +67,16 @@ class SiteRebuildTest extends SiteTestCase
         Http::assertSentCount(1);
     }
 
+    public function test_production_asks_for_its_own_build(): void
+    {
+        Http::fake(['api.github.com/*' => Http::response(null, 204)]);
+        config(['services.github.event' => 'content-changed-production']);
+
+        $this->artisan('site:rebuild', ['--force' => true])->assertSuccessful();
+
+        Http::assertSent(fn ($request) => $request['event_type'] === 'content-changed-production');
+    }
+
     public function test_constant_edits_still_build_within_30_minutes(): void
     {
         Http::fake(['api.github.com/*' => Http::response(null, 204)]);

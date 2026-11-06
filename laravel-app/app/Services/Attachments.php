@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\DB;
 /** Image URLs of WordPress attachments (media library) on foodies.academy. */
 class Attachments
 {
-    /** attachment_id => URL of the 601px "medium" size (or the original) */
-    public function urls(array $attachmentIds): array
+    /** attachment_id => URL of the 601px "medium" size (or the original), or of the original */
+    public function urls(array $attachmentIds, bool $original = false): array
     {
         if (! $attachmentIds) {
             return [];
@@ -19,13 +19,13 @@ class Attachments
             ->whereIn('post_id', $attachmentIds)
             ->where('meta_key', '_wp_attachment_metadata')
             ->pluck('meta_value', 'post_id')
-            ->map(function ($value) use ($base) {
+            ->map(function ($value) use ($base, $original) {
                 $data = @unserialize($value, ['allowed_classes' => false]);
                 if (! is_array($data) || empty($data['file'])) {
                     return '';
                 }
                 $dir = dirname($data['file']);
-                $file = $data['sizes']['medium']['file'] ?? basename($data['file']);
+                $file = $original ? basename($data['file']) : ($data['sizes']['medium']['file'] ?? basename($data['file']));
 
                 return $base.'/'.($dir === '.' ? '' : $dir.'/').rawurlencode($file);
             })

@@ -31,6 +31,31 @@
 	}
 }
 
+// Phones: two per row in a plain grid instead of a scrolling row. Nothing overflows, so
+// dragCarousel.ts shows no dots; the arrows are hidden on phones anyway.
+.carousel--categories {
+	@media @mobile {
+		.carousel__track {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			overflow: visible;
+			scroll-snap-type: none;
+			margin: 0;
+			padding: 0;
+			cursor: auto;
+		}
+		.carousel__arrow {
+			display: none;
+		}
+		// The card's 325px minimum height would also force a 195px minimum width through its
+		// aspect ratio, too wide for two columns; and 3/5 gets very tall at half a tablet.
+		:global(.category-card) {
+			min-height: 0;
+			aspect-ratio: 4/5;
+		}
+	}
+}
+
 .carousel--videos {
 	--carousel-gap: 18px;
 	--carousel-per-view: 5;

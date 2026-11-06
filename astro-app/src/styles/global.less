@@ -11,6 +11,10 @@ body {
 	background-position: center 100px;
 	background-repeat: repeat-y;
 	background-size: 100% auto;
+	// Phones: plain background, without the decorative pattern.
+	@media @mobile {
+		background-image: none;
+	}
 }
 .section-item {
 	margin-top: 15px;

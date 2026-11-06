@@ -25,14 +25,16 @@ interface Props {
 	printable?: boolean;
 	// Recipe for the bookmark button (the visitor's favourites). Without it the button is hidden.
 	favorite?: { slug: string; id: number };
+	// Below desktop: the cover runs edge to edge with no space above it (recipe pages).
+	flush?: boolean;
 }
 
 // Rendered first: a slot filled by a false condition still "exists", but renders to "".
 const media = Astro.slots.has("media") ? (await Astro.slots.render("media")).trim() : "";
 
-const { badge, label, badgeLinks, labelLinks, title, titleAccent, description, image, anchor, withVideo = true, videoLabel = "Смотреть видео", printable = false, favorite } = Astro.props;
+const { badge, label, badgeLinks, labelLinks, title, titleAccent, description, image, anchor, withVideo = true, videoLabel = "Смотреть видео", printable = false, favorite, flush = false } = Astro.props;
 ---
-<section class="article-hero">
+<section class:list={["article-hero", { "article-hero--flush": flush }]}>
 	<div class="article-hero__container container grid gap-40 items-center">
 		<div class="article-hero__content grid gap-30">
 			<div class="article-hero__tags flex gap-10 items-center">
@@ -167,6 +169,10 @@ const { badge, label, badgeLinks, labelLinks, title, titleAccent, description, i
 	&__title {
 		line-height: 36px;
 		margin: 0;
+		@media @mobile {
+			font-size: 20px;
+			line-height: 26px;
+		}
 	}
 	&__accent {
 		display: block;
@@ -175,7 +181,11 @@ const { badge, label, badgeLinks, labelLinks, title, titleAccent, description, i
 	&__desc {
 		color: var(--color-grey-dark);
 	}
+	// Phones keep only the main button.
 	&__icon-btn {
+		@media @mobile {
+			display: none;
+		}
 		border-radius: var(--border-radius-1000);
 		background: var(--color-white);
 		width: 46px;
@@ -198,6 +208,9 @@ const { badge, label, badgeLinks, labelLinks, title, titleAccent, description, i
 		overflow: hidden;
 		order: -1;
 		aspect-ratio: 16/9;
+		@media @mobile {
+			aspect-ratio: 4/3;
+		}
 		@media @desktop {
 			order: 0;
 			aspect-ratio: 4/3;
@@ -229,6 +242,25 @@ const { badge, label, badgeLinks, labelLinks, title, titleAccent, description, i
 		font-weight: 700;
 		text-shadow: 0 2px 10px rgba(0,0,0,.4);
 		z-index: 7;
+	}
+}
+
+// Below desktop the cover sits first (order: -1): full width, no space above, square corners;
+// only the text keeps the usual side padding.
+.article-hero--flush {
+	@media @below-desktop {
+		padding-top: 0;
+		.article-hero__container {
+			width: auto;
+			padding-left: 0;
+			padding-right: 0;
+		}
+		.article-hero__content {
+			padding: 0 20px;
+		}
+		.article-hero__media {
+			border-radius: 0;
+		}
 	}
 }
 

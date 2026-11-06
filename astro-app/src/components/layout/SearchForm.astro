@@ -36,17 +36,28 @@ const { id = "search-suggestions" } = Astro.props;
 	position: relative;
 	flex: 1;
 	display: grid;
-	grid-template-columns: 1fr 63px;
+	// minmax(0, …): an input is ~20 characters wide by default (wider in Safari) and would
+	// push the form past a narrow container, e.g. the mobile menu at 365px.
+	grid-template-columns: minmax(0, 1fr) 63px;
 	padding: 5px 5px 5px 15px;
 	border: var(--border-width) solid var(--color-border-search-form);
 	border-radius: var(--border-radius-1000);
 }
 
 .search__input {
+	min-width: 0;
+	width: 100%;
 	border: none;
 	outline: 0;
-	// Chrome/Safari draw their own clear (×) button in type="search".
-	&::-webkit-search-cancel-button {
+	// Safari (iOS above all) draws type="search" as its own light rounded box; the form's border
+	// is the field here, so the input itself stays plain and takes the background behind it.
+	-webkit-appearance: none;
+	appearance: none;
+	background: transparent;
+	border-radius: 0;
+	// Chrome/Safari draw their own clear (×) button and search decoration in type="search".
+	&::-webkit-search-cancel-button,
+	&::-webkit-search-decoration {
 		-webkit-appearance: none;
 		appearance: none;
 	}

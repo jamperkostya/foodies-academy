@@ -33,6 +33,9 @@ const { title, id, class: className } = Astro.props;
 	&__title {
 		font-size: 22px;
 		text-transform: uppercase;
+		@media @mobile {
+			font-size: 18px;
+		}
 	}
 	&__hint {
 		font-size: 13px;

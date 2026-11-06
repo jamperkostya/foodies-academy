@@ -1,6 +1,7 @@
 <?php
 /**
  * Settings of wp.dev.foodies.academy that Docker passes as environment variables.
+ * Production (wp.foodies.academy): the same with the addresses without "dev." (PRODUCTION.md).
  *
  * Copy next to wp-config.php as wp-config-foodies.php, fill in the secret and load it at the top
  * of wp-config.php (deploy/hestia/README.md, step 6):
@@ -19,6 +20,8 @@ define('WP_ENVIRONMENT_TYPE', 'staging');
 putenv('FOODIES_API_SECRET=');
 // WordPress reports content changes here, so dev.foodies.academy gets rebuilt.
 putenv('FOODIES_LARAVEL_URL=https://api.dev.foodies.academy');
+// WordPress's own pages send visitors to the site (foodies-frontend.php). Production: https://foodies.academy
+putenv('FOODIES_SITE_URL=https://dev.foodies.academy');
 
 // Code comes from git and install-plugins.sh (pinned versions): no editing or auto-updates in the admin.
 define('DISALLOW_FILE_EDIT', true);

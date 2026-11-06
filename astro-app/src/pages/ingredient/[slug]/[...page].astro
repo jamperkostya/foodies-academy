@@ -21,11 +21,12 @@ import { pageHref, pageNumber, pageParams } from "../../../utils/pagination";
 
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
 
-// The popular ingredients the footer links to, split into pages of 24 recipes.
+// Every ingredient with a recipe, split into pages of 24 recipes: the old site had them all, and
+// search engines know their addresses.
 export async function getStaticPaths() {
 	// getStaticPaths can't see the constants above, so the URL is read again here.
 	const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
-	const { data: ingredients }: { data: Ingredient[] } = await fetch(`${API_URL}/ingredients/popular?limit=5`).then((r) => r.json());
+	const { data: ingredients }: { data: Ingredient[] } = await fetch(`${API_URL}/ingredients`).then((r) => r.json());
 
 	return ingredients.flatMap((ingredient) =>
 		pageParams(ingredient.count).map((page) => ({ params: { slug: ingredient.slug, page } })),

@@ -76,7 +76,7 @@ class SiteRebuild
         $response = Http::timeout(15)->withToken($token)->acceptJson()
             ->withHeaders(['X-GitHub-Api-Version' => '2022-11-28'])
             ->post("https://api.github.com/repos/$repo/dispatches", [
-                'event_type' => 'content-changed',
+                'event_type' => config('services.github.event'),
                 'client_payload' => ['reason' => $reason, 'changes' => array_slice($pending['reasons'] ?? [], -10)],
             ]);
         if (! $response->successful()) {

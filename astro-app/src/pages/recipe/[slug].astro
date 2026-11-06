@@ -143,6 +143,7 @@ const recipeSchema = jsonLd({
 		labelLinks={recipe.categoryLinks?.country.map((term) => ({ name: term.name, href: `/category/${term.slug}` }))}
 		anchor={{ href: "#ingredients", label: "Перейти к рецепту ↓" }}
 		printable
+		flush
 		favorite={{ slug: recipe.slug, id: recipe.id }}
 	>
 		{hasGallery && <RecipeGallery slot="media" title={recipe.title} photos={photos} youtubeId={recipe.youtubeId} />}
@@ -305,12 +306,16 @@ const recipeSchema = jsonLd({
 	padding: 10px 5px;
 	.recipe-quick-facts__inner {
 		flex-wrap: wrap;
+		// Phones: one fact per row.
+		@media @mobile {
+			flex-direction: column;
+			align-items: flex-start;
+		}
 		.quick-fact-item {
+			// Value over label. A column, not wrapped 100%-wide rows: a wrapping row is as wide as
+			// both lines side by side, which pushed the facts onto a second line on tablets.
 			.quick-fact-item-data {
-				flex-wrap: wrap;
-				.quick-fact-item__description, .quick-fact-item__value {
-					width: 100%;
-				}
+				flex-direction: column;
 				.quick-fact-item__value {
 					font-weight: 700;
 					font-size: 16px;
@@ -428,6 +433,10 @@ const recipeSchema = jsonLd({
 	}
 	&__score {
 		text-align: center;
+		// Phones: the score sits centred above the bars.
+		@media @mobile {
+			margin: auto;
+		}
 	}
 	&__value {
 		display: block;

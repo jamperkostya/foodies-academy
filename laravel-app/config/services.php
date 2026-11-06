@@ -54,6 +54,8 @@ return [
     'github' => [
         'repo' => env('GITHUB_DEPLOY_REPO'),
         'token' => env('GITHUB_DEPLOY_TOKEN'),
+        // Which site gets rebuilt: .github/workflows/deploy.yml builds production for its own type.
+        'event' => env('GITHUB_DEPLOY_EVENT', 'content-changed'),
     ],
 
     'wordpress' => [

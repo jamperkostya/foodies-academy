@@ -1,18 +1,26 @@
 name: Deploy Laravel API to Hestia
 
-# api.dev.foodies.academy: tests, then the code goes to the server by rsync and the server
+# api.dev.foodies.academy on push to main, api.foodies.academy (environment "production") by hand:
+# tests, then the code goes to the server by rsync and the server
 # runs migrations and rebuilds Laravel's caches. Server setup: deploy/hestia/README.md.
 on:
   push:
     branches: [main]
     paths: ['laravel-app/**', '.github/workflows/deploy-laravel.yml']
   workflow_dispatch:
+    inputs:
+      environment:
+        description: Where to deploy (production only from main)
+        type: choice
+        options: [dev, production]
+        default: dev
 
-concurrency: deploy-laravel
+concurrency: deploy-laravel-${{ inputs.environment || 'dev' }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment || 'dev' }}
     defaults:
       run:
         working-directory: laravel-app
@@ -32,6 +40,11 @@ jobs:
           --health-interval=5s --health-timeout=5s --health-retries=30
 
     steps:
+      # Production only gets code that is in main.
+      - name: Check branch
+        if: inputs.environment == 'production' && github.ref != 'refs/heads/main'
+        run: echo "Production is deployed from main only" && exit 1
+
       - uses: actions/checkout@v4
 
       - uses: shivammathur/setup-php@v2

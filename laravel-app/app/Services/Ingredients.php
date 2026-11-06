@@ -33,6 +33,30 @@ class Ingredients
             ->all();
     }
 
+    /**
+     * Every ingredient with a published recipe, by name: each has its page on the site. Counted
+     * here: term_taxonomy.count of the old database also counts deleted and draft recipes.
+     */
+    public function getAll(): array
+    {
+        return $this->db->table('term_taxonomy as tt')
+            ->join('terms as t', 't.term_id', '=', 'tt.term_id')
+            ->join('term_relationships as r', 'r.term_taxonomy_id', '=', 'tt.term_taxonomy_id')
+            ->join('posts as p', function ($join) {
+                $join->on('p.ID', '=', 'r.object_id')->where('p.post_type', 'recipe')->where('p.post_status', 'publish');
+            })
+            ->where('tt.taxonomy', 'ingredient')
+            ->groupBy('t.term_id', 't.name', 't.slug')
+            ->orderBy('t.name')
+            ->get(['t.name', 't.slug', DB::raw('COUNT(*) as count')])
+            ->map(fn ($term) => [
+                'name' => html_entity_decode($term->name, ENT_QUOTES | ENT_HTML5),
+                'slug' => $term->slug,
+                'count' => (int) $term->count,
+            ])
+            ->all();
+    }
+
     /** One ingredient with one page of its recipes, most viewed first, or null. */
     public function getBySlug(string $slug, int $page = 1, int $perPage = 24): ?array
     {
