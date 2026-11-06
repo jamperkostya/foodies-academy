@@ -20,6 +20,7 @@ Route::prefix('recipes')->controller(RecipesController::class)->group(function (
     Route::get('/top', 'top');
     Route::get('/new', 'new');
     Route::get('/slugs', 'slugs');
+    Route::get('/sitemap', 'sitemap');
     Route::get('/featured', 'featured');
     Route::get('/by-ingredients', 'byIngredients');
     Route::get('/search-index', 'searchIndex');
@@ -63,6 +64,7 @@ Route::prefix('collections')->controller(CollectionsController::class)->group(fu
 });
 
 Route::prefix('ingredients')->controller(IngredientsController::class)->group(function () {
+    Route::get('/', 'index');
     Route::get('/popular', 'popular');
     Route::get('/{slug}', 'show')->where('slug', '[a-z0-9_-]+');
 });

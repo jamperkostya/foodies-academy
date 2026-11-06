@@ -1,0 +1,11 @@
+# foodies.academy only: the photos of WordPress at the addresses they always had.
+# Texts of recipes and Google Images link to https://foodies.academy/wp-content/uploads/…; the files
+# themselves now live in the WordPress of wp.foodies.academy. ^~ wins over Hestia's own locations.
+# Install (as root):
+#   cp nginx.ssl.conf_foodies_uploads /home/jamper/conf/web/foodies.academy/nginx.ssl.conf_foodies_uploads
+#   nginx -t && systemctl reload nginx
+location ^~ /wp-content/uploads/ {
+    alias /home/jamper/web/wp.foodies.academy/public_html/wp-content/uploads/;
+    expires 30d;
+    access_log off;
+}

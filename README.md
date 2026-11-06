@@ -4,6 +4,7 @@ Recipe website: content is edited in **WordPress**, served by a **Laravel** API 
 Visitor activity (likes, views, reviews, searches, subscriptions, accounts) is written into the WordPress plugins' own tables, so it is all visible and managed in the WordPress admin.
 
 - Live site: https://foodies.academy
+- Production after the move: https://foodies.academy · https://api.foodies.academy/api · https://wp.foodies.academy/wp-admin
 - Dev: https://dev.foodies.academy (site) · https://api.dev.foodies.academy/api (API) · https://wp.dev.foodies.academy/wp-admin
 
 ## Architecture
@@ -66,8 +67,9 @@ docker exec foodies_laravel php artisan test   # WordPress tables in foodies_sit
 
 ## Deploy
 
-A push to `main` deploys only what changed: `astro-app/**` → site, `laravel-app/**` → API (tests, rsync, migrations), `wp-content/mu-plugins/**` → WordPress code. Every workflow can also be run by hand from any branch.
-Server setup, step by step: [`deploy/hestia/README.md`](deploy/hestia/README.md).
+A push to `main` deploys only what changed to **dev**: `astro-app/**` → site, `laravel-app/**` → API (tests, rsync, migrations), `wp-content/mu-plugins/**` → WordPress code. Every workflow can also be run by hand from any branch.
+**Production** (foodies.academy) is deployed by hand from `main` only: Actions → workflow → Run workflow → environment `production`.
+Server setup, step by step: [`deploy/hestia/README.md`](deploy/hestia/README.md); moving to foodies.academy and rolling back: [`deploy/hestia/PRODUCTION.md`](deploy/hestia/PRODUCTION.md).
 
 ## More
 

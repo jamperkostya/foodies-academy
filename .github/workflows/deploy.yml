@@ -1,25 +1,40 @@
 name: Deploy Astro to Hestia
 
-# The static site (dev.foodies.academy) built from the Laravel API. Server setup: deploy/hestia/README.md.
+# The static site built from the Laravel API: dev.foodies.academy on push to main, foodies.academy
+# (environment "production") by hand. Server setup: deploy/hestia/README.md, PRODUCTION.md.
 
 on:
   push:
     branches: [main]
     paths: ['astro-app/**', '.github/workflows/deploy.yml']
   workflow_dispatch:
-  # Sent by Laravel (php artisan site:rebuild) after WordPress content changes, and every night.
+    inputs:
+      environment:
+        description: Where to deploy (production only from main)
+        type: choice
+        options: [dev, production]
+        default: dev
+  # Sent by Laravel (php artisan site:rebuild) after WordPress content changes, and every night;
+  # the production Laravel sends its own type (GITHUB_DEPLOY_EVENT).
   repository_dispatch:
-    types: [content-changed]
+    types: [content-changed, content-changed-production]
 
-concurrency: deploy-production
+concurrency: deploy-site-${{ inputs.environment || (github.event.action == 'content-changed-production' && 'production') || 'dev' }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # Secrets and variables of the environment override the repository's (those are dev's).
+    environment: ${{ inputs.environment || (github.event.action == 'content-changed-production' && 'production') || 'dev' }}
     defaults:
       run:
         working-directory: astro-app
     steps:
+      # Production only gets code that is in main.
+      - name: Check branch
+        if: inputs.environment == 'production' && github.ref != 'refs/heads/main'
+        run: echo "Production is deployed from main only" && exit 1
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
@@ -32,7 +47,7 @@ jobs:
       - run: npm test
       - run: npm run build
         env:
-          # The production Laravel API the pages are built from (repository variables).
+          # The Laravel API the pages are built from (variables of the environment).
           API_URL: ${{ vars.API_URL }}
           PUBLIC_API_URL: ${{ vars.PUBLIC_API_URL }}
           SITE_URL: ${{ vars.SITE_URL }}

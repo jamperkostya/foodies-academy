@@ -38,4 +38,13 @@ class WpHtmlTest extends TestCase
         $this->assertTrue(PostViews::isBot(''));
         $this->assertFalse(PostViews::isBot('Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 Safari/604.1'));
     }
+
+    public function test_cyrillic_text_stays_whole(): void
+    {
+        // "х" is D1 85 in UTF-8; \x85 alone is a line break for a non-UTF-8 regex.
+        $html = WpHtml::render("Смешать муку и сахар.\n\nПоставить в холодильник.");
+
+        $this->assertSame("<p>Смешать муку и сахар.</p>\n<p>Поставить в холодильник.</p>", $html);
+        $this->assertNotFalse(json_encode($html));
+    }
 }

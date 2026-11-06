@@ -1,3 +1,0 @@
-# Hestia with Apache behind nginx: pages without a file extension are served by Apache.
-# Missing pages get the site's own 404 page (built by Astro), not Apache's.
-ErrorDocument 404 /404.html

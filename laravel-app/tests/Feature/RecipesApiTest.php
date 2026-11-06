@@ -32,6 +32,24 @@ class RecipesApiTest extends SiteTestCase
             ->assertJsonPath('data.categoryLinks.country.0', ['name' => 'Украина', 'slug' => 'ukraina']);
     }
 
+    public function test_sitemap_lists_every_recipe_with_its_photos_in_full_size(): void
+    {
+        $photo = fn (string $file) => tap($this->makePost('attachment', $file), fn ($id) => $this->meta($id, '_wp_attachment_metadata', serialize([
+            'file' => "2018/11/$file.jpg", 'sizes' => ['medium' => ['file' => "$file-601x601.jpg"]],
+        ])));
+        $cover = $photo('cover');
+        $second = $photo('second');
+        $this->recipe('borscht', ['post_modified_gmt' => '2026-03-01 10:00:00'], ['gallery' => serialize([(string) $cover, (string) $second])]);
+        $this->recipe('draft', ['post_status' => 'draft']);
+        $uploads = config('services.academy.uploads_url');
+
+        $this->getJson('/api/recipes/sitemap')
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.slug', 'borscht')
+            ->assertJsonPath('data.0.modified', '2026-03-01T10:00:00+00:00')
+            ->assertJsonPath('data.0.images', ["$uploads/2018/11/cover.jpg", "$uploads/2018/11/second.jpg"]);
+    }
+
     public function test_gallery_video_and_description(): void
     {
         $photo = fn (string $file) => tap($this->makePost('attachment', $file), fn ($id) => $this->meta($id, '_wp_attachment_metadata', serialize(['file' => "2018/11/$file.jpg"])));
@@ -75,6 +93,19 @@ class RecipesApiTest extends SiteTestCase
             ->assertJsonPath('data.image', $cover)
             ->assertJsonPath('data.gallery', [$cover]);
         $this->getJson('/api/recipes/new')->assertJsonPath('data.0.image', $cover);
+    }
+
+    public function test_plain_text_tip_and_history_become_paragraphs(): void
+    {
+        // WP Ultimate Recipe's editor saves the notes as plain lines, without <p>.
+        $this->recipe('olivier', [], [
+            'recipe_notes' => "*Вместо рябчиков — перепела.\r\n\r\n** Икру можно заменить.",
+            'history' => "Придуман в 1860-х.\n\nРецепт держали в секрете.",
+        ]);
+
+        $this->getJson('/api/recipes/olivier')
+            ->assertJsonPath('data.tip', "<p>*Вместо рябчиков — перепела.</p>\n<p>** Икру можно заменить.</p>")
+            ->assertJsonPath('data.history', "<p>Придуман в 1860-х.</p>\n<p>Рецепт держали в секрете.</p>");
     }
 
     public function test_slug_with_underscore_and_unknown_recipe(): void

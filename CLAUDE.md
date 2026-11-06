@@ -2,8 +2,6 @@
 
 Сайт рецептов foodies.academy. Контент ведётся в WordPress, Laravel отдаёт его API, Astro собирает из API статический сайт. Активность посетителей (лайки, просмотры, отзывы, поиски, подписки, аккаунты) Laravel пишет в таблицы плагинов WordPress, чтобы всё было видно и управлялось в админке WordPress.
 
-> `README.md` описывает первоначальный план (WP REST API, раздельные базы) и устарел. Как устроено на самом деле — ниже.
-
 ## Стек
 
 | Часть | Технология | Где |
@@ -51,11 +49,11 @@ WordPress (админка) ──┐
 **Сайт (`astro-app/src/pages`)**
 - Главная: слайдер топ-рецептов (значок YouTube у видеорецептов), рецепты по ингредиентам с фильтрами, популярные категории, подборки, новинки, видео, новости, блок «Нам доверяют» (цифры из базы), промо-блоки и SEO-текст.
 - Рецепт `/recipe/[slug]`: карусель фото (`gallery`) с видео первым слайдом (плеер YouTube грузится только по клику), описание `recipe_description`, быстрые факты, ингредиенты по группам с пересчётом порций, шаги с прогрессом, совет шефа, пищевая ценность, история происхождения, лайки, отзывы со звёздами и ответами, автор, похожие рецепты, JSON-LD Recipe, печать, избранное, «поделиться».
-- Каталог: `/categories`, `/category/[slug]`, `/kitchens`, `/ingredient/[slug]`, `/collections/[slug]` — с пагинацией по 24 и «Показать ещё».
+- Каталог: `/categories`, `/category/[slug]`, `/kitchens`, `/ingredient/[slug]` (все ингредиенты, у которых есть рецепт), `/collections/[slug]` — с пагинацией по 24 и «Показать ещё».
 - Видео `/video`, лайфхаки `/lifehacks`, новости `/news`, блог `/blog`, авторы `/authors` и `/author/[slug]` (рейтинг, подписка), страницы сайта `/[slug]` (галочка «Отдельная страница сайта» в WordPress), `/about`.
 - Поиск `/search` по `search-index.json` (рецепты по названию и ингредиентам, категории, кухни, авторы); запросы пишутся в Search Meter.
 - Аккаунт: `/register`, `/login`, `/profile` — избранное, подписки на авторов, новые рецепты подписок. Токен в `localStorage`, заголовок `Authorization: Bearer`.
-- `sitemap.xml`, `robots.txt` (на любом хосте, кроме foodies.academy, — `Disallow: /`), 404 со свежими рецептами, Yoast SEO на всех типах страниц.
+- `sitemap.xml` — индекс карт по сущностям (`sitemap-recipes.xml`, `-images`, `-categories`, `-ingredients`, `-authors`, `-articles`, `-videos`, `-lifehacks`, `-collections`, `-pages`; список в `src/sitemaps/sitemaps.ts`), `robots.txt` (на любом хосте, кроме foodies.academy, — `Disallow: /`), 404 со свежими рецептами, Yoast SEO на всех типах страниц.
 
 **API (`laravel-app/routes/api.php`)** — `recipes`, `categories`, `ingredients`, `collections`, `authors`, `news`, `blog`, `videos`, `lifehacks`, `pages`, `stats`; запись: отзывы (`POST …/comments`, на модерацию), лайки и просмотры (`/{recipes|videos}/{slug}/likes|view`), рейтинг автора, `search-log`, `subscribe`, `auth/*`, `me/*` (избранное, подписки). У каждой записи свой лимит частоты (`AppServiceProvider`).
 
@@ -66,7 +64,7 @@ WordPress (админка) ──┐
 - отзывы — комментарии WordPress, звёзды в `commentmeta.rating`;
 - пользователи — пользователи WordPress (роль subscriber); избранное и подписки — `usermeta` `foodies_favorite` / `foodies_follow_author`.
 
-**WordPress (`wp-content/mu-plugins`)** — типы записей `video`, `lifehack`, `news`; поле «SEO-текст»; страницы сайта (создаются сами при `init`); шаблон «История происхождения»; безопасные slug'и (`a-z0-9-_`); API пользователей; уведомление Laravel о правках. Плагины и версии — `wordpress/install-plugins.sh`.
+**WordPress (`wp-content/mu-plugins`)** — типы записей `video`, `lifehack`, `news`; поле «SEO-текст»; страницы сайта (создаются сами при `init`); шаблон «История происхождения»; безопасные slug'и (`a-z0-9-_`); API пользователей; уведомление Laravel о правках; перенаправление фронтенда WordPress на сайт. Плагины и версии — `wordpress/install-plugins.sh`.
 
 **Команды Laravel**
 - `site:prepare-db` — адаптация копии боевой базы (см. выше);
@@ -74,6 +72,7 @@ WordPress (админка) ──┐
 - `videos:sync [--latest]` — видео канала YouTube (без `YOUTUBE_API_KEY` — только 15 последних из RSS);
 - `likes:import-legacy`, `views:import-legacy` — перенос старых счётчиков;
 - `slugs:check` — недопустимые и повторяющиеся slug'и.
+- `deploy/hestia/clean-site-db.sh` — чистка копии боевой базы от спама (комментарии, пользователи, таблицы старых плагинов), после `site:prepare-db`.
 
 ## Локальная разработка
 
@@ -81,7 +80,7 @@ WordPress (админка) ──┐
 - `docker compose up -d`. Порты: сайт http://localhost:8082, API http://localhost:8000/api, WordPress http://localhost:8081/wp-admin, MySQL Laravel — 3307.
 - Имя базы сайта: `SITE_DB_DATABASE` в корневом `.env` (для WordPress) и в `laravel-app/.env` (для Laravel) — должны совпадать. Оба файла не в git.
 - После смены `.env` Laravel: `docker restart foodies_laravel foodies_scheduler` и `php artisan cache:clear`. Dev-сервер Astro кэширует `getStaticPaths` — при смене данных `docker restart foodies_astro`.
-- Сборка: `docker exec foodies_astro npx astro build` (~3 минуты, ~960 страниц).
+- Сборка: `docker exec foodies_astro npx astro build` (~7 минут, ~2500 страниц).
 
 ## Тесты
 
@@ -91,8 +90,11 @@ WordPress (админка) ──┐
 
 ## Деплой
 
-- dev: https://dev.foodies.academy (сайт), https://api.dev.foodies.academy (Laravel), https://wp.dev.foodies.academy (WordPress). Сервер HestiaCP, пользователь `jamper`, без Docker.
-- Push в `main` запускает только нужный workflow: `astro-app/**` → `deploy.yml` (тесты, сборка, rsync `dist/`), `laravel-app/**` → `deploy-laravel.yml` (тесты, rsync, миграции, `optimize`), `wp-content/mu-plugins/**` → `deploy-wordpress.yml`. Любой можно запустить вручную, в том числе с ветки: `gh workflow run deploy.yml --ref <ветка>`.
+- dev: https://dev.foodies.academy (сайт), https://api.dev.foodies.academy (Laravel), https://wp.dev.foodies.academy (WordPress). Прод: те же адреса без `dev.`. Один сервер HestiaCP, пользователь `jamper`, без Docker.
+- Push в `main` деплоит на **dev** только нужный workflow: `astro-app/**` → `deploy.yml` (тесты, сборка, rsync `dist/`), `laravel-app/**` → `deploy-laravel.yml` (тесты, rsync, миграции, `optimize`), `wp-content/mu-plugins/**` → `deploy-wordpress.yml`. Вручную — с любой ветки на dev: `gh workflow run deploy.yml --ref <ветка>`.
+- **Прод — только вручную и только из `main`**: `gh workflow run deploy.yml -f environment=production`. Пути и адреса прода — в GitHub Environment `production`, у dev — секреты репозитория. Боевой Laravel пересобирает сайт событием `content-changed-production` (`GITHUB_DEPLOY_EVENT`). Переезд и откат: `deploy/hestia/PRODUCTION.md`.
+- Адреса страниц без слэша на конце, как на старом сайте: Astro собирает `recipe/x.html` (`build.format: "file"`), `.htaccess` с 301 со старых адресов WordPress пишет `src/build/htaccess.ts` после сборки.
+- Фронтенд WordPress (`wp.*`) перенаправляет на сайт (`foodies-frontend.php`, `FOODIES_SITE_URL`); картинки на сайте — по старым адресам `foodies.academy/wp-content/uploads`, на проде nginx отдаёт их из папки WordPress.
 - На сервере вручную правятся только `.env` Laravel и `wp-config-foodies.php`; остальное перезаписывает деплой. Cron пользователя `jamper` запускает `schedule:run`.
 - Полная инструкция по серверу: `deploy/hestia/README.md`.
 
@@ -109,6 +111,5 @@ WordPress (админка) ──┐
 
 ## Известное
 
-- Внутренние ссылки без слэша на конце: Apache отвечает 301 на `/recipe/x/`. До переезда на боевой домен привести к одному виду.
 - 35 тыс. комментариев боевой базы ждут модерации (в основном спам); на сайте только одобренные.
 - У части статей блога и кухонь нет картинок в самом WordPress — карточки показывают заглушку.

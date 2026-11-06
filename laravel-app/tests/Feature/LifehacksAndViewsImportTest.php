@@ -86,4 +86,19 @@ class LifehacksAndViewsImportTest extends SiteTestCase
             ->assertJsonPath('data.seoText', '<p>Всё о соли</p>')
             ->assertJsonPath('data.recipes.0.slug', 'borscht');
     }
+
+    public function test_every_ingredient_with_a_published_recipe(): void
+    {
+        $borscht = $this->recipe('borscht');
+        $draft = $this->recipe('draft', ['post_status' => 'draft']);
+        $this->term('ingredient', 'sol', 'Соль', [$borscht, $draft]);
+        $this->term('ingredient', 'svekla', 'Свёкла', [$borscht]);
+        // Only in a draft: no page.
+        $this->term('ingredient', 'tmin', 'Тмин', [$draft]);
+
+        $this->getJson('/api/ingredients')->assertExactJson(['data' => [
+            ['name' => 'Свёкла', 'slug' => 'svekla', 'count' => 1],
+            ['name' => 'Соль', 'slug' => 'sol', 'count' => 1],
+        ]]);
+    }
 }

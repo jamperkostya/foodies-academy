@@ -14,6 +14,15 @@ class IngredientsController extends Controller
 
     public function __construct(private Ingredients $ingredients) {}
 
+    // GET /api/ingredients: every ingredient with a recipe (the site builds a page for each)
+    public function index(): JsonResponse
+    {
+        $ingredients = Cache::remember('ingredients:all', now()->addMinutes(self::CACHE_MINUTES),
+            fn () => $this->ingredients->getAll());
+
+        return response()->json(['data' => $ingredients]);
+    }
+
     // GET /api/ingredients/popular?limit=5
     public function popular(Request $request): JsonResponse
     {

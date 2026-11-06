@@ -1,19 +1,32 @@
 name: Deploy WordPress code to Hestia
 
-# wp.dev.foodies.academy: the site's mu-plugins and the pinned plugin list. WordPress core,
+# wp.dev.foodies.academy on push to main, wp.foodies.academy (environment "production") by hand:
+# the site's mu-plugins and the pinned plugin list. WordPress core,
 # uploads and the database live on the server only. Server setup: deploy/hestia/README.md.
 on:
   push:
     branches: [main]
     paths: ['wp-content/mu-plugins/**', 'wordpress/install-plugins.sh', '.github/workflows/deploy-wordpress.yml']
   workflow_dispatch:
+    inputs:
+      environment:
+        description: Where to deploy (production only from main)
+        type: choice
+        options: [dev, production]
+        default: dev
 
-concurrency: deploy-wordpress
+concurrency: deploy-wordpress-${{ inputs.environment || 'dev' }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment || 'dev' }}
     steps:
+      # Production only gets code that is in main.
+      - name: Check branch
+        if: inputs.environment == 'production' && github.ref != 'refs/heads/main'
+        run: echo "Production is deployed from main only" && exit 1
+
       - uses: actions/checkout@v4
 
       - name: Setup SSH

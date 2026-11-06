@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Support\WpHtml;
 use App\Support\YouTubeUrl;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -366,6 +368,40 @@ class Recipes
             ->all();
     }
 
+    /**
+     * Every published recipe for the sitemaps: its address, last change and photos in full size
+     * (the cover, then the rest of the gallery).
+     */
+    public function getSitemap(): array
+    {
+        $posts = $this->db->table('posts')
+            ->where('post_type', 'recipe')
+            ->where('post_status', 'publish')
+            ->orderBy('ID')
+            ->get(['ID', 'post_name', 'post_title', 'post_modified_gmt']);
+        $meta = $this->db->table('postmeta')
+            ->whereIn('post_id', $posts->pluck('ID'))
+            ->whereIn('meta_key', ['_thumbnail_id', 'gallery'])
+            ->get(['post_id', 'meta_key', 'meta_value'])
+            ->groupBy('post_id')
+            ->map(fn ($rows) => $rows->pluck('meta_value', 'meta_key')->all());
+
+        $photoIds = $meta->map(function ($m) {
+            $gallery = @unserialize($m['gallery'] ?? '', ['allowed_classes' => false]);
+
+            return array_values(array_unique(array_filter([$this->coverId($m), ...(is_array($gallery) ? array_map('intval', $gallery) : [])])));
+        });
+        $urls = app(Attachments::class)->urls($photoIds->flatten()->unique()->all(), original: true);
+
+        return $posts->map(fn ($post) => [
+            'slug' => $post->post_name,
+            'title' => html_entity_decode($post->post_title, ENT_QUOTES | ENT_HTML5),
+            // Old WordPress rows may have no date (0000-00-00).
+            'modified' => str_starts_with($post->post_modified_gmt, '0000') ? null : Carbon::parse($post->post_modified_gmt, 'UTC')->toIso8601String(),
+            'images' => array_values(array_filter(array_map(fn ($id) => $urls[$id] ?? '', $photoIds->get($post->ID, [])))),
+        ])->all();
+    }
+
     /** Published recipes by id, in the order of $ids (a visitor's favourites). */
     public function getByIds(array $ids): array
     {
@@ -441,7 +477,8 @@ class Recipes
         $recipe['steps'] = $this->steps($post->ID);
         // "Совет от шефа": HTML from WordPress, null when empty.
         $notes = trim($meta['recipe_notes'] ?? '');
-        $recipe['tip'] = trim(strip_tags($notes)) !== '' ? $notes : null;
+        // Saved as HTML or, by WP Ultimate Recipe's editor, as plain lines: both become paragraphs.
+        $recipe['tip'] = WpHtml::render($notes) ?: null;
         // Text under the title, "" when empty.
         $recipe['description'] = trim(html_entity_decode(strip_tags($meta['recipe_description'] ?? ''), ENT_QUOTES | ENT_HTML5));
         $recipe['gallery'] = $this->gallery($meta, $recipe['image']);
@@ -454,7 +491,7 @@ class Recipes
             ->whereIn('meta_key', ['_crb_recipe_history', 'history'])
             ->pluck('meta_value', 'meta_key');
         $history = trim((string) (trim($historyMeta['_crb_recipe_history'] ?? '') ?: ($historyMeta['history'] ?? '')));
-        $recipe['history'] = $history !== '' ? $history : $this->history($post->post_content);
+        $recipe['history'] = $history !== '' ? WpHtml::render($history) : $this->history($post->post_content);
 
         return $recipe;
     }

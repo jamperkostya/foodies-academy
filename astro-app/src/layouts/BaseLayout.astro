@@ -42,8 +42,10 @@ const site = Astro.site ?? new URL("https://foodies.academy");
 // Yoast titles already end with the site name.
 const fullTitle = seo?.title ?? (title ? `${title} — ${SITE_NAME}` : SITE_NAME);
 const metaDescription = seo?.description ?? description;
-// Canonical: this page's address on the site, without ?query; Yoast's points at WordPress.
-const canonical = new URL(Astro.url.pathname, site).href;
+// This page's address on the site, without ?query; Yoast's canonical points at WordPress.
+// The build sees the file (recipe/x.html), the page is served at /recipe/x.
+const path = Astro.url.pathname.replace(/\.html$/, "").replace(/\/index$/, "/");
+const canonical = new URL(path, site).href;
 const robots = [noindex || seo?.index === false ? "noindex" : "index", noindex || seo?.follow === false ? "nofollow" : "follow"];
 const ogImage = seo?.og.image ?? (image ? { url: new URL(image, site).href, width: null, height: null, type: null } : null);
 const ogTitle = seo?.og.title ?? fullTitle;
@@ -57,7 +59,7 @@ const breadcrumbSchema = breadcrumbs?.length
 				"@type": "ListItem",
 				position: i + 1,
 				name: crumb.label,
-				item: new URL(crumb.href ?? Astro.url.pathname, site).href,
+				item: new URL(crumb.href ?? path, site).href,
 			})),
 		})
 	: null;
