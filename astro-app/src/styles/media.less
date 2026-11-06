@@ -1,4 +1,9 @@
 // Breakpoints for @media queries. CSS custom properties don't work in media
 // conditions, so these are Less variables: @media @tablet { ... }
+//
+// Mobile first: plain styles are for phones, @tablet and @desktop add to them.
+// The "below" ones are for the few rules that only phones or tablets need.
 @tablet: ~"(min-width: 768px)";
 @desktop: ~"(min-width: 1200px)";
+@mobile: ~"(max-width: 767px)";
+@below-desktop: ~"(max-width: 1199px)";
