@@ -17,6 +17,19 @@ const { groups, href } = Astro.props;
 	{href && <a href={href} class="filters__all filter-name">Смотреть все</a>}
 </div>
 
+<script>
+	// The row fades out on the side where more filters are hidden, instead of cutting a button.
+	document.querySelectorAll<HTMLElement>(".filters__list").forEach((list) => {
+		const update = () => {
+			const end = list.scrollWidth - list.clientWidth;
+			list.classList.toggle("filters__list--more-start", list.scrollLeft > 1);
+			list.classList.toggle("filters__list--more-end", list.scrollLeft < end - 1);
+		};
+		list.addEventListener("scroll", update, { passive: true });
+		new ResizeObserver(update).observe(list);
+	});
+</script>
+
 <style lang="less">
 // "Смотреть все" is pinned to the right; the filters take the rest of the
 // row and scroll sideways when they don't fit.
@@ -37,6 +50,29 @@ const { groups, href } = Astro.props;
 	&::-webkit-scrollbar {
 		display: none;
 	}
+	// A mask, not an overlay: the buttons fade into any background.
+	--fade-start: 0px;
+	--fade-end: 0px;
+	mask-image: linear-gradient(to right, transparent, #000 var(--fade-start), #000 calc(100% - var(--fade-end)), transparent);
+	transition: --fade-start .2s, --fade-end .2s;
+	&--more-start {
+		--fade-start: 60px;
+	}
+	&--more-end {
+		--fade-end: 60px;
+	}
+}
+
+// Registered, so the fade width animates instead of jumping.
+@property --fade-start {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0px;
+}
+@property --fade-end {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0px;
 }
 
 .filters__btn,
