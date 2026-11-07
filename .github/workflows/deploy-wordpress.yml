@@ -22,10 +22,18 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment || 'dev' }}
     steps:
-      # Production only gets code that is in main.
-      - name: Check branch
-        if: inputs.environment == 'production' && github.ref != 'refs/heads/main'
-        run: echo "Production is deployed from main only" && exit 1
+      # Production only gets code that is in main. Without the "production" environment GitHub would
+      # silently use the repository secrets, which point at dev.
+      - name: Check production target
+        if: inputs.environment == 'production'
+        env:
+          TARGET: ${{ secrets.WP_PATH }}
+        run: |
+          [ "$GITHUB_REF" = refs/heads/main ] || { echo "Production is deployed from main only"; exit 1; }
+          case "$TARGET" in
+            */web/wp.foodies.academy/*) ;;
+            *) echo "WP_PATH of the production environment is not set (got: $TARGET)"; exit 1 ;;
+          esac
 
       - uses: actions/checkout@v4
 
