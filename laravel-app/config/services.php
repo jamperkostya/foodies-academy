@@ -60,8 +60,12 @@ return [
 
     'wordpress' => [
         'url' => env('WP_INTERNAL_URL', 'http://wordpress'),
-        // Contact Form 7 form "Подписка на рассылку".
-        'subscribe_form_id' => (int) env('CF7_SUBSCRIBE_FORM_ID', 77),
+        // Contact Form 7 forms the sign-ups go to, so CFDB7 keeps each list apart: the newsletter
+        // and the free recipe book. Until the book has its own form, it shares the newsletter's.
+        'subscribe_forms' => [
+            'newsletter' => (int) env('CF7_SUBSCRIBE_FORM_ID', 77),
+            'book' => (int) env('CF7_BOOK_FORM_ID', env('CF7_SUBSCRIBE_FORM_ID', 77)),
+        ],
         // Key of the user API (wp-content/mu-plugins/foodies-users.php), from the root .env.
         'api_secret' => env('FOODIES_API_SECRET', ''),
     ],

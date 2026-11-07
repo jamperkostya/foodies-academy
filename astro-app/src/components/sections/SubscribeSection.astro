@@ -14,7 +14,7 @@ const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/
 	<div class="subscribe flex gap-40">
 		<Image class="subscribe__img" src={book} alt="Кулинарная книга Foodies" />
 
-		<form method="post" class="subscribe__form flex gap-15" data-subscribe={`${PUBLIC_API_URL}/subscribe`}>
+		<form method="post" class="subscribe__form flex gap-15" data-subscribe={`${PUBLIC_API_URL}/subscribe`} data-list="book">
 			<h2 class="subscribe__title">{title}</h2>
 
 			<input class="subscribe__input" type="text" name="name" placeholder="Имя" aria-label="Имя" autocomplete="given-name" required>

@@ -1,5 +1,6 @@
-// Newsletter forms (SubscribeSection, NewsletterCard): <form data-subscribe={url}> with
-// "name" and "email" fields. Laravel passes them to Contact Form 7, and CFDB7 saves them.
+// Sign-up forms: <form data-subscribe={url} data-list="book|newsletter"> with "name" and "email"
+// fields (SubscribeSection: the free recipe book, NewsletterCard: the newsletter). Laravel passes
+// them to the list's Contact Form 7 form, and CFDB7 saves them under it.
 // On success the form gets .is-done, and its [data-subscribe-done] sibling is shown.
 import { showToast } from "./toast";
 
@@ -20,7 +21,7 @@ document.querySelectorAll<HTMLFormElement>("form[data-subscribe]").forEach((form
 			const response = await fetch(form.dataset.subscribe!, {
 				method: "POST",
 				headers: { "Content-Type": "application/json", Accept: "application/json" },
-				body: JSON.stringify({ name, email }),
+				body: JSON.stringify({ name, email, list: form.dataset.list }),
 			});
 			if (!response.ok) {
 				showToast(

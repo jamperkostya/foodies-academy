@@ -72,6 +72,33 @@ class ViewsSearchSubscribeTest extends SiteTestCase
                 === ['username' => 'Анна', 'email' => 'anna@example.test', '_wpcf7_unit_tag' => 'wpcf7-f77-o1']);
     }
 
+    public function test_each_list_goes_to_its_own_form(): void
+    {
+        config(['services.wordpress.subscribe_forms' => ['newsletter' => 77, 'book' => 91]]);
+        Http::fake(['wordpress.test/wp-json/contact-form-7/*' => Http::response(['status' => 'mail_sent'])]);
+
+        $this->postJson('/api/subscribe', ['name' => 'Анна', 'email' => 'anna@example.test', 'list' => 'book'])->assertCreated();
+        $this->postJson('/api/subscribe', ['name' => 'Анна', 'email' => 'anna@example.test', 'list' => 'newsletter'])->assertCreated();
+
+        $forms = Http::recorded()->map(fn ($pair) => [
+            basename(dirname($pair[0]->url())),
+            collect($pair[0]->data())->pluck('contents', 'name')->only(['_wpcf7', '_wpcf7_unit_tag'])->all(),
+        ])->all();
+        $this->assertSame([
+            ['91', ['_wpcf7' => 91, '_wpcf7_unit_tag' => 'wpcf7-f91-o1']],
+            ['77', ['_wpcf7' => 77, '_wpcf7_unit_tag' => 'wpcf7-f77-o1']],
+        ], $forms);
+    }
+
+    public function test_an_unknown_list_is_rejected(): void
+    {
+        Http::fake();
+
+        $this->postJson('/api/subscribe', ['name' => 'Анна', 'email' => 'anna@example.test', 'list' => 'vip'])
+            ->assertUnprocessable()->assertJsonValidationErrors('list');
+        Http::assertNothingSent();
+    }
+
     public function test_subscription_saved_even_if_the_mail_fails(): void
     {
         Http::fake(['wordpress.test/*' => Http::response(['status' => 'mail_failed'])]);

@@ -64,16 +64,19 @@ class EngagementController extends Controller
         return response()->json(null, 204);
     }
 
-    // POST /api/subscribe {name, email}: goes to Contact Form 7, saved by CFDB7.
+    // POST /api/subscribe {name, email, list: newsletter|book}: goes to the list's Contact Form 7
+    // form, saved by CFDB7.
     public function subscribe(Request $request, Subscriptions $subscriptions): JsonResponse
     {
         $data = $request->validate([
             'name' => 'required|string|min:2|max:60',
             'email' => 'required|email|max:120',
+            // Pages built before the lists were told apart send none: those go to the newsletter, as before.
+            'list' => ['nullable', Rule::in(Subscriptions::LISTS)],
         ]);
 
         try {
-            $errors = $subscriptions->subscribe(strip_tags(trim($data['name'])), trim($data['email']));
+            $errors = $subscriptions->subscribe($data['list'] ?? 'newsletter', strip_tags(trim($data['name'])), trim($data['email']));
         } catch (RuntimeException $e) {
             report($e);
 
