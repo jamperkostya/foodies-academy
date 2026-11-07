@@ -1,4 +1,5 @@
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
+import { readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
 import Footer from "../src/components/layout/Footer.astro";
 
@@ -24,9 +25,26 @@ describe("Footer", () => {
 		expect(img).toContain('height="81"');
 	});
 
-	it("renders all 5 social links with an accessible name", () => {
-		const socialLinks = [...html.matchAll(/<a[^>]*aria-label="[^"]*"[^>]*>\s*<svg[^>]*>\s*<use href="\/images\/icons\/sprite\.svg#social-/g)];
-		expect(socialLinks).toHaveLength(5);
+	it("links to the site's social networks, each with a name and an icon from the sprite", () => {
+		const sprite = readFileSync(new URL("../public/images/icons/sprite.svg", import.meta.url), "utf8");
+		const links = [...html.matchAll(/<a href="([^"]+)" class="footer__social-link" aria-label="([^"]+)"([^>]*)>[\s\S]*?sprite\.svg#([\w-]+)"/g)];
+
+		expect(links.map((m) => [m[2], m[1]])).toEqual([
+			["Facebook", "https://www.facebook.com/Foodies.Academy"],
+			["Instagram", "https://www.instagram.com/foodies.academy/"],
+			["Telegram", "https://t.me/foodies_academy"],
+			["YouTube", "https://www.youtube.com/foodies-academy"],
+		]);
+		for (const [, , , attrs, icon] of links) {
+			expect(attrs).toContain('target="_blank"');
+			expect(attrs).toContain('rel="noopener"');
+			expect(sprite).toContain(`<symbol id="${icon}"`);
+		}
+	});
+
+	it("has no placeholder links or commented-out markup", () => {
+		expect(html).not.toMatch(/href="#?"/);
+		expect(html).not.toContain("<!--");
 	});
 
 	it("labels the secondary navigation columns as a nav landmark", () => {
