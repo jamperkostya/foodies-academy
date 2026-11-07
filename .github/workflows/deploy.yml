@@ -30,10 +30,18 @@ jobs:
       run:
         working-directory: astro-app
     steps:
-      # Production only gets code that is in main.
-      - name: Check branch
-        if: inputs.environment == 'production' && github.ref != 'refs/heads/main'
-        run: echo "Production is deployed from main only" && exit 1
+      # Production only gets code that is in main. Without the "production" environment GitHub would
+      # silently use the repository secrets, which point at dev.
+      - name: Check production target
+        if: inputs.environment == 'production' || github.event.action == 'content-changed-production'
+        env:
+          TARGET: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          [ "$GITHUB_REF" = refs/heads/main ] || { echo "Production is deployed from main only"; exit 1; }
+          case "$TARGET" in
+            */web/foodies.academy/*) ;;
+            *) echo "DEPLOY_PATH of the production environment is not set (got: $TARGET)"; exit 1 ;;
+          esac
 
       - uses: actions/checkout@v4
 

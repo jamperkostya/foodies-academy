@@ -4,6 +4,7 @@ import Footer from "../components/layout/Footer.astro";
 import Breadcrumbs from "../components/layout/Breadcrumbs.astro";
 import BackToTop from "../components/layout/BackToTop.astro";
 import Toast from "../components/ui/Toast.astro";
+import SiteCounters from "../components/layout/SiteCounters.astro";
 import type { Breadcrumb } from "../types/breadcrumb";
 import type { Seo } from "../types/seo";
 import { jsonLd } from "../utils/jsonLd";
@@ -115,6 +116,7 @@ const breadcrumbSchema = breadcrumbs?.length
 		{(seo?.twitter.image ?? ogImage?.url) && <meta name="twitter:image" content={seo?.twitter.image ?? ogImage?.url}>}
 		<link rel="sitemap" href="/sitemap.xml">
 		{breadcrumbSchema && <script type="application/ld+json" is:inline set:html={breadcrumbSchema} />}
+		<SiteCounters host={Astro.site?.hostname} />
 	</head>
 	<body>
 		<Header />
