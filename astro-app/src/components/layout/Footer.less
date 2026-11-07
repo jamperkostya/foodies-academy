@@ -16,12 +16,10 @@
 	}
 	
 }
-// Footer links are dimmed (here or by .footer__bottom) and light up on hover.
+// Footer links are dimmed and light up on hover.
 .footer__social-link,
 .footer__col-header,
-.footer__link,
-.footer__country,
-.footer__legal-link {
+.footer__link {
 	transition: color .15s, opacity .15s;
 	&:hover {
 		color: var(--color-red);
@@ -100,29 +98,4 @@
 }
 .footer__link {
 	opacity: 0.5;
-}
-
-.footer__bottom {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 10px;
-	text-align: center;
-	@media (min-width: 1200px) {
-		flex-direction: row;
-		justify-content: space-between;
-		text-align: initial;
-	}
-	padding-top: 15px;
-	padding-bottom: 15px;
-	border-bottom: var(--border-width) solid var(--color-grey);
-	opacity: 0.5;
-}
-
-.footer__countries,
-.footer__legal {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
-	gap: 4px 15px;
 }
