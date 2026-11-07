@@ -74,7 +74,6 @@ class ViewsSearchSubscribeTest extends SiteTestCase
 
     public function test_each_list_goes_to_its_own_form(): void
     {
-        config(['services.wordpress.subscribe_forms' => ['newsletter' => 77, 'book' => 91]]);
         Http::fake(['wordpress.test/wp-json/contact-form-7/*' => Http::response(['status' => 'mail_sent'])]);
 
         $this->postJson('/api/subscribe', ['name' => 'Анна', 'email' => 'anna@example.test', 'list' => 'book'])->assertCreated();
@@ -88,6 +87,15 @@ class ViewsSearchSubscribeTest extends SiteTestCase
             ['91', ['_wpcf7' => 91, '_wpcf7_unit_tag' => 'wpcf7-f91-o1']],
             ['77', ['_wpcf7' => 77, '_wpcf7_unit_tag' => 'wpcf7-f77-o1']],
         ], $forms);
+    }
+
+    public function test_a_list_without_a_form_fails_without_asking_wordpress(): void
+    {
+        config(['services.wordpress.subscribe_forms.book' => 0]);
+        Http::fake();
+
+        $this->postJson('/api/subscribe', ['name' => 'Анна', 'email' => 'anna@example.test', 'list' => 'book'])->assertStatus(502);
+        Http::assertNothingSent();
     }
 
     public function test_an_unknown_list_is_rejected(): void

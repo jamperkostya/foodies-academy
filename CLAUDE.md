@@ -60,7 +60,7 @@ WordPress (админка) ──┐
 **Где хранится активность (плагины WordPress)**
 - лайки — Posts Like Dislike (`pld_like_count` / `pld_dislike_count`);
 - просмотры — Post Views Counter (`post_views`) и старый `post_views_realtime`;
-- поиски — Search Meter; подписки — Contact Form 7 + CFDB7, у каждого списка своя форма: рассылка (77, `CF7_SUBSCRIBE_FORM_ID`) и книга рецептов (`CF7_BOOK_FORM_ID`);
+- поиски — Search Meter; подписки — Contact Form 7 + CFDB7, у каждого списка своя форма: рассылка (`CF7_SUBSCRIBE_FORM_ID`) и книга рецептов (`CF7_BOOK_FORM_ID`), оба обязательны в `.env` Laravel; это ID записи формы, а не хеш из шорткода;
 - отзывы — комментарии WordPress, звёзды в `commentmeta.rating`;
 - пользователи — пользователи WordPress (роль subscriber); избранное и подписки — `usermeta` `foodies_favorite` / `foodies_follow_author`.
 
