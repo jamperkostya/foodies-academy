@@ -1,0 +1,27 @@
+---
+// Yandex.Metrika and the search consoles' ownership tags of the old site. Only on foodies.academy:
+// dev and local builds would pollute the statistics.
+interface Props {
+	// Hostname the site is built for (astro.config `site`).
+	host?: string;
+}
+
+const PRODUCTION_HOST = "foodies.academy";
+const METRIKA_ID = 51455426;
+
+const { host } = Astro.props;
+const metrika = `(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(${METRIKA_ID},"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true,trackHash:true});`;
+---
+
+{
+	host === PRODUCTION_HOST && (
+		<>
+			<meta name="google-site-verification" content="xeligI0KtM3Yup2uX5Mw_AOL78FE2X3Jz4F5CmT3vdk" />
+			<meta name="yandex-verification" content="96437330454fa524" />
+			<script is:inline set:html={metrika} />
+			<noscript>
+				<div><img src={`https://mc.yandex.ru/watch/${METRIKA_ID}`} style="position:absolute;left:-9999px" alt="" /></div>
+			</noscript>
+		</>
+	)
+}
