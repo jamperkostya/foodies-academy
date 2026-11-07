@@ -44,6 +44,7 @@ jobs:
       # silently use the repository secrets, which point at dev.
       - name: Check production target
         if: inputs.environment == 'production'
+        working-directory: .  # runs before checkout, when the job's folder doesn't exist yet
         env:
           TARGET: ${{ secrets.LARAVEL_PATH }}
         run: |
