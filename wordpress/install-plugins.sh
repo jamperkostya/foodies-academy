@@ -1,6 +1,7 @@
 #!/bin/bash
 # Installs and activates the plugins foodies.academy relies on. Safe to re-run:
 # plugins already present are only activated. Versions are pinned, like everything else.
+# Exits with an error if any of them ends up inactive.
 #
 # Docker runs it as root with the defaults; on Hestia the deploy runs it as the site user:
 #   WP_PATH=/home/jamper/web/wp.dev.foodies.academy/public_html WP_CLI="php8.3 $HOME/bin/wp" bash install-plugins.sh
@@ -45,10 +46,21 @@ for entry in "${PLUGINS[@]}"; do
 	if ! wp plugin is-installed "$slug"; then
 		echo "[plugins] installing $slug"
 		case "$source" in
-			http*) wp plugin install "$source" --quiet ;;
-			*) wp plugin install "$slug" --version="$source" --quiet ;;
-		esac || { echo "[plugins] failed to install $slug"; continue; }
+			http*) wp plugin install "$source" ;;
+			*) wp plugin install "$slug" --version="$source" ;;
+		esac || echo "[plugins] failed to install $slug"
 	fi
-	wp plugin is-active "$slug" || wp plugin activate "$slug" --quiet || echo "[plugins] failed to activate $slug"
+	wp plugin is-active "$slug" 2>/dev/null || wp plugin activate "$slug" --quiet || echo "[plugins] failed to activate $slug"
 done
+
+# A plugin that didn't install or activate (Contact Form 7 once, so sign-ups broke) fails the
+# deploy instead of leaving it green.
+missing=()
+for entry in "${PLUGINS[@]}"; do
+	wp plugin is-active "${entry%%=*}" 2>/dev/null || missing+=("${entry%%=*}")
+done
+if [ ${#missing[@]} -gt 0 ]; then
+	echo "[plugins] not active: ${missing[*]}"
+	exit 1
+fi
 echo "[plugins] done"
