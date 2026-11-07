@@ -37,6 +37,8 @@
         <env name="NIGHTWATCH_ENABLED" value="false"/>
         <env name="APP_LOCALE" value="ru" force="true"/>
         <!-- WordPress tables: an empty test database, never the site's (see tests/SiteDatabase.php). -->
+        <env name="CF7_SUBSCRIBE_FORM_ID" value="77" force="true"/>
+        <env name="CF7_BOOK_FORM_ID" value="91" force="true"/>
         <env name="SITE_DB_HOST" value="mysql" force="true"/>
         <env name="SITE_DB_PORT" value="3306" force="true"/>
         <env name="SITE_DB_DATABASE" value="foodies_site_test" force="true"/>

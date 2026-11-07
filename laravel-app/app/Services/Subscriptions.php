@@ -7,20 +7,25 @@ use Illuminate\Support\Facades\Log;
 use RuntimeException;
 
 /**
- * Newsletter sign-ups, sent to the Contact Form 7 form "Подписка на рассылку" through its
- * REST API: CF7 validates them and sends its mail, and Contact Form CFDB7 saves the entry
- * (WordPress admin → Contact Forms → CFDB7).
+ * Sign-ups (the newsletter, the free recipe book), each sent to its own Contact Form 7 form through
+ * its REST API: CF7 validates them and sends its mail, and Contact Form CFDB7 saves the entry
+ * under that form (WordPress admin → Contact Forms → CFDB7).
  */
 class Subscriptions
 {
     /**
      * Returns null on success, or [field => message] when CF7 rejects the data.
      *
-     * @throws RuntimeException when WordPress can't be reached or refuses the submission
+     * @throws RuntimeException when the list has no form, or WordPress can't be reached or refuses the submission
      */
-    public function subscribe(string $name, string $email): ?array
+    public const LISTS = ['newsletter', 'book'];
+
+    public function subscribe(string $list, string $name, string $email): ?array
     {
-        $formId = (int) config('services.wordpress.subscribe_form_id');
+        $formId = (int) config("services.wordpress.subscribe_forms.$list");
+        if ($formId <= 0) {
+            throw new RuntimeException("No Contact Form 7 form for the \"$list\" sign-ups: set CF7_SUBSCRIBE_FORM_ID / CF7_BOOK_FORM_ID in .env");
+        }
         $url = rtrim(config('services.wordpress.url'), '/')."/wp-json/contact-form-7/v1/contact-forms/$formId/feedback";
 
         $response = Http::asMultipart()->timeout(15)->post($url, [

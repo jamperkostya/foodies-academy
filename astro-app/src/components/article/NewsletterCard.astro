@@ -13,7 +13,7 @@ const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/
 ---
 <SidebarCard title={title} accent>
 	<p class="newsletter-card__text">{text}</p>
-	<form class="newsletter-card__form" data-subscribe={`${PUBLIC_API_URL}/subscribe`}>
+	<form class="newsletter-card__form" data-subscribe={`${PUBLIC_API_URL}/subscribe`} data-list="newsletter">
 		<input class="newsletter-card__input" type="text" name="name" placeholder="Имя" aria-label="Имя" autocomplete="given-name" required>
 		<input class="newsletter-card__input" type="email" name="email" placeholder="E-mail" aria-label="E-mail" autocomplete="email" required>
 		<button type="submit" class="btn newsletter-card__btn">Подписаться</button>
