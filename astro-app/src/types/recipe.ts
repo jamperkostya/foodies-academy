@@ -60,6 +60,8 @@ export interface Recipe {
   author?: AuthorSummary | null; // posts.post_author
   similar?: Recipe[]; // recipes sharing the most ingredients, most first
   youtubeId?: string | null; // video recipe from recipe_video_embed
+  updatedAt?: string; // ISO date of the last change, only in GET /api/recipes/{slug}: the video's uploadDate
+  focusKeyword?: string; // Yoast SEO focus keyword, "" when not set, only in GET /api/recipes/{slug}
   comments: number;
   views: Counter;
   likes: Counter;

@@ -102,6 +102,14 @@ const reviews: Review[] = recipe.reviews ?? [];
 // not the Docker-internal API_URL (http://laravel:8000).
 const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/api";
 
+// Google's "keywords" are descriptors other than the dish type and cuisine, which have their own fields.
+const keywords = [
+	recipe.focusKeyword,
+	recipe.complexity,
+	recipe.minutes > 0 && recipe.minutes <= 30 ? "быстрый рецепт" : "",
+	recipe.youtubeId ? "видеорецепт" : "",
+].filter(Boolean);
+
 // Recipe rich result in Google (rating, time, calories). Every value here is
 // also shown on the page, as Google requires.
 const recipeSchema = jsonLd({
@@ -117,8 +125,20 @@ const recipeSchema = jsonLd({
 	nutrition: recipe.calories ? { "@type": "NutritionInformation", calories: `${recipe.calories} ккал` } : undefined,
 	recipeIngredient: recipe.ingredients.map((item) => [item.amount, item.unit, item.name, item.notes].filter(Boolean).join(" ")),
 	recipeInstructions: steps.map((step) => ({ "@type": "HowToStep", text: step.text })),
-	// Google rejects a rating with ratingCount 0.
-	aggregateRating: hasRating ? { "@type": "AggregateRating", ratingValue: recipe.rating, ratingCount: recipe.ratingCount || recipe.comments } : undefined,
+	keywords: keywords.length ? keywords.join(", ") : undefined,
+	video: recipe.youtubeId
+		? {
+				"@type": "VideoObject",
+				name: recipe.title,
+				description,
+				thumbnailUrl: [`https://i.ytimg.com/vi/${recipe.youtubeId}/hqdefault.jpg`],
+				uploadDate: recipe.updatedAt,
+				embedUrl: `https://www.youtube.com/embed/${recipe.youtubeId}`,
+				contentUrl: `https://www.youtube.com/watch?v=${recipe.youtubeId}`,
+			}
+		: undefined,
+	// Google rejects a rating outside 1–5 or with ratingCount 0: reviews without stars give 0.
+	aggregateRating: hasRating && recipe.rating >= 1 ? { "@type": "AggregateRating", ratingValue: recipe.rating, ratingCount: recipe.ratingCount || recipe.comments } : undefined,
 });
 ---
 
