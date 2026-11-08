@@ -7,12 +7,11 @@ import type { AstroIntegration } from "astro";
 
 // Old WordPress addresses → new ones. Patterns are Apache's, without the leading slash.
 const MOVED: [string, string][] = [
-	["^course/([^/]+)$", "/category/$1"],
-	["^cuisine/([^/]+)$", "/category/$1"],
+	["^(course|cuisine)/([^/]+)(/page/[0-9]+)?$", "/category/$2$3"],
 	["^category/novosti$", "/news"],
 	["^category/zdorovoe-pitanie$", "/blog"],
 	["^category/video$", "/video"],
-	["^recipe$", "/categories"],
+	["^recipe(/page/[0-9]+)?$", "/categories"],
 	// Print versions and attachment pages of a recipe's photos.
 	["^recipe/([^/]+)/.+$", "/recipe/$1"],
 	["^kuhni-mira$", "/kitchens"],
@@ -46,7 +45,9 @@ export function htaccess(blogSlugs: string[], pageSlugs: string[] = []): string 
 		...blogSlugs.filter((slug) => !pages.has(slug)).map((slug) => rule([`^${escape(slug)}$`, `/blog/${slug}`])),
 		"",
 		"# /recipe/x is served from recipe/x.html.",
-		"RewriteCond %{REQUEST_FILENAME}.html -f",
+		// Not %{REQUEST_FILENAME}: for /news/feed it is …/news (the rest goes to PATH_INFO), news.html
+		// exists, and /news/feed.html is rewritten again and again until Apache gives up with a 500.
+		"RewriteCond %{DOCUMENT_ROOT}/$1.html -f",
 		"RewriteRule ^(.+)$ /$1.html [L]",
 		"",
 	].join("\n");
