@@ -17,10 +17,9 @@ use RuntimeException;
  */
 class SiteRebuild
 {
-    // A build takes ~25 minutes and loads the server: a batch of edits waits for 10 quiet minutes.
-    private const DEBOUNCE_MINUTES = 10;
+    private const DEBOUNCE_MINUTES = 5;
 
-    private const MAX_WAIT_MINUTES = 60;
+    private const MAX_WAIT_MINUTES = 30;
 
     /** {first, last, reasons} of the changes not built yet. A file: Cache::flush() must not lose it. */
     private function path(): string

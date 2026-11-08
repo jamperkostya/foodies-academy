@@ -43,7 +43,7 @@ class SiteRebuildTest extends SiteTestCase
         $this->assertSame(['recipe borscht: publish → publish'], app(SiteRebuild::class)->pending()['reasons']);
     }
 
-    public function test_a_batch_of_edits_is_built_once_after_ten_quiet_minutes(): void
+    public function test_a_batch_of_edits_is_built_once_after_five_quiet_minutes(): void
     {
         Http::fake(['api.github.com/*' => Http::response(null, 204)]);
         Carbon::setTestNow('2026-11-03 12:00:00');
@@ -51,11 +51,11 @@ class SiteRebuildTest extends SiteTestCase
         Carbon::setTestNow('2026-11-03 12:03:00');
         $this->report('edit 2');
 
-        Carbon::setTestNow('2026-11-03 12:12:59');
+        Carbon::setTestNow('2026-11-03 12:07:59');
         $this->artisan('site:rebuild')->assertSuccessful();
         Http::assertNothingSent();
 
-        Carbon::setTestNow('2026-11-03 12:13:00');
+        Carbon::setTestNow('2026-11-03 12:08:00');
         $this->artisan('site:rebuild')->expectsOutputToContain('started')->assertSuccessful();
         Http::assertSentCount(1);
         Http::assertSent(fn ($request) => $request->url() === 'https://api.github.com/repos/owner/site/dispatches'
@@ -78,10 +78,10 @@ class SiteRebuildTest extends SiteTestCase
         Http::assertSent(fn ($request) => $request['event_type'] === 'content-changed-production');
     }
 
-    public function test_constant_edits_still_build_within_an_hour(): void
+    public function test_constant_edits_still_build_within_30_minutes(): void
     {
         Http::fake(['api.github.com/*' => Http::response(null, 204)]);
-        for ($minute = 0; $minute <= 60; $minute += 5) {
+        for ($minute = 0; $minute <= 30; $minute += 2) {
             Carbon::setTestNow(Carbon::parse('2026-11-03 12:00:00')->addMinutes($minute));
             $this->report("edit at $minute");
             $this->artisan('site:rebuild');
