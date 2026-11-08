@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\DB;
  *  - the WPML translations that are not Russian are deleted (posts with their meta, comments
  *    and terms; image attachments stay, the site never lists them),
  *  - the lifehacks written for the site (database/content/lifehacks.json) are added,
- *  - old likes and views go into the plugins' counters, video recipes come from YouTube.
+ *  - old likes and views go into the plugins' counters, recipe videos and covers go to the
+ *    fields the recipe editor shows (recipes:move-legacy-fields), video recipes come from YouTube.
  * Safe to re-run: every step skips what is already done.
  */
 class PrepareSiteDatabase extends Command
@@ -37,6 +38,7 @@ class PrepareSiteDatabase extends Command
         $this->importLifehacks();
         $this->call('likes:import-legacy');
         $this->call('views:import-legacy');
+        $this->call('recipes:move-legacy-fields');
         if (! $this->option('no-videos')) {
             $this->call('videos:sync');
         }
