@@ -105,6 +105,37 @@ describe("/recipe/[slug]", () => {
 		expect(html).toContain('class="rating-summary');
 	});
 
+	it("describes the video recipe's video, uploaded when the recipe last changed", async () => {
+		const { schema } = await renderRecipe("borscht", { youtubeId: "H89sF9Kdw_4", updatedAt: "2026-03-01T10:00:00+00:00" });
+
+		expect(schema.video).toMatchObject({
+			"@type": "VideoObject",
+			name: apiRecipe.title,
+			thumbnailUrl: ["https://i.ytimg.com/vi/H89sF9Kdw_4/hqdefault.jpg"],
+			uploadDate: "2026-03-01T10:00:00+00:00",
+			embedUrl: "https://www.youtube.com/embed/H89sF9Kdw_4",
+		});
+		expect(schema.video.description).toBeTruthy();
+
+		const { schema: plain } = await renderRecipe("borscht", { youtubeId: null });
+		expect(plain.video).toBeUndefined();
+	});
+
+	it("lists the focus keyword and the recipe's descriptors as keywords", async () => {
+		const { schema } = await renderRecipe("borscht", { focusKeyword: "борщ с пампушками", minutes: 25, youtubeId: "H89sF9Kdw_4" });
+		expect(schema.keywords).toBe("борщ с пампушками, Средне, быстрый рецепт, видеорецепт");
+
+		const { schema: bare } = await renderRecipe("borscht", { focusKeyword: "", complexity: "", youtubeId: null });
+		expect(bare.keywords).toBeUndefined();
+	});
+
+	it("leaves the rating out of the structured data when the reviews have no stars", async () => {
+		// Google: "rating out of range" for ratingValue 0, and the recipe loses its rich result.
+		const { schema } = await renderRecipe("borscht", { rating: 0, ratingCount: 0, comments: 5 });
+
+		expect(schema.aggregateRating).toBeUndefined();
+	});
+
 	it("splits the stars by the reviews' own ratings, without bars when there are none", async () => {
 		const reviews = [
 			{ name: "А", date: "1 мая 2024", text: "…", rating: 5 },

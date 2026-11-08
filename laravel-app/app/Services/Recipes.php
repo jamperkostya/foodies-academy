@@ -83,7 +83,7 @@ class Recipes
             ->whereIn('post_id', $ids)
             ->whereIn('meta_key', [
                 '_thumbnail_id', 'recipe_rating', '_yoast_wpseo_primary_course', 'pld_like_count', 'pld_dislike_count', 'type', 'recipe_servings', 'complexity', 'calorific_value', 'recipe_notes',
-                'recipe_description', 'gallery', 'recipe_video_embed', 'video',
+                'recipe_description', 'gallery', 'recipe_video_embed', 'video', '_yoast_wpseo_focuskw',
                 'recipe_prep_time', 'recipe_prep_time_text',
                 'recipe_cook_time', 'recipe_cook_time_text',
                 'recipe_passive_time', 'recipe_passive_time_text',
@@ -482,6 +482,10 @@ class Recipes
         // Text under the title, "" when empty.
         $recipe['description'] = trim(html_entity_decode(strip_tags($meta['recipe_description'] ?? ''), ENT_QUOTES | ENT_HTML5));
         $recipe['gallery'] = $this->gallery($meta, $recipe['image']);
+        // For the page's structured data: the video's upload date is the recipe's last change,
+        // and the Yoast focus keyword goes to "keywords" ("" when not set).
+        $recipe['updatedAt'] = Carbon::parse(str_starts_with($post->post_modified_gmt, '0000') ? $post->post_date_gmt : $post->post_modified_gmt, 'UTC')->toIso8601String();
+        $recipe['focusKeyword'] = trim(html_entity_decode($meta['_yoast_wpseo_focuskw'] ?? '', ENT_QUOTES | ENT_HTML5));
         $recipe['similar'] = $this->getSimilarRecipes($post->ID);
         $recipe['author'] = $this->author((int) $post->post_author);
         // The history: the Carbon Fields field, or the old theme's ACF field "history" (the same text in

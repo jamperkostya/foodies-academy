@@ -32,6 +32,20 @@ class RecipesApiTest extends SiteTestCase
             ->assertJsonPath('data.categoryLinks.country.0', ['name' => 'Украина', 'slug' => 'ukraina']);
     }
 
+    public function test_last_change_and_focus_keyword_for_the_structured_data(): void
+    {
+        $this->recipe('borscht', ['post_modified_gmt' => '2026-03-01 10:00:00'], ['_yoast_wpseo_focuskw' => ' борщ с пампушками ']);
+        $this->recipe('plain', ['post_date_gmt' => '2025-05-02 08:00:00', 'post_modified_gmt' => '0000-00-00 00:00:00']);
+
+        $this->getJson('/api/recipes/borscht')
+            ->assertJsonPath('data.updatedAt', '2026-03-01T10:00:00+00:00')
+            ->assertJsonPath('data.focusKeyword', 'борщ с пампушками');
+        // Never changed: the publication date; no keyword: "".
+        $this->getJson('/api/recipes/plain')
+            ->assertJsonPath('data.updatedAt', '2025-05-02T08:00:00+00:00')
+            ->assertJsonPath('data.focusKeyword', '');
+    }
+
     public function test_sitemap_lists_every_recipe_with_its_photos_in_full_size(): void
     {
         $photo = fn (string $file) => tap($this->makePost('attachment', $file), fn ($id) => $this->meta($id, '_wp_attachment_metadata', serialize([
