@@ -23,6 +23,7 @@
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
         <env name="CACHE_STORE" value="array"/>
+        <env name="SEO_CACHE_DRIVER" value="array"/>
         <!-- Laravel's own tables in memory. force/server: docker-compose sets DB_DATABASE too. -->
         <env name="DB_CONNECTION" value="sqlite" force="true"/>
         <server name="DB_CONNECTION" value="sqlite" force="true"/>

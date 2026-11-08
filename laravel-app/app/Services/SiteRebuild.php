@@ -17,9 +17,10 @@ use RuntimeException;
  */
 class SiteRebuild
 {
-    private const DEBOUNCE_MINUTES = 5;
+    // A build takes ~25 minutes and loads the server: a batch of edits waits for 10 quiet minutes.
+    private const DEBOUNCE_MINUTES = 10;
 
-    private const MAX_WAIT_MINUTES = 30;
+    private const MAX_WAIT_MINUTES = 60;
 
     /** {first, last, reasons} of the changes not built yet. A file: Cache::flush() must not lose it. */
     private function path(): string
@@ -30,6 +31,7 @@ class SiteRebuild
     public function contentChanged(string $reason): void
     {
         // The API answers from fresh data at once; the static pages follow after the build.
+        // The Yoast fields are in their own store: only the edited post's are forgotten (Seo::forget()).
         Cache::flush();
 
         $now = Carbon::now()->toIso8601String();

@@ -47,6 +47,14 @@ return [
             'lock_table' => env('DB_CACHE_LOCK_TABLE'),
         ],
 
+        // Yoast SEO fields from WordPress (App\Services\Seo): apart from the default store, so the
+        // Cache::flush() after every content change doesn't make the next build ask WordPress
+        // for all of them again.
+        'seo' => [
+            'driver' => env('SEO_CACHE_DRIVER', 'file'),
+            'path' => storage_path('framework/cache/seo'),
+        ],
+
         'file' => [
             'driver' => 'file',
             'path' => storage_path('framework/cache/data'),

@@ -28,7 +28,7 @@ WordPress (админка) ──┐
 
 - Laravel читает базу WordPress **напрямую** (соединение `site`, `config/database.php`), а не через WP REST API. Исключения, где нужен сам WordPress: пользователи (регистрация, вход, профиль — mu-plugin `foodies-users.php`) и подписки (REST Contact Form 7). Ключ — общий `FOODIES_API_SECRET`.
 - Ответы API кэшируются на 10 минут, кэш `failover` (база, а при её падении — память).
-- Пересборка сайта: правка в WordPress → mu-plugin `foodies-rebuild.php` → `POST /api/internal/content-changed` → Laravel сбрасывает кэш → `site:rebuild` (раз в минуту) запускает GitHub Actions через `repository_dispatch`, выждав 5 минут тишины (максимум 30). Плюс ночная сборка в 04:30. Без `GITHUB_DEPLOY_TOKEN` только пишет в лог.
+- Пересборка сайта: правка в WordPress → mu-plugin `foodies-rebuild.php` → `POST /api/internal/content-changed` → Laravel сбрасывает кэш (SEO-поля Yoast лежат в отдельном кэше `seo` на неделю: сбрасываются только у изменённой записи, целиком — перед ночной сборкой) → `site:rebuild` (раз в минуту) запускает GitHub Actions через `repository_dispatch`, выждав 10 минут тишины (максимум 60). Плюс ночная сборка в 04:30. Сборка идёт ~25–30 минут. Без `GITHUB_DEPLOY_TOKEN` только пишет в лог.
 
 ## Базы данных
 

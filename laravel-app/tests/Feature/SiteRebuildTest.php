@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Services\Seo;
 use App\Services\SiteRebuild;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -42,7 +43,7 @@ class SiteRebuildTest extends SiteTestCase
         $this->assertSame(['recipe borscht: publish → publish'], app(SiteRebuild::class)->pending()['reasons']);
     }
 
-    public function test_a_batch_of_edits_is_built_once_after_five_quiet_minutes(): void
+    public function test_a_batch_of_edits_is_built_once_after_ten_quiet_minutes(): void
     {
         Http::fake(['api.github.com/*' => Http::response(null, 204)]);
         Carbon::setTestNow('2026-11-03 12:00:00');
@@ -50,11 +51,11 @@ class SiteRebuildTest extends SiteTestCase
         Carbon::setTestNow('2026-11-03 12:03:00');
         $this->report('edit 2');
 
-        Carbon::setTestNow('2026-11-03 12:07:59');
+        Carbon::setTestNow('2026-11-03 12:12:59');
         $this->artisan('site:rebuild')->assertSuccessful();
         Http::assertNothingSent();
 
-        Carbon::setTestNow('2026-11-03 12:08:00');
+        Carbon::setTestNow('2026-11-03 12:13:00');
         $this->artisan('site:rebuild')->expectsOutputToContain('started')->assertSuccessful();
         Http::assertSentCount(1);
         Http::assertSent(fn ($request) => $request->url() === 'https://api.github.com/repos/owner/site/dispatches'
@@ -77,10 +78,10 @@ class SiteRebuildTest extends SiteTestCase
         Http::assertSent(fn ($request) => $request['event_type'] === 'content-changed-production');
     }
 
-    public function test_constant_edits_still_build_within_30_minutes(): void
+    public function test_constant_edits_still_build_within_an_hour(): void
     {
         Http::fake(['api.github.com/*' => Http::response(null, 204)]);
-        for ($minute = 0; $minute <= 30; $minute += 2) {
+        for ($minute = 0; $minute <= 60; $minute += 5) {
             Carbon::setTestNow(Carbon::parse('2026-11-03 12:00:00')->addMinutes($minute));
             $this->report("edit at $minute");
             $this->artisan('site:rebuild');
@@ -110,5 +111,43 @@ class SiteRebuildTest extends SiteTestCase
         config(['services.github.token' => null]);
         $this->artisan('site:rebuild --force')->expectsOutputToContain('skipped');
         Http::assertSentCount(1);
+    }
+
+    public function test_an_edit_forgets_only_the_edited_items_yoast_fields(): void
+    {
+        $seo = fn (string $path, array $query = []) => Cache::store('seo')->put('seo:'.$path.':'.http_build_query($query), ['title' => 'old'], 3600);
+        $kept = fn (string $path, array $query = []) => Cache::store('seo')->has('seo:'.$path.':'.http_build_query($query));
+        $seo('recipe', ['slug' => 'borscht']);
+        $seo('recipe', ['slug' => 'plov']);
+        $seo('posts', ['slug' => 'news-1']);
+        $seo('pages/12');
+        $seo('course', ['slug' => 'soups']);
+
+        $this->withHeader('X-Foodies-Secret', config('services.wordpress.api_secret'))
+            ->postJson('/api/internal/content-changed', ['reason' => 'edits', 'changed' => [
+                ['post_type' => 'recipe', 'slug' => 'borscht', 'id' => 5],
+                ['post_type' => 'post', 'slug' => 'news-1', 'id' => 6],
+                ['post_type' => 'page', 'slug' => 'about', 'id' => 12],
+                ['taxonomy' => 'course', 'slug' => 'soups'],
+            ]])->assertStatus(202);
+
+        $this->assertFalse($kept('recipe', ['slug' => 'borscht']));
+        $this->assertFalse($kept('posts', ['slug' => 'news-1']));
+        $this->assertFalse($kept('pages/12'));
+        $this->assertFalse($kept('course', ['slug' => 'soups']));
+        // The rest of the site keeps its fields: the build doesn't ask WordPress for them again.
+        $this->assertTrue($kept('recipe', ['slug' => 'plov']));
+    }
+
+    public function test_the_nightly_build_asks_wordpress_for_every_yoast_field_again(): void
+    {
+        Http::fake(['api.github.com/*' => Http::response(null, 204)]);
+        Cache::store('seo')->put('seo:recipe:slug=plov', ['title' => 'old'], 3600);
+
+        $this->artisan('site:rebuild')->assertSuccessful();
+        $this->assertTrue(Cache::store('seo')->has('seo:recipe:slug=plov'));
+
+        $this->artisan('site:rebuild --force')->assertSuccessful();
+        $this->assertFalse(Cache::store('seo')->has('seo:recipe:slug=plov'));
     }
 }

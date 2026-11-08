@@ -9,8 +9,9 @@ export default defineConfig({
 	site: process.env.SITE_URL ?? "https://foodies.academy",
 	// Addresses without a slash at the end, as on the old site: recipe/x.html is /recipe/x.
 	trailingSlash: "never",
-	// Four pages at a time: most of a page's build time is waiting for the API.
-	build: { format: "file", concurrency: 4 },
+	// Two pages at a time: most of a page's build time is waiting for the API, and the API and
+	// WordPress share a small server (1 CPU, 1 GB) with the live site.
+	build: { format: "file", concurrency: 2 },
 	integrations: [apiFetchIntegration(), htaccessIntegration(process.env.API_URL ?? "http://localhost:8000/api")],
 	// Fetch a page as soon as its link is hovered or focused, so the click
 	// opens it almost instantly. "viewport" would fetch every card on screen.
