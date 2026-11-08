@@ -221,5 +221,5 @@ rm /home/jamper/conf/web/foodies.academy/nginx.ssl.conf_foodies_uploads && nginx
 
 ## Дальше
 
-- Правки контента — в `https://wp.foodies.academy/wp-admin`. Сайт пересобирается сам через 5 минут (событие `content-changed-production`), плюс ночная сборка.
+- Правки контента — в `https://wp.foodies.academy/wp-admin`. Сайт пересобирается сам через 5 минут тишины после последней правки, но не позже чем через 30 минут после первой (событие `content-changed-production`); сама сборка ~25–30 минут. Плюс ночная сборка.
 - Новый код: PR в `main` → автоматически dev → проверка → **Run workflow → production** для нужных частей (Astro, Laravel, WordPress).

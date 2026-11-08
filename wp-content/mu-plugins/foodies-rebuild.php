@@ -13,27 +13,44 @@ if (!defined('ABSPATH')) {
 /** Post types whose content the site shows. */
 const FOODIES_REBUILD_POST_TYPES = ['recipe', 'post', 'news', 'page', 'video', 'lifehack'];
 
-function foodies_rebuild_request(string $reason): void
+/**
+ * Notes a change; Laravel hears of all of them once, when WordPress has finished the request.
+ * $item says which post or term it was, so Laravel forgets only its Yoast SEO fields:
+ * ['post_type' => 'recipe', 'slug' => 'borscht', 'id' => 5] or ['taxonomy' => 'course', 'slug' => 'soups'].
+ */
+function foodies_rebuild_request(string $reason, array $item = []): void
 {
-	static $sent = false; // One call per WordPress request is enough.
+	static $reasons = [], $items = [];
+	if (!$reasons) {
+		add_action('shutdown', function () use (&$reasons, &$items) {
+			foodies_rebuild_send(implode('; ', array_unique($reasons)), $items);
+		});
+	}
+	$reasons[] = $reason;
+	if ($item) {
+		$items[] = $item;
+	}
+}
+
+function foodies_rebuild_send(string $reason, array $items): void
+{
 	$url = (string) getenv('FOODIES_LARAVEL_URL');
 	$secret = (string) getenv('FOODIES_API_SECRET');
-	if ($sent || $url === '' || strlen($secret) < 32) {
+	if ($url === '' || strlen($secret) < 32) {
 		return;
 	}
-	$sent = true;
 	wp_remote_post(rtrim($url, '/') . '/api/internal/content-changed', [
 		'blocking' => false, // Don't make the editor wait.
 		'timeout' => 2,
 		'headers' => ['X-Foodies-Secret' => $secret, 'Accept' => 'application/json'],
-		'body' => ['reason' => $reason],
+		'body' => ['reason' => mb_substr($reason, 0, 200), 'changed' => array_slice($items, 0, 50)],
 	]);
 }
 
 // Published, unpublished, edited while published, trashed.
 add_action('transition_post_status', function (string $new, string $old, WP_Post $post) {
 	if (in_array($post->post_type, FOODIES_REBUILD_POST_TYPES, true) && ($new === 'publish' || $old === 'publish')) {
-		foodies_rebuild_request("{$post->post_type} {$post->post_name}: $old → $new");
+		foodies_rebuild_request("{$post->post_type} {$post->post_name}: $old → $new", ['post_type' => $post->post_type, 'slug' => $post->post_name, 'id' => $post->ID]);
 	}
 }, 10, 3);
 
@@ -45,7 +62,10 @@ add_action('before_delete_post', function (int $id, WP_Post $post) {
 
 // Rubrics, dish types, countries, ingredients: names, SEO text.
 foreach (['created_term', 'edited_term', 'delete_term'] as $hook) {
-	add_action($hook, fn ($term_id, $tt_id, $taxonomy) => foodies_rebuild_request("$hook $taxonomy #$term_id"), 10, 3);
+	add_action($hook, function ($term_id, $tt_id, $taxonomy) use ($hook) {
+		$term = get_term($term_id, $taxonomy);
+		foodies_rebuild_request("$hook $taxonomy #$term_id", $term instanceof WP_Term ? ['taxonomy' => $taxonomy, 'slug' => $term->slug] : []);
+	}, 10, 3);
 }
 
 // Reviews and comments show on the site once approved.

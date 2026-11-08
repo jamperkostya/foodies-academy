@@ -30,6 +30,7 @@ class SiteRebuild
     public function contentChanged(string $reason): void
     {
         // The API answers from fresh data at once; the static pages follow after the build.
+        // The Yoast fields are in their own store: only the edited post's are forgotten (Seo::forget()).
         Cache::flush();
 
         $now = Carbon::now()->toIso8601String();

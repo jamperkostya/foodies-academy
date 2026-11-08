@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Services\Seo;
 use App\Services\SiteRebuild;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -110,5 +111,43 @@ class SiteRebuildTest extends SiteTestCase
         config(['services.github.token' => null]);
         $this->artisan('site:rebuild --force')->expectsOutputToContain('skipped');
         Http::assertSentCount(1);
+    }
+
+    public function test_an_edit_forgets_only_the_edited_items_yoast_fields(): void
+    {
+        $seo = fn (string $path, array $query = []) => Cache::store('seo')->put('seo:'.$path.':'.http_build_query($query), ['title' => 'old'], 3600);
+        $kept = fn (string $path, array $query = []) => Cache::store('seo')->has('seo:'.$path.':'.http_build_query($query));
+        $seo('recipe', ['slug' => 'borscht']);
+        $seo('recipe', ['slug' => 'plov']);
+        $seo('posts', ['slug' => 'news-1']);
+        $seo('pages/12');
+        $seo('course', ['slug' => 'soups']);
+
+        $this->withHeader('X-Foodies-Secret', config('services.wordpress.api_secret'))
+            ->postJson('/api/internal/content-changed', ['reason' => 'edits', 'changed' => [
+                ['post_type' => 'recipe', 'slug' => 'borscht', 'id' => 5],
+                ['post_type' => 'post', 'slug' => 'news-1', 'id' => 6],
+                ['post_type' => 'page', 'slug' => 'about', 'id' => 12],
+                ['taxonomy' => 'course', 'slug' => 'soups'],
+            ]])->assertStatus(202);
+
+        $this->assertFalse($kept('recipe', ['slug' => 'borscht']));
+        $this->assertFalse($kept('posts', ['slug' => 'news-1']));
+        $this->assertFalse($kept('pages/12'));
+        $this->assertFalse($kept('course', ['slug' => 'soups']));
+        // The rest of the site keeps its fields: the build doesn't ask WordPress for them again.
+        $this->assertTrue($kept('recipe', ['slug' => 'plov']));
+    }
+
+    public function test_the_nightly_build_asks_wordpress_for_every_yoast_field_again(): void
+    {
+        Http::fake(['api.github.com/*' => Http::response(null, 204)]);
+        Cache::store('seo')->put('seo:recipe:slug=plov', ['title' => 'old'], 3600);
+
+        $this->artisan('site:rebuild')->assertSuccessful();
+        $this->assertTrue(Cache::store('seo')->has('seo:recipe:slug=plov'));
+
+        $this->artisan('site:rebuild --force')->assertSuccessful();
+        $this->assertFalse(Cache::store('seo')->has('seo:recipe:slug=plov'));
     }
 }

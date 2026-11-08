@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Throwable;
@@ -12,10 +13,14 @@ use Throwable;
  * WordPress doesn't answer (the page then uses its own title and description).
  * Canonical and og:url are left out: Yoast builds them from WordPress addresses, the site
  * (Astro) knows its own.
+ *
+ * Kept for a week in their own cache store: a post or term edited in WordPress has its entry
+ * forgotten (forget()), and the nightly build starts from a fresh store (flush()), which also
+ * brings changes of Yoast's own settings.
  */
 class Seo
 {
-    private const CACHE_MINUTES = 30;
+    private const CACHE_DAYS = 7;
 
     /** $restBase: recipe, video, posts, pages. */
     public function forPost(string $restBase, string $slug): ?array
@@ -39,12 +44,35 @@ class Seo
         return $this->fetch("pages/$id");
     }
 
+    /**
+     * Forgets the fields of what was edited in WordPress. $path and $query as the lookups above
+     * use them: ('recipe', ['slug' => 'borscht']), ('pages/12'), ('course', ['slug' => 'soups']).
+     */
+    public function forget(string $path, array $query = []): void
+    {
+        $this->store()->forget($this->key($path, $query));
+    }
+
+    public function flush(): void
+    {
+        $this->store()->flush();
+    }
+
+    private function store(): Repository
+    {
+        return Cache::store('seo');
+    }
+
+    private function key(string $path, array $query): string
+    {
+        return 'seo:'.$path.':'.http_build_query($query);
+    }
+
     // Query parameters as an array: Http::get() replaces a query string written in the URL.
     private function fetch(string $path, array $query = []): ?array
     {
-        $key = 'seo:'.$path.':'.http_build_query($query);
-
-        return Cache::remember($key, now()->addMinutes(self::CACHE_MINUTES), function () use ($path, $query) {
+        // A null answer (WordPress down) isn't kept: the next request asks again.
+        return $this->store()->remember($this->key($path, $query), now()->addDays(self::CACHE_DAYS), function () use ($path, $query) {
             try {
                 $url = rtrim(config('services.wordpress.url'), '/')."/wp-json/wp/v2/$path";
                 $response = Http::timeout(10)->acceptJson()->get($url, $query + ['_fields' => 'yoast_head_json']);
