@@ -56,8 +56,13 @@ done
 # A plugin that didn't install or activate (Contact Form 7 once, so sign-ups broke) fails the
 # deploy instead of leaving it green.
 missing=()
+# WP-CLI's own error is printed: "not active" alone hid a check that failed for another reason.
 for entry in "${PLUGINS[@]}"; do
-	wp plugin is-active "${entry%%=*}" 2>/dev/null || missing+=("${entry%%=*}")
+	slug="${entry%%=*}"
+	if ! output=$(wp plugin is-active "$slug" 2>&1); then
+		missing+=("$slug")
+		[ -n "$output" ] && echo "[plugins] $slug: $output"
+	fi
 done
 if [ ${#missing[@]} -gt 0 ]; then
 	echo "[plugins] not active: ${missing[*]}"
