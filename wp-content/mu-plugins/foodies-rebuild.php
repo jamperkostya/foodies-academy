@@ -79,3 +79,10 @@ add_action('comment_post', function (int $id, $approved) {
 		foodies_rebuild_request('comment approved on posting');
 	}
 }, 10, 2);
+
+// Authors' name, photo and bio show on the site; other users' profiles don't.
+add_action('profile_update', function (int $user_id) {
+	if (count_user_posts($user_id, ['recipe', 'post', 'news'], true) > 0) {
+		foodies_rebuild_request("author #$user_id profile");
+	}
+});

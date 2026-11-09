@@ -78,7 +78,7 @@ const tabs = [
 	</section>
 
 	<Section>
-		{author.bio && <p class="author-bio">{author.bio}</p>}
+		{author.bio && <div class="author-bio" set:html={author.bio} />}
 
 		{tabs.length > 1 && (
 			<div class="author-tabs" role="tablist" aria-label="Материалы автора">
@@ -187,6 +187,25 @@ const tabs = [
 	font-size: 16px;
 	line-height: 1.7;
 	color: var(--color-grey-dark);
+	:global(p), :global(ul), :global(ol) {
+		margin: 0 0 12px;
+	}
+	:global(ul), :global(ol) {
+		padding-left: 1.4em;
+	}
+	:global(ul) {
+		list-style: disc;
+	}
+	:global(ol) {
+		list-style: decimal;
+	}
+	:global(a) {
+		color: var(--color-red);
+		text-decoration: underline;
+	}
+	> :global(:last-child) {
+		margin-bottom: 0;
+	}
 }
 
 .author-tabs {

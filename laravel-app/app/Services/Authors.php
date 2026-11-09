@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Support\WpHtml;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -64,7 +65,8 @@ class Authors
 
         $visitors = app(AuthorRatings::class)->get((int) $user->ID);
 
-        $bio = trim((string) $this->db->table('usermeta')
+        // HTML: the profile's bio has the visual editor; older bios are plain lines.
+        $bio = WpHtml::render($this->db->table('usermeta')
             ->where('user_id', $user->ID)->where('meta_key', 'description')->value('meta_value'));
 
         // array_merge, not +: "recipes" is the count in the card and the page of recipes here.
