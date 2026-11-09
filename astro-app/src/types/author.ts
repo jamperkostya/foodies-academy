@@ -15,7 +15,7 @@ export interface AuthorSummary {
 
 // GET /api/authors/{slug}?page=N: the author with one page of recipes.
 export interface AuthorProfile extends Omit<AuthorSummary, 'recipes'> {
-	bio: string; // "" when not filled in WordPress
+	bio: string; // HTML, "" when not filled in WordPress
 	since: number; // registration year
 	rating: number | null; // visitors' stars; average rating of their recipes until someone rates
 	ratingCount: number; // visitors who rated the author

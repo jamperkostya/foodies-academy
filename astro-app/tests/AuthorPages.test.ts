@@ -23,7 +23,7 @@ const profile = (author: AuthorSummary, extra: Partial<AuthorProfile>): AuthorPr
 	...author, bio: "", since: 2019, rating: 4.8, news: [], posts: [], recipes: [recipe("borscht")], total: author.recipes, page: 1, pages: 1, ...extra,
 });
 const mariana = profile(authors[0], { pages: 3, recipes: [recipe("borscht"), recipe("paella")] });
-const platon = profile(authors[1], { bio: "Пишу о кухне.", rating: null, news: [news], posts: [post] });
+const platon = profile(authors[1], { bio: "<p>Пишу о <strong>кухне</strong>.</p>", rating: null, news: [news], posts: [post] });
 
 const requested: string[] = [];
 beforeAll(() =>
@@ -89,7 +89,7 @@ describe("/author/[slug]", () => {
 		// Blog posts get their own tab and link into the blog.
 		expect(html).toMatch(/role="tab"[^>]*>\s*Блог/);
 		expect(html).toContain('href="/blog/mango"');
-		expect(html).toContain("Пишу о кухне.");
+		expect(html).toContain("<p>Пишу о <strong>кухне</strong>.</p>");
 		expect(html).not.toContain("средний рейтинг");
 	});
 });

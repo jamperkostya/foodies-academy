@@ -64,7 +64,7 @@ WordPress (админка) ──┐
 - отзывы — комментарии WordPress, звёзды в `commentmeta.rating`;
 - пользователи — пользователи WordPress (роль subscriber); избранное и подписки — `usermeta` `foodies_favorite` / `foodies_follow_author`.
 
-**WordPress (`wp-content/mu-plugins`)** — типы записей `video`, `lifehack`, `news`; поле «SEO-текст»; блоки «Галерея фото» и «История происхождения» у рецепта (поля `gallery` и `history` старой темы: ACF и Carbon Fields не установлены, `foodies-recipe-fields.php`); страницы сайта (создаются сами при `init`); шаблон «История происхождения»; безопасные slug'и (`a-z0-9-_`); API пользователей; уведомление Laravel о правках; перенаправление фронтенда WordPress на сайт. Плагины и версии — `wordpress/install-plugins.sh`.
+**WordPress (`wp-content/mu-plugins`)** — типы записей `video`, `lifehack`, `news`; поле «SEO-текст»; блоки «Галерея фото» и «История происхождения» у рецепта (поля `gallery` и `history` старой темы: ACF и Carbon Fields не установлены, `foodies-recipe-fields.php`); страницы сайта (создаются сами при `init`); шаблон «История происхождения»; безопасные slug'и (`a-z0-9-_`); API пользователей; фото профиля (мета `artit_user_avatar` старого плагина, вместо Gravatar) и «Биография» с визуальным редактором (`foodies-user-profile.php`, на сайте — HTML); уведомление Laravel о правках; перенаправление фронтенда WordPress на сайт. Плагины и версии — `wordpress/install-plugins.sh`.
 
 **Команды Laravel**
 - `site:prepare-db` — адаптация копии боевой базы (см. выше);

@@ -68,6 +68,17 @@ class NewsAndBlogTest extends SiteTestCase
             ->assertJsonPath('data.posts.*.slug', ['mango']);
     }
 
+    public function test_author_bio_is_html_with_paragraphs(): void
+    {
+        $author = $this->user('oleg', 'Олег');
+        $this->recipe('borscht', ['post_author' => $author]);
+        // Older bios are plain lines; the visual editor saves HTML, which passes as is.
+        $this->site()->table('usermeta')->insert(['user_id' => $author, 'meta_key' => 'description', 'meta_value' => "Повар.\n\nПишу о <strong>кухне</strong>."]);
+
+        $this->getJson('/api/authors/oleg')
+            ->assertJsonPath('data.bio', "<p>Повар.</p>\n<p>Пишу о <strong>кухне</strong>.</p>");
+    }
+
     public function test_content_without_wpml_rows_is_on_the_site(): void
     {
         // Made in the docker WordPress, which has no WPML: no icl_translations rows at all.
