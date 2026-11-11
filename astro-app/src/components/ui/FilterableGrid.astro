@@ -1,7 +1,8 @@
 ---
 // Filters + card grid + "Показать ещё". Cards come in the default slot with
 // `data-groups`; the page renders the ones past the first `pageSize` with
-// `hidden`, so the first screen is right before the script runs.
+// `hidden`, so the first screen is right before the script runs. An element with
+// `data-grid-ad` (an ad card) is shown together with the card right before it.
 import Filters from "./Filters.astro";
 import CardGrid from "./CardGrid.astro";
 
@@ -46,6 +47,7 @@ const { groups, pageSize, total, moreLabel, minCardWidth } = Astro.props;
 	document.querySelectorAll<HTMLElement>("[data-filterable-grid]").forEach((root) => {
 		const more = root.querySelector<HTMLButtonElement>(".filterable-grid__more");
 		const items = [...root.querySelectorAll<HTMLElement>("[data-groups]")].map((el) => ({ el, groups: groupsOf(el) }));
+		const ads = [...root.querySelectorAll<HTMLElement>("[data-grid-ad]")];
 		const pageSize = Number(root.dataset.pageSize);
 		let group = "";
 		let limit = pageSize;
@@ -55,6 +57,7 @@ const { groups, pageSize, total, moreLabel, minCardWidth } = Astro.props;
 			const matching = items.filter((item) => group === "" || item.groups.includes(group));
 			items.forEach((item) => (item.el.hidden = true));
 			matching.forEach((item, i) => (item.el.hidden = i >= limit));
+			ads.forEach((ad) => (ad.hidden = (ad.previousElementSibling as HTMLElement).hidden));
 			if (more) more.hidden = matching.length <= limit;
 		};
 

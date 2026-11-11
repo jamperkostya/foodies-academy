@@ -1,11 +1,13 @@
 ---
-// Google AdSense display unit. Served only on foodies.academy: AdSense doesn't fill other hosts,
+// Google AdSense unit: responsive display, or in-feed when `layoutKey` is given. Served only on foodies.academy: AdSense doesn't fill other hosts,
 // and dev clicks would count as invalid traffic. Elsewhere a placeholder shows where the ad goes.
 interface Props {
 	// Ad unit ID (data-ad-slot) from AdSense → Ads → By ad unit. Empty: nothing on production.
 	unit: string;
 	// Hostname the site is built for (astro.config `site`).
 	host?: string;
+	// In-feed unit's data-ad-layout-key: it sizes itself to the card it sits in.
+	layoutKey?: string;
 	class?: string;
 }
 
@@ -13,35 +15,52 @@ const PRODUCTION_HOST = "foodies.academy";
 // Same publisher as public/ads.txt.
 const CLIENT = "ca-pub-5409964786388188";
 
-const { unit, host, class: className } = Astro.props;
+const { unit, host, layoutKey, class: className } = Astro.props;
 const live = host === PRODUCTION_HOST;
 ---
 
 {
 	live ? (
 		unit && (
-			<aside class:list={["ad-slot no-print", className]} aria-label="Реклама">
-				<ins class="adsbygoogle ad-slot__unit" data-ad-client={CLIENT} data-ad-slot={unit} data-ad-format="auto" data-full-width-responsive="true" />
+			<aside class:list={["ad-slot no-print", { "ad-slot--feed": layoutKey }, className]} aria-label="Реклама">
+				{layoutKey ? (
+					<ins class="ad-slot__unit" data-ad-client={CLIENT} data-ad-slot={unit} data-ad-format="fluid" data-ad-layout-key={layoutKey} />
+				) : (
+					<ins class="ad-slot__unit" data-ad-client={CLIENT} data-ad-slot={unit} data-ad-format="auto" data-full-width-responsive="true" />
+				)}
 			</aside>
 		)
 	) : (
-		<aside class:list={["ad-slot ad-slot--placeholder no-print", className]} aria-hidden="true">
+		<aside class:list={["ad-slot ad-slot--placeholder no-print", { "ad-slot--feed": layoutKey }, className]} aria-hidden="true">
 			Реклама
 		</aside>
 	)
 }
 
 <script>
-	// Bundled once per page however many units it has: loads AdSense and fills every unit.
-	const units = document.querySelectorAll("ins.adsbygoogle");
+	// Bundled once per page however many units it has. A unit is filled when it comes near the screen:
+	// AdSense fails on units hidden by "Показать ещё". push() fills the first unprocessed `ins.adsbygoogle`,
+	// so the class goes on right before it.
+	const units = document.querySelectorAll<HTMLElement>(".ad-slot__unit");
 	if (units.length) {
 		const loader = document.createElement("script");
 		loader.async = true;
 		loader.crossOrigin = "anonymous";
-		loader.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${units[0].getAttribute("data-ad-client")}`;
+		loader.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${units[0].dataset.adClient}`;
 		document.head.append(loader);
 		const queue = ((window as unknown as { adsbygoogle: object[] }).adsbygoogle ||= []);
-		units.forEach(() => queue.push({}));
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach(({ isIntersecting, target }) => {
+					if (!isIntersecting) return;
+					observer.unobserve(target);
+					target.classList.add("adsbygoogle");
+					queue.push({});
+				});
+			},
+			{ rootMargin: "300px" }
+		);
+		units.forEach((unit) => observer.observe(unit));
 	}
 </script>
 
@@ -55,6 +74,11 @@ const live = host === PRODUCTION_HOST;
 	}
 	&__unit {
 		display: block;
+	}
+	// Inside a card of the grid: the card sets the size.
+	&--feed {
+		margin-top: 0;
+		min-height: 200px;
 	}
 	&--placeholder {
 		display: flex;

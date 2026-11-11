@@ -4,6 +4,7 @@ import PageHero from "../components/layout/PageHero.astro";
 import Section from "../components/layout/Section.astro";
 import FilterableGrid from "../components/ui/FilterableGrid.astro";
 import PostCard from "../components/blog/PostCard.astro";
+import PostAd from "../components/blog/PostAd.astro";
 import Avatar from "../components/ui/Avatar.astro";
 import SubscribeSection from "../components/sections/SubscribeSection.astro";
 import type { Article } from "../types/article";
@@ -12,7 +13,10 @@ import type { Article } from "../types/article";
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
 const { data: posts }: { data: Article[] } = await fetch(`${API_URL}/blog?limit=200`).then((r) => r.json());
 
-const PAGE_SIZE = 6;
+// AdSense in-feed unit after every AD_EVERY-th card. A page of 5 cards and an ad keeps the rows full.
+const FEED_AD = { unit: "7368061889", layoutKey: "-6q+ek+16-3w+4d" };
+const AD_EVERY = 5;
+const PAGE_SIZE = 5;
 const [featured, ...rest] = posts;
 const groups = [...new Set(rest.map((post) => post.category).filter(Boolean))];
 const description =
@@ -42,7 +46,12 @@ const description =
 		)}
 
 		<FilterableGrid groups={groups} pageSize={PAGE_SIZE} total={rest.length} moreLabel="Показать больше статей" minCardWidth={400}>
-			{rest.map((post, i) => <PostCard post={post} hidden={i >= PAGE_SIZE} />)}
+			{rest.map((post, i) => (
+				<>
+					<PostCard post={post} hidden={i >= PAGE_SIZE} />
+					{FEED_AD.unit && (i + 1) % AD_EVERY === 0 && <PostAd {...FEED_AD} host={Astro.site?.hostname} hidden={i >= PAGE_SIZE} />}
+				</>
+			))}
 		</FilterableGrid>
 	</Section>
 

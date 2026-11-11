@@ -105,6 +105,17 @@ describe("/blog", () => {
 		expect(count(html, /class="filters__btn/g)).toBe(3);
 		expect(html.match(/<h1/g)).toHaveLength(1);
 	});
+
+	it("puts an in-feed ad after every 5th card, hidden with the cards past the first page", async () => {
+		vi.stubGlobal("fetch", async () => new Response(JSON.stringify({ data: Array.from({ length: 12 }, (_, i) => article(i + 1, "Новости")) })));
+		const html = await render(BlogPage);
+		const grid = [...html.matchAll(/class="(post-card|post-ad no-print)"([^>]*)>/g)].map(([, cls, attrs]) => (cls === "post-card" ? "p" : "A") + (/\bhidden\b/.test(attrs) ? "-" : ""));
+
+		expect(grid.join(" ")).toBe("p p p p p A p- p- p- p- p- A- p-");
+		// Not a production build: placeholders in the in-feed size.
+		expect(count(html, /ad-slot--placeholder/g)).toBe(2);
+		expect(html).toContain("ad-slot--feed");
+	});
 });
 
 describe("/blog/[slug] and /news/[slug]", () => {
