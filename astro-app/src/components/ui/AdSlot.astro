@@ -1,0 +1,69 @@
+---
+// Google AdSense display unit. Served only on foodies.academy: AdSense doesn't fill other hosts,
+// and dev clicks would count as invalid traffic. Elsewhere a placeholder shows where the ad goes.
+interface Props {
+	// Ad unit ID (data-ad-slot) from AdSense → Ads → By ad unit. Empty: nothing on production.
+	unit: string;
+	// Hostname the site is built for (astro.config `site`).
+	host?: string;
+	class?: string;
+}
+
+const PRODUCTION_HOST = "foodies.academy";
+// Same publisher as public/ads.txt.
+const CLIENT = "ca-pub-5409964786388188";
+
+const { unit, host, class: className } = Astro.props;
+const live = host === PRODUCTION_HOST;
+---
+
+{
+	live ? (
+		unit && (
+			<aside class:list={["ad-slot no-print", className]} aria-label="Реклама">
+				<ins class="adsbygoogle ad-slot__unit" data-ad-client={CLIENT} data-ad-slot={unit} data-ad-format="auto" data-full-width-responsive="true" />
+			</aside>
+		)
+	) : (
+		<aside class:list={["ad-slot ad-slot--placeholder no-print", className]} aria-hidden="true">
+			Реклама
+		</aside>
+	)
+}
+
+<script>
+	// Bundled once per page however many units it has: loads AdSense and fills every unit.
+	const units = document.querySelectorAll("ins.adsbygoogle");
+	if (units.length) {
+		const loader = document.createElement("script");
+		loader.async = true;
+		loader.crossOrigin = "anonymous";
+		loader.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${units[0].getAttribute("data-ad-client")}`;
+		document.head.append(loader);
+		const queue = ((window as unknown as { adsbygoogle: object[] }).adsbygoogle ||= []);
+		units.forEach(() => queue.push({}));
+	}
+</script>
+
+<style lang="less">
+.ad-slot {
+	margin-top: 30px;
+	// Space reserved up front so the text doesn't jump when the ad arrives.
+	min-height: 280px;
+	@media @tablet {
+		min-height: 250px;
+	}
+	&__unit {
+		display: block;
+	}
+	&--placeholder {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border: 2px dashed var(--color-grey);
+		color: var(--color-grey);
+		font-size: 14px;
+		text-transform: uppercase;
+	}
+}
+</style>
