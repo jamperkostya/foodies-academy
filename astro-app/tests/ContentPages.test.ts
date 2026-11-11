@@ -26,11 +26,11 @@ describe("/lifehacks", () => {
 	beforeAll(() => vi.stubGlobal("fetch", async () => new Response(JSON.stringify({ data: lifehacks }))));
 	afterAll(() => vi.unstubAllGlobals());
 
-	it("lists every lifehack from WordPress, showing the first six", async () => {
+	it("lists every lifehack from WordPress, showing the first five and an in-feed ad", async () => {
 		const html = await render(LifehacksPage);
+		const grid = [...html.matchAll(/class="(lifehack-card|feed-ad no-print)"([^>]*)>/g)].map(([, cls, attrs]) => (cls === "lifehack-card" ? "l" : "A") + (/\bhidden\b/.test(attrs) ? "-" : ""));
 
-		expect(count(html, /class="lifehack-card"/g)).toBe(lifehacks.length);
-		expect(count(html, /class="lifehack-card"[^>]*hidden/g)).toBe(lifehacks.length - 6);
+		expect(grid.join(" ")).toBe("l l l l l A l- l- l-");
 		expect(html).toContain('href="/lifehack/lifehack-1"');
 	});
 
@@ -58,6 +58,11 @@ describe("/lifehack/[slug]", () => {
 		expect(html).toContain("Спасибо!");
 		expect(html).toMatch(/data-action="[^"]*\/lifehacks\/lifehack-1\/comments"/);
 		expect(html).toContain("<p>О лайфхаках</p>");
+		// Ad placeholders (not a production build) right before and after the comments.
+		const comments = html.indexOf('id="comments"');
+		expect(count(html, /ad-slot--placeholder/g)).toBe(2);
+		expect(html.indexOf("ad-slot--placeholder")).toBeLessThan(comments);
+		expect(html.lastIndexOf("ad-slot--placeholder")).toBeGreaterThan(html.indexOf("</section>", comments));
 		// Similar lifehacks: same category first.
 		expect(html).toMatch(/Похожие лайфхаки[\s\S]*?Лайфхак 3/);
 	});
@@ -109,7 +114,7 @@ describe("/blog", () => {
 	it("puts an in-feed ad after every 5th card, hidden with the cards past the first page", async () => {
 		vi.stubGlobal("fetch", async () => new Response(JSON.stringify({ data: Array.from({ length: 12 }, (_, i) => article(i + 1, "Новости")) })));
 		const html = await render(BlogPage);
-		const grid = [...html.matchAll(/class="(post-card|post-ad no-print)"([^>]*)>/g)].map(([, cls, attrs]) => (cls === "post-card" ? "p" : "A") + (/\bhidden\b/.test(attrs) ? "-" : ""));
+		const grid = [...html.matchAll(/class="(post-card|feed-ad no-print)"([^>]*)>/g)].map(([, cls, attrs]) => (cls === "post-card" ? "p" : "A") + (/\bhidden\b/.test(attrs) ? "-" : ""));
 
 		expect(grid.join(" ")).toBe("p p p p p A p- p- p- p- p- A- p-");
 		// Not a production build: placeholders in the in-feed size.

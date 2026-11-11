@@ -1,6 +1,6 @@
 ---
-// In-feed AdSense unit dressed as a PostCard, between the cards of the blog grid.
-import AdSlot from "../ui/AdSlot.astro";
+// In-feed AdSense unit dressed as a card, between the cards of a FilterableGrid.
+import AdSlot from "./AdSlot.astro";
 
 interface Props {
 	unit: string;
@@ -12,13 +12,13 @@ interface Props {
 
 const { unit, layoutKey, host, hidden } = Astro.props;
 ---
-<div class="post-ad no-print" data-grid-ad hidden={hidden}>
-	<span class="post-ad__label">Реклама</span>
+<div class="feed-ad no-print" data-grid-ad hidden={hidden}>
+	<span class="feed-ad__label">Реклама</span>
 	<AdSlot unit={unit} layoutKey={layoutKey} host={host} />
 </div>
 
 <style lang="less">
-.post-ad {
+.feed-ad {
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
@@ -35,7 +35,7 @@ const { unit, layoutKey, host, hidden } = Astro.props;
 	}
 }
 
-.post-ad__label {
+.feed-ad__label {
 	font-size: 11px;
 	line-height: 14px;
 	text-transform: uppercase;
