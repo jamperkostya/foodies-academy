@@ -11,6 +11,8 @@ import AuthorCard from "../../components/article/AuthorCard.astro";
 import SidebarList from "../../components/article/SidebarList.astro";
 import NewsletterCard from "../../components/article/NewsletterCard.astro";
 import Avatar from "../../components/ui/Avatar.astro";
+import AdSlot from "../../components/ui/AdSlot.astro";
+import { AD_UNITS } from "../../data/ads";
 import SEOTextSection from "../../components/sections/SEOTextSection.astro";
 import type { Lifehack } from "../../types/lifehack";
 import { plural } from "../../utils/plural";
@@ -89,6 +91,8 @@ const similar = lifehacks
 
 			{lifehack.tip.text && <TipBox title={lifehack.tip.title || "Совет"}>{lifehack.tip.text}</TipBox>}
 
+			<AdSlot unit={AD_UNITS.beforeComments} host={Astro.site?.hostname} />
+
 			<ContentBlock title="Комментарии" id="comments" class="no-print">
 				<span slot="hint" id="commentsCount">{commentsCount}</span>
 				<Reviews
@@ -102,6 +106,8 @@ const similar = lifehacks
 					action={`${PUBLIC_API_URL}/lifehacks/${lifehack.slug}/comments`}
 				/>
 			</ContentBlock>
+
+			<AdSlot unit={AD_UNITS.afterComments} host={Astro.site?.hostname} />
 
 			<Fragment slot="sidebar">
 				<AuthorCard name={lifehack.author.name} info={lifehack.author.info} buttonLabel="Профиль автора" href={lifehack.author.info ? `/author/${lifehack.author.slug}` : undefined} />
