@@ -12,6 +12,7 @@ import SidebarList from "./SidebarList.astro";
 import NewsletterCard from "./NewsletterCard.astro";
 import SEOTextSection from "../sections/SEOTextSection.astro";
 import Avatar from "../ui/Avatar.astro";
+import AdSlot from "../ui/AdSlot.astro";
 import type { Article } from "../../types/article";
 import { plural } from "../../utils/plural";
 
@@ -21,6 +22,9 @@ interface Props {
 	others: Article[];
 	section: { label: string; href: "/news" | "/blog"; api: "news" | "blog" };
 }
+
+// AdSense ad units around the comments of blog posts.
+const BLOG_AD_SLOTS = { beforeComments: "6273637916", afterComments: "7652112859" };
 
 const { article, others, section } = Astro.props;
 // Comments are posted straight from the browser, so it needs Laravel's public URL.
@@ -74,6 +78,8 @@ const image = article.image || "https://foodies.academy/wp-content/uploads/2025/
 				<PageContent html={article.content ?? ""} />
 			</div>
 
+			{section.api === "blog" && <AdSlot unit={BLOG_AD_SLOTS.beforeComments} host={Astro.site?.hostname} />}
+
 			<ContentBlock title="Комментарии" id="comments" class="no-print">
 				<span slot="hint" id="commentsCount">{commentsCount}</span>
 				<Reviews
@@ -88,6 +94,8 @@ const image = article.image || "https://foodies.academy/wp-content/uploads/2025/
 					action={`${PUBLIC_API_URL}/${section.api}/${article.slug}/comments`}
 				/>
 			</ContentBlock>
+
+			{section.api === "blog" && <AdSlot unit={BLOG_AD_SLOTS.afterComments} host={Astro.site?.hostname} />}
 
 			<Fragment slot="sidebar">
 				<AuthorCard name={article.author.name} buttonLabel="Профиль автора" href={article.author.slug ? `/author/${article.author.slug}` : undefined} />
