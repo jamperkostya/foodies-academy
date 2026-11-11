@@ -48,14 +48,15 @@ const live = host === PRODUCTION_HOST;
 		loader.crossOrigin = "anonymous";
 		loader.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${units[0].dataset.adClient}`;
 		document.head.append(loader);
-		const queue = ((window as unknown as { adsbygoogle: object[] }).adsbygoogle ||= []);
+		// Looked up on every push: once loaded, AdSense replaces the queue array with its own object.
+		const ads = window as unknown as { adsbygoogle?: object[] };
 		const observer = new IntersectionObserver(
 			(entries) => {
 				entries.forEach(({ isIntersecting, target }) => {
 					if (!isIntersecting) return;
 					observer.unobserve(target);
 					target.classList.add("adsbygoogle");
-					queue.push({});
+					(ads.adsbygoogle ||= []).push({});
 				});
 			},
 			{ rootMargin: "300px" }
