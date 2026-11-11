@@ -1,0 +1,44 @@
+---
+// In-feed AdSense unit dressed as a PostCard, between the cards of the blog grid.
+import AdSlot from "../ui/AdSlot.astro";
+
+interface Props {
+	unit: string;
+	layoutKey: string;
+	host?: string;
+	// Past the first page of a FilterableGrid.
+	hidden?: boolean;
+}
+
+const { unit, layoutKey, host, hidden } = Astro.props;
+---
+<div class="post-ad no-print" data-grid-ad hidden={hidden}>
+	<span class="post-ad__label">Реклама</span>
+	<AdSlot unit={unit} layoutKey={layoutKey} host={host} />
+</div>
+
+<style lang="less">
+.post-ad {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	overflow: hidden;
+	padding: 20px;
+	background: var(--color-white);
+	border: var(--border-width) solid var(--color-black-10);
+	border-radius: var(--border-radius-25);
+	> :global(.ad-slot) {
+		flex: 1;
+	}
+	&[hidden] {
+		display: none;
+	}
+}
+
+.post-ad__label {
+	font-size: 11px;
+	line-height: 14px;
+	text-transform: uppercase;
+	color: var(--color-grey);
+}
+</style>
