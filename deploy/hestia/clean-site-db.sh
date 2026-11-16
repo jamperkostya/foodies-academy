@@ -31,15 +31,10 @@ SELECT ROW_COUNT() AS marked_spam_deleted;"
 
 # 2. Spam accounts: subscribers who never posted, commented, logged in to the new site or saved
 #    anything, and whose name, address, e-mail or bio look like a bot's.
-FOOT="(EXISTS(SELECT 1 FROM ${P}posts p WHERE p.post_author = u.ID)
-  OR EXISTS(SELECT 1 FROM ${P}comments c WHERE c.user_id = u.ID)
-  OR EXISTS(SELECT 1 FROM ${P}usermeta s WHERE s.user_id = u.ID
-    AND s.meta_key IN ('session_tokens', 'foodies_favorite', 'foodies_follow_author', '${P}user_avatar')))"
 SPAM="(u.user_url <> ''
   OR u.display_name REGEXP 'https?://|www\\\\.|\\\\.(com|ru|net|org|xyz|top|info|biz|io|site|online|shop|store)'
   OR u.user_login REGEXP 'https?|www|\\\\.(com|ru|net)'
-  OR EXISTS(SELECT 1 FROM ${P}usermeta d WHERE d.user_id = u.ID AND d.meta_key = 'description'
-    AND d.meta_value REGEXP 'https?://|www\\\\.|<a ')
+  OR b.ID IS NOT NULL
   OR u.user_login REGEXP 'telegram|sberbank|tinkoff|tink|vtb|rub|bitcoin|crypto|casino|bonus|invest|@|usd|bingx|\\\\.(blog|dev|page|site|app)'
   OR u.display_name REGEXP 'telegram|SBERBANK|TINK|VTB|RUB|USD|BAM [0-9]'
   OR BINARY u.user_login REGEXP '^[A-Za-z]{8,}\$' AND BINARY u.user_login REGEXP '[a-z][A-Z][a-z]?[A-Z]'
@@ -47,11 +42,23 @@ SPAM="(u.user_url <> ''
   OR SUBSTRING_INDEX(u.user_email, '@', 1) REGEXP '([^.]+\\\\.){3,}'
   OR u.user_email NOT REGEXP '@(gmail|googlemail|yahoo|hotmail|outlook|live|msn|icloud|me|mac|aol|mail|yandex|ya|bk|list|inbox|rambler|ukr|i|meta|gmx|web|seznam|centrum|email|post|tut|onet|wp|o2|interia|libero|orange|free|laposte|t-online|protonmail|proton|zoho|qq|163|126|naver|daum|abv|freemail|inbox\\\\.lv|bigmir)\\\\.[a-z.]+\$'
   OR u.user_email REGEXP '^[a-z]{10}@')"
+# Who left a trace and whose bio has links go to temporary tables first: as EXISTS subqueries inside
+# the ORs, MariaDB took hours on the 172k accounts of an uncleaned copy.
 SQL "
+CREATE TEMPORARY TABLE active_users (ID BIGINT UNSIGNED PRIMARY KEY)
+  SELECT post_author AS ID FROM ${P}posts WHERE post_author > 0
+  UNION SELECT user_id FROM ${P}comments WHERE user_id > 0
+  UNION SELECT user_id FROM ${P}usermeta
+    WHERE meta_key IN ('session_tokens', 'foodies_favorite', 'foodies_follow_author', '${P}user_avatar');
+CREATE TEMPORARY TABLE bio_links (ID BIGINT UNSIGNED PRIMARY KEY)
+  SELECT DISTINCT user_id AS ID FROM ${P}usermeta
+    WHERE meta_key = 'description' AND meta_value REGEXP 'https?://|www\\\\.|<a ';
 CREATE TEMPORARY TABLE spam_users (ID BIGINT UNSIGNED PRIMARY KEY)
-  SELECT u.ID FROM ${P}users u
+  SELECT DISTINCT u.ID FROM ${P}users u
   JOIN ${P}usermeta r ON r.user_id = u.ID AND r.meta_key = '${P}capabilities' AND r.meta_value LIKE '%subscriber%'
-  WHERE NOT $FOOT AND $SPAM;
+  LEFT JOIN active_users a ON a.ID = u.ID
+  LEFT JOIN bio_links b ON b.ID = u.ID
+  WHERE a.ID IS NULL AND $SPAM;
 SELECT COUNT(*) AS spam_users FROM spam_users;
 DELETE y FROM ${P}yoast_indexable y JOIN spam_users d ON d.ID = y.object_id AND y.object_type = 'user';
 DELETE h FROM ${P}yoast_indexable_hierarchy h LEFT JOIN ${P}yoast_indexable y ON y.id = h.indexable_id WHERE y.id IS NULL;
@@ -99,6 +106,9 @@ DELETE p FROM ${P}posts p JOIN old_revisions o ON o.ID = p.ID;"
 
 # 5. One collation everywhere: plugins created some tables as utf8mb3 (no emoji in a search
 #    query) or utf8mb4_unicode_520_ci, which "Illegal mix of collations" errors come from.
+#    The database's own default first: Hestia creates databases as utf8mb3, and a plugin's new
+#    table without a charset of its own takes it.
+SQL "ALTER DATABASE CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 for t in $(SQL "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()
   AND table_type = 'BASE TABLE' AND table_collation <> 'utf8mb4_unicode_ci'" -N); do
 	echo "utf8mb4_unicode_ci: $t"
