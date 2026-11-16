@@ -32,8 +32,8 @@ WordPress (админка) ──┐
 
 ## Базы данных
 
-- **База сайта** — база WordPress. Локально в MAMP: `foodies_dev` (адаптированная копия боевой `foodies.academy`). На dev-сервере: `jamper_foodies_site`. Старая проектная `foodies.academy_with_content` больше не используется.
-- **База Laravel** — сессии, кэш, токены входа (`api_tokens`), очередь. Локально контейнер `mysql` (`foodies_laravel`), на сервере `jamper_foodies_laravel`. Заполняется миграциями.
+- **База сайта** — база WordPress. Локально в MAMP (MySQL 8): `foodies_dev` (адаптированная копия боевой). На dev-сервере: `jamper_foodies_site`, на проде: `foodies_wordpress`. Старая проектная `foodies.academy_with_content` больше не используется.
+- **База Laravel** — сессии, кэш, токены входа (`api_tokens`), очередь. Локально контейнер `mysql` (`foodies_laravel`), на dev-сервере `jamper_foodies_laravel`, на проде `foodies_laravel`. Заполняется миграциями.
 - **Тестовая** — `foodies_site_test` (контейнер `mysql`), схема из `laravel-app/tests/fixtures/site-schema.sql`. Тесты отказываются работать с базой, имя которой не кончается на `_test`.
 - **Боевая база хранит часть данных в полях старой темы (ACF)**, проектная — в новых. Код читает оба варианта, не убирать:
   - видео рецепта: `recipe_video_embed` → `video`;
@@ -91,12 +91,12 @@ WordPress (админка) ──┐
 
 ## Деплой
 
-- dev: https://dev.foodies.academy (сайт), https://api.dev.foodies.academy (Laravel), https://wp.dev.foodies.academy (WordPress). Прод: те же адреса без `dev.`. Один сервер HestiaCP, пользователь `jamper`, без Docker.
+- dev: https://dev.foodies.academy (сайт), https://api.dev.foodies.academy (Laravel), https://wp.dev.foodies.academy (WordPress). Прод: те же адреса без `dev.`. Один сервер HestiaCP без Docker: dev — у пользователя `jamper` (`/home/jamper/web/…`), прод — у пользователя `foodies` (`/home/foodies/web/…`). Все базы и таблицы должны быть в `utf8mb4_unicode_ci` (таблицы плагинов переводит `clean-site-db.sh`).
 - Push в `main` деплоит на **dev** только нужный workflow: `astro-app/**` → `deploy.yml` (тесты, сборка, rsync `dist/`), `laravel-app/**` → `deploy-laravel.yml` (тесты, rsync, миграции, `optimize`), `wp-content/mu-plugins/**` → `deploy-wordpress.yml`. Вручную — с любой ветки на dev: `gh workflow run deploy.yml --ref <ветка>`.
-- **Прод — только вручную и только из `main`**: `gh workflow run deploy.yml -f environment=production`. Пути и адреса прода — в GitHub Environment `production`, у dev — секреты репозитория. Боевой Laravel пересобирает сайт событием `content-changed-production` (`GITHUB_DEPLOY_EVENT`). Переезд и откат: `deploy/hestia/PRODUCTION.md`.
+- **Прод — только вручную и только из `main`**: `gh workflow run deploy.yml -f environment=production`. Пути и адреса прода — в GitHub Environment `production`, у dev — секреты репозитория. Боевой Laravel пересобирает сайт событием `content-changed-production` (`GITHUB_DEPLOY_EVENT`). Устройство прода и переезд: `deploy/hestia/PRODUCTION.md`.
 - Адреса страниц без слэша на конце, как на старом сайте: Astro собирает `recipe/x.html` (`build.format: "file"`), `.htaccess` с 301 со старых адресов WordPress пишет `src/build/htaccess.ts` после сборки.
 - Фронтенд WordPress (`wp.*`) перенаправляет на сайт (`foodies-frontend.php`, `FOODIES_SITE_URL`); картинки на сайте — по старым адресам `foodies.academy/wp-content/uploads`, на проде nginx отдаёт их из папки WordPress.
-- На сервере вручную правятся только `.env` Laravel и `wp-config-foodies.php`; остальное перезаписывает деплой. Cron пользователя `jamper` запускает `schedule:run`.
+- На сервере вручную правятся только `.env` Laravel и `wp-config-foodies.php`; остальное перезаписывает деплой. `schedule:run` запускает cron своего пользователя: `jamper` на dev, `foodies` на проде. Команды прода — от `foodies` (`sudo -u foodies` под root); `mariadb` без пароля — только у root.
 - Полная инструкция по серверу: `deploy/hestia/README.md`.
 
 ## Как работать в этом проекте
@@ -108,7 +108,7 @@ WordPress (админка) ──┐
 - Git: работа в ветке, PR в `main` (слияние = деплой на dev). Коммиты — conventional (`feat:`, `fix:`, `chore:`) с поясняющим телом. Коммитить и пушить только по просьбе пользователя.
 - Данные в базе сайта реальные: тестовые записи (отзывы, лайки, пользователи) за собой удалять, перед массовыми изменениями — бэкап (`deploy/hestia/export-site-db.sh` или `backups/`, не в git).
 - Не подключать dev или локальную среду к боевой базе foodies.academy: Laravel пишет в неё.
-- Команды для сервера и для Mac легко перепутать: в инструкциях всегда указывать, где выполнять (`root@server`, `jamper@server` или Mac).
+- Команды для сервера и для Mac легко перепутать: в инструкциях всегда указывать, где выполнять (`root@server`, `jamper@server`, `foodies@server` или Mac).
 
 ## Известное
 
