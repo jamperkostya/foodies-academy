@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Removes what the live foodies.academy database collected over the years and the site doesn't
-# need: spam comments waiting for moderation, spam accounts, tables of removed plugins. The same
-# cleanup was done by hand on foodies_dev (November 2026); this repeats it on a fresh copy.
+# need: spam comments, spam accounts, tables of removed plugins, old revisions; and brings every
+# table to utf8mb4_unicode_ci. The same cleanup was done by hand on foodies_dev (November 2026);
+# this repeats it on a fresh copy.
 #
 # Run as root@server on the copy, after "php artisan site:prepare-db", with a backup made:
 #   bash clean-site-db.sh jamper_foodies_prod_site
@@ -21,6 +22,12 @@ DELETE FROM ${P}comments WHERE comment_approved = '0' AND comment_ID <= $REVIEWE
 SELECT ROW_COUNT() AS spam_comments_deleted;
 SELECT comment_ID, comment_post_ID, comment_author, LEFT(comment_content, 80) AS newer_pending_to_check
   FROM ${P}comments WHERE comment_approved = '0' AND comment_ID > $REVIEWED;"
+
+# Comments Akismet or a moderator marked as spam: never shown, kept only for Akismet's history.
+SQL "
+DELETE m FROM ${P}commentmeta m JOIN ${P}comments c ON c.comment_ID = m.comment_id WHERE c.comment_approved = 'spam';
+DELETE FROM ${P}comments WHERE comment_approved = 'spam';
+SELECT ROW_COUNT() AS marked_spam_deleted;"
 
 # 2. Spam accounts: subscribers who never posted, commented, logged in to the new site or saved
 #    anything, and whose name, address, e-mail or bio look like a bot's.
@@ -51,7 +58,8 @@ DELETE h FROM ${P}yoast_indexable_hierarchy h LEFT JOIN ${P}yoast_indexable y ON
 DELETE u FROM ${P}users u JOIN spam_users d ON d.ID = u.ID;
 DELETE m FROM ${P}usermeta m LEFT JOIN ${P}users u ON u.ID = m.user_id WHERE u.ID IS NULL;"
 
-# 3. Tables that neither WordPress with its current plugins, nor Laravel, nor Astro use.
+# 3. Tables that neither WordPress with its current plugins, nor Laravel, nor Astro use
+#    (icl_translations only by site:prepare-db, which has run by now).
 TABLES="
   artit_actionscheduler_actions artit_actionscheduler_claims artit_actionscheduler_groups
   artit_actionscheduler_logs artit_downloadstats artit_downloadtracking artit_fusewp_queue_jobs
@@ -60,7 +68,7 @@ TABLES="
   artit_icl_message_status artit_icl_node artit_icl_reminders artit_icl_strings
   artit_icl_string_positions artit_icl_string_status artit_icl_string_translations
   artit_icl_translate artit_icl_translate_job artit_icl_translation_batches
-  artit_icl_translation_downloads artit_icl_translation_status artit_kcc_clicks
+  artit_icl_translation_downloads artit_icl_translation_status artit_icl_translations artit_kcc_clicks
   artit_post_views_summary artit_ppress_coupons artit_ppress_customers artit_ppress_forms
   artit_ppress_formsmeta artit_ppress_meta_data artit_ppress_ordermeta artit_ppress_orders
   artit_ppress_plans artit_ppress_sessions artit_ppress_subscriptions artit_relevanssi
@@ -78,5 +86,24 @@ TABLES="
   wc_ukr_shipping_np_warehouses"
 SQL "DROP TABLE IF EXISTS $(for t in $TABLES; do printf '`%s`,' "$t"; done | sed 's/,$//');"
 
-SQL "OPTIMIZE TABLE ${P}comments, ${P}commentmeta, ${P}users, ${P}usermeta;" > /dev/null
+# 4. Revisions beyond the 10 newest of each post (the limit of mu-plugins/foodies-revisions.php,
+#    which WordPress applies only when a post is saved again). WP Ultimate Recipe copies every
+#    recipe field into a revision, so most of postmeta was old revisions.
+SQL "
+CREATE TEMPORARY TABLE old_revisions (ID BIGINT UNSIGNED PRIMARY KEY)
+  SELECT ID FROM (SELECT ID, ROW_NUMBER() OVER (PARTITION BY post_parent ORDER BY post_date DESC, ID DESC) AS n
+    FROM ${P}posts WHERE post_type = 'revision') r WHERE n > 10;
+SELECT COUNT(*) AS old_revisions FROM old_revisions;
+DELETE m FROM ${P}postmeta m JOIN old_revisions o ON o.ID = m.post_id;
+DELETE p FROM ${P}posts p JOIN old_revisions o ON o.ID = p.ID;"
+
+# 5. One collation everywhere: plugins created some tables as utf8mb3 (no emoji in a search
+#    query) or utf8mb4_unicode_520_ci, which "Illegal mix of collations" errors come from.
+for t in $(SQL "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()
+  AND table_type = 'BASE TABLE' AND table_collation <> 'utf8mb4_unicode_ci'" -N); do
+	echo "utf8mb4_unicode_ci: $t"
+	SQL "ALTER TABLE \`$t\` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+done
+
+SQL "OPTIMIZE TABLE ${P}comments, ${P}commentmeta, ${P}users, ${P}usermeta, ${P}posts, ${P}postmeta;" > /dev/null
 echo "Done: $(SQL "SELECT COUNT(*) FROM ${P}users" -N) users, $(SQL "SELECT COUNT(*) FROM ${P}comments WHERE comment_approved = '1'" -N) approved comments."
