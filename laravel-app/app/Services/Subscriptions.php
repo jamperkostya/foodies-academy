@@ -47,7 +47,8 @@ class Subscriptions
         }
         // CFDB7 saves the entry before CF7 sends mail, so a failed mail still counts as saved.
         if ($status === 'mail_failed') {
-            Log::warning('Contact Form 7 could not send the subscription mail', ['email' => $email]);
+            // No e-mail in the context: this warning also goes to Sentry.
+            Log::warning('Contact Form 7 could not send the subscription mail', ['list' => $list]);
 
             return null;
         }

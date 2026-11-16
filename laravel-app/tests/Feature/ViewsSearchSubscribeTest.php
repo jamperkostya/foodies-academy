@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Tests\SiteTestCase;
 
 class ViewsSearchSubscribeTest extends SiteTestCase
@@ -110,8 +111,17 @@ class ViewsSearchSubscribeTest extends SiteTestCase
     public function test_subscription_saved_even_if_the_mail_fails(): void
     {
         Http::fake(['wordpress.test/*' => Http::response(['status' => 'mail_failed'])]);
+        Log::spy();
 
         $this->postJson('/api/subscribe', ['name' => 'Анна', 'email' => 'anna@example.test'])->assertCreated();
+        // The warning goes to Sentry too: the subscriber's e-mail stays out of it.
+        Log::shouldHaveReceived('warning')->once()
+            ->withArgs(fn ($message, $context) => str_contains($message, 'subscription mail') && $context === ['list' => 'newsletter']);
+    }
+
+    public function test_only_warnings_and_errors_go_to_sentry(): void
+    {
+        $this->assertSame(['driver' => 'sentry', 'level' => 'warning'], config('logging.channels.sentry'));
     }
 
     public function test_subscription_errors(): void

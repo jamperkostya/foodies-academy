@@ -58,6 +58,12 @@ return [
             'ignore_exceptions' => false,
         ],
 
+        // Warnings and errors as Sentry issues (in LOG_STACK on the server); off without the DSN.
+        'sentry' => [
+            'driver' => 'sentry',
+            'level' => env('SENTRY_LOG_LEVEL', 'warning'),
+        ],
+
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
