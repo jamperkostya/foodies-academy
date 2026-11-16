@@ -73,7 +73,7 @@ WordPress (админка) ──┐
 - `likes:import-legacy`, `views:import-legacy` — перенос старых счётчиков;
 - `slugs:check` — недопустимые и повторяющиеся slug'и.
 - `recipes:move-legacy-fields` — видео из старого поля ACF `video` в «Recipe Video» WP Ultimate Recipe (`recipe_video_embed`, старое поле удаляется) и первое фото галереи в «Изображение записи», где его нет; входит в `site:prepare-db`.
-- `deploy/hestia/clean-site-db.sh` — чистка копии боевой базы от спама (комментарии, пользователи, таблицы старых плагинов), после `site:prepare-db`.
+- `deploy/hestia/clean-site-db.sh` — чистка копии боевой базы: спам (комментарии, пользователи), таблицы старых плагинов, ревизии старше 10-й, перевод всех таблиц в `utf8mb4_unicode_ci`; после `site:prepare-db`.
 
 ## Локальная разработка
 
