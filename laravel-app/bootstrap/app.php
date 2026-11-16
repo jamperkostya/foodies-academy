@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias(['visitor' => \App\Http\Middleware\AuthenticateVisitor::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        // Without it Laravel 11+ doesn't hand unhandled exceptions to Sentry.
+        \Sentry\Laravel\Integration::handles($exceptions);
+
         // API errors are JSON even without "Accept: application/json" (Astro's fetch doesn't send it),
         // so a bad request returns 422 with a message instead of a redirect to an HTML page.
         $exceptions->shouldRenderJsonWhen(fn ($request) => $request->is('api/*'));

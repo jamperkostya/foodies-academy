@@ -53,6 +53,8 @@
         <env name="FOODIES_API_SECRET" value="test-secret-test-secret-test-secret-00" force="true"/>
         <server name="FOODIES_API_SECRET" value="test-secret-test-secret-test-secret-00" force="true"/>
         <env name="YOUTUBE_API_KEY" value="" force="true"/>
+        <!-- Tests must not report to the real Sentry project from a local .env. -->
+        <env name="SENTRY_LARAVEL_DSN" value="" force="true"/>
         <env name="ACADEMY_UPLOADS_URL" value="https://uploads.test" force="true"/>
     </php>
 </phpunit>
