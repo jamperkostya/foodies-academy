@@ -103,9 +103,11 @@ nginx -t && systemctl reload nginx
 **DB → Add Database** (Hestia сама добавит префикс `jamper_`) или под root:
 
 ```bash
-v-add-database jamper foodies_site foodies_site 'ПАРОЛЬ_SITE' mysql        # → база и пользователь jamper_foodies_site
-v-add-database jamper foodies_laravel foodies_laravel 'ПАРОЛЬ_LARAVEL' mysql  # → jamper_foodies_laravel
+v-add-database jamper foodies_site foodies_site 'ПАРОЛЬ_SITE' mysql localhost utf8mb4        # → база и пользователь jamper_foodies_site
+v-add-database jamper foodies_laravel foodies_laravel 'ПАРОЛЬ_LARAVEL' mysql localhost utf8mb4  # → jamper_foodies_laravel
 ```
+
+Без `utf8mb4` Hestia создаёт базу в `utf8mb3_general_ci`, и эту кодировку получают таблицы, которые плагины создают без своей. У существующей базы: `mariadb -e "ALTER DATABASE jamper_foodies_site CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"` — данные не трогает.
 
 `jamper_foodies_site` — **копия** базы WordPress. Боевую базу foodies.academy к dev не подключать: Laravel пишет в неё лайки, просмотры, поиски и пользователей.
 
@@ -139,7 +141,9 @@ gunzip -c /home/jamper/jamper_foodies_site-*.sql.gz | mariadb jamper_foodies_sit
 rm /home/jamper/jamper_foodies_site-*.sql.gz
 ```
 
-Скрипт убирает из дампа `DEFINER=` (пользователь базы на сервере не root). База локально на MySQL 5.7 с `utf8mb4_unicode_ci`, поэтому импортируется и в MariaDB, и в MySQL.
+Скрипт убирает из дампа `DEFINER=` (пользователь базы на сервере не root). Все таблицы в `utf8mb4_unicode_ci`: эта collation есть и в MariaDB, и в MySQL, поэтому дамп импортируется в обе. Collation по умолчанию MariaDB 11.4 (`utf8mb4_uca1400_ai_ci`) и MySQL 8 (`utf8mb4_0900_ai_ci`) друг другу неизвестны.
+
+Чистка копии от спама, старых ревизий и чужих collation — `clean-site-db.sh` (после `site:prepare-db`). Деплой его на сервер не кладёт: `scp deploy/hestia/clean-site-db.sh root@SERVER:/root/`, затем под root бэкап и `bash /root/clean-site-db.sh jamper_foodies_site`.
 
 Страницы сайта (политика, правила, контакты, блоки главной) создаст mu-plugin `foodies-site-pages.php` при первом запуске WordPress (шаг 9.1).
 
