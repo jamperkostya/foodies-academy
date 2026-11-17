@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\EngagementController;
 use App\Http\Controllers\Api\PagesController;
 use App\Http\Controllers\Api\VideosController;
 use App\Http\Controllers\Api\AccountController;
+use App\Http\Controllers\Api\RedirectsController;
 use App\Http\Controllers\Api\StatsController;
 use App\Http\Controllers\Api\LifehacksController;
 use Illuminate\Support\Facades\Route;
@@ -75,6 +76,7 @@ Route::prefix('authors')->controller(AuthorsController::class)->group(function (
 });
 
 Route::get('/stats', [StatsController::class, 'show']);
+Route::get('/redirects', RedirectsController::class);
 Route::get('/pages', [PagesController::class, 'index']);
 Route::get('/pages/{slug}', [PagesController::class, 'show'])->where('slug', '[a-z0-9_-]+');
 

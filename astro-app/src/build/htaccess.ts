@@ -7,7 +7,8 @@ import type { AstroIntegration } from "astro";
 
 // Old WordPress addresses → new ones. Patterns are Apache's, without the leading slash.
 const MOVED: [string, string][] = [
-	["^(course|cuisine)/([^/]+)(/page/[0-9]+)?$", "/category/$2$3"],
+	// Without the page: the old site had fewer recipes on a page, its numbers run past the new last page.
+	["^(course|cuisine)/([^/]+)(/page/[0-9]+)?(/feed)?$", "/category/$2"],
 	["^category/novosti$", "/news"],
 	["^category/zdorovoe-pitanie$", "/blog"],
 	["^category/video$", "/video"],
@@ -20,7 +21,17 @@ const MOVED: [string, string][] = [
 	["^(cart|checkout)$", "/"],
 	// Yoast SEO sitemaps, as Search Console knows them: sitemap_index.xml, recipe-sitemap2.xml…
 	["^(sitemap_index|[a-z_]+-sitemap[0-9]*)\\.xml$", "/sitemap.xml"],
+	["^feed$", "/"],
 ];
+
+// The site has no RSS: a feed of a page (/ingredient/x/feed…) goes to the page itself.
+const FEED: [string, string] = ["^(.+)/feed$", "/$1"];
+
+/** Old WordPress addresses the API knows: shortlinks /?p=ID and recipe slugs changed in the admin. */
+export interface Redirects {
+	ids: { id: number; to: string }[];
+	slugs: { from: string; to: string }[];
+}
 
 const escape = (slug: string) => slug.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -28,9 +39,15 @@ const escape = (slug: string) => slug.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
  * Blog posts lived at /{slug} and are now at /blog/{slug}. A site page with the same slug keeps
  * its address.
  */
-export function htaccess(blogSlugs: string[], pageSlugs: string[] = []): string {
+export function htaccess(
+	blogSlugs: string[],
+	pageSlugs: string[] = [],
+	redirects: Redirects = { ids: [], slugs: [] },
+): string {
 	const pages = new Set(pageSlugs);
 	const rule = ([from, to]: [string, string]) => `RewriteRule ${from} ${to} [R=301,L]`;
+	const shortlink = ({ id, to }: { id: number; to: string }) =>
+		`RewriteCond %{QUERY_STRING} (^|&)p=${id}(&|$)\nRewriteRule ^(index\\.php)?$ ${to} [R=301,L,QSD]`;
 	return [
 		"ErrorDocument 404 /404.html",
 		// /category/x is both a page (category/x.html) and the folder of its page 2+: no slash added.
@@ -40,9 +57,25 @@ export function htaccess(blogSlugs: string[], pageSlugs: string[] = []): string 
 		"# One address per page: without the slash at the end.",
 		"RewriteRule ^(.+)/$ /$1 [R=301,L]",
 		"",
+		"# Like buttons of the old theme: actions, not pages.",
+		"RewriteCond %{QUERY_STRING} (^|&)act=(un)?like(&|$)",
+		"RewriteRule (^|/)index\\.php$ - [G]",
+		"",
+		...(redirects.ids.length
+			? [
+					"# Shortlinks /?p=ID. There are hundreds: any other address skips them in one step.",
+					"RewriteCond %{QUERY_STRING} !(^|&)p=[0-9]+(&|$)",
+					`RewriteRule ^ - [S=${redirects.ids.length}]`,
+					...redirects.ids.map(shortlink),
+					"",
+				]
+			: []),
 		"# Addresses of the old WordPress site.",
 		...MOVED.map(rule),
-		...blogSlugs.filter((slug) => !pages.has(slug)).map((slug) => rule([`^${escape(slug)}$`, `/blog/${slug}`])),
+		...redirects.slugs.map(({ from, to }) => rule([`^${escape(from)}$`, to])),
+		// The feed of a post too, in one step and not through /{slug}.
+		...blogSlugs.filter((slug) => !pages.has(slug)).map((slug) => rule([`^${escape(slug)}(/feed)?$`, `/blog/${slug}`])),
+		rule(FEED),
 		"",
 		"# /recipe/x is served from recipe/x.html.",
 		// Not %{REQUEST_FILENAME}: for /news/feed it is …/news (the rest goes to PATH_INFO), news.html
@@ -59,8 +92,9 @@ export function htaccessIntegration(apiUrl: string): AstroIntegration {
 		name: "foodies-htaccess",
 		hooks: {
 			"astro:build:done": async ({ dir }) => {
-				const [blog, pages] = await Promise.all([load("/blog/slugs"), load("/pages")]);
-				await writeFile(new URL(".htaccess", dir), htaccess(blog, pages.map((page: { slug: string }) => page.slug)));
+				const [blog, pages, redirects] = await Promise.all([load("/blog/slugs"), load("/pages"), load("/redirects")]);
+				const text = htaccess(blog, pages.map((page: { slug: string }) => page.slug), redirects);
+				await writeFile(new URL(".htaccess", dir), text);
 			},
 		},
 	};
