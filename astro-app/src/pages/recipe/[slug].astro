@@ -13,6 +13,7 @@ import SidebarList from "../../components/article/SidebarList.astro";
 import NewsletterCard from "../../components/article/NewsletterCard.astro";
 import RecipeGallery from "../../components/article/RecipeGallery.astro";
 import RecipeLikes from "../../components/article/RecipeLikes.astro";
+import DonateCard from "../../components/article/DonateCard.astro";
 import ViewCounter from "../../components/article/ViewCounter.astro";
 import SEOTextSection from "../../components/sections/SEOTextSection.astro";
 import Icon from "../../components/ui/Icon.astro";
@@ -247,6 +248,8 @@ const recipeSchema = jsonLd({
 			{recipe.history && <OriginStory html={recipe.history} />}
 
 			<RecipeLikes slug={recipe.slug} votes={recipe.votes} action={`${PUBLIC_API_URL}/recipes/${recipe.slug}/likes`} />
+
+			<DonateCard />
 
 			<ContentBlock title="Отзывы" id="reviews" class="no-print">
 				{hasRating && (
