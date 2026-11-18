@@ -19,6 +19,12 @@ const { html } = Astro.props;
 .origin-story-content {
 	color: var(--color-grey-dark);
 	line-height: 1.6;
+	h1, h2, h3, h4, h5, h6 {
+		margin-bottom: 10px;
+	}
+	p {
+		margin-bottom: 16px;
+	}
 	> p, > ul, > ol, > figure, > blockquote {
 		margin-bottom: 16px;
 	}
@@ -57,7 +63,6 @@ const { html } = Astro.props;
 	}
 	h4 {
 		font-size: 16px;
-		margin-bottom: 4px;
 	}
 
 	&__lead {
