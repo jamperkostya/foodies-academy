@@ -19,6 +19,9 @@ const MOVED: [string, string][] = [
 	// Print versions and attachment pages of a recipe's photos.
 	["^recipe/([^/]+)/.+$", "/recipe/$1"],
 	["^kuhni-mira$", "/kitchens"],
+	// "Креветки, лангустины" was merged into "Лангустины" in the admin.
+	["^ingredient/krevetki-langustinyi$", "/ingredient/langustinyi"],
+	["^en/ingredient/shrimp-langoustines$", "/en/ingredient/langoustines"],
 	// The old theme's page of all recipes.
 	["^receipes$", "/categories"],
 	["^registration$", "/register"],

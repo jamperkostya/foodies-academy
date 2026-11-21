@@ -1,12 +1,13 @@
 ---
 // Asks readers in the EU, the EEA, the UK and Switzerland whether the statistics counters may run
 // (SiteCounters.astro decides who and loads them). Only where the counters are: foodies.academy.
-import { langOf, t } from "../../i18n";
+import { langOf, localize, t } from "../../i18n";
 const lang = langOf(Astro.url);
 ---
 <div class="cookie-consent no-print" role="dialog" aria-live="polite" aria-label={t(lang, "Файлы cookie")} hidden>
 	<p class="cookie-consent__text">
 		{t(lang, "Мы используем файлы cookie Google Analytics и Яндекс Метрики, чтобы понимать, какие рецепты вам нравятся. Разрешаете?")}
+		{" "}<a href={localize(lang, "/privacy-policy")} class="cookie-consent__link">{t(lang, "Подробнее")}</a>
 	</p>
 	<div class="cookie-consent__actions flex gap-10">
 		<button type="button" class="cookie-consent__button btn btn--primary" data-consent="yes">{t(lang, "Разрешить")}</button>
@@ -52,6 +53,10 @@ const lang = langOf(Astro.url);
 		margin: 0 0 12px;
 		font-size: 14px;
 		line-height: 1.5;
+	}
+	&__link {
+		color: inherit;
+		text-decoration: underline;
 	}
 	// The site's .btn as it is; a <button> doesn't inherit the page's font by itself.
 	&__button {

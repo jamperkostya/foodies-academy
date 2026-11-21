@@ -54,6 +54,53 @@ add_action('init', function () {
 	update_option('foodies_site_pages_version', '1');
 });
 
+// The texts of the legal pages and contacts (foodies-site-pages/{slug}.{lang}.html), once: the
+// Russian page only while it still has the placeholder text above, and its English translation
+// (Polylang) if it has none. After that they are edited in the admin.
+add_action('init', function () {
+	if (get_option('foodies_site_pages_content_version') === '1') {
+		return;
+	}
+	if (!function_exists('pll_insert_post') || !PLL()->model->languages->get('en')) {
+		return; // Polylang not set up yet (wp foodies languages): next time.
+	}
+	$english = [
+		'privacy-policy' => ['Privacy Policy', 'What data Foodies Academy collects, why, and how you can see, correct or delete it.'],
+		'terms' => ['Terms of Use', 'The rules of Foodies Academy: recipes and copyright, your account and reviews, health and safety.'],
+		'contacts' => ['Contacts', 'How to reach the Foodies Academy team: questions about recipes, mistakes, partnerships and your data.'],
+	];
+	$file = fn (string $slug, string $lang) => (string) file_get_contents(__DIR__ . "/foodies-site-pages/$slug.$lang.html");
+	foreach ($english as $slug => [$title, $excerpt]) {
+		if (!$page = get_page_by_path($slug, OBJECT, 'page')) {
+			continue;
+		}
+		if (str_contains($page->post_content, 'Заполните текст этой страницы')) {
+			wp_update_post(['ID' => $page->ID, 'post_content' => $file($slug, 'ru')]);
+		}
+		if (!pll_get_post_language($page->ID)) {
+			pll_set_post_language($page->ID, 'ru');
+		}
+		if (pll_get_post($page->ID, 'en')) {
+			continue;
+		}
+		// Same slug: Polylang adds "-2", and the site shows it as /en/{slug} (Translations::publicSlug()).
+		$id = pll_insert_post([
+			'post_type' => 'page',
+			'post_status' => 'publish',
+			'post_name' => $slug,
+			'post_title' => $title,
+			'post_excerpt' => $excerpt,
+			'post_content' => $file($slug, 'en'),
+			'comment_status' => 'closed',
+		], 'en');
+		if ($id && !is_wp_error($id)) {
+			pll_save_post_translations(['ru' => $page->ID, 'en' => $id]);
+			update_post_meta($id, FOODIES_SITE_PAGE_KEY, '1');
+		}
+	}
+	update_option('foodies_site_pages_content_version', '1');
+}, 30);
+
 // Yoast SEO title and description of the site pages, once and only where empty: without them the
 // pages share the site's default description. Edited in the page's Yoast box afterwards.
 add_action('init', function () {

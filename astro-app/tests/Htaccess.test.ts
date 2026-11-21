@@ -18,6 +18,7 @@ describe(".htaccess", () => {
 		expect(text).toContain("RewriteRule ^course$ /categories [R=301,L]");
 		expect(text).toContain("RewriteRule ^cuisine$ /kitchens [R=301,L]");
 		expect(text).toContain("RewriteRule ^receipes$ /categories [R=301,L]");
+		expect(text).toContain("RewriteRule ^ingredient/krevetki-langustinyi$ /ingredient/langustinyi [R=301,L]");
 		expect(text).toContain("RewriteRule ^recipe(/page/[0-9]+)?$ /categories [R=301,L]");
 		// The recipe list's pages go to /categories before the rule for a recipe's subpages takes them.
 		expect(text.indexOf("^recipe(/page")).toBeLessThan(text.indexOf("^recipe/([^/]+)/.+$"));

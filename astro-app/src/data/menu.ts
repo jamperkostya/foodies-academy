@@ -30,6 +30,8 @@ interface Menu {
 	footer: FooterColumn[];
 	// Shown after the category columns.
 	links: { label: string; href: string }[];
+	// Under the footer: privacy policy, terms, contacts — those published in this language.
+	legal: { title: string; href: string }[];
 }
 
 const load = async (lang: Lang, path: string): Promise<Term[]> =>
@@ -41,14 +43,20 @@ const FOOTER_COUNTRIES = ['Украина', 'Россия', 'Франция', '�
 const FOOTER_COURSES = ['Супы', 'Вторые блюда', 'Соусы', 'Уличная еда'];
 
 async function build(lang: Lang, ru: { courses: Term[]; countries: Term[] } | null): Promise<Menu> {
-	const [courses, allCountries, countries, ingredients, collections] = await Promise.all([
+	const [courses, allCountries, countries, ingredients, collections, pages] = await Promise.all([
 		load(lang, '/categories?type=course'),
 		load(lang, '/categories?type=country'),
 		// 54 countries are too many for a menu: the most popular ones, the rest on /kitchens.
 		load(lang, '/categories/popular?type=country&limit=12'),
 		load(lang, '/ingredients/popular?limit=5'),
 		load(lang, '/collections'),
+		load(lang, '/pages'),
 	]);
+	// Russian slugs: a translation has the same public slug (Translations::publicSlug()).
+	const legal = ['privacy-policy', 'terms', 'contacts']
+		.map((slug) => pages.find((page) => page.slug === slug) as unknown as { slug: string; title: string } | undefined)
+		.filter((page) => page !== undefined)
+		.map((page) => ({ title: page.title, href: localize(lang, `/${page.slug}`) }));
 	const links = (terms: Term[]) => terms.map((term) => ({ title: term.name, href: localize(lang, `/category/${term.slug}`) }));
 	// Picked by Russian name, in this order; a name missing in WordPress (or untranslated) is skipped.
 	// Categories carry the Russian term's id in every language.
@@ -99,6 +107,7 @@ async function build(lang: Lang, ru: { courses: Term[]; countries: Term[] } | nu
 			},
 		],
 		links: sections.map(({ title, href }) => ({ label: title, href })),
+		legal,
 	};
 }
 

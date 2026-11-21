@@ -13,4 +13,5 @@ export interface SitePage {
   modified: string;
   seoText: string;
   seo: Seo | null; // Yoast SEO
+  translations: Record<string, string>; // its slug in every language it is published in
 }

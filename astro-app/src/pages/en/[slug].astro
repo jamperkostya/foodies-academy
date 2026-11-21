@@ -1,0 +1,7 @@
+---
+// The English page: the same page, built for /en (it reads its language from the address).
+import Page, { getStaticPaths as paths } from "../[slug].astro";
+
+export const getStaticPaths = paths;
+---
+<Page {...Astro.props} />

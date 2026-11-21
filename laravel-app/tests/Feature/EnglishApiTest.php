@@ -124,6 +124,27 @@ class EnglishApiTest extends SiteTestCase
         $this->getJson('/api/ingredients/svekla-krasnaya')->assertJsonPath('data.translations', ['ru' => 'svekla-krasnaya']);
     }
 
+    public function test_site_pages_in_english_are_the_translated_ones_under_the_russian_slug(): void
+    {
+        $privacy = $this->makePost('page', 'privacy-policy', ['post_title' => 'Политика конфиденциальности', 'post_content' => '<p>Текст</p>'], ['foodies_site_page' => '1']);
+        $this->makePost('page', 'terms', ['post_title' => 'Правила'], ['foodies_site_page' => '1']);
+        // Polylang gives the translation "-2": the same slug is taken by the Russian page.
+        $english = $this->makePost('page', 'privacy-policy-2', ['post_title' => 'Privacy Policy', 'post_content' => '<p>Text</p>'], ['foodies_site_page' => '1']);
+        $this->translate($privacy, $english);
+
+        $this->getJson('/api/pages')->assertExactJson(['data' => [
+            ['slug' => 'privacy-policy', 'title' => 'Политика конфиденциальности'],
+            ['slug' => 'terms', 'title' => 'Правила'],
+        ]]);
+        $this->getJson('/api/pages?lang=en')->assertExactJson(['data' => [['slug' => 'privacy-policy', 'title' => 'Privacy Policy']]]);
+        $this->getJson('/api/pages/privacy-policy?lang=en')
+            ->assertJsonPath('data.title', 'Privacy Policy')
+            ->assertJsonPath('data.content', '<p>Text</p>')
+            ->assertJsonPath('data.translations', ['ru' => 'privacy-policy', 'en' => 'privacy-policy']);
+        $this->getJson('/api/pages/privacy-policy')->assertJsonPath('data.content', '<p>Текст</p>');
+        $this->getJson('/api/pages/terms?lang=en')->assertNotFound();
+    }
+
     public function test_validation_messages_are_in_the_language_of_the_request(): void
     {
         $data = ['name' => '', 'email' => 'bad', 'password' => '12345678'];

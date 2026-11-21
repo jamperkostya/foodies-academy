@@ -8,7 +8,7 @@ import ViewCounter from "../components/article/ViewCounter.astro";
 import SEOTextSection from "../components/sections/SEOTextSection.astro";
 import type { SitePage } from "../types/page";
 import { isTakenAddress } from "../utils/sitePages";
-import { builds, langOf, langOfRoute, withLang } from "../i18n";
+import { builds, langOf, langOfRoute, localize, withLang, type Lang } from "../i18n";
 const lang = langOf(Astro.url);
 
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
@@ -31,7 +31,13 @@ if (!response.ok) {
 }
 const { data: page }: { data: SitePage } = await response.json();
 ---
-<BaseLayout seo={page.seo} image={page.image || undefined} title={page.title} description={page.excerpt || undefined} breadcrumbs={[{ label: page.title }]}>
+<BaseLayout
+	seo={page.seo}
+	image={page.image || undefined}
+	title={page.title}
+	description={page.excerpt || undefined}
+	translations={Object.fromEntries(Object.entries(page.translations ?? {}).map(([code, slug]) => [code, localize(code as Lang, `/${slug}`)]))}
+	breadcrumbs={[{ label: page.title }]}>
 	<PageHero slot="hero" description={page.excerpt || undefined}>{page.title}</PageHero>
 
 	<section class="site-page section-item">

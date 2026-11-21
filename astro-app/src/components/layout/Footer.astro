@@ -43,6 +43,14 @@ const SOCIAL = [
 			))}
 		</nav>
 	</div>
+	<div class="footer__bottom">
+		<span class="footer__copyright">© {new Date().getFullYear()} Foodies Academy</span>
+		{menuOf(lang).legal.length > 0 && (
+			<ul class="footer__legal">
+				{menuOf(lang).legal.map((item) => <li><a href={item.href} class="footer__link">{item.title}</a></li>)}
+			</ul>
+		)}
+	</div>
 </footer>
 
 <style lang="less">

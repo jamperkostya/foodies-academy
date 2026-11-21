@@ -43,9 +43,10 @@ function sitemapsOf(lang: Lang): Record<string, () => Promise<Entry[]>> {
 		collections: () => terms("/collections", "/collections"),
 	};
 	if (lang !== "ru") {
-		// News, videos, the blog, kitchen hacks and site pages are not translated yet.
+		// News, videos, the blog and kitchen hacks are not translated yet; site pages only those
+		// with a translation (/api/pages lists them).
 		return {
-			pages: async () => ["/", "/categories", "/kitchens", "/authors"].map((path) => ({ path: at(path) })),
+			pages: async () => [...["/", "/categories", "/kitchens", "/authors"].map((path) => ({ path: at(path) })), ...(await terms("/pages", ""))],
 			...common,
 			authors: () => terms("/authors", "/author"),
 		};
