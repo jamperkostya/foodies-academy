@@ -19,6 +19,8 @@ import SEOTextSection from "../../components/sections/SEOTextSection.astro";
 import Icon from "../../components/ui/Icon.astro";
 import Stars from "../../components/ui/Stars.astro";
 import RecipeSection from "../../components/sections/RecipeSection.astro";
+import AdSlot from "../../components/ui/AdSlot.astro";
+import { AD_UNITS } from "../../data/ads";
 
 import type { Recipe } from "../../types/recipe";
 import type { Review } from "../../types/review";
@@ -294,6 +296,8 @@ const recipeSchema = jsonLd({
 					action={withLang(lang, `${PUBLIC_API_URL}/recipes/${recipe.slug}/comments`)}
 				/>
 			</ContentBlock>
+
+			<AdSlot unit={AD_UNITS.afterComments} host={Astro.site?.hostname} />
 
 			<Fragment slot="sidebar">
 				{recipe.author && (
