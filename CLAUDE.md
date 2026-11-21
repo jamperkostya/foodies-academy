@@ -40,7 +40,7 @@ WordPress (админка) ──┐
   - видео рецепта: `recipe_video_embed` → `video`;
   - история происхождения: `_crb_recipe_history` → `history` → блок `origin-story` в тексте;
   - обложка рецепта: `_thumbnail_id` → первое фото `gallery`;
-  - картинка рубрики: `_crb_category_thumb` → `image`;
+  - картинка рубрики: `_crb_category_thumb` → `image` (в админке — поле «Изображение» у типа блюд и кухни, `foodies-term-image.php`; у переводов — картинка русской рубрики);
   - обложка статьи блога/новости: `_thumbnail_id` → первая `wp-image-ID` в тексте → превью YouTube из `link_to_video`.
 - Число отзывов считается по одобренным комментариям, не по `posts.comment_count` (он устаревает, если отзыв одобрен в обход WordPress).
 - `php artisan site:prepare-db` приводит копию боевой базы к виду, который ждёт сайт: удаляет переводы WPML не на русском (кроме картинок), добавляет лайфхаки из `laravel-app/database/content/lifehacks.json`, переносит старые лайки и просмотры, загружает видео с YouTube. Повторный запуск безопасен. Запускать на **копии** базы.
