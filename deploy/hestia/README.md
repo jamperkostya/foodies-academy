@@ -262,6 +262,22 @@ Variables:
 
 Не трогать руками: `dev.foodies.academy/public_html` (rsync `--delete` удалит всё, чего нет в сборке), код в `api.dev…/public_html` и `wp-content/mu-plugins` — перезапишутся при следующем деплое. На сервере правятся только `.env`, `wp-config-foodies.php` и `wp-config.php`.
 
+## 11. Английская версия (один раз на сервер)
+
+После деплоя кода WordPress и Laravel этого релиза, с бэкапом базы до начала:
+
+```bash
+# Mac
+scp deploy/hestia/setup-translations.sh root@SERVER:/home/jamper/      # для прода: /home/foodies/
+# root@server
+chown jamper:jamper /home/jamper/setup-translations.sh                  # для прода: foodies
+# dev — jamper@server / прод — root@server
+bash ~/setup-translations.sh dev
+sudo -u foodies bash /home/foodies/setup-translations.sh prod
+```
+
+Скрипт исправляет ингредиенты русских рецептов, загружает переводы терминов и рецептов и публикует их, строки интерфейса, создаёт английские формы CF7 и вписывает их ID в `.env` Laravel, убирает в корзину страницы старой темы, копирует счётчики и запускает сборку сайта. Повторный запуск безопасен.
+
 ## Если что-то не работает
 
 | Симптом | Причина |
