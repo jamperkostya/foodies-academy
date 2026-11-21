@@ -1,4 +1,6 @@
 ---
+import { langOf, t } from "../../i18n";
+const lang = langOf(Astro.url);
 // SEO text from the WordPress admin ("SEO-текст" field, see wp-content/mu-plugins/foodies-seo-text.php).
 // Renders nothing without text. Paginated lists pass it on their first page only.
 interface Props {
@@ -12,7 +14,7 @@ const { html } = Astro.props;
 	<section class="section-item">
 		<div class="seo-text">
 			<div class="seo-text__body is-collapsed" set:html={html} />
-			<button type="button" class="seo-text__toggle btn btn--secondary" aria-expanded="false" hidden>Показать больше</button>
+			<button type="button" class="seo-text__toggle btn btn--secondary" aria-expanded="false" hidden>{t(lang, "Показать больше")}</button>
 		</div>
 	</section>
 )}
@@ -67,6 +69,7 @@ const { html } = Astro.props;
 </style>
 
 <script>
+	import { tc } from "../../scripts/i18n";
 	// Show more / show less, only when the text is longer than the collapsed height.
 	document.querySelectorAll<HTMLElement>(".seo-text").forEach((block) => {
 		const body = block.querySelector<HTMLElement>(".seo-text__body");
@@ -80,7 +83,7 @@ const { html } = Astro.props;
 		toggle.hidden = false;
 		toggle.addEventListener("click", () => {
 			const expanded = !body.classList.toggle("is-collapsed");
-			toggle.textContent = expanded ? "Свернуть" : "Показать больше";
+			toggle.textContent = expanded ? tc("Свернуть") : tc("Показать больше");
 			toggle.setAttribute("aria-expanded", String(expanded));
 		});
 	});

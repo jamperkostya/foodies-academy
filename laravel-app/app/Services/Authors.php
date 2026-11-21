@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Support\Lang;
 use App\Support\WpHtml;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /** Recipe authors: WordPress users who have published Russian recipes (posts.post_author). */
 class Authors
@@ -65,9 +67,9 @@ class Authors
 
         $visitors = app(AuthorRatings::class)->get((int) $user->ID);
 
-        // HTML: the profile's bio has the visual editor; older bios are plain lines.
-        $bio = WpHtml::render($this->db->table('usermeta')
-            ->where('user_id', $user->ID)->where('meta_key', 'description')->value('meta_value'));
+        // HTML: the profile's bio has the visual editor; older bios are plain lines. Russian only.
+        $bio = Lang::isDefault() ? WpHtml::render($this->db->table('usermeta')
+            ->where('user_id', $user->ID)->where('meta_key', 'description')->value('meta_value')) : '';
 
         // array_merge, not +: "recipes" is the count in the card and the page of recipes here.
         return array_merge($this->card($user, $list['total'], $this->avatars([$user->ID])[$user->ID] ?? ''), [
@@ -78,7 +80,7 @@ class Authors
             'ratingCount' => $visitors['count'],
             'news' => app(News::class)->getByAuthor((int) $user->ID),
             'posts' => app(Blog::class)->getByAuthor((int) $user->ID),
-            'seo' => app(Seo::class)->forUser($user->user_nicename),
+            'seo' => Lang::isDefault() ? app(Seo::class)->forUser($user->user_nicename) : null,
         ], $list);
     }
 
@@ -95,7 +97,7 @@ class Authors
     {
         return $this->db->table('posts as p')
             ->where('p.post_type', 'recipe')
-            ->where('p.post_status', 'publish');
+            ->where('p.post_status', 'publish')->tap(fn ($q) => app(Translations::class)->scope($q));
     }
 
     /** user_id => avatar URL ("artit_user_avatar" is an attachment id). */
@@ -117,7 +119,8 @@ class Authors
         return [
             'id' => (int) $user->ID,
             'slug' => $user->user_nicename,
-            'name' => html_entity_decode($user->display_name, ENT_QUOTES | ENT_HTML5),
+            // Russian names in Latin letters on the other languages' pages.
+            'name' => Lang::isDefault() ? html_entity_decode($user->display_name, ENT_QUOTES | ENT_HTML5) : Str::transliterate(html_entity_decode($user->display_name, ENT_QUOTES | ENT_HTML5)),
             'avatar' => $avatar,
             'recipes' => $recipes,
         ];

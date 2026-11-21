@@ -4,22 +4,25 @@ import PageHero from "../../../components/layout/PageHero.astro";
 import SortBar from "../../../components/ui/SortBar.astro";
 import CardGrid from "../../../components/ui/CardGrid.astro";
 import RecipeCard from "../../../components/recipes/RecipeCard.astro";
-import { recipesWord } from "../../../utils/plural";
 import Pagination from "../../../components/ui/Pagination.astro";
 import { pageHref, pageNumber, pageParams } from "../../../utils/pagination";
 import type { Seo } from "../../../types/seo";
 import type { Category } from "../../../types/category";
 import type { Recipe } from "../../../types/recipe";
 import SEOTextSection from "../../../components/sections/SEOTextSection.astro";
+import { builds, langOf, langOfRoute, LOCALES, localize, recipesWord, t, withLang, type Lang } from "../../../i18n";
+const lang = langOf(Astro.url);
 
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
 
 // Every dish type and country with recipes, split into pages of 24 recipes.
-export async function getStaticPaths() {
+export async function getStaticPaths({ routePattern }: { routePattern?: string } = {}) {
+	// Not built when only another language is rebuilt.
+	if (!builds(langOfRoute(routePattern))) return [];
 	// getStaticPaths can't see the constants above, so the URL is read again here.
 	const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
 	const load = async (type: string): Promise<Category[]> =>
-		(await fetch(`${API_URL}/categories?type=${type}`).then((r) => r.json())).data;
+		(await fetch(withLang(langOfRoute(routePattern), `${API_URL}/categories?type=${type}`)).then((r) => r.json())).data;
 	const categories = [...(await load("course")), ...(await load("country"))];
 
 	return categories.flatMap((category) =>
@@ -29,7 +32,7 @@ export async function getStaticPaths() {
 
 const { slug } = Astro.params;
 const page = pageNumber(Astro.params.page);
-const response = await fetch(`${API_URL}/categories/${slug}?page=${page}`);
+const response = await fetch(withLang(lang, `${API_URL}/categories/${slug}?page=${page}`));
 if (!response.ok) {
 	throw new Error(`Category "${slug}" from ${API_URL}: HTTP ${response.status}`);
 }
@@ -38,20 +41,21 @@ const categoryRecipes = category.recipes;
 
 // A country page sits under "Кухни мира", a dish type under "Категории".
 const parent = category.type === "country"
-	? { label: "Кухни мира", href: "/kitchens", eyebrow: "Кухня мира" }
-	: { label: "Категории", href: "/categories", eyebrow: "Категория" };
-const description = `${category.count.toLocaleString("ru-RU")} ${recipesWord(category.count)} с пошаговыми фото.`;
+	? { label: t(lang, "Кухни мира"), href: "/kitchens", eyebrow: t(lang, "Кухня мира") }
+	: { label: t(lang, "Категории"), href: "/categories", eyebrow: t(lang, "Категория") };
+const description = t(lang, "{n} {recipes} с пошаговыми фото.", { n: category.count.toLocaleString(LOCALES[lang]), recipes: recipesWord(lang, category.count) });
 // "popular" keeps the data's own order.
 const sortOptions = [
-	{ value: "popular", label: "По популярности" },
-	{ value: "az", label: "По алфавиту" },
+	{ value: "popular", label: t(lang, "По популярности") },
+	{ value: "az", label: t(lang, "По алфавиту") },
 ];
 ---
 <BaseLayout
 	seo={page === 1 ? category.seo : null}
 	image={category.image || undefined}
-	title={`${category.name}${page > 1 ? ` — страница ${page}` : ""}`}
-	description={`${category.name}: рецепты с пошаговыми фото на Foodies Academy.`}
+	title={`${category.name}${page > 1 ? t(lang, " — страница {n}", { n: page }) : ""}`}
+	description={t(lang, "{name}: рецепты с пошаговыми фото на Foodies Academy.", { name: category.name })}
+	translations={page === 1 ? Object.fromEntries(Object.entries(category.translations ?? {}).map(([code, slug]) => [code, localize(code as Lang, `/category/${slug}`)])) : undefined}
 	breadcrumbs={[{ label: parent.label, href: parent.href }, { label: category.name }]}>
 	<PageHero slot="hero" eyebrow={parent.eyebrow} description={description}>
 		<span class="page-hero__accent">{category.name}</span>
@@ -60,7 +64,7 @@ const sortOptions = [
 	<section class="catalog section-item">
 		<SortBar
 			count={category.total}
-			countWord={recipesWord(category.total)}
+			countWord={recipesWord(lang, category.total)}
 			options={sortOptions}
 		/>
 		{categoryRecipes.length ? (
@@ -69,7 +73,7 @@ const sortOptions = [
 			</CardGrid>
 			<Pagination page={page} pages={category.pages} base={`/category/${slug}`} />
 		) : (
-			<p class="category-empty">В этой категории пока нет рецептов.</p>
+			<p class="category-empty">{t(lang, "В этой категории пока нет рецептов.")}</p>
 		)}
 	</section>
 	{/* On the first page only: later pages repeat the list, not the text. */}

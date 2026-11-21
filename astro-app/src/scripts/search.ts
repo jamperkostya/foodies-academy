@@ -1,3 +1,4 @@
+import { href, tc } from "./i18n";
 // Shared by the header search suggestions (SearchForm.astro) and the
 // /search results page. The index is /search-index.json (see
 // pages/search-index.json.ts).
@@ -14,7 +15,7 @@ export type SearchItem = {
 // Fetched once, on first use, then shared by every caller on the page.
 let index: Promise<SearchItem[]> | undefined;
 export const loadIndex = () =>
-	(index ??= fetch("/search-index.json")
+	(index ??= fetch(href("/search-index.json"))
 		.then((response) => response.json() as Promise<SearchItem[]>)
 		.catch(() => []));
 
@@ -29,7 +30,7 @@ export const findItems = (items: SearchItem[], query: string): SearchItem[] => {
 	const byIngredient = items.flatMap((item) => {
 		if (byTitle.includes(item)) return [];
 		const ingredient = item.ingredients?.find((name) => normalize(name).includes(query));
-		return ingredient ? [{ ...item, meta: `${item.meta} · с ингредиентом «${ingredient}»` }] : [];
+		return ingredient ? [{ ...item, meta: `${item.meta} · ${tc("с ингредиентом «{name}»", { name: ingredient })}` }] : [];
 	});
 	return [...byTitle, ...byIngredient];
 };

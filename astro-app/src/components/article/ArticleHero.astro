@@ -3,6 +3,8 @@
 // The "meta" slot goes under the description (rating for a recipe, author for a lifehack).
 // The "media" slot replaces the cover (a recipe's photo / video carousel).
 import Icon from "../ui/Icon.astro";
+import { langOf, localize, t } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	badge: string;
@@ -32,17 +34,17 @@ interface Props {
 // Rendered first: a slot filled by a false condition still "exists", but renders to "".
 const media = Astro.slots.has("media") ? (await Astro.slots.render("media")).trim() : "";
 
-const { badge, label, badgeLinks, labelLinks, title, titleAccent, description, image, anchor, withVideo = true, videoLabel = "Смотреть видео", printable = false, favorite, flush = false } = Astro.props;
+const { badge, label, badgeLinks, labelLinks, title, titleAccent, description, image, anchor, withVideo = true, videoLabel = t(lang, "Смотреть видео"), printable = false, favorite, flush = false } = Astro.props;
 ---
 <section class:list={["article-hero", { "article-hero--flush": flush }]}>
 	<div class="article-hero__container container grid gap-40 items-center">
 		<div class="article-hero__content grid gap-30">
 			<div class="article-hero__tags flex gap-10 items-center">
 				{badgeLinks?.length
-					? badgeLinks.map((link) => <a class="badge badge--static article-hero__link" href={link.href}>{link.name}</a>)
+					? badgeLinks.map((link) => <a class="badge badge--static article-hero__link" href={localize(lang, link.href)}>{link.name}</a>)
 					: <span class="badge badge--static">{badge}</span>}
 				{labelLinks?.length
-					? labelLinks.map((link) => <a class="article-hero__label article-hero__link" href={link.href}>{link.name}</a>)
+					? labelLinks.map((link) => <a class="article-hero__label article-hero__link" href={localize(lang, link.href)}>{link.name}</a>)
 					: label && <span class="article-hero__label">{label}</span>}
 			</div>
 			<h1 class="article-hero__title section-title">
@@ -52,17 +54,17 @@ const { badge, label, badgeLinks, labelLinks, title, titleAccent, description, i
 			{description && <p class="article-hero__desc">{description}</p>}
 			{Astro.slots.has("meta") && <div class="article-hero__meta flex items-center gap-10"><slot name="meta" /></div>}
 			<div class="article-hero__actions flex flex-wrap items-center gap-20 no-print">
-				<a href={anchor.href} class="btn">{anchor.label}</a>
+				<a href={localize(lang, anchor.href)} class="btn">{anchor.label}</a>
 				{favorite && (
-					<button type="button" class="article-hero__icon-btn" data-hero-save={favorite.slug} data-recipe-id={favorite.id} aria-label="Сохранить в избранное" aria-pressed="false">
+					<button type="button" class="article-hero__icon-btn" data-hero-save={favorite.slug} data-recipe-id={favorite.id} aria-label={t(lang, "Сохранить в избранное")} aria-pressed="false">
 						<Icon name="bookmark" width={18} height={18} />
 					</button>
 				)}
-				<button type="button" class="article-hero__icon-btn" data-hero-share aria-label="Поделиться">
+				<button type="button" class="article-hero__icon-btn" data-hero-share aria-label={t(lang, "Поделиться")}>
 					<Icon name="share" width={18} height={18} />
 				</button>
 				{printable && (
-					<button type="button" class="article-hero__icon-btn" data-hero-print aria-label="Распечатать">
+					<button type="button" class="article-hero__icon-btn" data-hero-print aria-label={t(lang, "Распечатать")}>
 						<Icon name="print" width={18} height={18} />
 					</button>
 				)}
@@ -85,6 +87,7 @@ const { badge, label, badgeLinks, labelLinks, title, titleAccent, description, i
 </section>
 
 <script>
+	import { tc } from "../../scripts/i18n";
 	import { showToast } from "../../scripts/toast";
 	import { api, goToLogin, loadMe, patchMe } from "../../scripts/account";
 
@@ -96,13 +99,13 @@ const { badge, label, badgeLinks, labelLinks, title, titleAccent, description, i
 		const paint = (saved: boolean) => {
 			saveBtn.classList.toggle("is-active", saved);
 			saveBtn.setAttribute("aria-pressed", String(saved));
-			saveBtn.setAttribute("aria-label", saved ? "Убрать из избранного" : "Сохранить в избранное");
+			saveBtn.setAttribute("aria-label", saved ? tc("Убрать из избранного") : tc("Сохранить в избранное"));
 		};
 		loadMe().then((me) => paint(Boolean(me?.favorites.includes(recipeId))));
 
 		saveBtn.addEventListener("click", async () => {
 			if (!(await loadMe())) {
-				showToast("Войдите, чтобы сохранять рецепты");
+				showToast(tc("Войдите, чтобы сохранять рецепты"));
 				return setTimeout(goToLogin, 900);
 			}
 			const saved = saveBtn.getAttribute("aria-pressed") !== "true";
@@ -111,9 +114,9 @@ const { badge, label, badgeLinks, labelLinks, title, titleAccent, description, i
 				const { favorites } = await api<{ favorites: number[] }>(`/me/favorites/${slug}`, { method: saved ? "PUT" : "DELETE" });
 				await patchMe({ favorites });
 				paint(saved);
-				showToast(saved ? "Сохранено в избранное" : "Убрано из избранного");
+				showToast(saved ? tc("Сохранено в избранное") : tc("Убрано из избранного"));
 			} catch (error) {
-				showToast(error instanceof Error ? error.message : "Не удалось сохранить");
+				showToast(error instanceof Error ? error.message : tc("Не удалось сохранить"));
 			} finally {
 				saveBtn.disabled = false;
 			}
@@ -128,7 +131,7 @@ const { badge, label, badgeLinks, labelLinks, title, titleAccent, description, i
 				return;
 			}
 			await navigator.clipboard.writeText(url);
-			showToast("Ссылка скопирована");
+			showToast(tc("Ссылка скопирована"));
 		} catch {
 			// The user closed the share sheet, or the clipboard is unavailable.
 		}
@@ -136,7 +139,7 @@ const { badge, label, badgeLinks, labelLinks, title, titleAccent, description, i
 
 	document.querySelector("[data-hero-print]")?.addEventListener("click", () => window.print());
 
-	document.querySelector("[data-hero-video]")?.addEventListener("click", () => showToast("Видео скоро будет доступно"));
+	document.querySelector("[data-hero-video]")?.addEventListener("click", () => showToast(tc("Видео скоро будет доступно")));
 </script>
 
 <style lang="less">

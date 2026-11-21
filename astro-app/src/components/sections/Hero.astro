@@ -3,6 +3,8 @@ import Icon from "../ui/Icon.astro";
 import VideoCard from "../videos/VideoCard.astro";
 import type { HeroCard } from "../../types/heroCard";
 import type { Recipe } from "../../types/recipe";
+import { langOf, localize, t } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	// Recipes marked as "top" in WordPress.
@@ -49,7 +51,7 @@ function groupHeroCards(cards: HeroCard[]): RenderGroup[] {
 const heroGroups = groupHeroCards(heroCards);
 
 // A card opens its recipe page.
-const cardProps = ({ recipe, ...card }: HeroCard) => ({ ...card, href: `/recipe/${recipe}` });
+const cardProps = ({ recipe, ...card }: HeroCard) => ({ ...card, href: localize(lang, `/recipe/${recipe}`) });
 ---
 
 <section class="hero section-item">
@@ -67,10 +69,10 @@ const cardProps = ({ recipe, ...card }: HeroCard) => ({ ...card, href: `/recipe/
 				)
 			)}
 		</div>
-		<button type="button" class="carousel__arrow carousel__arrow--prev" aria-label="Назад">
+		<button type="button" class="carousel__arrow carousel__arrow--prev" aria-label={t(lang, "Назад")}>
 			<Icon name="arrow-slider" width={12} height={10} />
 		</button>
-		<button type="button" class="carousel__arrow carousel__arrow--next" aria-label="Вперёд">
+		<button type="button" class="carousel__arrow carousel__arrow--next" aria-label={t(lang, "Вперёд")}>
 			<Icon name="arrow-slider" width={12} height={10} />
 		</button>
 	</div>

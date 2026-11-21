@@ -55,6 +55,12 @@ describe("SEO head (BaseLayout)", () => {
 		expect(html).toContain('<meta property="og:type" content="website">');
 	});
 
+	it("keeps the links of a page left out of the index", async () => {
+		const html = await render(BaseLayout, { title: "Кочугару", noindex: "follow" }, page);
+
+		expect(html).toContain('<meta name="robots" content="noindex, follow">');
+	});
+
 	it("follows Yoast's noindex", async () => {
 		const html = await render(BaseLayout, { seo: { ...yoast, index: false } }, page);
 

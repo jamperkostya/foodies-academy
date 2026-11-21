@@ -25,6 +25,7 @@ export interface Lifehack {
 	// Minutes; shown on the video button when set.
 	videoMinutes: number | null;
 	commentCount: number;
+	views: number; // on the site
 	// Only in GET /api/lifehacks/{slug}:
 	comments?: Review[];
 	seoText?: string;

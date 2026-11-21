@@ -6,27 +6,32 @@ import RecipeCard from "../../../components/recipes/RecipeCard.astro";
 import SEOTextSection from "../../../components/sections/SEOTextSection.astro";
 import type { Recipe } from "../../../types/recipe";
 import type { Seo } from "../../../types/seo";
+const lang = langOf(Astro.url);
 
 interface Ingredient {
 	name: string;
 	slug: string;
 	count: number;
+	// false: a thin page (fewer than 3 recipes, no SEO text of its own), not for search engines.
+	indexed: boolean;
 	recipes?: Recipe[];
 	seoText?: string;
 	seo?: Seo | null;
 }
-import { recipesWord } from "../../../utils/plural";
 import Pagination from "../../../components/ui/Pagination.astro";
 import { pageHref, pageNumber, pageParams } from "../../../utils/pagination";
+import { builds, langOf, langOfRoute, localize, recipesWord, t, withLang, type Lang } from "../../../i18n";
 
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
 
 // Every ingredient with a recipe, split into pages of 24 recipes: the old site had them all, and
 // search engines know their addresses.
-export async function getStaticPaths() {
+export async function getStaticPaths({ routePattern }: { routePattern?: string } = {}) {
+	// Not built when only another language is rebuilt.
+	if (!builds(langOfRoute(routePattern))) return [];
 	// getStaticPaths can't see the constants above, so the URL is read again here.
 	const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
-	const { data: ingredients }: { data: Ingredient[] } = await fetch(`${API_URL}/ingredients`).then((r) => r.json());
+	const { data: ingredients }: { data: Ingredient[] } = await fetch(withLang(langOfRoute(routePattern), `${API_URL}/ingredients`)).then((r) => r.json());
 
 	return ingredients.flatMap((ingredient) =>
 		pageParams(ingredient.count).map((page) => ({ params: { slug: ingredient.slug, page } })),
@@ -35,21 +40,23 @@ export async function getStaticPaths() {
 
 const { slug } = Astro.params;
 const page = pageNumber(Astro.params.page);
-const response = await fetch(`${API_URL}/ingredients/${slug}?page=${page}`);
+const response = await fetch(withLang(lang, `${API_URL}/ingredients/${slug}?page=${page}`));
 if (!response.ok) {
 	throw new Error(`Ingredient "${slug}" from ${API_URL}: HTTP ${response.status}`);
 }
 const { data: ingredient }: { data: Ingredient & { total: number; pages: number } } = await response.json();
 const recipes = ingredient.recipes ?? [];
 
-const description = `${ingredient.total} ${recipesWord(ingredient.total)} с ингредиентом «${ingredient.name}»: самые популярные у наших читателей — первыми.`;
+const description = t(lang, "{n} {recipes} с ингредиентом «{name}»: самые популярные у наших читателей — первыми.", { n: ingredient.total, recipes: recipesWord(lang, ingredient.total), name: ingredient.name });
 ---
 <BaseLayout
 	seo={page === 1 ? ingredient.seo : null}
-	title={`Рецепты с ингредиентом «${ingredient.name}»${page > 1 ? ` — страница ${page}` : ""}`}
+	noindex={ingredient.indexed ? false : "follow"}
+	title={`${t(lang, "Рецепты с ингредиентом «{name}»", { name: ingredient.name })}${page > 1 ? t(lang, " — страница {n}", { n: page }) : ""}`}
+	translations={page === 1 ? Object.fromEntries(Object.entries(ingredient.translations ?? {}).map(([code, slug]) => [code, localize(code as Lang, `/ingredient/${slug}`)])) : undefined}
 	description={description}
-	breadcrumbs={[{ label: "Ингредиенты" }, { label: ingredient.name }]}>
-	<PageHero slot="hero" eyebrow="Рецепты по ингредиентам" description={description}>
+	breadcrumbs={[{ label: t(lang, "Ингредиенты") }, { label: ingredient.name }]}>
+	<PageHero slot="hero" eyebrow={t(lang, "Рецепты по ингредиентам")} description={description}>
 		<span class="page-hero__accent">{ingredient.name}</span>
 	</PageHero>
 

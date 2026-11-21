@@ -66,6 +66,11 @@ return [
             'newsletter' => (int) env('CF7_SUBSCRIBE_FORM_ID'),
             'book' => (int) env('CF7_BOOK_FORM_ID'),
         ],
+        // English subscribers are lists of their own: copies of the forms (wp foodies copy-forms).
+        'subscribe_forms_en' => [
+            'newsletter' => (int) env('CF7_SUBSCRIBE_FORM_ID_EN'),
+            'book' => (int) env('CF7_BOOK_FORM_ID_EN'),
+        ],
         // Key of the user API (wp-content/mu-plugins/foodies-users.php), from the root .env.
         'api_secret' => env('FOODIES_API_SECRET', ''),
     ],

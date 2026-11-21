@@ -4,6 +4,8 @@
 // the server accepts it; without it, it is just added to the top of the list.
 import ReviewItem from "./ReviewItem.astro";
 import type { Review } from "../../types/review";
+import { langOf, t } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	reviews: Review[];
@@ -25,29 +27,30 @@ interface Props {
 const {
 	reviews,
 	withRating = false,
-	formTitle = "Оставить отзыв",
-	placeholder = "Расскажите, как получилось...",
-	submitLabel = "Опубликовать",
-	successMessage = "Спасибо за отзыв!",
+	formTitle = t(lang, "Оставить отзыв"),
+	placeholder = t(lang, "Расскажите, как получилось..."),
+	submitLabel = t(lang, "Опубликовать"),
+	successMessage = t(lang, "Спасибо за отзыв!"),
 	countId,
+	// Russian forms: the browser picks and translates one (pluralc).
 	countForms = ["отзыв", "отзыва", "отзывов"],
 	action,
 	emptyText,
 } = Astro.props;
 
-const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 звезды", "5 звёзд"];
+const starLabels = [t(lang, "1 звезда"), t(lang, "2 звезды"), t(lang, "3 звезды"), t(lang, "4 звезды"), t(lang, "5 звёзд")];
 ---
 <div class="reviews" data-success={successMessage} data-count-id={countId} data-count-forms={countForms.join(",")} data-action={action}>
 	<form class="review-form no-print" novalidate>
 		<h3 class="review-form__title">{formTitle}</h3>
 		{withRating && (
-			<div class="review-form__rating flex gap-5" role="group" aria-label="Ваша оценка">
+			<div class="review-form__rating flex gap-5" role="group" aria-label={t(lang, "Ваша оценка")}>
 				{starLabels.map((label) => (
 					<button type="button" class="review-form__star" aria-label={label} aria-pressed="false">★</button>
 				))}
 			</div>
 		)}
-		<input class="review-form__field" type="text" name="name" placeholder="Ваше имя" aria-label="Ваше имя" required>
+		<input class="review-form__field" type="text" name="name" placeholder={t(lang, "Ваше имя")} aria-label={t(lang, "Ваше имя")} required>
 		<textarea class="review-form__field" name="comment" rows="3" placeholder={placeholder} aria-label={formTitle} required></textarea>
 		<button type="submit" class="btn">{submitLabel}</button>
 	</form>
@@ -60,14 +63,14 @@ const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 з�
 
 	{/* Cloned for each posted review, so it gets the same markup and scoped styles. */}
 	<template class="reviews__template">
-		<ReviewItem review={{ name: "", date: "Только что", text: "", rating: withRating ? 0 : undefined }} isNew />
+		<ReviewItem review={{ name: "", date: t(lang, "Только что"), text: "", rating: withRating ? 0 : undefined }} isNew />
 	</template>
 </div>
 
 <script>
+	import { pluralc, tc } from "../../scripts/i18n";
 	import { showToast } from "../../scripts/toast";
 	import { initials } from "../../utils/initials";
-	import { plural } from "../../utils/plural";
 
 	document.querySelectorAll<HTMLElement>(".reviews").forEach((root) => {
 		const form = root.querySelector<HTMLFormElement>(".review-form")!;
@@ -82,7 +85,7 @@ const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 з�
 		const updateCount = () => {
 			if (!counter) return;
 			const count = list.children.length;
-			counter.textContent = `${count} ${plural(count, countForms)}`;
+			counter.textContent = `${count} ${pluralc(count, countForms)}`;
 		};
 
 		const paintStars = (value: number) => stars.forEach((star, i) => star.classList.toggle("is-filled", i < value));
@@ -105,7 +108,7 @@ const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 з�
 			const text = String(data.get("comment") ?? "").trim();
 
 			if (!name || !text || (withRating && !rating)) {
-				showToast(withRating ? "Заполните имя, отзыв и поставьте оценку" : "Заполните имя и комментарий");
+				showToast(withRating ? tc("Заполните имя, отзыв и поставьте оценку") : tc("Заполните имя и комментарий"));
 				return;
 			}
 
@@ -120,11 +123,11 @@ const starLabels = ["1 звезда", "2 звезды", "3 звезды", "4 з�
 					});
 					if (!response.ok) {
 						const error = await response.json().catch(() => ({}));
-						showToast(response.status === 429 ? "Слишком много отзывов, попробуйте через минуту" : error.message ?? "Не удалось отправить отзыв");
+						showToast(response.status === 429 ? tc("Слишком много отзывов, попробуйте через минуту") : error.message ?? tc("Не удалось отправить отзыв"));
 						return;
 					}
 				} catch {
-					showToast("Не удалось отправить отзыв, проверьте интернет");
+					showToast(tc("Не удалось отправить отзыв, проверьте интернет"));
 					return;
 				} finally {
 					button.disabled = false;

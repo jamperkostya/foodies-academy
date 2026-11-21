@@ -1,6 +1,8 @@
 ---
 // In-feed AdSense unit dressed as a card, between the cards of a FilterableGrid.
 import AdSlot from "./AdSlot.astro";
+import { langOf, t } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	unit: string;
@@ -13,7 +15,7 @@ interface Props {
 const { unit, layoutKey, host, hidden } = Astro.props;
 ---
 <div class="feed-ad no-print" data-grid-ad hidden={hidden}>
-	<span class="feed-ad__label">Реклама</span>
+	<span class="feed-ad__label">{t(lang, "Реклама")}</span>
 	<AdSlot unit={unit} layoutKey={layoutKey} host={host} />
 </div>
 

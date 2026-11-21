@@ -122,7 +122,7 @@ v-add-database jamper foodies_laravel foodies_laravel 'ПАРОЛЬ_LARAVEL' mys
 
 ```bash
 # 1. Копия боевой базы: foodies.academy → foodies_dev (оригинал не меняется)
-M=/Applications/MAMP/Library/bin
+M=/Applications/MAMP/Library/bin/mysql80/bin
 $M/mysql -h127.0.0.1 -uroot -proot -e "CREATE DATABASE foodies_dev CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
 $M/mysqldump -h127.0.0.1 -uroot -proot --single-transaction foodies.academy | $M/mysql -h127.0.0.1 -uroot -proot foodies_dev
 
@@ -156,8 +156,8 @@ cd ~/web/wp.dev.foodies.academy/public_html
 rm -f index.html robots.txt                      # заглушка Hestia
 alias wp='php8.3 ~/bin/wp'
 
-# Ядро той же версии, что в Docker (wordpress:7.0.2)
-wp core download --version=7.0.2 --locale=ru_RU
+# Ядро той же версии, что в Docker (wordpress:7.1.5); дальше версию поднимает деплой (install-plugins.sh)
+wp core download --version=7.1.5 --locale=ru_RU
 wp config create --dbname=jamper_foodies_site --dbuser=jamper_foodies_site --dbpass='ПАРОЛЬ_SITE' \
   --dbhost=localhost --dbprefix=artit_ --skip-check
 ```

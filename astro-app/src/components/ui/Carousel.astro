@@ -1,6 +1,8 @@
 ---
 import Icon from "./Icon.astro";
 import Filters from "./Filters.astro";
+import { langOf, localize, t } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	// `.carousel` modifier: card size and cards per view (see carousel.less).
@@ -16,15 +18,15 @@ const { variant, groups, href } = Astro.props;
 ---
 <div data-filterable-carousel>
 	{/* One group is no choice: filters need at least two. */}
-	{groups && groups.length > 1 && <Filters groups={groups} href={href} />}
+	{groups && groups.length > 1 && <Filters groups={groups} href={localize(lang, href)} />}
 	<div class={`carousel carousel--${variant}`}>
 		<div class="carousel__track">
 			<slot />
 		</div>
-		<button type="button" class="carousel__arrow carousel__arrow--prev" aria-label="Назад">
+		<button type="button" class="carousel__arrow carousel__arrow--prev" aria-label={t(lang, "Назад")}>
 			<Icon name="arrow-slider" width={12} height={10} />
 		</button>
-		<button type="button" class="carousel__arrow carousel__arrow--next" aria-label="Вперёд">
+		<button type="button" class="carousel__arrow carousel__arrow--next" aria-label={t(lang, "Вперёд")}>
 			<Icon name="arrow-slider" width={12} height={10} />
 		</button>
 	</div>

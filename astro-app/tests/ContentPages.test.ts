@@ -18,7 +18,7 @@ const lifehack = (i: number, category: string): Lifehack => ({
 	id: i, slug: `lifehack-${i}`, title: `Лайфхак ${i}`, titleAccent: "", category, icon: "🍝", image: "/img.jpg",
 	description: `Описание ${i}`, intro: "Вступление", points: [{ title: "Мало воды.", text: "Литр на 100 г." }, { title: "", text: "Без заголовка" }],
 	tip: { title: "Главное правило", text: "Солите воду" }, author: { slug: "admin", name: "Олег", info: "243 рецепта" },
-	date: "3 августа 2026", readTime: 2, videoMinutes: null, commentCount: 1,
+	date: "3 августа 2026", readTime: 2, videoMinutes: null, commentCount: 1, views: i === 1 ? 1234 : 0,
 });
 const lifehacks = [lifehack(1, "Хранение"), lifehack(2, "Сервировка"), ...Array.from({ length: 6 }, (_, i) => lifehack(i + 3, "Хранение"))];
 
@@ -57,6 +57,8 @@ describe("/lifehack/[slug]", () => {
 		expect(html).toContain("Солите воду");
 		expect(html).toContain("Спасибо!");
 		expect(html).toMatch(/data-action="[^"]*\/lifehacks\/lifehack-1\/comments"/);
+		expect(html).toMatch(/class="view-counter" data-action="[^"]*\/lifehacks\/lifehack-1\/view"/);
+		expect(html).toMatch(/3 августа 2026 · 2 мин чтения · 1\s234 просмотра/);
 		expect(html).toContain("<p>О лайфхаках</p>");
 		// Ad placeholders (not a production build) right before and after the comments.
 		const comments = html.indexOf('id="comments"');
@@ -93,7 +95,7 @@ describe("404", () => {
 // GET /api/blog and /api/news (ordinary WordPress posts and post type "news").
 const article = (i: number, category: string) => ({
 	id: i, slug: `post-${i}`, title: `Статья ${i}`, excerpt: `Анонс ${i}`, category, tags: [], image: "", date: "2026-01-01",
-	dateText: "1 января 2026", author: { slug: "oleg", name: "Олег" }, readTime: 3, commentCount: 0,
+	dateText: "1 января 2026", author: { slug: "oleg", name: "Олег" }, readTime: 3, commentCount: 0, views: i === 1 ? 21 : 0,
 });
 
 describe("/blog", () => {
@@ -136,6 +138,8 @@ describe("/blog/[slug] and /news/[slug]", () => {
 		expect(html).toContain("Спасибо!");
 		expect(html).toContain('href="/author/oleg"');
 		expect(html).toMatch(/data-action="[^"]*\/blog\/post-1\/comments"/);
+		expect(html).toMatch(/class="view-counter" data-action="[^"]*\/blog\/post-1\/view"/);
+		expect(html).toContain("1 января 2026 · 3 мин чтения · 21 просмотр<");
 		expect(html).toContain('href="/blog/post-2"');
 	});
 
@@ -143,6 +147,7 @@ describe("/blog/[slug] and /news/[slug]", () => {
 		const html = await render(NewsPostPage, { params: { slug: "post-1" } });
 
 		expect(html).toMatch(/data-action="[^"]*\/news\/post-1\/comments"/);
+		expect(html).toMatch(/class="view-counter" data-action="[^"]*\/news\/post-1\/view"/);
 		expect(html).toContain('href="/news/post-2"');
 	});
 });

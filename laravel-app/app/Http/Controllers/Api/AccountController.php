@@ -8,6 +8,7 @@ use App\Services\Authors;
 use App\Services\Recipes;
 use App\Services\VisitorLists;
 use App\Services\WordPressUsers;
+use App\Support\Lang;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -35,7 +36,7 @@ class AccountController extends Controller
         $data = $request->validate(['email' => 'required|string|max:100', 'password' => 'required|string|max:100']);
         $user = $this->users->login(trim($data['email']), $data['password']);
         if (! $user) {
-            return response()->json(['message' => 'Неверный e-mail или пароль'], 401);
+            return response()->json(['message' => Lang::text('Неверный e-mail или пароль', 'Wrong e-mail or password')], 401);
         }
 
         return response()->json(['data' => $this->session($user)]);
@@ -54,7 +55,7 @@ class AccountController extends Controller
     {
         $id = $this->userId($request);
         $user = $this->users->get($id);
-        abort_if(! $user, 401, 'Войдите в аккаунт');
+        abort_if(! $user, 401, Lang::text('Войдите в аккаунт', 'Please log in'));
         $this->lists->touchVisit($id);
 
         return response()->json(['data' => [
@@ -122,8 +123,8 @@ class AccountController extends Controller
 
     private function toggleFavorite(Request $request, string $slug, Recipes $recipes, bool $on): JsonResponse
     {
-        $recipeId = $recipes->getRecipeId($slug);
-        abort_if(! $recipeId, 404, 'Рецепт не найден');
+        $recipeId = $recipes->getOriginalId($slug);
+        abort_if(! $recipeId, 404, Lang::text('Рецепт не найден', 'Recipe not found'));
         $this->lists->setFavorite($this->userId($request), $recipeId, $on);
 
         return response()->json(['data' => ['favorites' => $this->lists->favoriteIds($this->userId($request))]]);
@@ -132,7 +133,7 @@ class AccountController extends Controller
     private function toggleFollow(Request $request, string $slug, Authors $authors, bool $on): JsonResponse
     {
         $authorId = $authors->getId($slug);
-        abort_if(! $authorId, 404, 'Автор не найден');
+        abort_if(! $authorId, 404, Lang::text('Автор не найден', 'Author not found'));
         $this->lists->setFollow($this->userId($request), $authorId, $on);
 
         return response()->json(['data' => ['follows' => $this->lists->followedIds($this->userId($request))]]);

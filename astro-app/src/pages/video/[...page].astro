@@ -6,41 +6,44 @@ import Pagination from "../../components/ui/Pagination.astro";
 import VideoCard from "../../components/videos/VideoCard.astro";
 import type { VideoPage } from "../../types/video";
 import { PER_PAGE, pageNumber, pageParams } from "../../utils/pagination";
-import { plural } from "../../utils/plural";
+import { builds, langOf, langOfRoute, localize, pluralOf, t, withLang } from "../../i18n";
+const lang = langOf(Astro.url);
 
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
 
 // Every video recipe, newest first, split into pages of 24.
-export async function getStaticPaths() {
+export async function getStaticPaths({ routePattern }: { routePattern?: string } = {}) {
+	// Not built when only another language is rebuilt.
+	if (!builds(langOfRoute(routePattern))) return [];
 	// getStaticPaths can't see the constants above, so the URL is read again here.
 	const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
-	const { data }: { data: VideoPage } = await fetch(`${API_URL}/videos?per_page=1`).then((r) => r.json());
+	const { data }: { data: VideoPage } = await fetch(withLang(langOfRoute(routePattern), `${API_URL}/videos?per_page=1`)).then((r) => r.json());
 
 	return pageParams(data.total).map((page) => ({ params: { page } }));
 }
 
 const page = pageNumber(Astro.params.page);
-const response = await fetch(`${API_URL}/videos?page=${page}&per_page=${PER_PAGE}`);
+const response = await fetch(withLang(lang, `${API_URL}/videos?page=${page}&per_page=${PER_PAGE}`));
 if (!response.ok) {
 	throw new Error(`Videos page ${page} from ${API_URL}: HTTP ${response.status}`);
 }
 const { data }: { data: VideoPage } = await response.json();
 
-const description = `${data.total} ${plural(data.total, ["видеорецепт", "видеорецепта", "видеорецептов"])} с YouTube-канала Foodies Academy: смотрите, как готовить, шаг за шагом.`;
+const description = `${data.total} ${pluralOf(lang, data.total, [t(lang, "видеорецепт"), t(lang, "видеорецепта"), t(lang, "видеорецептов")])} с YouTube-канала Foodies Academy: смотрите, как готовить, шаг за шагом.`;
 ---
 <BaseLayout
 	title={`Видеорецепты${page > 1 ? ` — страница ${page}` : ""}`}
 	description={description}
-	breadcrumbs={[{ label: "Видеорецепты" }]}>
-	<PageHero slot="hero" eyebrow="YouTube-канал Foodies Academy" description={description}>
-		<span class="page-hero__accent">Видео</span>рецепты
+	breadcrumbs={[{ label: t(lang, "Видеорецепты") }]}>
+	<PageHero slot="hero" eyebrow={t(lang, "YouTube-канал Foodies Academy")} description={description}>
+		<span class="page-hero__accent">{t(lang, "Видео")}</span>рецепты
 	</PageHero>
 
 	<section class="video-list section-item">
 		<CardGrid minCardWidth={260}>
 			{data.videos.map((video) => (
 				<VideoCard
-					href={`/video/${video.slug}`}
+					href={localize(lang, `/video/${video.slug}`)}
 					size="compact"
 					image={video.image}
 					title={video.title}

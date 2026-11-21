@@ -5,16 +5,18 @@ import SearchForm from "../components/layout/SearchForm.astro";
 import CardGrid from "../components/ui/CardGrid.astro";
 import RecipeCard from "../components/recipes/RecipeCard.astro";
 import type { Recipe } from "../types/recipe";
+import { langOf, localize, t, withLang } from "../i18n";
+const lang = langOf(Astro.url);
 
 const JOKES = [
-	"Мы искали её по всему холодильнику — не нашли.",
-	"Похоже, эту страницу съели раньше вас.",
-	"Шеф уронил эту страницу на пол. Правило пяти секунд не спасло.",
-	"Рецепт этой страницы утерян ещё в 2019-м.",
-	"Мы бы предложили её заменить, но замены тоже нет.",
-	"Кто-то забыл эту страницу на плите. Есть уже нельзя.",
-	"404: страница подгорела с обеих сторон.",
-	"Такой страницы нет в меню. И, кажется, никогда не было.",
+	t(lang, "Мы искали её по всему холодильнику — не нашли."),
+	t(lang, "Похоже, эту страницу съели раньше вас."),
+	t(lang, "Шеф уронил эту страницу на пол. Правило пяти секунд не спасло."),
+	t(lang, "Рецепт этой страницы утерян ещё в 2019-м."),
+	t(lang, "Мы бы предложили её заменить, но замены тоже нет."),
+	t(lang, "Кто-то забыл эту страницу на плите. Есть уже нельзя."),
+	t(lang, "404: страница подгорела с обеих сторон."),
+	t(lang, "Такой страницы нет в меню. И, кажется, никогда не было."),
 ];
 
 // Floating ingredients around the hero; x/y in % of the hero, delay staggers the bobbing.
@@ -29,11 +31,11 @@ const floats = [
 
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
 // The 12 newest recipes, and every recipe for the "random recipe" button.
-const { data: suggestions }: { data: Recipe[] } = await fetch(`${API_URL}/recipes/new?limit=12`).then((r) => r.json());
-const { data: slugs }: { data: string[] } = await fetch(`${API_URL}/recipes/slugs`).then((r) => r.json());
+const { data: suggestions }: { data: Recipe[] } = await fetch(withLang(lang, `${API_URL}/recipes/new?limit=12`)).then((r) => r.json());
+const { data: slugs }: { data: string[] } = await fetch(withLang(lang, `${API_URL}/recipes/slugs`)).then((r) => r.json());
 const recipeHrefs = slugs.map((slug) => `/recipe/${slug}`);
 ---
-<BaseLayout title="Страница не найдена" description="Такой страницы нет — но есть сотни рецептов.">
+<BaseLayout title={t(lang, "Страница не найдена")} description={t(lang, "Такой страницы нет — но есть сотни рецептов.")}>
 	<section slot="hero" class="error-hero">
 		{floats.map((item) => (
 			<span class="error-hero__float" style={`--x: ${item.x}%; --y: ${item.y}%; --delay: ${item.delay}s`} aria-hidden="true">{item.emoji}</span>
@@ -42,33 +44,33 @@ const recipeHrefs = slugs.map((slug) => `/recipe/${slug}`);
 		<div class="error-hero__inner container">
 			<p class="error-hero__code">
 				<span aria-hidden="true">4</span>
-				<button type="button" class="error-hero__egg" aria-label="Пасхалка: яичница вместо нуля">
+				<button type="button" class="error-hero__egg" aria-label={t(lang, "Пасхалка: яичница вместо нуля")}>
 					<span class="error-hero__steam"></span>
 					<span class="error-hero__steam error-hero__steam--late"></span>
 					<span class="error-hero__white"></span>
 					<span class="error-hero__yolk"></span>
 				</button>
 				<span aria-hidden="true">4</span>
-				<span class="sr-only">Ошибка 404</span>
+				<span class="sr-only">{t(lang, "Ошибка 404")}</span>
 			</p>
 
-			<h1 class="error-hero__title">Ой! Эта страница пригорела</h1>
+			<h1 class="error-hero__title">{t(lang, "Ой! Эта страница пригорела")}</h1>
 			<p class="error-hero__joke" aria-live="polite" data-jokes={JSON.stringify(JOKES)}>{JOKES[0]}</p>
-			<button type="button" class="error-hero__joke-btn">🔄 Другая шутка</button>
+			<button type="button" class="error-hero__joke-btn">{t(lang, "🔄 Другая шутка")}</button>
 
 			<div class="error-hero__search">
 				<SearchForm id="error-search-suggestions" />
 			</div>
 
 			<div class="error-hero__actions flex items-center gap-15">
-				<a href="/" class="btn">На главную</a>
-				<a href={recipeHrefs[0]} class="error-hero__random btn btn--secondary" data-hrefs={JSON.stringify(recipeHrefs)}>🎲 Случайный рецепт</a>
+				<a href={localize(lang, "/")} class="btn">{t(lang, "На главную")}</a>
+				<a href={localize(lang, recipeHrefs[0])} class="error-hero__random btn btn--secondary" data-hrefs={JSON.stringify(recipeHrefs)}>{t(lang, "🎲 Случайный рецепт")}</a>
 			</div>
 		</div>
 	</section>
 
 	<Section>
-		<Fragment slot="title"><span class="section-title__accent">Новые</span> рецепты</Fragment>
+		<Fragment slot="title"><span class="section-title__accent">{t(lang, "Новые")}</span>{" "}{t(lang, "рецепты")}</Fragment>
 		<CardGrid minCardWidth={260}>
 			{suggestions.map((recipe) => <RecipeCard recipe={recipe} />)}
 		</CardGrid>
@@ -273,6 +275,7 @@ const recipeHrefs = slugs.map((slug) => `/recipe/${slug}`);
 </style>
 
 <script>
+	import { tc } from "../scripts/i18n";
 	import { showToast } from "../scripts/toast";
 
 	// Another food pun, never the same one twice in a row.
@@ -295,9 +298,9 @@ const recipeHrefs = slugs.map((slug) => `/recipe/${slug}`);
 	// The "0" is a fried egg that wobbles and talks back.
 	const egg = document.querySelector<HTMLButtonElement>(".error-hero__egg");
 	const replies: Record<number, string> = {
-		3: "Ладно-ладно, это просто пасхалка 🍳",
-		7: "Вы очень настойчивы. Уважаем.",
-		12: "Яйцо сдалось. Идите уже готовить что-нибудь 👨‍🍳",
+		3: tc("Ладно-ладно, это просто пасхалка 🍳"),
+		7: tc("Вы очень настойчивы. Уважаем."),
+		12: tc("Яйцо сдалось. Идите уже готовить что-нибудь 👨‍🍳"),
 	};
 	let clicks = 0;
 

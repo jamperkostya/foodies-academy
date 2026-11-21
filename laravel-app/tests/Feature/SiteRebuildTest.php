@@ -68,6 +68,35 @@ class SiteRebuildTest extends SiteTestCase
         Http::assertSentCount(1);
     }
 
+    public function test_changes_of_translations_only_build_their_language(): void
+    {
+        Http::fake(['api.github.com/*' => Http::response(null, 204)]);
+        $send = fn (array $changed) => $this->withHeader('X-Foodies-Secret', config('services.wordpress.api_secret'))
+            ->postJson('/api/internal/content-changed', ['reason' => 'edit', 'changed' => $changed])->assertStatus(202);
+        $built = function () {
+            Carbon::setTestNow(Carbon::now()->addMinutes(10));
+            $this->artisan('site:rebuild')->assertSuccessful();
+
+            return Http::recorded()->last()[0]['client_payload']['langs'];
+        };
+
+        $send([['post_type' => 'recipe', 'slug' => 'borscht', 'id' => 2, 'lang' => 'en'], ['lang' => 'en']]);
+        $this->assertSame('en', $built());
+
+        // A Russian original: its translations show its amounts and photos.
+        $send([['post_type' => 'recipe', 'slug' => 'borscht-en', 'id' => 2, 'lang' => 'en']]);
+        $send([['taxonomy' => 'course', 'slug' => 'supy', 'lang' => 'ru']]);
+        $this->assertSame('', $built());
+
+        // WordPress didn't say what (a deletion): everything.
+        $send([]);
+        $this->assertSame('', $built());
+
+        $send([['lang' => 'en']]);
+        $this->artisan('site:rebuild --force')->assertSuccessful();
+        $this->assertSame('', Http::recorded()->last()[0]['client_payload']['langs']);
+    }
+
     public function test_production_asks_for_its_own_build(): void
     {
         Http::fake(['api.github.com/*' => Http::response(null, 204)]);

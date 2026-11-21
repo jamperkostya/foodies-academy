@@ -1,4 +1,6 @@
 ---
+import { langOf, t } from "../../i18n";
+const lang = langOf(Astro.url);
 // One review (with stars) or comment (without).
 import Avatar from "../ui/Avatar.astro";
 import Stars from "../ui/Stars.astro";
@@ -20,7 +22,7 @@ const { review, isNew = false } = Astro.props;
 			{review.rating !== undefined && <Stars rating={review.rating} />}
 		</div>
 		<span class="review__date">
-			{review.replyTo && <span class="review__reply-to">↳ ответ для {review.replyTo} · </span>}
+			{review.replyTo && <span class="review__reply-to">↳ {t(lang, "ответ для {name}", { name: review.replyTo })} · </span>}
 			{review.date}
 		</span>
 		<p class="review__text">{review.text}</p>

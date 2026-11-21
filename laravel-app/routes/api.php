@@ -1,20 +1,22 @@
 <?php
 
-use App\Http\Controllers\Api\RecipesController;
-use App\Http\Controllers\Api\AuthorsController;
-use App\Http\Controllers\Api\CategoriesController;
-use App\Http\Controllers\Api\NewsController;
-use App\Http\Controllers\Api\BlogController;
-use App\Http\Controllers\Api\ContentChangedController;
-use App\Http\Controllers\Api\CollectionsController;
-use App\Http\Controllers\Api\IngredientsController;
-use App\Http\Controllers\Api\EngagementController;
-use App\Http\Controllers\Api\PagesController;
-use App\Http\Controllers\Api\VideosController;
 use App\Http\Controllers\Api\AccountController;
+use App\Http\Controllers\Api\AuthorsController;
+use App\Http\Controllers\Api\BlogController;
+use App\Http\Controllers\Api\CategoriesController;
+use App\Http\Controllers\Api\CollectionsController;
+use App\Http\Controllers\Api\ContentChangedController;
+use App\Http\Controllers\Api\EngagementController;
+use App\Http\Controllers\Api\IngredientsController;
+use App\Http\Controllers\Api\LifehacksController;
+use App\Http\Controllers\Api\NewsController;
+use App\Http\Controllers\Api\PagesController;
+use App\Http\Controllers\Api\RecipesController;
 use App\Http\Controllers\Api\RedirectsController;
 use App\Http\Controllers\Api\StatsController;
-use App\Http\Controllers\Api\LifehacksController;
+use App\Http\Controllers\Api\StringsController;
+use App\Http\Controllers\Api\VideosController;
+use App\Services\PostViews;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('recipes')->controller(RecipesController::class)->group(function () {
@@ -34,7 +36,7 @@ Route::prefix('recipes')->controller(RecipesController::class)->group(function (
 Route::controller(EngagementController::class)->group(function () {
     Route::get('/{type}/{slug}/likes', 'likes')->whereIn('type', ['recipes', 'videos'])->where('slug', '[a-z0-9_-]+');
     Route::post('/{type}/{slug}/likes', 'vote')->whereIn('type', ['recipes', 'videos'])->where('slug', '[a-z0-9_-]+')->middleware('throttle:likes');
-    Route::post('/{type}/{slug}/view', 'view')->whereIn('type', ['recipes', 'videos'])->where('slug', '[a-z0-9_-]+')->middleware('throttle:views');
+    Route::post('/{type}/{slug}/view', 'view')->whereIn('type', array_keys(PostViews::TYPES))->where('slug', '[a-z0-9_-]+')->middleware('throttle:views');
     Route::post('/search-log', 'search')->middleware('throttle:search-log');
     Route::post('/subscribe', 'subscribe')->middleware('throttle:subscribe');
     Route::get('/authors/{slug}/rating', 'authorRating')->where('slug', '[a-z0-9_-]+');
@@ -76,6 +78,8 @@ Route::prefix('authors')->controller(AuthorsController::class)->group(function (
 });
 
 Route::get('/stats', [StatsController::class, 'show']);
+// Interface strings of ?lang= as translated in the WordPress admin.
+Route::get('/strings', StringsController::class);
 Route::get('/redirects', RedirectsController::class);
 Route::get('/pages', [PagesController::class, 'index']);
 Route::get('/pages/{slug}', [PagesController::class, 'show'])->where('slug', '[a-z0-9_-]+');

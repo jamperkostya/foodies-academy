@@ -1,3 +1,4 @@
+import { tc } from "./i18n";
 // Shared by the account forms: show the API's field errors under the fields.
 import { ApiError } from "./account";
 import { showToast } from "./toast";
@@ -21,7 +22,7 @@ export function showError(form: HTMLFormElement, error: unknown) {
 		field.classList.add("is-invalid");
 		shown = true;
 	}
-	if (!shown) showToast(error instanceof ApiError ? error.message : "Нет связи с сервером, проверьте интернет");
+	if (!shown) showToast(error instanceof ApiError ? error.message : tc("Нет связи с сервером, проверьте интернет"));
 }
 
 /** The form's fields as {name: trimmed value}. */

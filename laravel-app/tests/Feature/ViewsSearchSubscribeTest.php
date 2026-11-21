@@ -40,6 +40,32 @@ class ViewsSearchSubscribeTest extends SiteTestCase
         $this->assertSame(0, $this->site()->table('post_views')->where('id', $id)->count());
     }
 
+    public function test_views_of_every_kind_of_post(): void
+    {
+        $posts = [
+            'videos' => $this->makePost('video', 'shorts'),
+            'lifehacks' => $this->makePost('lifehack', 'knife'),
+            'news' => $this->makePost('news', 'award'),
+            'blog' => $this->makePost('post', 'tips'),
+            'pages' => $this->makePost('page', 'contacts'),
+        ];
+        $slugs = ['videos' => 'shorts', 'lifehacks' => 'knife', 'news' => 'award', 'blog' => 'tips', 'pages' => 'contacts'];
+        foreach ($slugs as $type => $slug) {
+            $this->withHeader('User-Agent', 'Mozilla/5.0 (iPhone)')->postJson("/api/$type/$slug/view")->assertNoContent();
+            $this->assertSame(1, (int) $this->site()->table('post_views_realtime')->where('post_id', $posts[$type])->value('post_views_total'), $type);
+        }
+        // A post of another type with that slug isn't counted.
+        $this->postJson('/api/blog/knife/view')->assertNotFound();
+        $this->makePost('page', 'old', ['post_status' => 'draft']);
+        $this->postJson('/api/pages/old/view')->assertNotFound();
+
+        // The site shows them.
+        $this->getJson('/api/lifehacks/knife')->assertJsonPath('data.views', 1);
+        $this->getJson('/api/blog/tips')->assertJsonPath('data.views', 1);
+        $this->getJson('/api/news/award')->assertJsonPath('data.views', 1);
+        $this->getJson('/api/videos/shorts')->assertJsonPath('data.siteViews', 1);
+    }
+
     public function test_searches_go_to_search_meter(): void
     {
         $this->postJson('/api/search-log', ['q' => 'борщ, с пампушками', 'hits' => 4])->assertNoContent();
@@ -88,6 +114,17 @@ class ViewsSearchSubscribeTest extends SiteTestCase
             ['91', ['_wpcf7' => 91, '_wpcf7_unit_tag' => 'wpcf7-f91-o1']],
             ['77', ['_wpcf7' => 77, '_wpcf7_unit_tag' => 'wpcf7-f77-o1']],
         ], $forms);
+    }
+
+    public function test_english_subscribers_go_to_the_english_copies_of_the_forms(): void
+    {
+        config(['services.wordpress.subscribe_forms_en' => ['newsletter' => 101, 'book' => 102]]);
+        Http::fake(['wordpress.test/wp-json/contact-form-7/*' => Http::response(['status' => 'mail_sent'])]);
+
+        $this->postJson('/api/subscribe?lang=en', ['name' => 'Ann', 'email' => 'ann@example.test', 'list' => 'book'])
+            ->assertCreated()->assertJsonPath('message', 'You are subscribed');
+
+        Http::assertSent(fn ($request) => str_ends_with($request->url(), '/contact-forms/102/feedback'));
     }
 
     public function test_a_list_without_a_form_fails_without_asking_wordpress(): void

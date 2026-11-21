@@ -101,7 +101,7 @@ class Videos
 
     private function published()
     {
-        return $this->db->table('posts')->where('post_type', 'video')->where('post_status', 'publish');
+        return $this->db->table('posts')->where('post_type', 'video')->where('post_status', 'publish')->tap(fn ($q) => app(Translations::class)->scope($q, 'posts.ID'));
     }
 
     private function present(Collection $posts): array
@@ -113,8 +113,9 @@ class Videos
             ->groupBy('post_id')
             ->map(fn ($rows) => $rows->pluck('meta_value', 'meta_key'));
         $ratings = app(Comments::class)->ratings($posts->pluck('ID')->all());
+        $siteViews = app(PostViews::class)->totals($posts->pluck('ID')->all());
 
-        return $posts->map(function ($post) use ($meta, $ratings) {
+        return $posts->map(function ($post) use ($meta, $ratings, $siteViews) {
             $m = $meta->get($post->ID, collect());
 
             return [
@@ -127,6 +128,8 @@ class Videos
                 'publishedAt' => Carbon::parse($m->get('youtube_published_at', $post->post_date_gmt))->toIso8601String(),
                 'duration' => (string) $m->get('youtube_duration', ''),
                 'views' => (int) $m->get('youtube_views', 0),
+                // Views of its page on the site.
+                'siteViews' => $siteViews[$post->ID] ?? 0,
                 'youtubeLikes' => (int) $m->get('youtube_likes', 0),
                 // The site's own likes minus dislikes (Posts Like Dislike) and comments.
                 'likes' => Recipes::netLikes($m->all()),

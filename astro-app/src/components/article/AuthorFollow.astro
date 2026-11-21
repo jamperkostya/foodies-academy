@@ -1,4 +1,6 @@
 ---
+import { langOf, t } from "../../i18n";
+const lang = langOf(Astro.url);
 // "Подписаться" on an author's page. Followed authors and their new recipes show up in the
 // visitor's profile; logged-out visitors are sent to log in first.
 interface Props {
@@ -8,9 +10,10 @@ interface Props {
 
 const { slug, id } = Astro.props;
 ---
-<button type="button" class="author-follow btn no-print" data-slug={slug} data-author-id={id} aria-pressed="false">Подписаться</button>
+<button type="button" class="author-follow btn no-print" data-slug={slug} data-author-id={id} aria-pressed="false">{t(lang, "Подписаться")}</button>
 
 <script>
+	import { tc } from "../../scripts/i18n";
 	import { api, goToLogin, loadMe, patchMe } from "../../scripts/account";
 	import { showToast } from "../../scripts/toast";
 
@@ -18,14 +21,14 @@ const { slug, id } = Astro.props;
 		const authorId = Number(button.dataset.authorId);
 		const paint = (on: boolean) => {
 			button.setAttribute("aria-pressed", String(on));
-			button.textContent = on ? "Вы подписаны" : "Подписаться";
+			button.textContent = on ? tc("Вы подписаны") : tc("Подписаться");
 			button.classList.toggle("btn--secondary", on);
 		};
 		loadMe().then((me) => paint(Boolean(me?.follows.includes(authorId))));
 
 		button.addEventListener("click", async () => {
 			if (!(await loadMe())) {
-				showToast("Войдите, чтобы подписаться на автора");
+				showToast(tc("Войдите, чтобы подписаться на автора"));
 				return setTimeout(goToLogin, 900);
 			}
 			const on = button.getAttribute("aria-pressed") !== "true";
@@ -34,9 +37,9 @@ const { slug, id } = Astro.props;
 				const { follows } = await api<{ follows: number[] }>(`/me/follows/${button.dataset.slug}`, { method: on ? "PUT" : "DELETE" });
 				await patchMe({ follows });
 				paint(on);
-				showToast(on ? "Новые рецепты автора появятся в вашем профиле" : "Вы отписались от автора");
+				showToast(on ? tc("Новые рецепты автора появятся в вашем профиле") : tc("Вы отписались от автора"));
 			} catch (error) {
-				showToast(error instanceof Error ? error.message : "Не удалось подписаться");
+				showToast(error instanceof Error ? error.message : tc("Не удалось подписаться"));
 			} finally {
 				button.disabled = false;
 			}

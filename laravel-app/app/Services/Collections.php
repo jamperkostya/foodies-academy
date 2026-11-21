@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Support\Lang;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -16,10 +17,12 @@ class Collections
     private const COLLECTIONS = [
         's-kuricey' => [
             'title' => 'С курицей',
+            'title_en' => 'With Chicken',
             'ingredients' => ['Курица', 'Куриные бёдра', 'Куриное филе', 'Цыплёнок', 'Куриный фарш'],
         ],
         's-myasom' => [
             'title' => 'С мясом',
+            'title_en' => 'With Meat',
             'ingredients' => [
                 'Говядина', 'Говяжий фарш', 'Говяжья голень', 'Говяжья вырезка',
                 'Свинина', 'Свинина постная', 'Свиной фарш', 'Свиная голяшка', 'Свиная вырезка', 'Свиной подчерёвок (грудинка)',
@@ -30,6 +33,7 @@ class Collections
         ],
         's-ryboy' => [
             'title' => 'С рыбой',
+            'title_en' => 'With Fish',
             'ingredients' => [
                 'Морская рыба', 'Рыба свежая', 'Рыба белая', 'Рыба морской черт', 'Речная рыба',
                 'Лосось свежий', 'Стейк лосося', 'Филе лосося', 'Филе лосося со шкурой',
@@ -38,11 +42,13 @@ class Collections
         ],
         's-pastoy' => [
             'title' => 'С пастой',
+            'title_en' => 'With Pasta',
             'ingredients' => ['Спагетти', 'Черные спагетти', 'Макароны', 'Феттучини', 'Пенне'],
         ],
         // Not "Яичная лапша" or "Бычьи яйца".
         's-yaytsami' => [
             'title' => 'С яйцами',
+            'title_en' => 'With Eggs',
             'ingredients' => [
                 'Яйцо куриное', 'Яйцо куриное (вареное)', 'Яйцо', 'Яйцо перепелиное', 'Яйцо пашот',
                 'Желток яичный', 'Белок яичный', 'Маринованные яйцо (ajitsuke tamago)',
@@ -65,11 +71,11 @@ class Collections
 
             return [
                 'slug' => $slug,
-                'title' => $collection['title'],
+                'title' => Lang::text($collection['title'], $collection['title_en']),
                 'count' => $this->query($slug)->distinct()->count('p.ID'),
                 'image' => $top[0]['image'] ?? '',
             ];
-        })->values()->all();
+        })->filter(fn ($collection) => $collection['count'] > 0)->values()->all();
     }
 
     /** One collection with one page of its recipes, most viewed first, or null. */
@@ -81,7 +87,7 @@ class Collections
 
         return [
             'slug' => $slug,
-            'title' => self::COLLECTIONS[$slug]['title'],
+            'title' => Lang::text(self::COLLECTIONS[$slug]['title'], self::COLLECTIONS[$slug]['title_en']),
         ] + $this->recipes->paginate($this->query($slug), $page, $perPage);
     }
 
@@ -101,7 +107,7 @@ class Collections
                     ->where('v.output_type', 'content');
             })
             ->where('p.post_type', 'recipe')
-            ->where('p.post_status', 'publish')
+            ->where('p.post_status', 'publish')->tap(fn ($q) => app(Translations::class)->scope($q))
             // whereExists, not a join: a recipe with two of the ingredients shows up once
             ->whereExists(fn ($q) => $q->from('term_relationships as r')
                 ->whereColumn('r.object_id', 'p.ID')

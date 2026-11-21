@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\Comments;
 use App\Services\Recipes;
+use App\Support\Lang;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -44,7 +45,7 @@ class RecipesController extends Controller
 
     private function cached(string $key, callable $load)//: JsonResponse
     {
-        $recipes = Cache::remember($key, now()->addMinutes(self::CACHE_MINUTES), $load);;
+        $recipes = Cache::remember(Lang::key($key), now()->addMinutes(self::CACHE_MINUTES), $load);;
         return response()->json(['data' => $recipes]);
     }
 
@@ -117,13 +118,13 @@ class RecipesController extends Controller
             (string) $request->userAgent(),
         );
 
-        return response()->json(['message' => 'Комментарий отправлен на модерацию'], 201);
+        return response()->json(['message' => Lang::text('Комментарий отправлен на модерацию', 'Your comment will appear after moderation')], 201);
     }
 
     // GET /api/recipes/{slug}
     public function show(string $slug): JsonResponse
     {
-        $recipe = Cache::remember("recipes:slug:$slug", now()->addMinutes(self::CACHE_MINUTES),
+        $recipe = Cache::remember(Lang::key("recipes:slug:$slug"), now()->addMinutes(self::CACHE_MINUTES),
             fn () => $this->recipes->getRecipeBySlug($slug));
 
         abort_if(! $recipe, 404, 'Recipe not found');

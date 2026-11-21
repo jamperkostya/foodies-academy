@@ -1,17 +1,19 @@
 ---
+import { langOf, localize, t } from "../../i18n";
+const lang = langOf(Astro.url);
 // "Угостить автора кофе" under a recipe: plain links to the donation pages, no third-party
 // widget script, so the static page stays fast.
 const LINKS = [
 	{ label: "Buy Me a Coffee", href: "https://buymeacoffee.com/jamper", modifier: "bmc" },
 	// monobank jar: takes any Ukrainian card and Apple/Google Pay without exposing a card number.
-	{ label: "Монобанк", href: "https://send.monobank.ua/jar/8NjMxea8qQ", modifier: "mono" },
+	{ label: t(lang, "Монобанк"), href: "https://send.monobank.ua/jar/8NjMxea8qQ", modifier: "mono" },
 ];
 ---
 <div class="donate-card flex gap-15 items-center no-print">
-	<span class="donate-card__title">Понравился рецепт? Угостите нас кофе ☕</span>
+	<span class="donate-card__title">{t(lang, "Понравился рецепт? Угостите нас кофе ☕")}</span>
 	<div class="flex gap-10">
 		{LINKS.map(({ label, href, modifier }) => (
-			<a href={href} class:list={["donate-card__link", `donate-card__link--${modifier}`]} target="_blank" rel="noopener">{label}</a>
+			<a href={localize(lang, href)} class:list={["donate-card__link", `donate-card__link--${modifier}`]} target="_blank" rel="noopener">{label}</a>
 		))}
 	</div>
 </div>

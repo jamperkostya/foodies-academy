@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\Categories;
+use App\Support\Lang;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -68,7 +69,7 @@ class CategoriesController extends Controller
         ]);
         $page = (int) ($data['page'] ?? 1);
 
-        $category = Cache::remember("categories:slug:$slug:page:$page", now()->addMinutes(self::CACHE_MINUTES),
+        $category = Cache::remember(Lang::key("categories:slug:$slug:page:$page"), now()->addMinutes(self::CACHE_MINUTES),
             fn () => $this->categories->getBySlug($slug, $page));
 
         abort_if(! $category, 404, 'Category not found');
@@ -78,7 +79,7 @@ class CategoriesController extends Controller
 
     private function cached(string $key, callable $load): JsonResponse
     {
-        $categories = Cache::remember($key, now()->addMinutes(self::CACHE_MINUTES), $load);
+        $categories = Cache::remember(Lang::key($key), now()->addMinutes(self::CACHE_MINUTES), $load);
 
         return response()->json(['data' => $categories]);
     }

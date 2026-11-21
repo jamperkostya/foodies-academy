@@ -1,32 +1,34 @@
 ---
 import Icon from "../ui/Icon.astro";
-import { menuColumns, menuLinks } from "../../data/menu";
+import { menuOf } from "../../data/menu";
+import { langOf, localize, t } from "../../i18n";
+const lang = langOf(Astro.url);
 ---
 <div class="categories-menu">
 	<button type="button" class="categories-menu__toggle" aria-expanded="false" aria-controls="categories-menu-panel">
-		Категории
+		{t(lang, "Категории")}
 		<Icon class="categories-menu__arrow" name="menu-arrow" width={12} height={7} />
 	</button>
 
-	<nav class="categories-menu__panel" id="categories-menu-panel" aria-label="Категории" hidden>
+	<nav class="categories-menu__panel" id="categories-menu-panel" aria-label={t(lang, "Категории")} hidden>
 		<div class="categories-menu__columns">
-			{menuColumns.map(({ group, items, all }) => (
+			{menuOf(lang).columns.map(({ group, items, all }) => (
 				<div class="categories-menu__column">
 					<p class="categories-menu__title">{group}</p>
 					<ul class="categories-menu__list">
 						{items.map((item) => (
 							<li>
-								<a class="categories-menu__link" href={item.href}>{item.title}</a>
+								<a class="categories-menu__link" href={localize(lang, item.href)}>{item.title}</a>
 							</li>
 						))}
 					</ul>
-					<a class="categories-menu__all" href={all.href}>{all.label}</a>
+					<a class="categories-menu__all" href={localize(lang, all.href)}>{all.label}</a>
 				</div>
 			))}
 			<ul class="categories-menu__list categories-menu__list--extra">
-				{menuLinks.map((link) => (
+				{menuOf(lang).links.map((link) => (
 					<li>
-						<a class="categories-menu__link categories-menu__link--extra" href={link.href}>{link.label}</a>
+						<a class="categories-menu__link categories-menu__link--extra" href={localize(lang, link.href)}>{link.label}</a>
 					</li>
 				))}
 			</ul>

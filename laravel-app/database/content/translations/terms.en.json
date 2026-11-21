@@ -1,0 +1,6944 @@
+{
+    "lang": "en",
+    "course": [
+        {
+            "term_id": 256,
+            "ru": "Бургеры",
+            "name": "Burgers"
+        },
+        {
+            "term_id": 257,
+            "ru": "Вторые блюда",
+            "name": "Main Dishes"
+        },
+        {
+            "term_id": 258,
+            "ru": "Выпечка",
+            "name": "Baking"
+        },
+        {
+            "term_id": 259,
+            "ru": "Десерты",
+            "name": "Desserts"
+        },
+        {
+            "term_id": 260,
+            "ru": "Закуски",
+            "name": "Snacks"
+        },
+        {
+            "term_id": 261,
+            "ru": "Лапша",
+            "name": "Noodles"
+        },
+        {
+            "term_id": 262,
+            "ru": "Маринады",
+            "name": "Marinades"
+        },
+        {
+            "term_id": 263,
+            "ru": "Напитки",
+            "name": "Drinks"
+        },
+        {
+            "term_id": 264,
+            "ru": "Пицца",
+            "name": "Pizza"
+        },
+        {
+            "term_id": 265,
+            "ru": "Салаты",
+            "name": "Salads"
+        },
+        {
+            "term_id": 266,
+            "ru": "Соусы",
+            "name": "Sauces"
+        },
+        {
+            "term_id": 267,
+            "ru": "Супы",
+            "name": "Soups"
+        },
+        {
+            "term_id": 1127,
+            "ru": "Гарнир",
+            "name": "Side Dishes"
+        },
+        {
+            "term_id": 1131,
+            "ru": "Ингредиенты к блюду",
+            "name": "Ingredients for Dishes"
+        },
+        {
+            "term_id": 1143,
+            "ru": "Завтраки",
+            "name": "Breakfasts"
+        },
+        {
+            "term_id": 1307,
+            "ru": "Пасты и приправы",
+            "name": "Pastes and Seasonings"
+        },
+        {
+            "term_id": 1342,
+            "ru": "Конфитюры, варенье, джемы",
+            "name": "Jams and Preserves"
+        },
+        {
+            "term_id": 2282,
+            "ru": "Уличная еда",
+            "name": "Street Food"
+        }
+    ],
+    "cuisine": [
+        {
+            "term_id": 269,
+            "ru": "Абхазия",
+            "name": "Abkhazia"
+        },
+        {
+            "term_id": 270,
+            "ru": "Австралия",
+            "name": "Australia"
+        },
+        {
+            "term_id": 271,
+            "ru": "Австрия",
+            "name": "Austria"
+        },
+        {
+            "term_id": 272,
+            "ru": "Азербайджан",
+            "name": "Azerbaijan"
+        },
+        {
+            "term_id": 273,
+            "ru": "Албания",
+            "name": "Albania"
+        },
+        {
+            "term_id": 274,
+            "ru": "Алжир",
+            "name": "Algeria"
+        },
+        {
+            "term_id": 275,
+            "ru": "Ангола",
+            "name": "Angola"
+        },
+        {
+            "term_id": 276,
+            "ru": "Андорра",
+            "name": "Andorra"
+        },
+        {
+            "term_id": 277,
+            "ru": "Антигуа и Барбуда",
+            "name": "Antigua and Barbuda"
+        },
+        {
+            "term_id": 278,
+            "ru": "Аргентина",
+            "name": "Argentina"
+        },
+        {
+            "term_id": 279,
+            "ru": "Армения",
+            "name": "Armenia"
+        },
+        {
+            "term_id": 280,
+            "ru": "Афганистан",
+            "name": "Afghanistan"
+        },
+        {
+            "term_id": 281,
+            "ru": "Багамские Острова",
+            "name": "The Bahamas"
+        },
+        {
+            "term_id": 282,
+            "ru": "Бангладеш",
+            "name": "Bangladesh"
+        },
+        {
+            "term_id": 283,
+            "ru": "Барбадос",
+            "name": "Barbados"
+        },
+        {
+            "term_id": 284,
+            "ru": "Бахрейн",
+            "name": "Bahrain"
+        },
+        {
+            "term_id": 285,
+            "ru": "Белиз",
+            "name": "Belize"
+        },
+        {
+            "term_id": 286,
+            "ru": "Белоруссия",
+            "name": "Belarus"
+        },
+        {
+            "term_id": 287,
+            "ru": "Бельгия",
+            "name": "Belgium"
+        },
+        {
+            "term_id": 288,
+            "ru": "Бенин",
+            "name": "Benin"
+        },
+        {
+            "term_id": 289,
+            "ru": "Болгария",
+            "name": "Bulgaria"
+        },
+        {
+            "term_id": 290,
+            "ru": "Боливия",
+            "name": "Bolivia"
+        },
+        {
+            "term_id": 291,
+            "ru": "Босния и Герцеговина",
+            "name": "Bosnia and Herzegovina"
+        },
+        {
+            "term_id": 292,
+            "ru": "Ботсвана",
+            "name": "Botswana"
+        },
+        {
+            "term_id": 293,
+            "ru": "Бразилия",
+            "name": "Brazil"
+        },
+        {
+            "term_id": 294,
+            "ru": "Бруней",
+            "name": "Brunei"
+        },
+        {
+            "term_id": 295,
+            "ru": "Буркина-Фасо",
+            "name": "Burkina Faso"
+        },
+        {
+            "term_id": 296,
+            "ru": "Бурунди",
+            "name": "Burundi"
+        },
+        {
+            "term_id": 297,
+            "ru": "Бутан",
+            "name": "Bhutan"
+        },
+        {
+            "term_id": 298,
+            "ru": "Вануату",
+            "name": "Vanuatu"
+        },
+        {
+            "term_id": 299,
+            "ru": "Ватикан",
+            "name": "Vatican City"
+        },
+        {
+            "term_id": 300,
+            "ru": "Великобритания",
+            "name": "United Kingdom"
+        },
+        {
+            "term_id": 301,
+            "ru": "Венгрия",
+            "name": "Hungary"
+        },
+        {
+            "term_id": 302,
+            "ru": "Венесуэла",
+            "name": "Venezuela"
+        },
+        {
+            "term_id": 303,
+            "ru": "Восточный Тимор",
+            "name": "East Timor"
+        },
+        {
+            "term_id": 304,
+            "ru": "Вьетнам",
+            "name": "Vietnam"
+        },
+        {
+            "term_id": 305,
+            "ru": "Габон",
+            "name": "Gabon"
+        },
+        {
+            "term_id": 306,
+            "ru": "Гаити",
+            "name": "Haiti"
+        },
+        {
+            "term_id": 307,
+            "ru": "Гайана",
+            "name": "Guyana"
+        },
+        {
+            "term_id": 308,
+            "ru": "Гамбия",
+            "name": "The Gambia"
+        },
+        {
+            "term_id": 309,
+            "ru": "Гана",
+            "name": "Ghana"
+        },
+        {
+            "term_id": 310,
+            "ru": "Гватемала",
+            "name": "Guatemala"
+        },
+        {
+            "term_id": 311,
+            "ru": "Гвинея",
+            "name": "Guinea"
+        },
+        {
+            "term_id": 312,
+            "ru": "Гвинея-Бисау",
+            "name": "Guinea-Bissau"
+        },
+        {
+            "term_id": 313,
+            "ru": "Германия",
+            "name": "Germany"
+        },
+        {
+            "term_id": 314,
+            "ru": "Гондурас",
+            "name": "Honduras"
+        },
+        {
+            "term_id": 315,
+            "ru": "Государство Палестина",
+            "name": "Palestine"
+        },
+        {
+            "term_id": 316,
+            "ru": "Гренада",
+            "name": "Grenada"
+        },
+        {
+            "term_id": 317,
+            "ru": "Греция",
+            "name": "Greece"
+        },
+        {
+            "term_id": 318,
+            "ru": "Грузия",
+            "name": "Georgia"
+        },
+        {
+            "term_id": 319,
+            "ru": "Дания",
+            "name": "Denmark"
+        },
+        {
+            "term_id": 320,
+            "ru": "Джибути",
+            "name": "Djibouti"
+        },
+        {
+            "term_id": 321,
+            "ru": "Доминика",
+            "name": "Dominica"
+        },
+        {
+            "term_id": 323,
+            "ru": "ДР Конго",
+            "name": "DR Congo"
+        },
+        {
+            "term_id": 324,
+            "ru": "Египет",
+            "name": "Egypt"
+        },
+        {
+            "term_id": 325,
+            "ru": "Замбия",
+            "name": "Zambia"
+        },
+        {
+            "term_id": 326,
+            "ru": "Украина",
+            "name": "Ukraine"
+        },
+        {
+            "term_id": 327,
+            "ru": "Шри-Ланка",
+            "name": "Sri Lanka"
+        },
+        {
+            "term_id": 328,
+            "ru": "Таиланд",
+            "name": "Thailand"
+        },
+        {
+            "term_id": 329,
+            "ru": "Италия",
+            "name": "Italy"
+        },
+        {
+            "term_id": 330,
+            "ru": "Япония",
+            "name": "Japan"
+        },
+        {
+            "term_id": 335,
+            "ru": "Америка",
+            "name": "America"
+        },
+        {
+            "term_id": 347,
+            "ru": "Испания",
+            "name": "Spain"
+        },
+        {
+            "term_id": 383,
+            "ru": "Франция",
+            "name": "France"
+        },
+        {
+            "term_id": 424,
+            "ru": "Индия",
+            "name": "India"
+        },
+        {
+            "term_id": 495,
+            "ru": "Авторская кухня",
+            "name": "Author's Cuisine"
+        },
+        {
+            "term_id": 520,
+            "ru": "Молдавия",
+            "name": "Moldova"
+        },
+        {
+            "term_id": 616,
+            "ru": "Китай",
+            "name": "China"
+        },
+        {
+            "term_id": 650,
+            "ru": "Иран",
+            "name": "Iran"
+        },
+        {
+            "term_id": 677,
+            "ru": "Мексика",
+            "name": "Mexico"
+        },
+        {
+            "term_id": 678,
+            "ru": "Россия",
+            "name": "Russia"
+        },
+        {
+            "term_id": 804,
+            "ru": "Норвегия",
+            "name": "Norway"
+        },
+        {
+            "term_id": 826,
+            "ru": "Малайзия",
+            "name": "Malaysia"
+        },
+        {
+            "term_id": 884,
+            "ru": "Доминиканская республика",
+            "name": "Dominican Republic"
+        },
+        {
+            "term_id": 899,
+            "ru": "Филипины",
+            "name": "Philippines"
+        },
+        {
+            "term_id": 921,
+            "ru": "Турция",
+            "name": "Turkey"
+        },
+        {
+            "term_id": 929,
+            "ru": "Македония",
+            "name": "North Macedonia"
+        },
+        {
+            "term_id": 1041,
+            "ru": "Англия",
+            "name": "England"
+        },
+        {
+            "term_id": 1076,
+            "ru": "Тибет",
+            "name": "Tibet"
+        },
+        {
+            "term_id": 1078,
+            "ru": "Израиль",
+            "name": "Israel"
+        },
+        {
+            "term_id": 1242,
+            "ru": "Канада",
+            "name": "Canada"
+        },
+        {
+            "term_id": 1479,
+            "ru": "Румыния",
+            "name": "Romania"
+        },
+        {
+            "term_id": 1482,
+            "ru": "Хорватия",
+            "name": "Croatia"
+        },
+        {
+            "term_id": 1850,
+            "ru": "Индонезия",
+            "name": "Indonesia"
+        },
+        {
+            "term_id": 1904,
+            "ru": "Перу",
+            "name": "Peru"
+        },
+        {
+            "term_id": 1939,
+            "ru": "Марокко",
+            "name": "Morocco"
+        },
+        {
+            "term_id": 1940,
+            "ru": "АФРИКА",
+            "name": "Africa"
+        },
+        {
+            "term_id": 1941,
+            "ru": "Южная Африка (ЮАР)",
+            "name": "South Africa"
+        },
+        {
+            "term_id": 1942,
+            "ru": "Танзания",
+            "name": "Tanzania"
+        },
+        {
+            "term_id": 1982,
+            "ru": "Чехия",
+            "name": "Czech Republic"
+        },
+        {
+            "term_id": 2104,
+            "ru": "КОРЕЯ",
+            "name": "Korea"
+        },
+        {
+            "term_id": 2220,
+            "ru": "Обьединенные арабские эмираты",
+            "name": "United Arab Emirates"
+        },
+        {
+            "term_id": 2307,
+            "ru": "Кипр",
+            "name": "Cyprus"
+        },
+        {
+            "term_id": 2571,
+            "ru": "Узбекистан",
+            "name": "Uzbekistan"
+        },
+        {
+            "term_id": 2692,
+            "ru": "Бирма",
+            "name": "Burma"
+        },
+        {
+            "term_id": 2775,
+            "ru": "Польша",
+            "name": "Poland"
+        },
+        {
+            "term_id": 2834,
+            "ru": "Еврейская кухня",
+            "name": "Jewish Cuisine"
+        },
+        {
+            "term_id": 3120,
+            "ru": "Португалия",
+            "name": "Portugal"
+        },
+        {
+            "term_id": 3125,
+            "ru": "Чили",
+            "name": "Chile"
+        },
+        {
+            "term_id": 3169,
+            "ru": "Ирландия",
+            "name": "Ireland"
+        }
+    ],
+    "ingredient": [
+        {
+            "term_id": 331,
+            "ru": "Яблоко",
+            "name": "Apple"
+        },
+        {
+            "term_id": 337,
+            "ru": "Авокадо",
+            "name": "Avocado"
+        },
+        {
+            "term_id": 338,
+            "ru": "Лимонный сок",
+            "name": "Lemon juice"
+        },
+        {
+            "term_id": 340,
+            "ru": "Лук-шалот",
+            "name": "Shallot"
+        },
+        {
+            "term_id": 344,
+            "ru": "Масло оливковое",
+            "name": "Olive oil"
+        },
+        {
+            "term_id": 349,
+            "ru": "Чеснок",
+            "name": "Garlic"
+        },
+        {
+            "term_id": 350,
+            "ru": "Морепродукты",
+            "name": "Seafood"
+        },
+        {
+            "term_id": 351,
+            "ru": "Лук репчатый",
+            "name": "Onion"
+        },
+        {
+            "term_id": 354,
+            "ru": "Бланшированные помидоры",
+            "name": "Blanched tomatoes"
+        },
+        {
+            "term_id": 356,
+            "ru": "Шафран",
+            "name": "Saffron"
+        },
+        {
+            "term_id": 357,
+            "ru": "Лимон",
+            "name": "Lemon"
+        },
+        {
+            "term_id": 359,
+            "ru": "Копченая паприка",
+            "name": "Smoked paprika"
+        },
+        {
+            "term_id": 361,
+            "ru": "Телятина",
+            "name": "Veal"
+        },
+        {
+            "term_id": 362,
+            "ru": "Свинина",
+            "name": "Pork"
+        },
+        {
+            "term_id": 363,
+            "ru": "Курица",
+            "name": "Chicken"
+        },
+        {
+            "term_id": 364,
+            "ru": "Лук",
+            "name": "Onion"
+        },
+        {
+            "term_id": 365,
+            "ru": "Морковь",
+            "name": "Carrot"
+        },
+        {
+            "term_id": 366,
+            "ru": "Корень пастернака",
+            "name": "Parsnip root"
+        },
+        {
+            "term_id": 367,
+            "ru": "Корень сельдерея",
+            "name": "Celery root"
+        },
+        {
+            "term_id": 370,
+            "ru": "Лавровый лист",
+            "name": "Bay leaf"
+        },
+        {
+            "term_id": 374,
+            "ru": "Томатная паста",
+            "name": "Tomato paste"
+        },
+        {
+            "term_id": 375,
+            "ru": "Картофель",
+            "name": "Potatoes"
+        },
+        {
+            "term_id": 376,
+            "ru": "Капуста свежая",
+            "name": "Fresh cabbage"
+        },
+        {
+            "term_id": 377,
+            "ru": "Фасоль",
+            "name": "Beans"
+        },
+        {
+            "term_id": 378,
+            "ru": "Винный уксус",
+            "name": "Wine vinegar"
+        },
+        {
+            "term_id": 379,
+            "ru": "Сахар",
+            "name": "Sugar"
+        },
+        {
+            "term_id": 380,
+            "ru": "Соль",
+            "name": "Salt"
+        },
+        {
+            "term_id": 385,
+            "ru": "Бульон креветочный или рыбный",
+            "name": "Shrimp or fish broth"
+        },
+        {
+            "term_id": 391,
+            "ru": "Оливковое масло",
+            "name": "Olive oil"
+        },
+        {
+            "term_id": 393,
+            "ru": "Креветки, лангустины",
+            "name": "Shrimp, langoustines"
+        },
+        {
+            "term_id": 394,
+            "ru": "Морская рыба",
+            "name": "Sea fish"
+        },
+        {
+            "term_id": 397,
+            "ru": "Вино белое сухое",
+            "name": "Dry white wine"
+        },
+        {
+            "term_id": 398,
+            "ru": "Сельдерей черешковый",
+            "name": "Celery"
+        },
+        {
+            "term_id": 399,
+            "ru": "Болгарский перец красный",
+            "name": "Red bell pepper"
+        },
+        {
+            "term_id": 402,
+            "ru": "Молотый миндаль",
+            "name": "Ground almonds"
+        },
+        {
+            "term_id": 403,
+            "ru": "Прошутто",
+            "name": "Prosciutto"
+        },
+        {
+            "term_id": 404,
+            "ru": "Гвоздика",
+            "name": "Cloves"
+        },
+        {
+            "term_id": 409,
+            "ru": "Йогурт",
+            "name": "Yogurt"
+        },
+        {
+            "term_id": 410,
+            "ru": "Масло Гхи",
+            "name": "Ghee"
+        },
+        {
+            "term_id": 411,
+            "ru": "Горчичное масло",
+            "name": "Mustard oil"
+        },
+        {
+            "term_id": 413,
+            "ru": "Корица",
+            "name": "Cinnamon"
+        },
+        {
+            "term_id": 414,
+            "ru": "Черный кардамон",
+            "name": "Black cardamom"
+        },
+        {
+            "term_id": 415,
+            "ru": "Зеленый кардамон",
+            "name": "Green cardamom"
+        },
+        {
+            "term_id": 416,
+            "ru": "Семена фенхеля",
+            "name": "Fennel seeds"
+        },
+        {
+            "term_id": 417,
+            "ru": "Асафетида",
+            "name": "Asafoetida"
+        },
+        {
+            "term_id": 418,
+            "ru": "Мацис (мускатный цвет)",
+            "name": "Mace (nutmeg flower)"
+        },
+        {
+            "term_id": 421,
+            "ru": "Корень Алканны красильной",
+            "name": "Alkanet root"
+        },
+        {
+            "term_id": 423,
+            "ru": "Красный кашмирский Чили",
+            "name": "Red Kashmiri chili"
+        },
+        {
+            "term_id": 428,
+            "ru": "Лук порей, мелко нарезанный",
+            "name": "Leek, finely chopped"
+        },
+        {
+            "term_id": 431,
+            "ru": "Перец чили, мелко нарезанный",
+            "name": "Chili pepper, finely chopped"
+        },
+        {
+            "term_id": 432,
+            "ru": "Перец черный молотый",
+            "name": "Ground black pepper"
+        },
+        {
+            "term_id": 434,
+            "ru": "Бриош",
+            "name": "Brioche"
+        },
+        {
+            "term_id": 436,
+            "ru": "Листья базилика",
+            "name": "Basil leaves"
+        },
+        {
+            "term_id": 437,
+            "ru": "Листья мяты",
+            "name": "Mint leaves"
+        },
+        {
+            "term_id": 439,
+            "ru": "Филе семги",
+            "name": "Salmon fillet"
+        },
+        {
+            "term_id": 441,
+            "ru": "Цедра лайма",
+            "name": "Lime zest"
+        },
+        {
+            "term_id": 444,
+            "ru": "Соус шрирача",
+            "name": "Sriracha sauce"
+        },
+        {
+            "term_id": 445,
+            "ru": "Греческий йогурт",
+            "name": "Greek yogurt"
+        },
+        {
+            "term_id": 446,
+            "ru": "Креветочная паста в соевом масле Pantai",
+            "name": "Shrimp paste"
+        },
+        {
+            "term_id": 447,
+            "ru": "Говяжьи кости",
+            "name": "Beef bones"
+        },
+        {
+            "term_id": 448,
+            "ru": "Говяжий язык",
+            "name": "Beef tongue"
+        },
+        {
+            "term_id": 453,
+            "ru": "Саке",
+            "name": "Sake"
+        },
+        {
+            "term_id": 454,
+            "ru": "Мирин",
+            "name": "Mirin"
+        },
+        {
+            "term_id": 455,
+            "ru": "Вода",
+            "name": "Water"
+        },
+        {
+            "term_id": 456,
+            "ru": "Рисовый уксус",
+            "name": "Rice vinegar"
+        },
+        {
+            "term_id": 457,
+            "ru": "Лапша",
+            "name": "Noodles"
+        },
+        {
+            "term_id": 460,
+            "ru": "Нори",
+            "name": "Nori"
+        },
+        {
+            "term_id": 461,
+            "ru": "Зеленый лук",
+            "name": "Green onion"
+        },
+        {
+            "term_id": 463,
+            "ru": "Коралловый гриб",
+            "name": "Coral mushroom"
+        },
+        {
+            "term_id": 465,
+            "ru": "Свежая лапша",
+            "name": "Fresh noodles"
+        },
+        {
+            "term_id": 469,
+            "ru": "Сода пищевая",
+            "name": "Baking soda"
+        },
+        {
+            "term_id": 472,
+            "ru": "Стебель лемонграса",
+            "name": "Lemongrass stalk"
+        },
+        {
+            "term_id": 474,
+            "ru": "Галангал, корень",
+            "name": "Galangal, root"
+        },
+        {
+            "term_id": 476,
+            "ru": "Рыбный соус",
+            "name": "Fish sauce"
+        },
+        {
+            "term_id": 483,
+            "ru": "Рис короткий",
+            "name": "Short grain rice"
+        },
+        {
+            "term_id": 485,
+            "ru": "Приправа 5 специй",
+            "name": "Five spice seasoning"
+        },
+        {
+            "term_id": 486,
+            "ru": "Орегано",
+            "name": "Oregano"
+        },
+        {
+            "term_id": 496,
+            "ru": "Филе судака",
+            "name": "Pike perch fillet"
+        },
+        {
+            "term_id": 499,
+            "ru": "Чука",
+            "name": "Chuka"
+        },
+        {
+            "term_id": 501,
+            "ru": "Сыр Чеддер",
+            "name": "Cheddar cheese"
+        },
+        {
+            "term_id": 502,
+            "ru": "Кинза мелко нарезанная",
+            "name": "Finely chopped cilantro"
+        },
+        {
+            "term_id": 503,
+            "ru": "Устричный соус",
+            "name": "Oyster sauce"
+        },
+        {
+            "term_id": 504,
+            "ru": "Букатини",
+            "name": "Bucatini"
+        },
+        {
+            "term_id": 505,
+            "ru": "Гуанчиале",
+            "name": "Guanciale"
+        },
+        {
+            "term_id": 508,
+            "ru": "Петух домашний",
+            "name": "Rooster"
+        },
+        {
+            "term_id": 511,
+            "ru": "Вино Pino Noir",
+            "name": "Pinot noir wine"
+        },
+        {
+            "term_id": 512,
+            "ru": "Коньяк",
+            "name": "Cognac"
+        },
+        {
+            "term_id": 514,
+            "ru": "Перец чёрный горошком",
+            "name": "Black peppercorns"
+        },
+        {
+            "term_id": 519,
+            "ru": "Крутоны",
+            "name": "Croutons"
+        },
+        {
+            "term_id": 521,
+            "ru": "Корень петрушки",
+            "name": "Parsley root"
+        },
+        {
+            "term_id": 523,
+            "ru": "Любисток",
+            "name": "Lovage"
+        },
+        {
+            "term_id": 524,
+            "ru": "Отрубной квас (Borş acru)",
+            "name": "Sourdough kvass (borş acru)"
+        },
+        {
+            "term_id": 528,
+            "ru": "Пшеничные отруби",
+            "name": "Wheat bran"
+        },
+        {
+            "term_id": 531,
+            "ru": "Дрожжи",
+            "name": "Yeast"
+        },
+        {
+            "term_id": 532,
+            "ru": "Ветка вишни",
+            "name": "Cherry branch"
+        },
+        {
+            "term_id": 535,
+            "ru": "Паппарделле",
+            "name": "Pappardelle"
+        },
+        {
+            "term_id": 539,
+            "ru": "Шалфей",
+            "name": "Sage"
+        },
+        {
+            "term_id": 547,
+            "ru": "Шоколад",
+            "name": "Chocolate"
+        },
+        {
+            "term_id": 556,
+            "ru": "Банан",
+            "name": "Banana"
+        },
+        {
+            "term_id": 558,
+            "ru": "Капуста цветная",
+            "name": "Cauliflower"
+        },
+        {
+            "term_id": 559,
+            "ru": "Гранат",
+            "name": "Pomegranate"
+        },
+        {
+            "term_id": 561,
+            "ru": "Виноград светлый",
+            "name": "Light grapes"
+        },
+        {
+            "term_id": 564,
+            "ru": "Изюм",
+            "name": "Raisins"
+        },
+        {
+            "term_id": 568,
+            "ru": "Курага",
+            "name": "Dried apricots"
+        },
+        {
+            "term_id": 569,
+            "ru": "Лайм",
+            "name": "Lime"
+        },
+        {
+            "term_id": 571,
+            "ru": "Маслины",
+            "name": "Olives"
+        },
+        {
+            "term_id": 573,
+            "ru": "Апельсин",
+            "name": "Orange"
+        },
+        {
+            "term_id": 576,
+            "ru": "Хмели-сунели",
+            "name": "Khmeli-suneli"
+        },
+        {
+            "term_id": 578,
+            "ru": "Крахмал картофельный",
+            "name": "Potato starch"
+        },
+        {
+            "term_id": 579,
+            "ru": "Крахмал кукурузный",
+            "name": "Cornstarch"
+        },
+        {
+            "term_id": 580,
+            "ru": "Куркума",
+            "name": "Turmeric"
+        },
+        {
+            "term_id": 588,
+            "ru": "Томатный соус",
+            "name": "Tomato sauce"
+        },
+        {
+            "term_id": 594,
+            "ru": "Цедра лимона",
+            "name": "Lemon zest"
+        },
+        {
+            "term_id": 595,
+            "ru": "Семена чиа",
+            "name": "Chia seeds"
+        },
+        {
+            "term_id": 596,
+            "ru": "Ванильный экстракт",
+            "name": "Vanilla extract"
+        },
+        {
+            "term_id": 597,
+            "ru": "Кокосовое молоко",
+            "name": "Coconut milk"
+        },
+        {
+            "term_id": 598,
+            "ru": "Малина",
+            "name": "Raspberries"
+        },
+        {
+            "term_id": 601,
+            "ru": "Бычий (коровий) хвост",
+            "name": "Oxtail (beef tail)"
+        },
+        {
+            "term_id": 604,
+            "ru": "Паприка копчёная",
+            "name": "Smoked paprika"
+        },
+        {
+            "term_id": 606,
+            "ru": "Вино Тинто, Херес или Фино",
+            "name": "Red wine, Sherry or fino"
+        },
+        {
+            "term_id": 608,
+            "ru": "Лук белый",
+            "name": "White onion"
+        },
+        {
+            "term_id": 613,
+            "ru": "Гарам масала",
+            "name": "Garam masala"
+        },
+        {
+            "term_id": 614,
+            "ru": "Цуккини",
+            "name": "Zucchini"
+        },
+        {
+            "term_id": 617,
+            "ru": "Яйцо куриное",
+            "name": "Chicken egg"
+        },
+        {
+            "term_id": 619,
+            "ru": "Кролик",
+            "name": "Rabbit"
+        },
+        {
+            "term_id": 622,
+            "ru": "Сливки 20%",
+            "name": "20% cream"
+        },
+        {
+            "term_id": 625,
+            "ru": "Мясо кролика",
+            "name": "Rabbit meat"
+        },
+        {
+            "term_id": 628,
+            "ru": "Листья карри",
+            "name": "Curry leaves"
+        },
+        {
+            "term_id": 630,
+            "ru": "Порошок карри",
+            "name": "Curry powder"
+        },
+        {
+            "term_id": 634,
+            "ru": "Черная соль",
+            "name": "Black salt"
+        },
+        {
+            "term_id": 638,
+            "ru": "Маскарпоне",
+            "name": "Mascarpone"
+        },
+        {
+            "term_id": 639,
+            "ru": "Рубленая баранина",
+            "name": "Chopped lamb"
+        },
+        {
+            "term_id": 640,
+            "ru": "Рубленая телятина",
+            "name": "Ground veal"
+        },
+        {
+            "term_id": 641,
+            "ru": "Виноградные листья",
+            "name": "Grape leaves"
+        },
+        {
+            "term_id": 642,
+            "ru": "Рис Жасмин",
+            "name": "Jasmine rice"
+        },
+        {
+            "term_id": 643,
+            "ru": "Колотый горох",
+            "name": "Cracked peas"
+        },
+        {
+            "term_id": 646,
+            "ru": "Гвоздика молотая",
+            "name": "Ground cloves"
+        },
+        {
+            "term_id": 647,
+            "ru": "Турецкий йогурт",
+            "name": "Turkish yogurt"
+        },
+        {
+            "term_id": 648,
+            "ru": "Айран",
+            "name": "Ayran"
+        },
+        {
+            "term_id": 651,
+            "ru": "Щавель листья",
+            "name": "Sorrel leaves"
+        },
+        {
+            "term_id": 652,
+            "ru": "Телятина рёбрышки",
+            "name": "Veal ribs"
+        },
+        {
+            "term_id": 657,
+            "ru": "Сметана",
+            "name": "Sour cream"
+        },
+        {
+            "term_id": 658,
+            "ru": "Картофель молодой",
+            "name": "Young potatoes"
+        },
+        {
+            "term_id": 663,
+            "ru": "Рис долгозернистый",
+            "name": "Long-Grain rice"
+        },
+        {
+            "term_id": 671,
+            "ru": "Молоко",
+            "name": "Milk"
+        },
+        {
+            "term_id": 672,
+            "ru": "Говяжий фарш",
+            "name": "Ground beef"
+        },
+        {
+            "term_id": 679,
+            "ru": "Бадьян",
+            "name": "Star anise"
+        },
+        {
+            "term_id": 680,
+            "ru": "Кардамон",
+            "name": "Cardamom"
+        },
+        {
+            "term_id": 681,
+            "ru": "Масло растительное",
+            "name": "Vegetable oil"
+        },
+        {
+            "term_id": 683,
+            "ru": "Кокосовые сливки",
+            "name": "Coconut cream"
+        },
+        {
+            "term_id": 686,
+            "ru": "Чесночно-имбирная паста",
+            "name": "Garlic-ginger paste"
+        },
+        {
+            "term_id": 687,
+            "ru": "Перец чили молотый",
+            "name": "Ground chili pepper"
+        },
+        {
+            "term_id": 688,
+            "ru": "Кешью",
+            "name": "Cashews"
+        },
+        {
+            "term_id": 691,
+            "ru": "Семена мака",
+            "name": "Poppy seeds"
+        },
+        {
+            "term_id": 692,
+            "ru": "Рис Басмати",
+            "name": "Basmati rice"
+        },
+        {
+            "term_id": 693,
+            "ru": "Наан лепешка",
+            "name": "Naan bread"
+        },
+        {
+            "term_id": 694,
+            "ru": "Плоская рисовая лапша",
+            "name": "Flat rice noodles"
+        },
+        {
+            "term_id": 699,
+            "ru": "Вода холодная",
+            "name": "Cold water"
+        },
+        {
+            "term_id": 701,
+            "ru": "Перец белый молотый",
+            "name": "Ground white pepper"
+        },
+        {
+            "term_id": 702,
+            "ru": "Семена кориандра",
+            "name": "Coriander seeds"
+        },
+        {
+            "term_id": 704,
+            "ru": "Вода горячая",
+            "name": "Hot water"
+        },
+        {
+            "term_id": 706,
+            "ru": "Грибы джи-зонг",
+            "name": "Ji-Zong mushrooms"
+        },
+        {
+            "term_id": 708,
+            "ru": "Краб",
+            "name": "Crab"
+        },
+        {
+            "term_id": 712,
+            "ru": "Грибы эноки",
+            "name": "Enoki mushrooms"
+        },
+        {
+            "term_id": 713,
+            "ru": "Икра красная",
+            "name": "Red caviar"
+        },
+        {
+            "term_id": 715,
+            "ru": "Чернила каракатицы",
+            "name": "Cuttlefish ink"
+        },
+        {
+            "term_id": 716,
+            "ru": "Черные спагетти",
+            "name": "Black spaghetti"
+        },
+        {
+            "term_id": 719,
+            "ru": "Бонито хлопья",
+            "name": "Bonito flakes"
+        },
+        {
+            "term_id": 720,
+            "ru": "Вакаме",
+            "name": "Wakame"
+        },
+        {
+            "term_id": 721,
+            "ru": "Пищевая сода",
+            "name": "Baking soda"
+        },
+        {
+            "term_id": 729,
+            "ru": "Тертая цедра и сок лимона",
+            "name": "Grated lemon zest and juice"
+        },
+        {
+            "term_id": 732,
+            "ru": "Кардамон молотый",
+            "name": "Ground cardamom"
+        },
+        {
+            "term_id": 733,
+            "ru": "Мацис (мускатный цвет) молотый",
+            "name": "Ground mace (nutmeg flower)"
+        },
+        {
+            "term_id": 734,
+            "ru": "Зира (кумин)",
+            "name": "Cumin"
+        },
+        {
+            "term_id": 735,
+            "ru": "Корица молотая",
+            "name": "Ground cinnamon"
+        },
+        {
+            "term_id": 738,
+            "ru": "Мускатный орех молотый",
+            "name": "Ground nutmeg"
+        },
+        {
+            "term_id": 741,
+            "ru": "Семена аниса молотые",
+            "name": "Ground anise seeds"
+        },
+        {
+            "term_id": 743,
+            "ru": "Лавровый лист молотый",
+            "name": "Ground bay leaf"
+        },
+        {
+            "term_id": 744,
+            "ru": "Лепестки розы молотые",
+            "name": "Ground rose petals"
+        },
+        {
+            "term_id": 745,
+            "ru": "Бутоны лаванды",
+            "name": "Lavender buds"
+        },
+        {
+            "term_id": 770,
+            "ru": "Свиные кости",
+            "name": "Pork bones"
+        },
+        {
+            "term_id": 771,
+            "ru": "Свиной жир",
+            "name": "Pork fat"
+        },
+        {
+            "term_id": 776,
+            "ru": "Болгарский перец",
+            "name": "Bell pepper"
+        },
+        {
+            "term_id": 779,
+            "ru": "Грибы шиитаке",
+            "name": "Shiitake mushrooms"
+        },
+        {
+            "term_id": 782,
+            "ru": "Белый квас",
+            "name": "White kvass"
+        },
+        {
+            "term_id": 784,
+            "ru": "Огурец свежий",
+            "name": "Fresh cucumber"
+        },
+        {
+            "term_id": 785,
+            "ru": "Редис",
+            "name": "Radish"
+        },
+        {
+            "term_id": 786,
+            "ru": "Зеленый горошек",
+            "name": "Green peas"
+        },
+        {
+            "term_id": 788,
+            "ru": "Васаби",
+            "name": "Wasabi"
+        },
+        {
+            "term_id": 789,
+            "ru": "Куриные сердечки",
+            "name": "Chicken hearts"
+        },
+        {
+            "term_id": 793,
+            "ru": "Пальмовый сахар",
+            "name": "Palm sugar"
+        },
+        {
+            "term_id": 797,
+            "ru": "Шпинат",
+            "name": "Spinach"
+        },
+        {
+            "term_id": 799,
+            "ru": "Перец чили зеленый",
+            "name": "Green chili pepper"
+        },
+        {
+            "term_id": 802,
+            "ru": "Листья пажитника (kasuri methi)",
+            "name": "Fenugreek leaves (kasuri methi)"
+        },
+        {
+            "term_id": 803,
+            "ru": "Печень трески",
+            "name": "Cod liver"
+        },
+        {
+            "term_id": 810,
+            "ru": "Бульон овощной",
+            "name": "Vegetable broth"
+        },
+        {
+            "term_id": 814,
+            "ru": "Куриные крылышки",
+            "name": "Chicken wings"
+        },
+        {
+            "term_id": 815,
+            "ru": "Бобовый черный соус",
+            "name": "Black bean sauce"
+        },
+        {
+            "term_id": 816,
+            "ru": "Мед",
+            "name": "Honey"
+        },
+        {
+            "term_id": 817,
+            "ru": "Винный уксус белый",
+            "name": "White wine vinegar"
+        },
+        {
+            "term_id": 819,
+            "ru": "Кунжутное масло",
+            "name": "Sesame oil"
+        },
+        {
+            "term_id": 822,
+            "ru": "Сыр Горгонзола",
+            "name": "Gorgonzola cheese"
+        },
+        {
+            "term_id": 823,
+            "ru": "Сыр Грана Падано",
+            "name": "Grana Padano cheese"
+        },
+        {
+            "term_id": 827,
+            "ru": "Крылья ската",
+            "name": "Stingray wings"
+        },
+        {
+            "term_id": 832,
+            "ru": "Лакса паста (самбал)",
+            "name": "Laksa paste (sambal)"
+        },
+        {
+            "term_id": 833,
+            "ru": "Куриное филе",
+            "name": "Chicken fillet"
+        },
+        {
+            "term_id": 838,
+            "ru": "Тонкая рисовая лапша",
+            "name": "Thin rice noodles"
+        },
+        {
+            "term_id": 839,
+            "ru": "Яичная лапша",
+            "name": "Egg noodles"
+        },
+        {
+            "term_id": 847,
+            "ru": "Говядина (Лопатка)",
+            "name": "Beef (shoulder)"
+        },
+        {
+            "term_id": 848,
+            "ru": "Копченые свиные ребра",
+            "name": "Smoked pork ribs"
+        },
+        {
+            "term_id": 850,
+            "ru": "Домашняя колбаса",
+            "name": "Homemade sausage"
+        },
+        {
+            "term_id": 854,
+            "ru": "Семена кунжута",
+            "name": "Sesame seeds"
+        },
+        {
+            "term_id": 856,
+            "ru": "Острый бобовый соус",
+            "name": "Spicy bean sauce"
+        },
+        {
+            "term_id": 857,
+            "ru": "Мисо паста светлая",
+            "name": "Light miso paste"
+        },
+        {
+            "term_id": 860,
+            "ru": "Маринованные яйцо (ajitsuke tamago)",
+            "name": "Marinated egg (ajitsuke tamago)"
+        },
+        {
+            "term_id": 861,
+            "ru": "Свинина чaсю (shashu)",
+            "name": "Pork chashu (shashu)"
+        },
+        {
+            "term_id": 862,
+            "ru": "Кукуруза зерна",
+            "name": "Corn kernels"
+        },
+        {
+            "term_id": 864,
+            "ru": "Сыр Тофу жареный (tofu puffs)",
+            "name": "Fried tofu (tofu puffs)"
+        },
+        {
+            "term_id": 865,
+            "ru": "Рыбные шарики",
+            "name": "Fish balls"
+        },
+        {
+            "term_id": 867,
+            "ru": "Паста Самбал",
+            "name": "Sambal paste"
+        },
+        {
+            "term_id": 869,
+            "ru": "Перец чили свежий",
+            "name": "Fresh chili pepper"
+        },
+        {
+            "term_id": 870,
+            "ru": "Сушеные креветки",
+            "name": "Dried shrimp"
+        },
+        {
+            "term_id": 872,
+            "ru": "Орех кимири (candlenut)**",
+            "name": "Candlenut (kemiri)**"
+        },
+        {
+            "term_id": 873,
+            "ru": "Чили паста (CHILI BOH)",
+            "name": "Chili paste (CHILI BOH)"
+        },
+        {
+            "term_id": 874,
+            "ru": "Сливки 33%",
+            "name": "Cream 33%"
+        },
+        {
+            "term_id": 880,
+            "ru": "Болгарский перец красный и зеленый",
+            "name": "Red and green bell pepper"
+        },
+        {
+            "term_id": 881,
+            "ru": "перец Хабанеро",
+            "name": "Habanero pepper"
+        },
+        {
+            "term_id": 890,
+            "ru": "Тмин",
+            "name": "Cumin"
+        },
+        {
+            "term_id": 891,
+            "ru": "Красное вино домашнее",
+            "name": "Homemade red wine"
+        },
+        {
+            "term_id": 893,
+            "ru": "Спагетти",
+            "name": "Spaghetti"
+        },
+        {
+            "term_id": 894,
+            "ru": "Сыр Пекорино Романо",
+            "name": "Pecorino Romano cheese"
+        },
+        {
+            "term_id": 895,
+            "ru": "Лангустины",
+            "name": "Langoustines"
+        },
+        {
+            "term_id": 900,
+            "ru": "Масло рапсовое",
+            "name": "Canola oil"
+        },
+        {
+            "term_id": 901,
+            "ru": "Цыплёнок",
+            "name": "Spring chicken"
+        },
+        {
+            "term_id": 902,
+            "ru": "Грибы сморчки",
+            "name": "Morel mushrooms"
+        },
+        {
+            "term_id": 903,
+            "ru": "Фасоль красная",
+            "name": "Red beans"
+        },
+        {
+            "term_id": 907,
+            "ru": "Соус песто",
+            "name": "Pesto sauce"
+        },
+        {
+            "term_id": 909,
+            "ru": "Сыр Тофу",
+            "name": "Tofu cheese"
+        },
+        {
+            "term_id": 912,
+            "ru": "Бейби осьминог",
+            "name": "Baby octopus"
+        },
+        {
+            "term_id": 915,
+            "ru": "Дижонская горчица",
+            "name": "Dijon mustard"
+        },
+        {
+            "term_id": 916,
+            "ru": "Пеперони",
+            "name": "Pepperoni"
+        },
+        {
+            "term_id": 917,
+            "ru": "Орехи кедровые",
+            "name": "Pine nuts"
+        },
+        {
+            "term_id": 919,
+            "ru": "Трюфельный соус",
+            "name": "Truffle sauce"
+        },
+        {
+            "term_id": 920,
+            "ru": "Морской черенок",
+            "name": "Sea razor clams"
+        },
+        {
+            "term_id": 922,
+            "ru": "Индейка",
+            "name": "Turkey"
+        },
+        {
+            "term_id": 925,
+            "ru": "Баклажан",
+            "name": "Eggplant"
+        },
+        {
+            "term_id": 931,
+            "ru": "Тальятелле",
+            "name": "Tagliatelle"
+        },
+        {
+            "term_id": 933,
+            "ru": "Бекон",
+            "name": "Bacon"
+        },
+        {
+            "term_id": 934,
+            "ru": "коктейль из морепродуктов",
+            "name": "Seafood cocktail"
+        },
+        {
+            "term_id": 935,
+            "ru": "Крекер соленый",
+            "name": "Salted crackers"
+        },
+        {
+            "term_id": 936,
+            "ru": "Креветки сухие",
+            "name": "Dried shrimp"
+        },
+        {
+            "term_id": 940,
+            "ru": "Гренки или сухарики",
+            "name": "Croutons or crackers"
+        },
+        {
+            "term_id": 942,
+            "ru": "Хойсин соус (Hoisin)",
+            "name": "Hoisin sauce"
+        },
+        {
+            "term_id": 943,
+            "ru": "Пекинская утка",
+            "name": "Peking duck"
+        },
+        {
+            "term_id": 944,
+            "ru": "Мандаринские блинчики",
+            "name": "Mandarin pancakes"
+        },
+        {
+            "term_id": 945,
+            "ru": "Вишня",
+            "name": "Cherry"
+        },
+        {
+            "term_id": 946,
+            "ru": "Утиное бедро",
+            "name": "Duck thigh"
+        },
+        {
+            "term_id": 948,
+            "ru": "Фарфалле",
+            "name": "Farfalle"
+        },
+        {
+            "term_id": 949,
+            "ru": "Сливки 15%",
+            "name": "Cream 15%"
+        },
+        {
+            "term_id": 952,
+            "ru": "Корень дайкона сладкий CHAI PO",
+            "name": "Sweet daikon root CHAI PO"
+        },
+        {
+            "term_id": 953,
+            "ru": "Свиные рёбра",
+            "name": "Pork ribs"
+        },
+        {
+            "term_id": 954,
+            "ru": "Манго",
+            "name": "Mango"
+        },
+        {
+            "term_id": 964,
+            "ru": "Горчичный порошок",
+            "name": "Mustard powder"
+        },
+        {
+            "term_id": 965,
+            "ru": "Сушеный лук",
+            "name": "Dried onion"
+        },
+        {
+            "term_id": 968,
+            "ru": "Нутрия тушка",
+            "name": "Nutria carcass"
+        },
+        {
+            "term_id": 971,
+            "ru": "Арахис",
+            "name": "Peanuts"
+        },
+        {
+            "term_id": 974,
+            "ru": "Тайский соус Шрирача (Shriraja Panich)",
+            "name": "Thai Sriracha sauce (shriraja panich)"
+        },
+        {
+            "term_id": 977,
+            "ru": "Раки",
+            "name": "Crayfish"
+        },
+        {
+            "term_id": 980,
+            "ru": "Оливки без косточек",
+            "name": "Pitted olives"
+        },
+        {
+            "term_id": 982,
+            "ru": "Желток яичный",
+            "name": "Egg yolk"
+        },
+        {
+            "term_id": 983,
+            "ru": "Уксус",
+            "name": "Vinegar"
+        },
+        {
+            "term_id": 985,
+            "ru": "Ланспик",
+            "name": "Lanspik"
+        },
+        {
+            "term_id": 986,
+            "ru": "Листья салата",
+            "name": "Lettuce leaves"
+        },
+        {
+            "term_id": 990,
+            "ru": "Икра черная (паюсная)**",
+            "name": "Black caviar (potted)**"
+        },
+        {
+            "term_id": 991,
+            "ru": "Листья салата латук",
+            "name": "Lettuce leaves"
+        },
+        {
+            "term_id": 995,
+            "ru": "Головка чеснока, разрезанная пополам",
+            "name": "Head of garlic, cut in half"
+        },
+        {
+            "term_id": 997,
+            "ru": "Семена кунжута, жареные",
+            "name": "Sesame seeds, toasted"
+        },
+        {
+            "term_id": 999,
+            "ru": "Горгонзола",
+            "name": "Gorgonzola"
+        },
+        {
+            "term_id": 1000,
+            "ru": "Итальянские травы",
+            "name": "Italian herbs"
+        },
+        {
+            "term_id": 1001,
+            "ru": "Зеленая паста карри",
+            "name": "Green curry paste"
+        },
+        {
+            "term_id": 1004,
+            "ru": "Тайские баклажаны",
+            "name": "Thai eggplants"
+        },
+        {
+            "term_id": 1007,
+            "ru": "Сыр Пармезан, тертый",
+            "name": "Parmesan cheese, grated"
+        },
+        {
+            "term_id": 1009,
+            "ru": "Сухари панировочные",
+            "name": "Breadcrumbs"
+        },
+        {
+            "term_id": 1010,
+            "ru": "Вино красное сухое",
+            "name": "Dry red wine"
+        },
+        {
+            "term_id": 1011,
+            "ru": "Карп",
+            "name": "Carp"
+        },
+        {
+            "term_id": 1014,
+            "ru": "Сладкая паприка молотая",
+            "name": "Sweet ground paprika"
+        },
+        {
+            "term_id": 1017,
+            "ru": "Черный шоколад 75-95%",
+            "name": "Dark chocolate 75-95%"
+        },
+        {
+            "term_id": 1018,
+            "ru": "Какао порошок",
+            "name": "Cocoa powder"
+        },
+        {
+            "term_id": 1019,
+            "ru": "Мороженое",
+            "name": "Ice cream"
+        },
+        {
+            "term_id": 1020,
+            "ru": "Вишня без косточки",
+            "name": "Pitted cherries"
+        },
+        {
+            "term_id": 1021,
+            "ru": "Экстракт ванили",
+            "name": "Vanilla extract"
+        },
+        {
+            "term_id": 1022,
+            "ru": "Сахарная пудра",
+            "name": "Powdered sugar"
+        },
+        {
+            "term_id": 1023,
+            "ru": "Каре ягненка",
+            "name": "Lamb rack"
+        },
+        {
+            "term_id": 1026,
+            "ru": "Кабачок",
+            "name": "Zucchini"
+        },
+        {
+            "term_id": 1028,
+            "ru": "Прованские травы",
+            "name": "Herbs de Provence"
+        },
+        {
+            "term_id": 1037,
+            "ru": "Оливки черные",
+            "name": "Black olives"
+        },
+        {
+            "term_id": 1039,
+            "ru": "Яблоки кисло сладкие",
+            "name": "Sour-sweet apples"
+        },
+        {
+            "term_id": 1043,
+            "ru": "Красный винный уксус",
+            "name": "Red wine vinegar"
+        },
+        {
+            "term_id": 1044,
+            "ru": "Ананасовый сок",
+            "name": "Pineapple juice"
+        },
+        {
+            "term_id": 1047,
+            "ru": "Бальзамический уксус",
+            "name": "Balsamic vinegar"
+        },
+        {
+            "term_id": 1050,
+            "ru": "Каперсы маринованные",
+            "name": "Pickled capers"
+        },
+        {
+            "term_id": 1051,
+            "ru": "Шнитт-лук",
+            "name": "Chives"
+        },
+        {
+            "term_id": 1055,
+            "ru": "Ягоды можжевельника",
+            "name": "Juniper berries"
+        },
+        {
+            "term_id": 1057,
+            "ru": "Вино Кьянти",
+            "name": "Chianti wine"
+        },
+        {
+            "term_id": 1059,
+            "ru": "Клаб стейк",
+            "name": "Club steak"
+        },
+        {
+            "term_id": 1060,
+            "ru": "Руккола",
+            "name": "Arugula"
+        },
+        {
+            "term_id": 1061,
+            "ru": "Базилик зеленый",
+            "name": "Fresh basil"
+        },
+        {
+            "term_id": 1064,
+            "ru": "Лук репчатый, мелко нарезанный",
+            "name": "Onion, finely chopped"
+        },
+        {
+            "term_id": 1066,
+            "ru": "Сыр Рикотта",
+            "name": "Ricotta cheese"
+        },
+        {
+            "term_id": 1068,
+            "ru": "Листы Лазаньи",
+            "name": "Lasagna sheets"
+        },
+        {
+            "term_id": 1069,
+            "ru": "Шпинат свежий",
+            "name": "Fresh spinach"
+        },
+        {
+            "term_id": 1073,
+            "ru": "Майоран",
+            "name": "Marjoram"
+        },
+        {
+            "term_id": 1079,
+            "ru": "Турецкий горох (нут)",
+            "name": "Chickpeas"
+        },
+        {
+            "term_id": 1080,
+            "ru": "Тахини",
+            "name": "Tahini"
+        },
+        {
+            "term_id": 1081,
+            "ru": "Зира (кумин) молотая",
+            "name": "Ground cumin"
+        },
+        {
+            "term_id": 1083,
+            "ru": "Тайский Чили, сушеный",
+            "name": "Thai chili, dried"
+        },
+        {
+            "term_id": 1087,
+            "ru": "Грибы вешенки",
+            "name": "Oyster mushrooms"
+        },
+        {
+            "term_id": 1089,
+            "ru": "Бараний фарш",
+            "name": "Ground lamb"
+        },
+        {
+            "term_id": 1090,
+            "ru": "Сумах",
+            "name": "Sumac"
+        },
+        {
+            "term_id": 1092,
+            "ru": "Телятина для бифштекса",
+            "name": "Veal for steak"
+        },
+        {
+            "term_id": 1095,
+            "ru": "Сыр с голубой плесенью",
+            "name": "Blue cheese"
+        },
+        {
+            "term_id": 1098,
+            "ru": "Светлый соевый соус",
+            "name": "Light soy sauce"
+        },
+        {
+            "term_id": 1100,
+            "ru": "Тайский чили",
+            "name": "Thai chili"
+        },
+        {
+            "term_id": 1103,
+            "ru": "Зеленые стручки фасоли",
+            "name": "Green bean pods"
+        },
+        {
+            "term_id": 1105,
+            "ru": "Паста карри красная",
+            "name": "Red curry paste"
+        },
+        {
+            "term_id": 1110,
+            "ru": "Мясо петуха",
+            "name": "Rooster meat"
+        },
+        {
+            "term_id": 1111,
+            "ru": "Говяжьи копыта",
+            "name": "Beef hooves"
+        },
+        {
+            "term_id": 1113,
+            "ru": "Говяжьи щеки",
+            "name": "Beef cheeks"
+        },
+        {
+            "term_id": 1115,
+            "ru": "Грибы шампиньоны",
+            "name": "Champignon mushrooms"
+        },
+        {
+            "term_id": 1117,
+            "ru": "Филе индейки",
+            "name": "Turkey fillet"
+        },
+        {
+            "term_id": 1123,
+            "ru": "Кубики льда",
+            "name": "Ice cubes"
+        },
+        {
+            "term_id": 1135,
+            "ru": "Печень куриная",
+            "name": "Chicken liver"
+        },
+        {
+            "term_id": 1137,
+            "ru": "Бренди или коньяк",
+            "name": "Brandy or cognac"
+        },
+        {
+            "term_id": 1145,
+            "ru": "Спаржа",
+            "name": "Asparagus"
+        },
+        {
+            "term_id": 1147,
+            "ru": "Тимьян свежий",
+            "name": "Fresh thyme"
+        },
+        {
+            "term_id": 1152,
+            "ru": "Сметана 20%",
+            "name": "Sour cream 20%"
+        },
+        {
+            "term_id": 1153,
+            "ru": "Говяжье сердце",
+            "name": "Beef heart"
+        },
+        {
+            "term_id": 1154,
+            "ru": "Щеки свиные",
+            "name": "Pork cheeks"
+        },
+        {
+            "term_id": 1157,
+            "ru": "Чёрная смородина",
+            "name": "Black currant"
+        },
+        {
+            "term_id": 1158,
+            "ru": "Шоколадный Хабанеро",
+            "name": "Chocolate Habanero"
+        },
+        {
+            "term_id": 1159,
+            "ru": "Сливки кокосовые",
+            "name": "Coconut cream"
+        },
+        {
+            "term_id": 1161,
+            "ru": "Сливки 10%",
+            "name": "10% cream"
+        },
+        {
+            "term_id": 1162,
+            "ru": "Тыква Хоккайдо",
+            "name": "Hokkaido pumpkin"
+        },
+        {
+            "term_id": 1163,
+            "ru": "Натуральный йогурт (3,5% жирности)",
+            "name": "Natural yogurt (3.5% fat)"
+        },
+        {
+            "term_id": 1165,
+            "ru": "Мята сушеная",
+            "name": "Dried mint"
+        },
+        {
+            "term_id": 1172,
+            "ru": "Кунжут",
+            "name": "Sesame seeds"
+        },
+        {
+            "term_id": 1173,
+            "ru": "Пшеничные листы для спринг роллов",
+            "name": "Wheat sheets for spring rolls"
+        },
+        {
+            "term_id": 1181,
+            "ru": "Ножка утиная",
+            "name": "Duck leg"
+        },
+        {
+            "term_id": 1183,
+            "ru": "Розмарин свежий",
+            "name": "Fresh rosemary"
+        },
+        {
+            "term_id": 1184,
+            "ru": "Каннеллоли",
+            "name": "Cannelloni"
+        },
+        {
+            "term_id": 1185,
+            "ru": "Соус маринара",
+            "name": "Marinara sauce"
+        },
+        {
+            "term_id": 1186,
+            "ru": "Бешамель",
+            "name": "Béchamel"
+        },
+        {
+            "term_id": 1187,
+            "ru": "Сухари из белого хлеба",
+            "name": "Croutons from white bread"
+        },
+        {
+            "term_id": 1189,
+            "ru": "Лопатка ягненка с костью",
+            "name": "Bone-in lamb shoulder"
+        },
+        {
+            "term_id": 1194,
+            "ru": "Стеклянная лапша",
+            "name": "Glass noodles"
+        },
+        {
+            "term_id": 1198,
+            "ru": "Масло растительное для жарки",
+            "name": "Vegetable oil for frying"
+        },
+        {
+            "term_id": 1199,
+            "ru": "Сладкий соус чили",
+            "name": "Sweet chili sauce"
+        },
+        {
+            "term_id": 1205,
+            "ru": "Картофельное пюре",
+            "name": "Mashed potatoes"
+        },
+        {
+            "term_id": 1209,
+            "ru": "Коричневый сахар",
+            "name": "Brown sugar"
+        },
+        {
+            "term_id": 1214,
+            "ru": "Капуста пекинская свежая",
+            "name": "Fresh napa cabbage"
+        },
+        {
+            "term_id": 1215,
+            "ru": "Гусь, цесарка или курица",
+            "name": "Goose, guinea fowl or chicken"
+        },
+        {
+            "term_id": 1216,
+            "ru": "Лед",
+            "name": "Ice"
+        },
+        {
+            "term_id": 1226,
+            "ru": "Грибы вешенки или шимеджи",
+            "name": "Oyster mushrooms or shimeji"
+        },
+        {
+            "term_id": 1228,
+            "ru": "Корни кинзы",
+            "name": "Cilantro roots"
+        },
+        {
+            "term_id": 1229,
+            "ru": "Чесночно-перечный соус",
+            "name": "Garlic-chili sauce"
+        },
+        {
+            "term_id": 1230,
+            "ru": "Масло из виноградных косточек",
+            "name": "Grapeseed oil"
+        },
+        {
+            "term_id": 1232,
+            "ru": "Сахарный сироп",
+            "name": "Sugar syrup"
+        },
+        {
+            "term_id": 1233,
+            "ru": "Листья кинзы",
+            "name": "Cilantro leaves"
+        },
+        {
+            "term_id": 1235,
+            "ru": "Чеснок измельченный",
+            "name": "Minced garlic"
+        },
+        {
+            "term_id": 1236,
+            "ru": "Стейк рибай выдержанный",
+            "name": "Aged ribeye steak"
+        },
+        {
+            "term_id": 1237,
+            "ru": "Лук синий",
+            "name": "Red onion"
+        },
+        {
+            "term_id": 1238,
+            "ru": "Молотый жареный рис (khao khua)",
+            "name": "Ground roasted rice (khao khua)"
+        },
+        {
+            "term_id": 1243,
+            "ru": "Копченый или слабосоленый лосось",
+            "name": "Smoked or lightly salted salmon"
+        },
+        {
+            "term_id": 1246,
+            "ru": "Английский маффин или тост",
+            "name": "English muffin or toast"
+        },
+        {
+            "term_id": 1251,
+            "ru": "Гребешки",
+            "name": "Scallops"
+        },
+        {
+            "term_id": 1252,
+            "ru": "Лапша из корней папоротника",
+            "name": "Fiddlehead fern noodles"
+        },
+        {
+            "term_id": 1258,
+            "ru": "Имбирная паста",
+            "name": "Ginger paste"
+        },
+        {
+            "term_id": 1259,
+            "ru": "Чесночная паста",
+            "name": "Garlic paste"
+        },
+        {
+            "term_id": 1265,
+            "ru": "Куриные бедра, ножки",
+            "name": "Chicken thighs, drumsticks"
+        },
+        {
+            "term_id": 1266,
+            "ru": "Перец кайенский",
+            "name": "Cayenne pepper"
+        },
+        {
+            "term_id": 1272,
+            "ru": "Рис",
+            "name": "Rice"
+        },
+        {
+            "term_id": 1278,
+            "ru": "Вустерский соус",
+            "name": "Worcestershire sauce"
+        },
+        {
+            "term_id": 1280,
+            "ru": "Говяжья голень",
+            "name": "Beef shank"
+        },
+        {
+            "term_id": 1283,
+            "ru": "Желатин",
+            "name": "Gelatin"
+        },
+        {
+            "term_id": 1284,
+            "ru": "Рябчики*",
+            "name": "Partridges*"
+        },
+        {
+            "term_id": 1288,
+            "ru": "Свиной фарш",
+            "name": "Ground pork"
+        },
+        {
+            "term_id": 1294,
+            "ru": "Говяжья лопатка",
+            "name": "Beef chuck"
+        },
+        {
+            "term_id": 1295,
+            "ru": "Паста массаман карри",
+            "name": "Massaman curry paste"
+        },
+        {
+            "term_id": 1298,
+            "ru": "Белый кардамон",
+            "name": "White cardamom"
+        },
+        {
+            "term_id": 1306,
+            "ru": "Соль морская крупная",
+            "name": "Coarse sea salt"
+        },
+        {
+            "term_id": 1311,
+            "ru": "Красная карри паста",
+            "name": "Red curry paste"
+        },
+        {
+            "term_id": 1314,
+            "ru": "Тайский базилик, листья",
+            "name": "Thai basil leaves"
+        },
+        {
+            "term_id": 1315,
+            "ru": "Телятина лопатка",
+            "name": "Veal shoulder"
+        },
+        {
+            "term_id": 1320,
+            "ru": "Говяжий костный мозг",
+            "name": "Beef bone marrow"
+        },
+        {
+            "term_id": 1321,
+            "ru": "Перно (или абсент)",
+            "name": "Pernod (or absinthe)"
+        },
+        {
+            "term_id": 1323,
+            "ru": "Острая колбаска \"ндуйя\" или чоризо",
+            "name": "Spicy sausage 'nduja or chorizo"
+        },
+        {
+            "term_id": 1324,
+            "ru": "Паста орзо (рисони)",
+            "name": "Orzo pasta (risoni)"
+        },
+        {
+            "term_id": 1326,
+            "ru": "Зеленый лук, мелко нарезанный",
+            "name": "Green onion, finely chopped"
+        },
+        {
+            "term_id": 1327,
+            "ru": "Каффир лайм, листья",
+            "name": "Kaffir lime leaves"
+        },
+        {
+            "term_id": 1328,
+            "ru": "Тайская красная паста карри",
+            "name": "Thai red curry paste"
+        },
+        {
+            "term_id": 1336,
+            "ru": "Бланшированные помидоры черри",
+            "name": "Blanched cherry tomatoes"
+        },
+        {
+            "term_id": 1337,
+            "ru": "Оливки черные без косточек",
+            "name": "Pitted black olives"
+        },
+        {
+            "term_id": 1340,
+            "ru": "Орегано сушеный",
+            "name": "Dried oregano"
+        },
+        {
+            "term_id": 1344,
+            "ru": "Груша",
+            "name": "Pear"
+        },
+        {
+            "term_id": 1345,
+            "ru": "Перец Чильтепин",
+            "name": "Chiltepin pepper"
+        },
+        {
+            "term_id": 1346,
+            "ru": "Черноплодная рябина",
+            "name": "Chokeberry"
+        },
+        {
+            "term_id": 1348,
+            "ru": "Ананас",
+            "name": "Pineapple"
+        },
+        {
+            "term_id": 1349,
+            "ru": "Клубника",
+            "name": "Strawberries"
+        },
+        {
+            "term_id": 1356,
+            "ru": "Колбаска Чоризо",
+            "name": "Chorizo sausage"
+        },
+        {
+            "term_id": 1359,
+            "ru": "Перец Халапеньо",
+            "name": "Jalapeño pepper"
+        },
+        {
+            "term_id": 1361,
+            "ru": "Осьминог",
+            "name": "Octopus"
+        },
+        {
+            "term_id": 1362,
+            "ru": "Сливки",
+            "name": "Cream"
+        },
+        {
+            "term_id": 1364,
+            "ru": "Щеки телячьи",
+            "name": "Veal cheeks"
+        },
+        {
+            "term_id": 1365,
+            "ru": "Букет Гарни",
+            "name": "Bouquet garni"
+        },
+        {
+            "term_id": 1366,
+            "ru": "Семена аниса",
+            "name": "Anise"
+        },
+        {
+            "term_id": 1367,
+            "ru": "Экстрагон (тархун)",
+            "name": "Tarragon"
+        },
+        {
+            "term_id": 1369,
+            "ru": "Горошек зеленый",
+            "name": "Green peas"
+        },
+        {
+            "term_id": 1370,
+            "ru": "Мята свежая",
+            "name": "Fresh mint"
+        },
+        {
+            "term_id": 1371,
+            "ru": "Физалис овощной (Томатильо)**",
+            "name": "Tomatillo (husk tomato)"
+        },
+        {
+            "term_id": 1372,
+            "ru": "Зеленый перец Серрано***",
+            "name": "Serrano green pepper"
+        },
+        {
+            "term_id": 1373,
+            "ru": "Кинза со стеблем",
+            "name": "Cilantro with stem"
+        },
+        {
+            "term_id": 1374,
+            "ru": "Горчица",
+            "name": "Mustard"
+        },
+        {
+            "term_id": 1387,
+            "ru": "Моллюски венерки в ракушках (vongole)",
+            "name": "Clams (vongole)"
+        },
+        {
+            "term_id": 1388,
+            "ru": "Телятина, вырезка",
+            "name": "Veal tenderloin"
+        },
+        {
+            "term_id": 1394,
+            "ru": "Картофель отварной или фри",
+            "name": "Boiled or fried potatoes"
+        },
+        {
+            "term_id": 1395,
+            "ru": "Горчица \"сарептская\"(она же русская)",
+            "name": "Sarepta mustard (russian mustard)"
+        },
+        {
+            "term_id": 1400,
+            "ru": "Сыр Грюйер",
+            "name": "Gruyère cheese"
+        },
+        {
+            "term_id": 1403,
+            "ru": "Гренки из французского багета",
+            "name": "Croutons from French baguette"
+        },
+        {
+            "term_id": 1408,
+            "ru": "Бульон из осьминога",
+            "name": "Octopus broth"
+        },
+        {
+            "term_id": 1412,
+            "ru": "Мясо гигантского кальмара",
+            "name": "Giant squid meat"
+        },
+        {
+            "term_id": 1418,
+            "ru": "Утиный жир",
+            "name": "Duck fat"
+        },
+        {
+            "term_id": 1420,
+            "ru": "Соус Бешамель",
+            "name": "Béchamel sauce"
+        },
+        {
+            "term_id": 1422,
+            "ru": "Паста Paccheri",
+            "name": "Paccheri pasta"
+        },
+        {
+            "term_id": 1424,
+            "ru": "Долька лимона",
+            "name": "Lemon wedge"
+        },
+        {
+            "term_id": 1425,
+            "ru": "Филе лосося со шкурой",
+            "name": "Salmon fillet with skin"
+        },
+        {
+            "term_id": 1428,
+            "ru": "Мука пшеничная",
+            "name": "Wheat flour"
+        },
+        {
+            "term_id": 1429,
+            "ru": "Рамп стейк выдержанный",
+            "name": "Aged ramp steak"
+        },
+        {
+            "term_id": 1430,
+            "ru": "Листья розмарина",
+            "name": "Rosemary leaves"
+        },
+        {
+            "term_id": 1433,
+            "ru": "Грибы лисички",
+            "name": "Chanterelle mushrooms"
+        },
+        {
+            "term_id": 1435,
+            "ru": "Тимьян сушеный",
+            "name": "Dried thyme"
+        },
+        {
+            "term_id": 1436,
+            "ru": "Зеленушки",
+            "name": "Green mushrooms"
+        },
+        {
+            "term_id": 1437,
+            "ru": "Масло оливковое Extra Virgin",
+            "name": "Extra virgin olive oil"
+        },
+        {
+            "term_id": 1443,
+            "ru": "Говяжья вырезка",
+            "name": "Beef tenderloin"
+        },
+        {
+            "term_id": 1446,
+            "ru": "Слоёное бездрожжевое тесто",
+            "name": "Yeast-free puff pastry"
+        },
+        {
+            "term_id": 1447,
+            "ru": "Пармская ветчина",
+            "name": "Parma ham"
+        },
+        {
+            "term_id": 1450,
+            "ru": "Обрезки говяжьей вырезки",
+            "name": "Trimmings from beef tenderloin"
+        },
+        {
+            "term_id": 1451,
+            "ru": "Красный уксус",
+            "name": "Red vinegar"
+        },
+        {
+            "term_id": 1455,
+            "ru": "Соус Трюфельный",
+            "name": "Truffle sauce"
+        },
+        {
+            "term_id": 1456,
+            "ru": "Яйцо пашот",
+            "name": "Poached egg"
+        },
+        {
+            "term_id": 1459,
+            "ru": "Крем-сыр",
+            "name": "Cream cheese"
+        },
+        {
+            "term_id": 1463,
+            "ru": "Бальзамический белый уксус",
+            "name": "White balsamic vinegar"
+        },
+        {
+            "term_id": 1464,
+            "ru": "Ячменная мука",
+            "name": "Barley flour"
+        },
+        {
+            "term_id": 1465,
+            "ru": "Масло из молока яка",
+            "name": "Yak milk butter"
+        },
+        {
+            "term_id": 1466,
+            "ru": "Солёный молочный чай",
+            "name": "Salted milk tea"
+        },
+        {
+            "term_id": 1468,
+            "ru": "Прессованный пуэр",
+            "name": "Pressed pu-erh"
+        },
+        {
+            "term_id": 1471,
+            "ru": "Отвареный рубец",
+            "name": "Boiled tripe"
+        },
+        {
+            "term_id": 1477,
+            "ru": "Вырезка говяжья",
+            "name": "Beef tenderloin"
+        },
+        {
+            "term_id": 1480,
+            "ru": "Перец душистый горошком",
+            "name": "Allspice berries"
+        },
+        {
+            "term_id": 1483,
+            "ru": "Каракатица",
+            "name": "Cuttlefish"
+        },
+        {
+            "term_id": 1487,
+            "ru": "Томатное пюре",
+            "name": "Tomato puree"
+        },
+        {
+            "term_id": 1488,
+            "ru": "Гусь или утка",
+            "name": "Goose or duck"
+        },
+        {
+            "term_id": 1491,
+            "ru": "Свекла красная",
+            "name": "Red beet"
+        },
+        {
+            "term_id": 1493,
+            "ru": "Уксус 3%",
+            "name": "3% vinegar"
+        },
+        {
+            "term_id": 1495,
+            "ru": "Гречневая мука",
+            "name": "Buckwheat flour"
+        },
+        {
+            "term_id": 1502,
+            "ru": "Пшено",
+            "name": "Millet"
+        },
+        {
+            "term_id": 1503,
+            "ru": "Винный уксус красный",
+            "name": "Red wine vinegar"
+        },
+        {
+            "term_id": 1508,
+            "ru": "Салат бейби ромен",
+            "name": "Baby romaine lettuce"
+        },
+        {
+            "term_id": 1511,
+            "ru": "Французская горчица",
+            "name": "French mustard"
+        },
+        {
+            "term_id": 1512,
+            "ru": "Фруктовая горчица ( Мостарда)",
+            "name": "Fruit mustard (mostarda)"
+        },
+        {
+            "term_id": 1513,
+            "ru": "Корнишоны",
+            "name": "Cornichons"
+        },
+        {
+            "term_id": 1528,
+            "ru": "Фасоль белая",
+            "name": "White beans"
+        },
+        {
+            "term_id": 1529,
+            "ru": "Чернослив",
+            "name": "Prunes"
+        },
+        {
+            "term_id": 1532,
+            "ru": "Сало копчёное",
+            "name": "Smoked pork fat"
+        },
+        {
+            "term_id": 1538,
+            "ru": "Свиное филе",
+            "name": "Pork fillet"
+        },
+        {
+            "term_id": 1541,
+            "ru": "Сыр тёртый",
+            "name": "Grated cheese"
+        },
+        {
+            "term_id": 1548,
+            "ru": "Брынза овечья",
+            "name": "Sheep cheese (bryndza)"
+        },
+        {
+            "term_id": 1549,
+            "ru": "Майоран сушеный молотый",
+            "name": "Dried ground marjoram"
+        },
+        {
+            "term_id": 1550,
+            "ru": "Тмин молотый",
+            "name": "Ground cumin"
+        },
+        {
+            "term_id": 1551,
+            "ru": "Укроп сушеный молотый",
+            "name": "Dried ground dill"
+        },
+        {
+            "term_id": 1555,
+            "ru": "Перец красный молотый",
+            "name": "Ground red pepper"
+        },
+        {
+            "term_id": 1558,
+            "ru": "Кефир",
+            "name": "Kefir"
+        },
+        {
+            "term_id": 1561,
+            "ru": "Мясной фарш",
+            "name": "Ground meat"
+        },
+        {
+            "term_id": 1575,
+            "ru": "Варенье",
+            "name": "Jam"
+        },
+        {
+            "term_id": 1578,
+            "ru": "Орехи",
+            "name": "Nuts"
+        },
+        {
+            "term_id": 1579,
+            "ru": "Ром",
+            "name": "Rum"
+        },
+        {
+            "term_id": 1590,
+            "ru": "Сметана домашняя 20%",
+            "name": "Homemade sour cream 20%"
+        },
+        {
+            "term_id": 1593,
+            "ru": "Свинина постная",
+            "name": "Lean pork"
+        },
+        {
+            "term_id": 1594,
+            "ru": "Говядина постная",
+            "name": "Lean beef"
+        },
+        {
+            "term_id": 1596,
+            "ru": "Перец острый розовый",
+            "name": "Hot pink pepper"
+        },
+        {
+            "term_id": 1597,
+            "ru": "Бекон копчёный",
+            "name": "Smoked bacon"
+        },
+        {
+            "term_id": 1598,
+            "ru": "Посолочная смесь",
+            "name": "Curing mix"
+        },
+        {
+            "term_id": 1612,
+            "ru": "Макароны",
+            "name": "Macaroni"
+        },
+        {
+            "term_id": 1615,
+            "ru": "Хлеб",
+            "name": "Bread"
+        },
+        {
+            "term_id": 1619,
+            "ru": "Свиной окорок копчёный",
+            "name": "Smoked pork ham"
+        },
+        {
+            "term_id": 1620,
+            "ru": "Свиные субпродукты",
+            "name": "Pork offal"
+        },
+        {
+            "term_id": 1621,
+            "ru": "Говядина",
+            "name": "Beef"
+        },
+        {
+            "term_id": 1626,
+            "ru": "Крахмал",
+            "name": "Starch"
+        },
+        {
+            "term_id": 1627,
+            "ru": "Грецкие орехи молотые",
+            "name": "Ground walnuts"
+        },
+        {
+            "term_id": 1630,
+            "ru": "Ванильный сахар",
+            "name": "Vanilla sugar"
+        },
+        {
+            "term_id": 1634,
+            "ru": "Вода газированная",
+            "name": "Sparkling water"
+        },
+        {
+            "term_id": 1642,
+            "ru": "Кефир 2,5%",
+            "name": "Kefir 2.5%"
+        },
+        {
+            "term_id": 1644,
+            "ru": "Чечевица",
+            "name": "Lentils"
+        },
+        {
+            "term_id": 1645,
+            "ru": "Тыква",
+            "name": "Pumpkin"
+        },
+        {
+            "term_id": 1646,
+            "ru": "Жёлтая чечевица",
+            "name": "Yellow lentils (or pigeon peas (toor dal), split pigeon peas"
+        },
+        {
+            "term_id": 1649,
+            "ru": "Самбар порошок",
+            "name": "Sambar powder"
+        },
+        {
+            "term_id": 1650,
+            "ru": "Перец чили сушеный",
+            "name": "Dried chili"
+        },
+        {
+            "term_id": 1660,
+            "ru": "Кориандр листья",
+            "name": "Coriander leaves"
+        },
+        {
+            "term_id": 1661,
+            "ru": "Кориандр молотый",
+            "name": "Ground coriander"
+        },
+        {
+            "term_id": 1665,
+            "ru": "Мука рисовая",
+            "name": "Rice flour"
+        },
+        {
+            "term_id": 1670,
+            "ru": "Тандури масала",
+            "name": "Tandoori masala"
+        },
+        {
+            "term_id": 1671,
+            "ru": "чаат масала",
+            "name": "Chaat masala"
+        },
+        {
+            "term_id": 1674,
+            "ru": "Масло топлёное",
+            "name": "Clarified butter"
+        },
+        {
+            "term_id": 1675,
+            "ru": "Мука кукурузная",
+            "name": "Corn flour"
+        },
+        {
+            "term_id": 1679,
+            "ru": "Перец Халапеньо мелко нарезанный",
+            "name": "Chopped jalapeño pepper"
+        },
+        {
+            "term_id": 1680,
+            "ru": "Горох",
+            "name": "Peas"
+        },
+        {
+            "term_id": 1684,
+            "ru": "Овощи варёные",
+            "name": "Boiled vegetables"
+        },
+        {
+            "term_id": 1687,
+            "ru": "Козлятина",
+            "name": "Goat meat"
+        },
+        {
+            "term_id": 1689,
+            "ru": "Козлиные ножки",
+            "name": "Goat legs"
+        },
+        {
+            "term_id": 1690,
+            "ru": "Кус-кус",
+            "name": "Couscous"
+        },
+        {
+            "term_id": 1691,
+            "ru": "Семена горчицы черные",
+            "name": "Black mustard seeds"
+        },
+        {
+            "term_id": 1704,
+            "ru": "Кешью молотый",
+            "name": "Ground cashew"
+        },
+        {
+            "term_id": 1723,
+            "ru": "Свиная вырезка",
+            "name": "Pork tenderloin"
+        },
+        {
+            "term_id": 1724,
+            "ru": "Рисовое вино",
+            "name": "Rice wine"
+        },
+        {
+            "term_id": 1728,
+            "ru": "Побеги бамбука",
+            "name": "Bamboo shoots"
+        },
+        {
+            "term_id": 1730,
+            "ru": "Гриб Муэр",
+            "name": "Wood ear mushrooms"
+        },
+        {
+            "term_id": 1732,
+            "ru": "Утка",
+            "name": "Duck"
+        },
+        {
+            "term_id": 1733,
+            "ru": "Уксус белый",
+            "name": "White vinegar"
+        },
+        {
+            "term_id": 1736,
+            "ru": "Тёмный соевый соус",
+            "name": "Dark soy sauce"
+        },
+        {
+            "term_id": 1738,
+            "ru": "Белок яичный",
+            "name": "Egg white"
+        },
+        {
+            "term_id": 1742,
+            "ru": "Болгарский перец жёлтый",
+            "name": "Yellow bell pepper"
+        },
+        {
+            "term_id": 1743,
+            "ru": "Кетчуп",
+            "name": "Ketchup"
+        },
+        {
+            "term_id": 1744,
+            "ru": "Масло арахисовое",
+            "name": "Peanut oil"
+        },
+        {
+            "term_id": 1745,
+            "ru": "Бульон куриный",
+            "name": "Chicken broth"
+        },
+        {
+            "term_id": 1747,
+            "ru": "Сычуаньский перец",
+            "name": "Sichuan pepper"
+        },
+        {
+            "term_id": 1748,
+            "ru": "Чесночный чили соус",
+            "name": "Garlic chili sauce"
+        },
+        {
+            "term_id": 1749,
+            "ru": "Красный рисовый уксус",
+            "name": "Red rice vinegar"
+        },
+        {
+            "term_id": 1755,
+            "ru": "Порошок фенхеля",
+            "name": "Fennel powder"
+        },
+        {
+            "term_id": 1757,
+            "ru": "Лук севок",
+            "name": "Shallots"
+        },
+        {
+            "term_id": 1760,
+            "ru": "Ваниль",
+            "name": "Vanilla"
+        },
+        {
+            "term_id": 1763,
+            "ru": "Лимонная кислота",
+            "name": "Citric acid"
+        },
+        {
+            "term_id": 1764,
+            "ru": "Лесные ягоды (малина, черника, земляника)",
+            "name": "Forest berries (raspberries, blueberries, strawberries)"
+        },
+        {
+            "term_id": 1768,
+            "ru": "Ветчина",
+            "name": "Ham"
+        },
+        {
+            "term_id": 1773,
+            "ru": "Крахмал тапиоки",
+            "name": "Tapioca starch"
+        },
+        {
+            "term_id": 1776,
+            "ru": "Масло чили",
+            "name": "Chili oil"
+        },
+        {
+            "term_id": 1779,
+            "ru": "Кунжутная паста",
+            "name": "Sesame paste"
+        },
+        {
+            "term_id": 1783,
+            "ru": "Паста Doubanjiang",
+            "name": "Doubanjiang paste"
+        },
+        {
+            "term_id": 1794,
+            "ru": "Бульон",
+            "name": "Broth"
+        },
+        {
+            "term_id": 1796,
+            "ru": "Каштаны",
+            "name": "Chestnuts"
+        },
+        {
+            "term_id": 1798,
+            "ru": "Пиво",
+            "name": "Beer"
+        },
+        {
+            "term_id": 1799,
+            "ru": "Лепёшка домашняя",
+            "name": "Homemade flatbread"
+        },
+        {
+            "term_id": 1801,
+            "ru": "Капуста Напа",
+            "name": "Napa cabbage"
+        },
+        {
+            "term_id": 1804,
+            "ru": "Перец чили анчо",
+            "name": "Ancho chili pepper"
+        },
+        {
+            "term_id": 1805,
+            "ru": "Перец чили гуахильо",
+            "name": "Guajillo chili"
+        },
+        {
+            "term_id": 1807,
+            "ru": "Перец чили де арбол",
+            "name": "Arbol chili"
+        },
+        {
+            "term_id": 1808,
+            "ru": "Перец чили поблано",
+            "name": "Poblano chili peppers"
+        },
+        {
+            "term_id": 1809,
+            "ru": "Свиная корейка",
+            "name": "Pork loin"
+        },
+        {
+            "term_id": 1810,
+            "ru": "Бульон свиной",
+            "name": "Pork broth"
+        },
+        {
+            "term_id": 1811,
+            "ru": "Уксус яблочный",
+            "name": "Apple cider vinegar"
+        },
+        {
+            "term_id": 1814,
+            "ru": "Сальса",
+            "name": "Salsa"
+        },
+        {
+            "term_id": 1816,
+            "ru": "Сыр Ранчеро",
+            "name": "Ranchero cheese"
+        },
+        {
+            "term_id": 1817,
+            "ru": "Фасоль Пинто",
+            "name": "Pinto beans"
+        },
+        {
+            "term_id": 1818,
+            "ru": "Перец чили серрано",
+            "name": "Serrano chili pepper"
+        },
+        {
+            "term_id": 1819,
+            "ru": "Кукурузная лепёшка",
+            "name": "Corn tortilla"
+        },
+        {
+            "term_id": 1820,
+            "ru": "Кукурузные чипсы",
+            "name": "Corn chips"
+        },
+        {
+            "term_id": 1821,
+            "ru": "Перец чили пасилья",
+            "name": "Pasilla chili pepper"
+        },
+        {
+            "term_id": 1822,
+            "ru": "Фисташки",
+            "name": "Pistachios"
+        },
+        {
+            "term_id": 1823,
+            "ru": "Семена тыквы",
+            "name": "Pumpkin seeds"
+        },
+        {
+            "term_id": 1824,
+            "ru": "Масло кукурузное",
+            "name": "Corn oil"
+        },
+        {
+            "term_id": 1825,
+            "ru": "Сальса верде",
+            "name": "Salsa verde"
+        },
+        {
+            "term_id": 1826,
+            "ru": "Цукаты",
+            "name": "Candied fruits"
+        },
+        {
+            "term_id": 1828,
+            "ru": "Тунец консервированный",
+            "name": "Canned tuna"
+        },
+        {
+            "term_id": 1831,
+            "ru": "Семга слабосоленая",
+            "name": "Lightly salted salmon"
+        },
+        {
+            "term_id": 1833,
+            "ru": "Сыр Кунезо Ранчеро",
+            "name": "Queso fresco ranchero cheese"
+        },
+        {
+            "term_id": 1834,
+            "ru": "Говяжий стейк",
+            "name": "Beef steak"
+        },
+        {
+            "term_id": 1835,
+            "ru": "Фасоль чёрная",
+            "name": "Black beans"
+        },
+        {
+            "term_id": 1836,
+            "ru": "Сыр Кесо Фреско",
+            "name": "Queso fresco"
+        },
+        {
+            "term_id": 1837,
+            "ru": "Свиная лопатка",
+            "name": "Pork shoulder"
+        },
+        {
+            "term_id": 1838,
+            "ru": "Перец чили чипотль",
+            "name": "Chipotle chili"
+        },
+        {
+            "term_id": 1839,
+            "ru": "Обертки для вонтонов",
+            "name": "Wonton wrappers"
+        },
+        {
+            "term_id": 1841,
+            "ru": "Соевый соус",
+            "name": "Soy sauce"
+        },
+        {
+            "term_id": 1842,
+            "ru": "Перец чили хлопьями",
+            "name": "Chili flakes"
+        },
+        {
+            "term_id": 1846,
+            "ru": "Кукуруза",
+            "name": "Corn"
+        },
+        {
+            "term_id": 1851,
+            "ru": "Перец чили красный",
+            "name": "Red chili pepper"
+        },
+        {
+            "term_id": 1854,
+            "ru": "Белый уксус",
+            "name": "White vinegar"
+        },
+        {
+            "term_id": 1857,
+            "ru": "Сыр",
+            "name": "Cheese"
+        },
+        {
+            "term_id": 1862,
+            "ru": "Базилик сушеный",
+            "name": "Dried basil"
+        },
+        {
+            "term_id": 1864,
+            "ru": "Говяжий жирный отруб (рибай, оковалок,ребра)",
+            "name": "Beef fatty cut (ribeye, shank, ribs)"
+        },
+        {
+            "term_id": 1871,
+            "ru": "Сладкий батат",
+            "name": "Sweet potato"
+        },
+        {
+            "term_id": 1873,
+            "ru": "Салат летуччи",
+            "name": "Lettuce"
+        },
+        {
+            "term_id": 1874,
+            "ru": "Салат романо",
+            "name": "Romaine lettuce"
+        },
+        {
+            "term_id": 1878,
+            "ru": "Куриный каркас",
+            "name": "Chicken carcass"
+        },
+        {
+            "term_id": 1880,
+            "ru": "Лапша рисовая",
+            "name": "Rice noodles"
+        },
+        {
+            "term_id": 1883,
+            "ru": "Морская соль",
+            "name": "Sea salt"
+        },
+        {
+            "term_id": 1888,
+            "ru": "Куриный фарш",
+            "name": "Cooked chicken mince"
+        },
+        {
+            "term_id": 1889,
+            "ru": "Паста Ачитоте",
+            "name": "Achiote paste"
+        },
+        {
+            "term_id": 1890,
+            "ru": "Грейпфрутовый сок",
+            "name": "Grapefruit juice"
+        },
+        {
+            "term_id": 1891,
+            "ru": "Листья эпазота",
+            "name": "Epazote leaves"
+        },
+        {
+            "term_id": 1892,
+            "ru": "Листья банана",
+            "name": "Banana leaves"
+        },
+        {
+            "term_id": 1895,
+            "ru": "Приправа для тако",
+            "name": "Taco seasoning"
+        },
+        {
+            "term_id": 1897,
+            "ru": "Булочка",
+            "name": "Bun"
+        },
+        {
+            "term_id": 1898,
+            "ru": "Сыр Кесо Панела",
+            "name": "Queso panela cheese"
+        },
+        {
+            "term_id": 1899,
+            "ru": "Душица",
+            "name": "Oregano"
+        },
+        {
+            "term_id": 1900,
+            "ru": "Свинина вяленая",
+            "name": "Cured pork"
+        },
+        {
+            "term_id": 1902,
+            "ru": "Майонез",
+            "name": "Mayonnaise"
+        },
+        {
+            "term_id": 1905,
+            "ru": "Перец желтый",
+            "name": "Yellow pepper"
+        },
+        {
+            "term_id": 1907,
+            "ru": "Филе белой рыбы",
+            "name": "White fish fillet"
+        },
+        {
+            "term_id": 1908,
+            "ru": "Салат латук",
+            "name": "Lettuce"
+        },
+        {
+            "term_id": 1909,
+            "ru": "Молоко сгущенное",
+            "name": "Condensed milk"
+        },
+        {
+            "term_id": 1910,
+            "ru": "Перец желтый молотый",
+            "name": "Ground yellow pepper"
+        },
+        {
+            "term_id": 1912,
+            "ru": "Утиные ножки",
+            "name": "Duck legs"
+        },
+        {
+            "term_id": 1913,
+            "ru": "Перец красный",
+            "name": "Red pepper"
+        },
+        {
+            "term_id": 1914,
+            "ru": "Паста Мирасол",
+            "name": "Mirasol paste"
+        },
+        {
+            "term_id": 1915,
+            "ru": "Бульон утиный",
+            "name": "Duck broth"
+        },
+        {
+            "term_id": 1917,
+            "ru": "Креольский соус",
+            "name": "Creole sauce"
+        },
+        {
+            "term_id": 1918,
+            "ru": "Телячье сердце",
+            "name": "Veal heart"
+        },
+        {
+            "term_id": 1920,
+            "ru": "Готовая основа для бульона",
+            "name": "Ready-made broth base"
+        },
+        {
+            "term_id": 1922,
+            "ru": "Корица палочка",
+            "name": "Cinnamon stick"
+        },
+        {
+            "term_id": 1925,
+            "ru": "Персик",
+            "name": "Peach"
+        },
+        {
+            "term_id": 1931,
+            "ru": "Форель",
+            "name": "Trout"
+        },
+        {
+            "term_id": 1933,
+            "ru": "Юкка",
+            "name": "Yuca"
+        },
+        {
+            "term_id": 1935,
+            "ru": "Перепелиное бедро",
+            "name": "Quail thigh"
+        },
+        {
+            "term_id": 1936,
+            "ru": "Маниока",
+            "name": "Cassava"
+        },
+        {
+            "term_id": 1937,
+            "ru": "Яйцо перепелиное",
+            "name": "Quail egg"
+        },
+        {
+            "term_id": 1944,
+            "ru": "Баранина",
+            "name": "Lamb"
+        },
+        {
+            "term_id": 1945,
+            "ru": "Миндаль хлопья",
+            "name": "Almond flakes"
+        },
+        {
+            "term_id": 1947,
+            "ru": "Тесто фило",
+            "name": "Filo dough"
+        },
+        {
+            "term_id": 1948,
+            "ru": "Вода апельсиновая",
+            "name": "Orange blossom water"
+        },
+        {
+            "term_id": 1950,
+            "ru": "Оливки красные",
+            "name": "Red olives"
+        },
+        {
+            "term_id": 1951,
+            "ru": "Чай",
+            "name": "Tea"
+        },
+        {
+            "term_id": 1952,
+            "ru": "Батат",
+            "name": "Sweet potato"
+        },
+        {
+            "term_id": 1953,
+            "ru": "Репа",
+            "name": "Turnip"
+        },
+        {
+            "term_id": 1956,
+            "ru": "Паприка острая",
+            "name": "Hot paprika"
+        },
+        {
+            "term_id": 1958,
+            "ru": "Треска филе",
+            "name": "Cod fillet"
+        },
+        {
+            "term_id": 1959,
+            "ru": "Помидор черри",
+            "name": "Cherry tomatoes"
+        },
+        {
+            "term_id": 1960,
+            "ru": "Сироп",
+            "name": "Syrup"
+        },
+        {
+            "term_id": 1964,
+            "ru": "Бульон мясной",
+            "name": "Meat broth"
+        },
+        {
+            "term_id": 1968,
+            "ru": "Фасоль сладкая",
+            "name": "Sweet beans"
+        },
+        {
+            "term_id": 1969,
+            "ru": "Белый винный уксус",
+            "name": "White wine vinegar"
+        },
+        {
+            "term_id": 1971,
+            "ru": "Виноград",
+            "name": "Grapes"
+        },
+        {
+            "term_id": 1974,
+            "ru": "Джем абрикосовый",
+            "name": "Apricot jam"
+        },
+        {
+            "term_id": 1976,
+            "ru": "Винный камень",
+            "name": "Cream of tartar"
+        },
+        {
+            "term_id": 1977,
+            "ru": "Тесто песочное",
+            "name": "Shortcrust pastry"
+        },
+        {
+            "term_id": 1978,
+            "ru": "Баранья нога",
+            "name": "Lamb leg"
+        },
+        {
+            "term_id": 1979,
+            "ru": "Бараний жир",
+            "name": "Lamb fat"
+        },
+        {
+            "term_id": 1984,
+            "ru": "Тёмное пиво",
+            "name": "Dark beer"
+        },
+        {
+            "term_id": 1985,
+            "ru": "Сыр Эдам",
+            "name": "Edam cheese"
+        },
+        {
+            "term_id": 1987,
+            "ru": "Фарш свиной",
+            "name": "Ground pork"
+        },
+        {
+            "term_id": 1988,
+            "ru": "Семена горчицы жёлтой",
+            "name": "Yellow mustard seeds"
+        },
+        {
+            "term_id": 1991,
+            "ru": "Вишневый сок",
+            "name": "Cherry juice"
+        },
+        {
+            "term_id": 1992,
+            "ru": "Ликёр апельсиновый",
+            "name": "Orange liqueur"
+        },
+        {
+            "term_id": 1994,
+            "ru": "Перловая крупа",
+            "name": "Pearl barley"
+        },
+        {
+            "term_id": 1995,
+            "ru": "Свиная отбивная",
+            "name": "Pork chop"
+        },
+        {
+            "term_id": 1997,
+            "ru": "Колбаса",
+            "name": "Sausage"
+        },
+        {
+            "term_id": 1998,
+            "ru": "Сельдь маринованная",
+            "name": "Pickled herring"
+        },
+        {
+            "term_id": 2000,
+            "ru": "Вяленое мясо",
+            "name": "Dried meat (beef and pork belly) or salt pork)"
+        },
+        {
+            "term_id": 2001,
+            "ru": "Фарш",
+            "name": "Minced meat"
+        },
+        {
+            "term_id": 2002,
+            "ru": "Анчоусы филе",
+            "name": "Anchovy fillets"
+        },
+        {
+            "term_id": 2004,
+            "ru": "Сельдь филе",
+            "name": "Herring fillet"
+        },
+        {
+            "term_id": 2006,
+            "ru": "Хлеб белый",
+            "name": "White bread"
+        },
+        {
+            "term_id": 2007,
+            "ru": "Цветная капуста",
+            "name": "Cauliflower"
+        },
+        {
+            "term_id": 2011,
+            "ru": "Свиной желудок",
+            "name": "Pig's stomach"
+        },
+        {
+            "term_id": 2012,
+            "ru": "Колбасный фарш",
+            "name": "Sausage filling"
+        },
+        {
+            "term_id": 2014,
+            "ru": "Сливовый джем",
+            "name": "Plum jam"
+        },
+        {
+            "term_id": 2015,
+            "ru": "Заварной крем",
+            "name": "Custard powder"
+        },
+        {
+            "term_id": 2016,
+            "ru": "Астурийская морсилья",
+            "name": "Asturian blood sausage"
+        },
+        {
+            "term_id": 2017,
+            "ru": "Перец зелёный",
+            "name": "Green pepper"
+        },
+        {
+            "term_id": 2018,
+            "ru": "Треска",
+            "name": "Salted cod"
+        },
+        {
+            "term_id": 2019,
+            "ru": "Ветчина Серрано",
+            "name": "Serrano ham"
+        },
+        {
+            "term_id": 2020,
+            "ru": "Кровяная колбаса",
+            "name": "Blood sausage"
+        },
+        {
+            "term_id": 2021,
+            "ru": "Луковая колбаса",
+            "name": "Onion sausage"
+        },
+        {
+            "term_id": 2024,
+            "ru": "Оливки",
+            "name": "Olives"
+        },
+        {
+            "term_id": 2026,
+            "ru": "Крахмал рисовый",
+            "name": "Rice starch"
+        },
+        {
+            "term_id": 2027,
+            "ru": "Миндаль молотый",
+            "name": "Ground almonds"
+        },
+        {
+            "term_id": 2028,
+            "ru": "Чимичурри соус",
+            "name": "Chimichurri sauce"
+        },
+        {
+            "term_id": 2029,
+            "ru": "Минтай",
+            "name": "Pollock"
+        },
+        {
+            "term_id": 2030,
+            "ru": "Кукуруза белая",
+            "name": "White corn"
+        },
+        {
+            "term_id": 2031,
+            "ru": "Рубец",
+            "name": "Beef tripe"
+        },
+        {
+            "term_id": 2034,
+            "ru": "Сыр Проволоне",
+            "name": "Provolone cheese"
+        },
+        {
+            "term_id": 2040,
+            "ru": "Стейк Оссобуко",
+            "name": "Osso buco"
+        },
+        {
+            "term_id": 2041,
+            "ru": "Бычьи яйца",
+            "name": "Beef testicles"
+        },
+        {
+            "term_id": 2042,
+            "ru": "Хересный уксус",
+            "name": "Sherry vinegar"
+        },
+        {
+            "term_id": 2044,
+            "ru": "Говяжий фланк стейк",
+            "name": "Beef flank steak"
+        },
+        {
+            "term_id": 2045,
+            "ru": "Тулузские колбаски",
+            "name": "Toulouse sausages"
+        },
+        {
+            "term_id": 2046,
+            "ru": "Свиная шкура",
+            "name": "Pork skin"
+        },
+        {
+            "term_id": 2047,
+            "ru": "Багет",
+            "name": "Baguette"
+        },
+        {
+            "term_id": 2049,
+            "ru": "Помидор свежий",
+            "name": "Fresh tomato"
+        },
+        {
+            "term_id": 2051,
+            "ru": "Сыр Реблошон Арависа",
+            "name": "Reblochon cheese"
+        },
+        {
+            "term_id": 2052,
+            "ru": "Фасоль зелёная",
+            "name": "Green beans"
+        },
+        {
+            "term_id": 2053,
+            "ru": "Артишок",
+            "name": "Artichokes"
+        },
+        {
+            "term_id": 2054,
+            "ru": "Лук-порей",
+            "name": "Leek"
+        },
+        {
+            "term_id": 2057,
+            "ru": "Аррорут (марантовый крахмал)",
+            "name": "Arrowroot (maranta starch)"
+        },
+        {
+            "term_id": 2058,
+            "ru": "Брюссельская капуста",
+            "name": "Brussels sprouts"
+        },
+        {
+            "term_id": 2059,
+            "ru": "Яблоко Голден",
+            "name": "Golden apple"
+        },
+        {
+            "term_id": 2061,
+            "ru": "Ванильный стручок",
+            "name": "Vanilla pod"
+        },
+        {
+            "term_id": 2062,
+            "ru": "Сыр Эмменталь",
+            "name": "Emmental cheese (grated (or gruyère), if desired)"
+        },
+        {
+            "term_id": 2063,
+            "ru": "Куриная печень",
+            "name": "Chicken liver"
+        },
+        {
+            "term_id": 2064,
+            "ru": "Салат Месклун",
+            "name": "Mesclun salad"
+        },
+        {
+            "term_id": 2065,
+            "ru": "Малиновый уксус",
+            "name": "Raspberry vinegar"
+        },
+        {
+            "term_id": 2066,
+            "ru": "Сыр козий",
+            "name": "Goat cheese"
+        },
+        {
+            "term_id": 2068,
+            "ru": "Сыр Камамбер",
+            "name": "Camembert cheese"
+        },
+        {
+            "term_id": 2078,
+            "ru": "Куриные бёдра",
+            "name": "Chicken thighs"
+        },
+        {
+            "term_id": 2082,
+            "ru": "Водоросли Нори",
+            "name": "Nori seaweed"
+        },
+        {
+            "term_id": 2091,
+            "ru": "Перец юдзу",
+            "name": "Yuzu pepper"
+        },
+        {
+            "term_id": 2092,
+            "ru": "Лапша гречневая",
+            "name": "Buckwheat noodles"
+        },
+        {
+            "term_id": 2093,
+            "ru": "Бульон даси",
+            "name": "Dashi broth"
+        },
+        {
+            "term_id": 2094,
+            "ru": "Рыбные фрикадельки",
+            "name": "Fish meatballs"
+        },
+        {
+            "term_id": 2095,
+            "ru": "Лапша удон",
+            "name": "Udon noodles"
+        },
+        {
+            "term_id": 2096,
+            "ru": "Перец шичими",
+            "name": "Shichimi pepper"
+        },
+        {
+            "term_id": 2097,
+            "ru": "Лук жемчужный или севок*",
+            "name": "Pearl onion or shallots*"
+        },
+        {
+            "term_id": 2098,
+            "ru": "Телячья мякоть",
+            "name": "Veal tenderloin"
+        },
+        {
+            "term_id": 2100,
+            "ru": "Перец корейский Кочукару",
+            "name": "Red pepper Gochugaru"
+        },
+        {
+            "term_id": 2101,
+            "ru": "Редька Дайкон",
+            "name": "Daikon radish"
+        },
+        {
+            "term_id": 2103,
+            "ru": "Корень колокольчика",
+            "name": "Bellflower root"
+        },
+        {
+            "term_id": 2105,
+            "ru": "Ростки папоротника",
+            "name": "Fern sprouts"
+        },
+        {
+            "term_id": 2106,
+            "ru": "Уксус рисовый",
+            "name": "Rice vinegar"
+        },
+        {
+            "term_id": 2108,
+            "ru": "Бобы мунг",
+            "name": "Mung beans"
+        },
+        {
+            "term_id": 2109,
+            "ru": "Говяжьи рёбра",
+            "name": "Beef short ribs"
+        },
+        {
+            "term_id": 2113,
+            "ru": "Пиво темное*",
+            "name": "Dark beer*"
+        },
+        {
+            "term_id": 2114,
+            "ru": "Лапша крахмальная",
+            "name": "Starch noodles"
+        },
+        {
+            "term_id": 2115,
+            "ru": "Ароматизатор миндальный пищевой",
+            "name": "Almond flavoring"
+        },
+        {
+            "term_id": 2117,
+            "ru": "Молоко нежирное",
+            "name": "Low-Fat milk"
+        },
+        {
+            "term_id": 2120,
+            "ru": "Персик сушеный",
+            "name": "Dried peach"
+        },
+        {
+            "term_id": 2121,
+            "ru": "Абрикос сушеный",
+            "name": "Dried apricots"
+        },
+        {
+            "term_id": 2122,
+            "ru": "Фасоль консервированная в томатном соусе",
+            "name": "Canned beans in tomato sauce"
+        },
+        {
+            "term_id": 2124,
+            "ru": "Кубик бульона (овощной или куриный)",
+            "name": "Bouillon cube (vegetable or chicken)"
+        },
+        {
+            "term_id": 2134,
+            "ru": "Лук белый мелко нарезанный",
+            "name": "Finely chopped white onion"
+        },
+        {
+            "term_id": 2136,
+            "ru": "Колбасные оболочки широкие",
+            "name": "Wide sausage casings"
+        },
+        {
+            "term_id": 2148,
+            "ru": "Свиные колбаски",
+            "name": "Pork sausages"
+        },
+        {
+            "term_id": 2152,
+            "ru": "Консервированные бобы",
+            "name": "Canned beans"
+        },
+        {
+            "term_id": 2153,
+            "ru": "Водоросли бурые сушеные",
+            "name": "Dried brown seaweed"
+        },
+        {
+            "term_id": 2161,
+            "ru": "Редька корейская",
+            "name": "Korean radish"
+        },
+        {
+            "term_id": 2164,
+            "ru": "Паста Денджанг",
+            "name": "Doenjang paste"
+        },
+        {
+            "term_id": 2165,
+            "ru": "Паста Кочуджанг",
+            "name": "Gochujang paste"
+        },
+        {
+            "term_id": 2166,
+            "ru": "Палтус",
+            "name": "Halibut"
+        },
+        {
+            "term_id": 2167,
+            "ru": "Бульон анчоусный",
+            "name": "Anchovy broth"
+        },
+        {
+            "term_id": 2168,
+            "ru": "Кресс-салат",
+            "name": "Watercress"
+        },
+        {
+            "term_id": 2170,
+            "ru": "Креветки солёные Saeu-jeot",
+            "name": "Salted shrimp saeu-jeot"
+        },
+        {
+            "term_id": 2178,
+            "ru": "Гук Ganjang",
+            "name": "Guk ganjang"
+        },
+        {
+            "term_id": 2179,
+            "ru": "Минари",
+            "name": "Minari (water dropwort) or watercress"
+        },
+        {
+            "term_id": 2180,
+            "ru": "Морской гребешок",
+            "name": "Scallops"
+        },
+        {
+            "term_id": 2181,
+            "ru": "Сливовый сироп",
+            "name": "Plum syrup"
+        },
+        {
+            "term_id": 2182,
+            "ru": "Мука рисовая сладкая",
+            "name": "Sweet rice flour"
+        },
+        {
+            "term_id": 2184,
+            "ru": "Дрожжи сухие",
+            "name": "Dry yeast"
+        },
+        {
+            "term_id": 2185,
+            "ru": "Кофе молотый",
+            "name": "Ground coffee"
+        },
+        {
+            "term_id": 2187,
+            "ru": "Перилла листья",
+            "name": "Perilla leaves"
+        },
+        {
+            "term_id": 2188,
+            "ru": "Перец шишито",
+            "name": "Shishito peppers"
+        },
+        {
+            "term_id": 2189,
+            "ru": "Капуста сеульская",
+            "name": "Seoul cabbage"
+        },
+        {
+            "term_id": 2190,
+            "ru": "Паста Твенджан",
+            "name": "Doenjang"
+        },
+        {
+            "term_id": 2191,
+            "ru": "Соус анчоусный",
+            "name": "Fermented anchovy sauce"
+        },
+        {
+            "term_id": 2192,
+            "ru": "Перилла семена",
+            "name": "Perilla seeds"
+        },
+        {
+            "term_id": 2194,
+            "ru": "Фасоль борлотти",
+            "name": "Borlotti beans"
+        },
+        {
+            "term_id": 2195,
+            "ru": "Базилик свежий",
+            "name": "Fresh basil"
+        },
+        {
+            "term_id": 2196,
+            "ru": "Оливковое масло холодного отжима",
+            "name": "Cold-pressed olive oil"
+        },
+        {
+            "term_id": 2197,
+            "ru": "Вино сухое Марсала",
+            "name": "Dry Marsala wine"
+        },
+        {
+            "term_id": 2198,
+            "ru": "Какао порошок горький",
+            "name": "Bitter cocoa powder"
+        },
+        {
+            "term_id": 2199,
+            "ru": "Печенье песочное",
+            "name": "Shortbread cookies"
+        },
+        {
+            "term_id": 2200,
+            "ru": "Мортаделла",
+            "name": "Mortadella"
+        },
+        {
+            "term_id": 2201,
+            "ru": "Ветчина вяленая",
+            "name": "Cured ham"
+        },
+        {
+            "term_id": 2202,
+            "ru": "Феттучини",
+            "name": "Fettuccine"
+        },
+        {
+            "term_id": 2208,
+            "ru": "Перец Анахайм сушеный",
+            "name": "Dried anaheim pepper"
+        },
+        {
+            "term_id": 2209,
+            "ru": "Перец Каскабель сушеный",
+            "name": "Dried Cascabel pepper"
+        },
+        {
+            "term_id": 2219,
+            "ru": "Хлеб домашний",
+            "name": "Homemade bread"
+        },
+        {
+            "term_id": 2223,
+            "ru": "Паста Кокильони",
+            "name": "Conchiglioni pasta"
+        },
+        {
+            "term_id": 2224,
+            "ru": "Лист Комбу(сушеные водоросли)",
+            "name": "Kombu leaf (dried seaweed)"
+        },
+        {
+            "term_id": 2227,
+            "ru": "Сыр Тофу твердый",
+            "name": "Firm tofu"
+        },
+        {
+            "term_id": 2233,
+            "ru": "Соуевый соус (Guk Ganjang)",
+            "name": "Soy sauce (guk ganjang)"
+        },
+        {
+            "term_id": 2237,
+            "ru": "Корейская чили паста Кочхуджанг (Gochujang)",
+            "name": "Korean chili paste Gochujang"
+        },
+        {
+            "term_id": 2241,
+            "ru": "Домашний хлеб",
+            "name": "Homemade bread"
+        },
+        {
+            "term_id": 2244,
+            "ru": "Маслины без косточек",
+            "name": "Pitted olives"
+        },
+        {
+            "term_id": 2246,
+            "ru": "Сыр бри",
+            "name": "Brie cheese"
+        },
+        {
+            "term_id": 2248,
+            "ru": "перец Кайенский молотый",
+            "name": "Ground cayenne pepper"
+        },
+        {
+            "term_id": 2251,
+            "ru": "Рыба камень",
+            "name": "Rockfish"
+        },
+        {
+            "term_id": 2254,
+            "ru": "Морской петух",
+            "name": "Tub gurnard"
+        },
+        {
+            "term_id": 2256,
+            "ru": "Рыба-солнечник",
+            "name": "John dory"
+        },
+        {
+            "term_id": 2257,
+            "ru": "Морской угорь",
+            "name": "Conger eel"
+        },
+        {
+            "term_id": 2260,
+            "ru": "Европейский звездочет",
+            "name": "Stargazer"
+        },
+        {
+            "term_id": 2261,
+            "ru": "Красная кефаль",
+            "name": "Red mullet"
+        },
+        {
+            "term_id": 2262,
+            "ru": "Морская цикада (slipper lobster)",
+            "name": "Slipper lobster"
+        },
+        {
+            "term_id": 2263,
+            "ru": "Лангуст",
+            "name": "Spiny lobster"
+        },
+        {
+            "term_id": 2265,
+            "ru": "Белая Скорпена",
+            "name": "White scorpionfish"
+        },
+        {
+            "term_id": 2266,
+            "ru": "Морской ерш или золотистая скорпена",
+            "name": "Black scorpionfish or red scorpionfish"
+        },
+        {
+            "term_id": 2267,
+            "ru": "Дракончик средиземноморский",
+            "name": "Greater weever"
+        },
+        {
+            "term_id": 2269,
+            "ru": "Дорада",
+            "name": "Dorada"
+        },
+        {
+            "term_id": 2283,
+            "ru": "Сырная палочка Моцарелла или сулугуги",
+            "name": "Mozzarella or suluguni cheese stick"
+        },
+        {
+            "term_id": 2285,
+            "ru": "Панировочные сухари Панко",
+            "name": "Panko bread crumbs"
+        },
+        {
+            "term_id": 2286,
+            "ru": "Острый кетчуп",
+            "name": "Spicy ketchup"
+        },
+        {
+            "term_id": 2287,
+            "ru": "Медовая горчица",
+            "name": "Honey mustard"
+        },
+        {
+            "term_id": 2288,
+            "ru": "Разрыхлитель для теста",
+            "name": "Baking powder"
+        },
+        {
+            "term_id": 2290,
+            "ru": "Картофель фри или запеченый",
+            "name": "French fries or baked potatoes"
+        },
+        {
+            "term_id": 2293,
+            "ru": "Зеленый лук (белая часть)",
+            "name": "Green onion (white part)"
+        },
+        {
+            "term_id": 2295,
+            "ru": "Сычуаньский перец горошком",
+            "name": "Sichuan peppercorns"
+        },
+        {
+            "term_id": 2299,
+            "ru": "Рисовый уксус черный",
+            "name": "Black rice vinegar"
+        },
+        {
+            "term_id": 2308,
+            "ru": "Трубы кальмара",
+            "name": "Squid tubes"
+        },
+        {
+            "term_id": 2322,
+            "ru": "Белые сухие грибы",
+            "name": "Dried white mushrooms"
+        },
+        {
+            "term_id": 2323,
+            "ru": "Крупа перловая",
+            "name": "Pearl barley"
+        },
+        {
+            "term_id": 2326,
+            "ru": "Семена укропа",
+            "name": "Dill seeds"
+        },
+        {
+            "term_id": 2329,
+            "ru": "Дыня зимняя",
+            "name": "Winter melon"
+        },
+        {
+            "term_id": 2333,
+            "ru": "Ростки бамбука",
+            "name": "Bamboo shoots"
+        },
+        {
+            "term_id": 2341,
+            "ru": "Желтая карри паста (или 5-6 ст.л. покупной пасты)",
+            "name": "Yellow curry paste (or 5-6 tbsp store-bought paste)"
+        },
+        {
+            "term_id": 2348,
+            "ru": "Нитритная соль",
+            "name": "Nitrite salt"
+        },
+        {
+            "term_id": 2351,
+            "ru": "Бекон сыровяленый",
+            "name": "Cured bacon"
+        },
+        {
+            "term_id": 2353,
+            "ru": "Рисовая бумага для жарки",
+            "name": "Rice paper for frying"
+        },
+        {
+            "term_id": 2360,
+            "ru": "Тесто слоеное бездрожжевое",
+            "name": "Unleavened puff pastry"
+        },
+        {
+            "term_id": 2368,
+            "ru": "Капуста бок-чой (или пекинская)",
+            "name": "Bok choy (or napa cabbage)"
+        },
+        {
+            "term_id": 2381,
+            "ru": "Моллюски рапана*",
+            "name": "Conch*"
+        },
+        {
+            "term_id": 2387,
+            "ru": "Пенне",
+            "name": "Penne"
+        },
+        {
+            "term_id": 2391,
+            "ru": "Соевый соус суповый Guk Ganjang",
+            "name": "Soup soy sauce guk ganjang"
+        },
+        {
+            "term_id": 2392,
+            "ru": "Корейская соевая паста Денджанг",
+            "name": "Korean soybean paste doenjang"
+        },
+        {
+            "term_id": 2394,
+            "ru": "Рисовые клёцки Тток",
+            "name": "Rice cakes tteok"
+        },
+        {
+            "term_id": 2398,
+            "ru": "Говяжья грудинка или ребра",
+            "name": "Beef brisket or ribs"
+        },
+        {
+            "term_id": 2400,
+            "ru": "Желтая кукурузная крупа среднего помола",
+            "name": "Medium grind yellow cornmeal"
+        },
+        {
+            "term_id": 2403,
+            "ru": "Лук-шалот, мелко нарезанный",
+            "name": "Shallot, finely chopped"
+        },
+        {
+            "term_id": 2413,
+            "ru": "Бульон из ягненка",
+            "name": "Lamb broth"
+        },
+        {
+            "term_id": 2415,
+            "ru": "Банан зеленый",
+            "name": "Green banana"
+        },
+        {
+            "term_id": 2417,
+            "ru": "Рыба свежая",
+            "name": "Fresh fish"
+        },
+        {
+            "term_id": 2418,
+            "ru": "Манная крупа мелкая",
+            "name": "Fine semolina"
+        },
+        {
+            "term_id": 2420,
+            "ru": "Миндаль целый",
+            "name": "Whole almonds"
+        },
+        {
+            "term_id": 2421,
+            "ru": "Миндаль бланшированный и очищеный",
+            "name": "Blanched and peeled almonds"
+        },
+        {
+            "term_id": 2422,
+            "ru": "Портерхаус стейк",
+            "name": "Porterhouse steak"
+        },
+        {
+            "term_id": 2433,
+            "ru": "Перечная паста для том ям*",
+            "name": "Tom Yum paste*"
+        },
+        {
+            "term_id": 2438,
+            "ru": "Брусника сушеная",
+            "name": "Dried lingonberry"
+        },
+        {
+            "term_id": 2439,
+            "ru": "Барбарис",
+            "name": "Barberry"
+        },
+        {
+            "term_id": 2456,
+            "ru": "Белая фасоль лимская свежая*",
+            "name": "Fresh lima beans*"
+        },
+        {
+            "term_id": 2457,
+            "ru": "Морская мелкая рыба",
+            "name": "Small sea fish"
+        },
+        {
+            "term_id": 2459,
+            "ru": "Сельдерейная соль",
+            "name": "Celery salt"
+        },
+        {
+            "term_id": 2460,
+            "ru": "Сладкая копченая паприка молотая",
+            "name": "Sweet smoked paprika ground"
+        },
+        {
+            "term_id": 2461,
+            "ru": "Чеснок сушёный молотый",
+            "name": "Dried ground garlic"
+        },
+        {
+            "term_id": 2463,
+            "ru": "Лук сушеный молотый",
+            "name": "Dried onion ground"
+        },
+        {
+            "term_id": 2473,
+            "ru": "Кокосовая стружка или тертый кокосовый орех",
+            "name": "Coconut flakes or grated coconut"
+        },
+        {
+            "term_id": 2475,
+            "ru": "Паприка сладкая молотая",
+            "name": "Sweet paprika, ground"
+        },
+        {
+            "term_id": 2477,
+            "ru": "Щупальца кальмаров",
+            "name": "Squid tentacles"
+        },
+        {
+            "term_id": 2478,
+            "ru": "Карри приправа",
+            "name": "Curry spice"
+        },
+        {
+            "term_id": 2480,
+            "ru": "Сыр Моцарелла Бурата",
+            "name": "Burrata Mozzarella cheese"
+        },
+        {
+            "term_id": 2481,
+            "ru": "Помидор \"Бычье сердце\"",
+            "name": "Tomato \"beef heart\""
+        },
+        {
+            "term_id": 2488,
+            "ru": "Кинза свежая",
+            "name": "Fresh cilantro"
+        },
+        {
+            "term_id": 2491,
+            "ru": "Яблочный уксус",
+            "name": "Apple cider vinegar"
+        },
+        {
+            "term_id": 2497,
+            "ru": "Куриная грудка с плечевой костью",
+            "name": "Chicken breast with wing bone"
+        },
+        {
+            "term_id": 2501,
+            "ru": "Побеги бамбука консервированные",
+            "name": "Canned bamboo shoots"
+        },
+        {
+            "term_id": 2508,
+            "ru": "Чили паста",
+            "name": "Chili paste"
+        },
+        {
+            "term_id": 2510,
+            "ru": "Утиная грудка с кожей",
+            "name": "Duck breast with skin"
+        },
+        {
+            "term_id": 2511,
+            "ru": "Ризотто, картофельное пюре или кус кус",
+            "name": "Risotto, mashed potatoes or couscous"
+        },
+        {
+            "term_id": 2512,
+            "ru": "Груша или яблоко",
+            "name": "Pear or apple"
+        },
+        {
+            "term_id": 2518,
+            "ru": "Уксус Chinkiang",
+            "name": "Chinkiang vinegar"
+        },
+        {
+            "term_id": 2521,
+            "ru": "Соус пико де гайо",
+            "name": "Pico de gallo sauce"
+        },
+        {
+            "term_id": 2525,
+            "ru": "Пеперончино *",
+            "name": "Pepperoncino *"
+        },
+        {
+            "term_id": 2526,
+            "ru": "Хлебная крошка или острые сухари",
+            "name": "Breadcrumbs or spicy croutons"
+        },
+        {
+            "term_id": 2527,
+            "ru": "Свиной ошеек",
+            "name": "Pork neck"
+        },
+        {
+            "term_id": 2529,
+            "ru": "Стейк лосося",
+            "name": "Salmon steak"
+        },
+        {
+            "term_id": 2531,
+            "ru": "Арахис жареный",
+            "name": "Roasted peanuts"
+        },
+        {
+            "term_id": 2533,
+            "ru": "Черный рисовый уксус",
+            "name": "Black rice vinegar"
+        },
+        {
+            "term_id": 2534,
+            "ru": "Китайские чёрные бобы",
+            "name": "Chinese black beans"
+        },
+        {
+            "term_id": 2536,
+            "ru": "Фасоль готовая",
+            "name": "Cooked beans"
+        },
+        {
+            "term_id": 2538,
+            "ru": "Лепёшки",
+            "name": "Flatbreads"
+        },
+        {
+            "term_id": 2539,
+            "ru": "Вода теплая",
+            "name": "Warm water"
+        },
+        {
+            "term_id": 2540,
+            "ru": "Сыр Оахака тертый*",
+            "name": "Shredded oaxaca cheese*"
+        },
+        {
+            "term_id": 2542,
+            "ru": "Семена льна",
+            "name": "Flax seeds"
+        },
+        {
+            "term_id": 2543,
+            "ru": "Листья Болдо",
+            "name": "Boldo leaves"
+        },
+        {
+            "term_id": 2544,
+            "ru": "Хвощ",
+            "name": "Horsetail"
+        },
+        {
+            "term_id": 2545,
+            "ru": "Ячмень",
+            "name": "Roasted barley"
+        },
+        {
+            "term_id": 2546,
+            "ru": "Айва",
+            "name": "Quince"
+        },
+        {
+            "term_id": 2553,
+            "ru": "Соленая свинина",
+            "name": "Salted pork"
+        },
+        {
+            "term_id": 2566,
+            "ru": "Имеретинский шафран (бархатцы)",
+            "name": "Imeretian saffron (marigold)"
+        },
+        {
+            "term_id": 2568,
+            "ru": "Сванская соль",
+            "name": "Svan salt"
+        },
+        {
+            "term_id": 2572,
+            "ru": "Рис Девзира (или Басмати)",
+            "name": "Devzira rice (or basmati)"
+        },
+        {
+            "term_id": 2576,
+            "ru": "Китайская брокколи Гай лан*",
+            "name": "Chinese broccoli gai lan*"
+        },
+        {
+            "term_id": 2577,
+            "ru": "Соус устричный",
+            "name": "Oyster sauce"
+        },
+        {
+            "term_id": 2578,
+            "ru": "Кукуруза сладкая вареная*",
+            "name": "Sweet corn boiled*"
+        },
+        {
+            "term_id": 2579,
+            "ru": "Сибас",
+            "name": "Sea bass"
+        },
+        {
+            "term_id": 2580,
+            "ru": "Огурец длинный",
+            "name": "Long cucumber"
+        },
+        {
+            "term_id": 2581,
+            "ru": "Каштаны консервированные",
+            "name": "Canned chestnuts"
+        },
+        {
+            "term_id": 2583,
+            "ru": "Лапша яичная тонкая",
+            "name": "Thin egg noodles"
+        },
+        {
+            "term_id": 2585,
+            "ru": "Молодые бобы в стручках",
+            "name": "Young green beans"
+        },
+        {
+            "term_id": 2587,
+            "ru": "Кунжут белый и черный",
+            "name": "White and black sesame seeds"
+        },
+        {
+            "term_id": 2588,
+            "ru": "Соус из чёрной фасоли с чесноком",
+            "name": "Black bean sauce with garlic"
+        },
+        {
+            "term_id": 2593,
+            "ru": "Тесто для вонтонов",
+            "name": "Wonton dough"
+        },
+        {
+            "term_id": 2594,
+            "ru": "Кунжут жареный",
+            "name": "Roasted sesame seeds"
+        },
+        {
+            "term_id": 2596,
+            "ru": "Рисовые обёртки",
+            "name": "Rice wrappers"
+        },
+        {
+            "term_id": 2626,
+            "ru": "Творог домашний (от 9%)",
+            "name": "Homemade cottage cheese (from 9%)"
+        },
+        {
+            "term_id": 2629,
+            "ru": "Кедровый орех",
+            "name": "Pine nuts"
+        },
+        {
+            "term_id": 2630,
+            "ru": "Черничный джем или варенье (любой ягодный)",
+            "name": "Blueberry jam or preserves (any berry)"
+        },
+        {
+            "term_id": 2632,
+            "ru": "Рисовое вино Шаоксин (или сухой херес)",
+            "name": "Shaoxing rice wine (or dry sherry)"
+        },
+        {
+            "term_id": 2634,
+            "ru": "Ноги ягнёнка (без костей)",
+            "name": "Lamb legs (boneless)"
+        },
+        {
+            "term_id": 2635,
+            "ru": "Сыр Панир",
+            "name": "Paneer cheese"
+        },
+        {
+            "term_id": 2637,
+            "ru": "перец Чили Красный сушеный",
+            "name": "Dried red chili pepper"
+        },
+        {
+            "term_id": 2638,
+            "ru": "Семена пажитника молотые",
+            "name": "Ground fenugreek seeds"
+        },
+        {
+            "term_id": 2641,
+            "ru": "Грибы шиитаке сушеные",
+            "name": "Dried shiitake mushrooms"
+        },
+        {
+            "term_id": 2643,
+            "ru": "Чили соус",
+            "name": "Chili sauce"
+        },
+        {
+            "term_id": 2646,
+            "ru": "Мак",
+            "name": "Poppy seeds"
+        },
+        {
+            "term_id": 2647,
+            "ru": "Мякоть кокоса",
+            "name": "Coconut flesh"
+        },
+        {
+            "term_id": 2648,
+            "ru": "Свиная кровь",
+            "name": "Pig's blood"
+        },
+        {
+            "term_id": 2650,
+            "ru": "Свиная щековина",
+            "name": "Pork cheek"
+        },
+        {
+            "term_id": 2651,
+            "ru": "Гречневая крупа",
+            "name": "Buckwheat"
+        },
+        {
+            "term_id": 2652,
+            "ru": "Лимонное пюре",
+            "name": "Lemon puree"
+        },
+        {
+            "term_id": 2655,
+            "ru": "Бутоны лилии сушеные",
+            "name": "Dried lily buds"
+        },
+        {
+            "term_id": 2659,
+            "ru": "Куриные лапки",
+            "name": "Chicken feet"
+        },
+        {
+            "term_id": 2663,
+            "ru": "Лапша для рамен",
+            "name": "Ramen noodles"
+        },
+        {
+            "term_id": 2664,
+            "ru": "Кунжут жареный измельченный",
+            "name": "Roasted and crushed sesame seeds"
+        },
+        {
+            "term_id": 2666,
+            "ru": "Бланшированная пекинская капуста",
+            "name": "Blanched napa cabbage"
+        },
+        {
+            "term_id": 2667,
+            "ru": "Бобовая паста Табаджан",
+            "name": "Doubanjiang (fermented broad bean paste)"
+        },
+        {
+            "term_id": 2669,
+            "ru": "Краситель пищевой оранжевый",
+            "name": "Orange food coloring"
+        },
+        {
+            "term_id": 2670,
+            "ru": "Вода розовая",
+            "name": "Rose water"
+        },
+        {
+            "term_id": 2675,
+            "ru": "Сычуаньский перец молотый",
+            "name": "Ground Sichuan pepper"
+        },
+        {
+            "term_id": 2676,
+            "ru": "Персик консервированный",
+            "name": "Canned peach"
+        },
+        {
+            "term_id": 2677,
+            "ru": "Фисташки чищеные",
+            "name": "Shelled pistachios"
+        },
+        {
+            "term_id": 2679,
+            "ru": "Сок яблочный, персиковый",
+            "name": "Apple or peach juice"
+        },
+        {
+            "term_id": 2680,
+            "ru": "Говядина отварная",
+            "name": "Boiled beef"
+        },
+        {
+            "term_id": 2681,
+            "ru": "Закваска или кефир",
+            "name": "Sourdough or kefir"
+        },
+        {
+            "term_id": 2690,
+            "ru": "Соус чили",
+            "name": "Chili sauce"
+        },
+        {
+            "term_id": 2694,
+            "ru": "Чипсы картофельные",
+            "name": "Potato chips"
+        },
+        {
+            "term_id": 2696,
+            "ru": "Креветочный порошок",
+            "name": "Shrimp powder"
+        },
+        {
+            "term_id": 2700,
+            "ru": "Смалец свиной",
+            "name": "Pork lard"
+        },
+        {
+            "term_id": 2701,
+            "ru": "Красная чечевица",
+            "name": "Red lentils"
+        },
+        {
+            "term_id": 2703,
+            "ru": "Икра улитки",
+            "name": "Snail caviar"
+        },
+        {
+            "term_id": 2704,
+            "ru": "Гренки из черного хлеба",
+            "name": "Black bread croutons"
+        },
+        {
+            "term_id": 2705,
+            "ru": "Мясо двухстворчатых моллюсков",
+            "name": "Clam meat"
+        },
+        {
+            "term_id": 2713,
+            "ru": "Кофе",
+            "name": "Coffee"
+        },
+        {
+            "term_id": 2714,
+            "ru": "Ванилин",
+            "name": "Vanillin"
+        },
+        {
+            "term_id": 2716,
+            "ru": "Сосиски",
+            "name": "Sausages"
+        },
+        {
+            "term_id": 2723,
+            "ru": "Салат айсберг",
+            "name": "Iceberg lettuce"
+        },
+        {
+            "term_id": 2724,
+            "ru": "Соус коктейльный",
+            "name": "Cocktail sauce"
+        },
+        {
+            "term_id": 2726,
+            "ru": "Карамелизированный лук",
+            "name": "Caramelized onion"
+        },
+        {
+            "term_id": 2728,
+            "ru": "Панчетта или бекон",
+            "name": "Pancetta or bacon"
+        },
+        {
+            "term_id": 2734,
+            "ru": "Колбаса копчёная",
+            "name": "Smoked sausage"
+        },
+        {
+            "term_id": 2739,
+            "ru": "Хлебная крошка крупная",
+            "name": "Coarse breadcrumbs"
+        },
+        {
+            "term_id": 2741,
+            "ru": "Горгонзола дольче",
+            "name": "Gorgonzola dolce"
+        },
+        {
+            "term_id": 2743,
+            "ru": "Гериций",
+            "name": "Hericium"
+        },
+        {
+            "term_id": 2744,
+            "ru": "Сухари",
+            "name": "Breadcrumbs"
+        },
+        {
+            "term_id": 2745,
+            "ru": "Соус айоли",
+            "name": "Aioli sauce"
+        },
+        {
+            "term_id": 2747,
+            "ru": "Салат Чука",
+            "name": "Chuka salad"
+        },
+        {
+            "term_id": 2751,
+            "ru": "Лепешки Чапати",
+            "name": "Chapati"
+        },
+        {
+            "term_id": 2752,
+            "ru": "Маргарин сливочный 65%",
+            "name": "Cream margarine 65%"
+        },
+        {
+            "term_id": 2754,
+            "ru": "Разрыхлитель пищевой",
+            "name": "Baking powder"
+        },
+        {
+            "term_id": 2755,
+            "ru": "Сахар ванильный",
+            "name": "Vanilla sugar"
+        },
+        {
+            "term_id": 2756,
+            "ru": "Пудра сахарная",
+            "name": "Powdered sugar"
+        },
+        {
+            "term_id": 2758,
+            "ru": "Повидло сливовое густое",
+            "name": "Thick plum jam"
+        },
+        {
+            "term_id": 2759,
+            "ru": "Шоколад молочный",
+            "name": "Milk chocolate"
+        },
+        {
+            "term_id": 2760,
+            "ru": "Чернослив без косточек",
+            "name": "Pitted prunes"
+        },
+        {
+            "term_id": 2767,
+            "ru": "Палочкки морковки",
+            "name": "Carrot sticks"
+        },
+        {
+            "term_id": 2768,
+            "ru": "Палочки сельдерея",
+            "name": "Celery sticks"
+        },
+        {
+            "term_id": 2770,
+            "ru": "Огурец маринованый",
+            "name": "Pickled cucumber"
+        },
+        {
+            "term_id": 2773,
+            "ru": "Дистиллированный уксус",
+            "name": "Distilled vinegar"
+        },
+        {
+            "term_id": 2774,
+            "ru": "Сок из под моллюсков",
+            "name": "Clam juice"
+        },
+        {
+            "term_id": 2776,
+            "ru": "Миндаль толчёный",
+            "name": "Crushed almonds"
+        },
+        {
+            "term_id": 2781,
+            "ru": "Соус Лаоганма",
+            "name": "Laoganma sauce"
+        },
+        {
+            "term_id": 2783,
+            "ru": "Сыр Фета",
+            "name": "Feta cheese"
+        },
+        {
+            "term_id": 2785,
+            "ru": "Оливки Каламата с косточкой",
+            "name": "Pitted Kalamata olives"
+        },
+        {
+            "term_id": 2793,
+            "ru": "Кунжут белый",
+            "name": "White sesame"
+        },
+        {
+            "term_id": 2794,
+            "ru": "Селедка дунайка или матиас",
+            "name": "Danube herring or matias"
+        },
+        {
+            "term_id": 2795,
+            "ru": "Яблоко кислое (Симиренко)",
+            "name": "Sour apple (simirenko)"
+        },
+        {
+            "term_id": 2796,
+            "ru": "Булка без корочки",
+            "name": "Crustless bread"
+        },
+        {
+            "term_id": 2797,
+            "ru": "Сливочный сыр",
+            "name": "Cream cheese"
+        },
+        {
+            "term_id": 2800,
+            "ru": "Черный ржаной хлеб",
+            "name": "Dark rye bread"
+        },
+        {
+            "term_id": 2802,
+            "ru": "Икра сельди",
+            "name": "Herring caviar"
+        },
+        {
+            "term_id": 2803,
+            "ru": "Пиво светлое",
+            "name": "Light beer"
+        },
+        {
+            "term_id": 2811,
+            "ru": "Колбаски охотничьи",
+            "name": "Hunting sausages"
+        },
+        {
+            "term_id": 2812,
+            "ru": "Курица копченая",
+            "name": "Smoked chicken"
+        },
+        {
+            "term_id": 2814,
+            "ru": "Огуречный рассол",
+            "name": "Cucumber brine"
+        },
+        {
+            "term_id": 2821,
+            "ru": "Сыр Дор блю",
+            "name": "Dor Blue cheese"
+        },
+        {
+            "term_id": 2827,
+            "ru": "Гусиный (куриный) жир",
+            "name": "Goose (chicken) fat"
+        },
+        {
+            "term_id": 2828,
+            "ru": "Гусиная (куриная) кожа",
+            "name": "Goose (chicken) skin"
+        },
+        {
+            "term_id": 2836,
+            "ru": "Яйцо куриное (вареное)",
+            "name": "Boiled chicken egg"
+        },
+        {
+            "term_id": 2837,
+            "ru": "Молоко концентрированнок (не с сахаром)",
+            "name": "Condensed milk (unsweetened)"
+        },
+        {
+            "term_id": 2838,
+            "ru": "Крекер (или 2 ломтика хлеба)",
+            "name": "Crackers (or 2 slices of bread)"
+        },
+        {
+            "term_id": 2843,
+            "ru": "Экстрагон сушеный",
+            "name": "Dried tarragon"
+        },
+        {
+            "term_id": 2849,
+            "ru": "Креветки Кардинал ( carabineros)",
+            "name": "Cardinal shrimp (carabineros)"
+        },
+        {
+            "term_id": 2850,
+            "ru": "Рыба морской черт",
+            "name": "Monkfish"
+        },
+        {
+            "term_id": 2851,
+            "ru": "Кальмары",
+            "name": "Squid"
+        },
+        {
+            "term_id": 2852,
+            "ru": "Двухстворчатые моллюски (мидии, венерки)",
+            "name": "Bivalve mollusks (mussels, clams)"
+        },
+        {
+            "term_id": 2857,
+            "ru": "Филе свежей морской рыбы (c белым мясом)",
+            "name": "Fresh fish fillet (with white meat)"
+        },
+        {
+            "term_id": 2858,
+            "ru": "Томатный сок",
+            "name": "Tomato juice"
+        },
+        {
+            "term_id": 2859,
+            "ru": "Бедро индейки",
+            "name": "Turkey thigh"
+        },
+        {
+            "term_id": 2860,
+            "ru": "Паприка острая хлопьями",
+            "name": "Spicy paprika flakes"
+        },
+        {
+            "term_id": 2861,
+            "ru": "Приправа карри",
+            "name": "Curry seasoning"
+        },
+        {
+            "term_id": 2865,
+            "ru": "Цитрусовый соус Понзу",
+            "name": "Citrus ponzu sauce"
+        },
+        {
+            "term_id": 2866,
+            "ru": "Уксус винный",
+            "name": "Wine vinegar"
+        },
+        {
+            "term_id": 2877,
+            "ru": "Приправа \"Итальянские травы\"",
+            "name": "Italian herb seasoning"
+        },
+        {
+            "term_id": 2879,
+            "ru": "Рис паровой",
+            "name": "Steamed rice"
+        },
+        {
+            "term_id": 2881,
+            "ru": "Сырок плавленый янтарь",
+            "name": "Processed cheese 'amber'"
+        },
+        {
+            "term_id": 2888,
+            "ru": "Свежий хлеб",
+            "name": "Fresh bread"
+        },
+        {
+            "term_id": 2898,
+            "ru": "Лосось свежий",
+            "name": "Fresh salmon"
+        },
+        {
+            "term_id": 2899,
+            "ru": "Горчица острая",
+            "name": "Hot mustard"
+        },
+        {
+            "term_id": 2900,
+            "ru": "Салат Эскариола",
+            "name": "Escarole salad"
+        },
+        {
+            "term_id": 2901,
+            "ru": "Вино красное сладкое",
+            "name": "Sweet red wine"
+        },
+        {
+            "term_id": 2904,
+            "ru": "Маринованный огурец",
+            "name": "Pickled cucumber"
+        },
+        {
+            "term_id": 2906,
+            "ru": "Крабовые палочки",
+            "name": "Crab sticks"
+        },
+        {
+            "term_id": 2908,
+            "ru": "Кукурузная мука для лепешек (masa harina)",
+            "name": "Corn flour for tortillas (masa harina)"
+        },
+        {
+            "term_id": 2909,
+            "ru": "Бобы красные консервированные",
+            "name": "Canned red beans"
+        },
+        {
+            "term_id": 2912,
+            "ru": "Сыр Пармиджано Реджано",
+            "name": "Parmesan cheese"
+        },
+        {
+            "term_id": 2913,
+            "ru": "Соус BBQ",
+            "name": "BBQ sauce"
+        },
+        {
+            "term_id": 2915,
+            "ru": "Изюм темный",
+            "name": "Dark raisins"
+        },
+        {
+            "term_id": 2920,
+            "ru": "Мята вьетнамская",
+            "name": "Vietnamese mint"
+        },
+        {
+            "term_id": 2921,
+            "ru": "Креветочное масло",
+            "name": "Shrimp oil"
+        },
+        {
+            "term_id": 2922,
+            "ru": "Микрогрин горчицы",
+            "name": "Mustard microgreens"
+        },
+        {
+            "term_id": 2923,
+            "ru": "Спаржевая фасоль",
+            "name": "Green beans"
+        },
+        {
+            "term_id": 2924,
+            "ru": "Телятина мякоть",
+            "name": "Boneless veal"
+        },
+        {
+            "term_id": 2925,
+            "ru": "Говяжье филе",
+            "name": "Beef fillet"
+        },
+        {
+            "term_id": 2927,
+            "ru": "Микрогрин",
+            "name": "Microgreens"
+        },
+        {
+            "term_id": 2929,
+            "ru": "Тертая цедра и сок апельсина",
+            "name": "Grated orange zest and juice"
+        },
+        {
+            "term_id": 2930,
+            "ru": "Свежевыжатый сок апельсина",
+            "name": "Freshly squeezed orange juice"
+        },
+        {
+            "term_id": 2931,
+            "ru": "Свежевыжатый сок лайма",
+            "name": "Freshly squeezed lime juice"
+        },
+        {
+            "term_id": 2933,
+            "ru": "Сычуаньский перец чили Chaotian, сушеный",
+            "name": "Dried Sichuan chili pepper chaotian"
+        },
+        {
+            "term_id": 2934,
+            "ru": "Папоротник Госари",
+            "name": "Gosari fern"
+        },
+        {
+            "term_id": 2935,
+            "ru": "Чесночное масло",
+            "name": "Garlic oil"
+        },
+        {
+            "term_id": 2936,
+            "ru": "Сухие травы",
+            "name": "Dried herbs"
+        },
+        {
+            "term_id": 2937,
+            "ru": "Крабовое мясо",
+            "name": "Crab meat"
+        },
+        {
+            "term_id": 2938,
+            "ru": "Вонтон",
+            "name": "Wonton"
+        },
+        {
+            "term_id": 2940,
+            "ru": "Куриное мясо",
+            "name": "Chicken meat"
+        },
+        {
+            "term_id": 2942,
+            "ru": "Глутамат натрия",
+            "name": "Monosodium glutamate"
+        },
+        {
+            "term_id": 2946,
+            "ru": "Цедра апельсина",
+            "name": "Orange zest"
+        },
+        {
+            "term_id": 2947,
+            "ru": "Перец Чипотль или Гуахильо сушеный",
+            "name": "Dried Chipotle or Guajillo pepper"
+        },
+        {
+            "term_id": 2948,
+            "ru": "Перец Анчо или Пасилла сушеный",
+            "name": "Dried Ancho or pasilla pepper"
+        },
+        {
+            "term_id": 2949,
+            "ru": "Перец Серрано или Поблано сушеный",
+            "name": "Dried Serrano or Poblano pepper"
+        },
+        {
+            "term_id": 2950,
+            "ru": "Орех кешью",
+            "name": "Cashew nuts"
+        },
+        {
+            "term_id": 2951,
+            "ru": "Виноградные улитки",
+            "name": "Escargots"
+        },
+        {
+            "term_id": 2953,
+            "ru": "Бульон говяжий",
+            "name": "Beef broth"
+        },
+        {
+            "term_id": 2954,
+            "ru": "Рассол из под маслин",
+            "name": "Brine from olives"
+        },
+        {
+            "term_id": 2955,
+            "ru": "Бульон говяжий светлый",
+            "name": "Light beef broth"
+        },
+        {
+            "term_id": 2956,
+            "ru": "Гранатовый соус или Наршараб",
+            "name": "Pomegranate sauce or narsharab"
+        },
+        {
+            "term_id": 2957,
+            "ru": "Бульон говяжий коричневый",
+            "name": "Brown beef broth"
+        },
+        {
+            "term_id": 2958,
+            "ru": "Имбирь, корень",
+            "name": "Ginger, root"
+        },
+        {
+            "term_id": 2959,
+            "ru": "Имбирь, корень измельченный",
+            "name": "Ginger, minced root"
+        },
+        {
+            "term_id": 2960,
+            "ru": "Имбирь маринованный",
+            "name": "Pickled ginger"
+        },
+        {
+            "term_id": 2961,
+            "ru": "Имбирь сухой молотый",
+            "name": "Dried ground ginger"
+        },
+        {
+            "term_id": 2963,
+            "ru": "Кацуобуси (стружка тунца)",
+            "name": "Katsuobushi (dried bonito flakes)"
+        },
+        {
+            "term_id": 2964,
+            "ru": "Перец корейский Кочугару, молотый",
+            "name": "Korean red pepper powder, ground"
+        },
+        {
+            "term_id": 2970,
+            "ru": "Брокколи соцветия",
+            "name": "Broccoli florets"
+        },
+        {
+            "term_id": 2971,
+            "ru": "Рассол соленый",
+            "name": "Brine"
+        },
+        {
+            "term_id": 2972,
+            "ru": "Сезонные овощи",
+            "name": "Seasonal vegetables"
+        },
+        {
+            "term_id": 2975,
+            "ru": "Икра мойвы пробойная",
+            "name": "Capelin roe"
+        },
+        {
+            "term_id": 2976,
+            "ru": "Крыло индейки",
+            "name": "Turkey wing"
+        },
+        {
+            "term_id": 2979,
+            "ru": "Рыба белая",
+            "name": "White fish"
+        },
+        {
+            "term_id": 2980,
+            "ru": "Апоногетон двуколосый",
+            "name": "Aponogeton distachyos (optional)*)"
+        },
+        {
+            "term_id": 2982,
+            "ru": "Кашмирский перец чили молотый",
+            "name": "Kashmiri chili powder"
+        },
+        {
+            "term_id": 2983,
+            "ru": "Кишки свиные очищенные",
+            "name": "Cleaned pork intestines"
+        },
+        {
+            "term_id": 2984,
+            "ru": "Кленовый сироп (или мёд)",
+            "name": "Maple syrup (or honey)"
+        },
+        {
+            "term_id": 2985,
+            "ru": "Мадейра или бренди",
+            "name": "Madeira or brandy"
+        },
+        {
+            "term_id": 2986,
+            "ru": "Миндаль жареный",
+            "name": "Roasted almonds"
+        },
+        {
+            "term_id": 2987,
+            "ru": "перец чили красный, молотый",
+            "name": "Red chili pepper, ground"
+        },
+        {
+            "term_id": 2989,
+            "ru": "Креветки сырые с головой",
+            "name": "Raw shrimp with heads"
+        },
+        {
+            "term_id": 2990,
+            "ru": "Креветки тигровые сырые",
+            "name": "Raw tiger shrimp"
+        },
+        {
+            "term_id": 2994,
+            "ru": "Грибы лесные свежие",
+            "name": "Fresh wild mushrooms"
+        },
+        {
+            "term_id": 2996,
+            "ru": "Зелень свежая",
+            "name": "Fresh herbs"
+        },
+        {
+            "term_id": 2997,
+            "ru": "Листья мелиссы",
+            "name": "Lemon balm leaves"
+        },
+        {
+            "term_id": 3000,
+            "ru": "Мидии свежие в ракушках",
+            "name": "Fresh mussels in shells"
+        },
+        {
+            "term_id": 3001,
+            "ru": "Икра минтая",
+            "name": "Pollock roe"
+        },
+        {
+            "term_id": 3002,
+            "ru": "Стручки моринги (хренное дерево)",
+            "name": "Moringa pods (drumstick)"
+        },
+        {
+            "term_id": 3003,
+            "ru": "Сыр таледжио",
+            "name": "Taleggio cheese"
+        },
+        {
+            "term_id": 3004,
+            "ru": "Молоко жирное",
+            "name": "Full-fat milk"
+        },
+        {
+            "term_id": 3006,
+            "ru": "Перец чили острый",
+            "name": "Hot chili pepper"
+        },
+        {
+            "term_id": 3007,
+            "ru": "Болгарский перец зеленый",
+            "name": "Green bell pepper"
+        },
+        {
+            "term_id": 3008,
+            "ru": "Перец душистый, молотый",
+            "name": "Allspice, ground"
+        },
+        {
+            "term_id": 3009,
+            "ru": "Помидоры вяленые",
+            "name": "Sun-dried tomatoes"
+        },
+        {
+            "term_id": 3010,
+            "ru": "Перец чили",
+            "name": "Chili pepper"
+        },
+        {
+            "term_id": 3012,
+            "ru": "Луковица фенхеля",
+            "name": "Fennel bulb"
+        },
+        {
+            "term_id": 3013,
+            "ru": "Речная рыба",
+            "name": "River fish"
+        },
+        {
+            "term_id": 3014,
+            "ru": "Гусиные шейки",
+            "name": "Goose necks"
+        },
+        {
+            "term_id": 3015,
+            "ru": "Потроха гусиные(куриные)",
+            "name": "Goose (chicken) offal"
+        },
+        {
+            "term_id": 3016,
+            "ru": "Гусиный фарш",
+            "name": "Goose (chicken or duck) minced meat"
+        },
+        {
+            "term_id": 3017,
+            "ru": "Марокканская приправа рас-эль-ханут",
+            "name": "Moroccan spice ras el hanout"
+        },
+        {
+            "term_id": 3018,
+            "ru": "Анчоус сушеный",
+            "name": "Dried anchovies"
+        },
+        {
+            "term_id": 3019,
+            "ru": "Рис арборио, Карнароли или Виалоне Нано",
+            "name": "Arborio rice, carnaroli or vialone nano"
+        },
+        {
+            "term_id": 3020,
+            "ru": "Рис Бомба или Каласпарра",
+            "name": "Bomba or calasparra rice"
+        },
+        {
+            "term_id": 3021,
+            "ru": "Ростки бобов мунг (маш)",
+            "name": "Mung bean sprouts"
+        },
+        {
+            "term_id": 3022,
+            "ru": "Лист салата",
+            "name": "Lettuce leaf"
+        },
+        {
+            "term_id": 3023,
+            "ru": "Соус томатный",
+            "name": "Tomato sauce"
+        },
+        {
+            "term_id": 3024,
+            "ru": "Сахар коричневый (тростниковый)",
+            "name": "Brown sugar (cane sugar)"
+        },
+        {
+            "term_id": 3025,
+            "ru": "Белые грибы свежие",
+            "name": "Fresh white mushrooms"
+        },
+        {
+            "term_id": 3027,
+            "ru": "Свежевыжатый гранатовый сок",
+            "name": "Freshly squeezed pomegranate juice"
+        },
+        {
+            "term_id": 3028,
+            "ru": "Телячья голяшка",
+            "name": "Veal shank"
+        },
+        {
+            "term_id": 3029,
+            "ru": "Свиная голяшка",
+            "name": "Pork shank"
+        },
+        {
+            "term_id": 3030,
+            "ru": "Свиное сало",
+            "name": "Pork lard"
+        },
+        {
+            "term_id": 3031,
+            "ru": "Свиной подчерёвок (грудинка)",
+            "name": "Pork belly"
+        },
+        {
+            "term_id": 3032,
+            "ru": "Уксус коричневый",
+            "name": "Brown vinegar"
+        },
+        {
+            "term_id": 3033,
+            "ru": "Зерна граната",
+            "name": "Pomegranate seeds"
+        },
+        {
+            "term_id": 3034,
+            "ru": "Смесь трав",
+            "name": "Herb mix"
+        },
+        {
+            "term_id": 3035,
+            "ru": "Зелень петрушки, измельченная",
+            "name": "Chopped parsley"
+        },
+        {
+            "term_id": 3036,
+            "ru": "Соленый огурец",
+            "name": "Salted cucumber"
+        },
+        {
+            "term_id": 3037,
+            "ru": "Паста Чу Хоу",
+            "name": "Chuno sauce"
+        },
+        {
+            "term_id": 3040,
+            "ru": "Стручковая фасоль плоская",
+            "name": "Flat green beans"
+        },
+        {
+            "term_id": 3041,
+            "ru": "Сыр Гравьера",
+            "name": "Graviera cheese (kefalotyri or parmesan), grated"
+        },
+        {
+            "term_id": 3042,
+            "ru": "Сыр имеретинский",
+            "name": "Imeretian cheese"
+        },
+        {
+            "term_id": 3043,
+            "ru": "Сыр бейби моцарелла",
+            "name": "Baby mozzarella"
+        },
+        {
+            "term_id": 3044,
+            "ru": "Сыр Моцарелла, тертый",
+            "name": "Mozzarella cheese, grated"
+        },
+        {
+            "term_id": 3045,
+            "ru": "Тамариндовая паста",
+            "name": "Tamarind paste"
+        },
+        {
+            "term_id": 3046,
+            "ru": "Сыр твёрдый",
+            "name": "Hard cheese"
+        },
+        {
+            "term_id": 3047,
+            "ru": "Трюфель, нарезанный пластинами",
+            "name": "Truffle, sliced"
+        },
+        {
+            "term_id": 3048,
+            "ru": "Укроп измельченный",
+            "name": "Chopped dill"
+        },
+        {
+            "term_id": 3049,
+            "ru": "Утиная грудка",
+            "name": "Duck breast"
+        },
+        {
+            "term_id": 3050,
+            "ru": "Мясо ягненка",
+            "name": "Lamb meat"
+        },
+        {
+            "term_id": 3051,
+            "ru": "Баклажан тайский",
+            "name": "Thai eggplant"
+        },
+        {
+            "term_id": 3052,
+            "ru": "Баранья лопатка",
+            "name": "Lamb shoulder"
+        },
+        {
+            "term_id": 3055,
+            "ru": "Мука",
+            "name": "Flour"
+        },
+        {
+            "term_id": 3057,
+            "ru": "Петрушка",
+            "name": "Parsley"
+        },
+        {
+            "term_id": 3059,
+            "ru": "Желтый венский сахар",
+            "name": "Yellow vienna sugar"
+        },
+        {
+            "term_id": 3061,
+            "ru": "Говяжий жир",
+            "name": "Beef fat"
+        },
+        {
+            "term_id": 3063,
+            "ru": "Капуста квашеная",
+            "name": "Sauerkraut"
+        },
+        {
+            "term_id": 3071,
+            "ru": "Масло горчичное",
+            "name": "Mustard oil"
+        },
+        {
+            "term_id": 3073,
+            "ru": "Кинза",
+            "name": "Cilantro"
+        },
+        {
+            "term_id": 3074,
+            "ru": "Креветочная паста высушенная (Belacan/Kapi)",
+            "name": "Dried shrimp paste (belacan/kapi)"
+        },
+        {
+            "term_id": 3081,
+            "ru": "Куриный окорок",
+            "name": "Chicken thigh"
+        },
+        {
+            "term_id": 3082,
+            "ru": "Ликёр Амарула",
+            "name": "Amarula liqueur"
+        },
+        {
+            "term_id": 3083,
+            "ru": "Желтая кукурузная крупа мелкого помола",
+            "name": "Fine yellow cornmeal"
+        },
+        {
+            "term_id": 3084,
+            "ru": "Лук зелёный",
+            "name": "Green onion"
+        },
+        {
+            "term_id": 3085,
+            "ru": "Листья пандана",
+            "name": "Pandan leaves"
+        },
+        {
+            "term_id": 3086,
+            "ru": "Крупа манная",
+            "name": "Semolina"
+        },
+        {
+            "term_id": 3087,
+            "ru": "Масло сливочное 82,5%",
+            "name": "Butter 82.5%"
+        },
+        {
+            "term_id": 3088,
+            "ru": "Грецкие орехи очищенные",
+            "name": "Peeled walnuts"
+        },
+        {
+            "term_id": 3089,
+            "ru": "Перец Халапеньо маринованный",
+            "name": "Pickled jalapeño"
+        },
+        {
+            "term_id": 3090,
+            "ru": "Фрикадельки",
+            "name": "Meatballs"
+        },
+        {
+            "term_id": 3091,
+            "ru": "Вино Херес сухой",
+            "name": "Dry sherry wine"
+        },
+        {
+            "term_id": 3093,
+            "ru": "Помидор",
+            "name": "Tomato"
+        },
+        {
+            "term_id": 3096,
+            "ru": "Кориандр",
+            "name": "Coriander"
+        },
+        {
+            "term_id": 3097,
+            "ru": "Солодовый уксус",
+            "name": "Malt vinegar"
+        },
+        {
+            "term_id": 3098,
+            "ru": "Гусиная печень сырая",
+            "name": "Raw goose liver"
+        },
+        {
+            "term_id": 3099,
+            "ru": "Арманьяк",
+            "name": "Armagnac"
+        },
+        {
+            "term_id": 3100,
+            "ru": "Вино Порто",
+            "name": "Port wine"
+        },
+        {
+            "term_id": 3101,
+            "ru": "Инжирное варенье",
+            "name": "Fig jam"
+        },
+        {
+            "term_id": 3102,
+            "ru": "Инжир",
+            "name": "Fig"
+        },
+        {
+            "term_id": 3103,
+            "ru": "Ягода ежевики",
+            "name": "Blackberries"
+        },
+        {
+            "term_id": 3104,
+            "ru": "Краб коричневый",
+            "name": "Brown crab"
+        },
+        {
+            "term_id": 3105,
+            "ru": "Рубец говяжий, очищенный",
+            "name": "Beef tripe, cleaned"
+        },
+        {
+            "term_id": 3106,
+            "ru": "Панчетта",
+            "name": "Pancetta"
+        },
+        {
+            "term_id": 3107,
+            "ru": "Огурец маринованный",
+            "name": "Pickled cucumber"
+        },
+        {
+            "term_id": 3108,
+            "ru": "Сахар коричневый",
+            "name": "Brown sugar"
+        },
+        {
+            "term_id": 3109,
+            "ru": "Сода",
+            "name": "Baking soda"
+        },
+        {
+            "term_id": 3110,
+            "ru": "Сок лайма",
+            "name": "Lime juice"
+        },
+        {
+            "term_id": 3111,
+            "ru": "Корень имбиря",
+            "name": "Ginger root"
+        },
+        {
+            "term_id": 3112,
+            "ru": "Зелёный перец чили",
+            "name": "Green chili"
+        },
+        {
+            "term_id": 3114,
+            "ru": "Свиная рулька копчёная",
+            "name": "Smoked pork knuckle"
+        },
+        {
+            "term_id": 3115,
+            "ru": "Паприка сладкая",
+            "name": "Sweet paprika"
+        },
+        {
+            "term_id": 3116,
+            "ru": "Зелень петрушки",
+            "name": "Parsley greens"
+        },
+        {
+            "term_id": 3117,
+            "ru": "Яйцо",
+            "name": "Egg"
+        },
+        {
+            "term_id": 3118,
+            "ru": "Тмин семена",
+            "name": "Cumin seeds"
+        },
+        {
+            "term_id": 3119,
+            "ru": "Кашмирский чили молотый",
+            "name": "Kashmiri chili powder"
+        },
+        {
+            "term_id": 3121,
+            "ru": "Морские блюдца",
+            "name": "Limpets"
+        },
+        {
+            "term_id": 3123,
+            "ru": "Кинг клип, голова и хвост",
+            "name": "Conger eel, head and tail"
+        },
+        {
+            "term_id": 3124,
+            "ru": "Кинг клип, стейк",
+            "name": "Conger eel, steak"
+        },
+        {
+            "term_id": 3126,
+            "ru": "Белый морской окунь Барамунди",
+            "name": "White barramundi sea bass"
+        },
+        {
+            "term_id": 3127,
+            "ru": "Голубцы",
+            "name": "Cabbage rolls"
+        },
+        {
+            "term_id": 3128,
+            "ru": "Масло кокосовое",
+            "name": "Coconut oil"
+        },
+        {
+            "term_id": 3137,
+            "ru": "Рыбный суповой нобор",
+            "name": "Fish soup set"
+        },
+        {
+            "term_id": 3138,
+            "ru": "Гриб рыжик",
+            "name": "Saffron milk cap mushrooms"
+        },
+        {
+            "term_id": 3139,
+            "ru": "Тимьян",
+            "name": "Thyme"
+        },
+        {
+            "term_id": 3140,
+            "ru": "Филе морской рыбы",
+            "name": "Fillet of sea fish"
+        },
+        {
+            "term_id": 3141,
+            "ru": "Соус ореховый",
+            "name": "Nut sauce"
+        },
+        {
+            "term_id": 3142,
+            "ru": "Шампиньоны",
+            "name": "Champignons"
+        },
+        {
+            "term_id": 3143,
+            "ru": "Сало",
+            "name": "Salo (cured pork fat)"
+        },
+        {
+            "term_id": 3144,
+            "ru": "Белый лук мелко нарезанный",
+            "name": "Finely chopped white onion"
+        },
+        {
+            "term_id": 3145,
+            "ru": "Прованские травы (не обязательно)",
+            "name": "Herbes de Provence (optional)"
+        },
+        {
+            "term_id": 3146,
+            "ru": "Мозги телячьи",
+            "name": "Calf brains"
+        },
+        {
+            "term_id": 3147,
+            "ru": "Булочки",
+            "name": "Buns"
+        },
+        {
+            "term_id": 3148,
+            "ru": "Чёрная горчица",
+            "name": "Black mustard seeds"
+        },
+        {
+            "term_id": 3149,
+            "ru": "Карри",
+            "name": "Curry powder"
+        },
+        {
+            "term_id": 3150,
+            "ru": "Масло растительное для фритюра",
+            "name": "Vegetable oil for deep-frying"
+        },
+        {
+            "term_id": 3151,
+            "ru": "Паприка",
+            "name": "Paprika"
+        },
+        {
+            "term_id": 3152,
+            "ru": "Имбирь",
+            "name": "Ginger"
+        },
+        {
+            "term_id": 3153,
+            "ru": "Соус Шермула",
+            "name": "Chermoula sauce"
+        },
+        {
+            "term_id": 3154,
+            "ru": "Творог домашний",
+            "name": "Homemade cottage cheese"
+        },
+        {
+            "term_id": 3155,
+            "ru": "Сметана жирная",
+            "name": "Fat sour cream"
+        },
+        {
+            "term_id": 3156,
+            "ru": "Жир свиной",
+            "name": "Pork fat"
+        },
+        {
+            "term_id": 3157,
+            "ru": "Тархоня",
+            "name": "Tarhonya (egg barley pasta)"
+        },
+        {
+            "term_id": 3158,
+            "ru": "Паприка красная молотая",
+            "name": "Ground red paprika"
+        },
+        {
+            "term_id": 3159,
+            "ru": "Яйца",
+            "name": "Eggs"
+        },
+        {
+            "term_id": 3160,
+            "ru": "Каре телятины",
+            "name": "Veal rack"
+        },
+        {
+            "term_id": 3161,
+            "ru": "Панировочные сухари",
+            "name": "Breadcrumbs"
+        },
+        {
+            "term_id": 3162,
+            "ru": "Фундук",
+            "name": "Hazelnuts"
+        },
+        {
+            "term_id": 3163,
+            "ru": "Сладкая бобовая паста Анка",
+            "name": "Sweet red bean paste (anko)"
+        },
+        {
+            "term_id": 3164,
+            "ru": "Сладкая бобовая паста Анко",
+            "name": "Sweet red bean paste anko"
+        },
+        {
+            "term_id": 3165,
+            "ru": "Филе белой морской рыбы",
+            "name": "Fillet of white fish"
+        },
+        {
+            "term_id": 3166,
+            "ru": "Филе лосося",
+            "name": "Salmon fillet"
+        },
+        {
+            "term_id": 3167,
+            "ru": "Филе копченой морской рыбы",
+            "name": "Fillet of smoked fish"
+        },
+        {
+            "term_id": 3168,
+            "ru": "масло слитии",
+            "name": "Clarified butter"
+        },
+        {
+            "term_id": 3170,
+            "ru": "Вино красное",
+            "name": "Red wine"
+        },
+        {
+            "term_id": 3171,
+            "ru": "Окра",
+            "name": "Okra"
+        },
+        {
+            "term_id": 3172,
+            "ru": "Лук сушеный обжаренный",
+            "name": "Fried dried onion"
+        },
+        {
+            "term_id": 3173,
+            "ru": "Мозговые кости",
+            "name": "Bone marrow"
+        },
+        {
+            "term_id": 3174,
+            "ru": "Острая колбаска \"ндуя\"",
+            "name": "Spicy nduja sausage"
+        },
+        {
+            "term_id": 3175,
+            "ru": "Сладкий картофель",
+            "name": "Sweet potato"
+        },
+        {
+            "term_id": 3176,
+            "ru": "Колотый лед",
+            "name": "Crushed ice"
+        },
+        {
+            "term_id": 3177,
+            "ru": "Рыбный бульон",
+            "name": "Fish stock"
+        },
+        {
+            "term_id": 3178,
+            "ru": "Устрицы свежие",
+            "name": "Fresh oysters"
+        },
+        {
+            "term_id": 3179,
+            "ru": "Сухари измельчённые",
+            "name": "Ground breadcrumbs"
+        },
+        {
+            "term_id": 3180,
+            "ru": "Перец",
+            "name": "Pepper"
+        },
+        {
+            "term_id": 3182,
+            "ru": "Креветки",
+            "name": "Shrimp"
+        },
+        {
+            "term_id": 3183,
+            "ru": "Креветки коктейльные",
+            "name": "Cocktail shrimp"
+        },
+        {
+            "term_id": 3184,
+            "ru": "Соус 1000 островов",
+            "name": "Thousand Island dressing"
+        },
+        {
+            "term_id": 3185,
+            "ru": "Белый перец",
+            "name": "White pepper"
+        },
+        {
+            "term_id": 3186,
+            "ru": "Мука кукурузная никстамализированная *",
+            "name": "Nixtamalized corn flour (masa harina)"
+        },
+        {
+            "term_id": 3187,
+            "ru": "Разрыхлитель",
+            "name": "Baking powder"
+        },
+        {
+            "term_id": 3188,
+            "ru": "Куриная грудка",
+            "name": "Chicken breast"
+        },
+        {
+            "term_id": 3189,
+            "ru": "Кукурузные листья",
+            "name": "Corn husks"
+        },
+        {
+            "term_id": 3190,
+            "ru": "Съедобные каштаны",
+            "name": "Edible chestnuts"
+        },
+        {
+            "term_id": 3191,
+            "ru": "Крем-фреш",
+            "name": "Crème fraîche"
+        },
+        {
+            "term_id": 3192,
+            "ru": "Белый лук",
+            "name": "White onion"
+        },
+        {
+            "term_id": 3193,
+            "ru": "Оливковое масло первого отжима",
+            "name": "Extra virgin olive oil"
+        },
+        {
+            "term_id": 3194,
+            "ru": "Бейби кальмар, тушка",
+            "name": "Baby squid, cleaned"
+        },
+        {
+            "term_id": 3195,
+            "ru": "Имбирно-чесночная паста",
+            "name": "Ginger-garlic paste"
+        },
+        {
+            "term_id": 3196,
+            "ru": "Семена кориандра молотые",
+            "name": "Ground coriander seeds"
+        },
+        {
+            "term_id": 3197,
+            "ru": "Смесь специй ирачи масала",
+            "name": "Irachi masala spice mix"
+        },
+        {
+            "term_id": 3198,
+            "ru": "Кокосовое масло",
+            "name": "Coconut oil"
+        },
+        {
+            "term_id": 3199,
+            "ru": "помидоры Черри",
+            "name": "Cherry tomatoes"
+        },
+        {
+            "term_id": 3200,
+            "ru": "Помидоры",
+            "name": "Tomatoes"
+        },
+        {
+            "term_id": 3201,
+            "ru": "Капуста краснокочанная",
+            "name": "Red cabbage"
+        },
+        {
+            "term_id": 3202,
+            "ru": "Рис Арборио",
+            "name": "Arborio rice"
+        },
+        {
+            "term_id": 3203,
+            "ru": "Бульон рыбный",
+            "name": "Fish stock"
+        },
+        {
+            "term_id": 3204,
+            "ru": "Сливочное масло",
+            "name": "Butter"
+        },
+        {
+            "term_id": 3205,
+            "ru": "Спаржа зеленая",
+            "name": "Green asparagus"
+        },
+        {
+            "term_id": 3206,
+            "ru": "Соус голландез",
+            "name": "Hollandaise sauce"
+        },
+        {
+            "term_id": 3207,
+            "ru": "Цветы съедобные",
+            "name": "Edible flowers"
+        },
+        {
+            "term_id": 3208,
+            "ru": "Зеленый горошек свежий",
+            "name": "Fresh green peas"
+        },
+        {
+            "term_id": 3209,
+            "ru": "Свежие молоки лосося",
+            "name": "Fresh salmon milt"
+        },
+        {
+            "term_id": 3210,
+            "ru": "кукурузная мука",
+            "name": "Corn flour"
+        },
+        {
+            "term_id": 3211,
+            "ru": "овощной бульон",
+            "name": "Vegetable stock"
+        },
+        {
+            "term_id": 3212,
+            "ru": "Зеленый горошек свежий в стручках",
+            "name": "Fresh green peas in pods"
+        },
+        {
+            "term_id": 3213,
+            "ru": "Бок-чой",
+            "name": "Bok choy"
+        },
+        {
+            "term_id": 3214,
+            "ru": "Пекинская капуста",
+            "name": "Napa cabbage"
+        },
+        {
+            "term_id": 3215,
+            "ru": "Куриный бульон",
+            "name": "Chicken stock"
+        },
+        {
+            "term_id": 3216,
+            "ru": "Гриб Муэр сушеный",
+            "name": "Dried wood ear mushrooms"
+        },
+        {
+            "term_id": 3217,
+            "ru": "Черствый белый хлеб",
+            "name": "Stale white bread"
+        },
+        {
+            "term_id": 3218,
+            "ru": "Сладкий красный перец",
+            "name": "Sweet red pepper"
+        },
+        {
+            "term_id": 3219,
+            "ru": "Перец Palmero сушеный",
+            "name": "Dried Palmero pepper"
+        },
+        {
+            "term_id": 3220,
+            "ru": "Мелкий картофель",
+            "name": "Baby potatoes"
+        },
+        {
+            "term_id": 3221,
+            "ru": "Укроп",
+            "name": "Dill"
+        },
+        {
+            "term_id": 3222,
+            "ru": "Слоёное тесто",
+            "name": "Puff pastry"
+        },
+        {
+            "term_id": 3223,
+            "ru": "Кокосовая стружка",
+            "name": "Desiccated coconut"
+        },
+        {
+            "term_id": 3224,
+            "ru": "Рисовая мука",
+            "name": "Rice flour"
+        },
+        {
+            "term_id": 3225,
+            "ru": "Кумин",
+            "name": "Cumin"
+        },
+        {
+            "term_id": 3226,
+            "ru": "Нут",
+            "name": "Chickpeas"
+        },
+        {
+            "term_id": 3227,
+            "ru": "Чат масала",
+            "name": "Chaat masala"
+        },
+        {
+            "term_id": 3228,
+            "ru": "Паста тамаринда",
+            "name": "Tamarind paste"
+        },
+        {
+            "term_id": 3229,
+            "ru": "Соль чёрная",
+            "name": "Black salt (kala namak)"
+        },
+        {
+            "term_id": 3230,
+            "ru": "Масло ванили",
+            "name": "Vanilla butter"
+        },
+        {
+            "term_id": 3231,
+            "ru": "Лимон консервированный",
+            "name": "Preserved lemon"
+        },
+        {
+            "term_id": 3232,
+            "ru": "Растительное масло",
+            "name": "Vegetable oil"
+        },
+        {
+            "term_id": 3233,
+            "ru": "Сухие дрожжи",
+            "name": "Dry yeast"
+        },
+        {
+            "term_id": 3234,
+            "ru": "Острый перец чили",
+            "name": "Hot chili pepper"
+        },
+        {
+            "term_id": 3235,
+            "ru": "Сливочный сыр (крем-фреш)",
+            "name": "Cream cheese (crème fraîche)"
+        },
+        {
+            "term_id": 3236,
+            "ru": "Розмарин",
+            "name": "Rosemary"
+        },
+        {
+            "term_id": 3237,
+            "ru": "Свекольный квас",
+            "name": "Beet kvass"
+        },
+        {
+            "term_id": 3238,
+            "ru": "Каперсы",
+            "name": "Capers"
+        },
+        {
+            "term_id": 3239,
+            "ru": "Черный перец молотый",
+            "name": "Ground black pepper"
+        },
+        {
+            "term_id": 3240,
+            "ru": "Бальзамический крем",
+            "name": "Balsamic glaze"
+        },
+        {
+            "term_id": 3241,
+            "ru": "Гуанчиале или панчетта",
+            "name": "Guanciale or pancetta"
+        },
+        {
+            "term_id": 3242,
+            "ru": "Говяжий рубец",
+            "name": "Beef tripe"
+        },
+        {
+            "term_id": 3243,
+            "ru": "Масло сливочное",
+            "name": "Butter"
+        },
+        {
+            "term_id": 3244,
+            "ru": "Майоран сушёный",
+            "name": "Dried marjoram"
+        },
+        {
+            "term_id": 3245,
+            "ru": "Мускатный орех",
+            "name": "Nutmeg"
+        },
+        {
+            "term_id": 3246,
+            "ru": "Пшеничная мука грубого помола",
+            "name": "Coarse wholemeal wheat flour"
+        },
+        {
+            "term_id": 3247,
+            "ru": "Тёплая кипячёная вода",
+            "name": "Warm boiled water"
+        },
+        {
+            "term_id": 3248,
+            "ru": "Белая сырая колбас",
+            "name": "Raw white sausage"
+        },
+        {
+            "term_id": 3249,
+            "ru": "Копчёный бекон",
+            "name": "Smoked bacon"
+        },
+        {
+            "term_id": 3250,
+            "ru": "Готовая закваска",
+            "name": "Ready-made sourdough starter"
+        },
+        {
+            "term_id": 3251,
+            "ru": "Вода кипяченая",
+            "name": "Boiled water"
+        },
+        {
+            "term_id": 3252,
+            "ru": "Ржаная мука",
+            "name": "Rye flour"
+        },
+        {
+            "term_id": 3253,
+            "ru": "Хлеб ржаной",
+            "name": "Rye bread"
+        },
+        {
+            "term_id": 3254,
+            "ru": "Закваска",
+            "name": "Sourdough starter"
+        },
+        {
+            "term_id": 3255,
+            "ru": "Мясной бульон",
+            "name": "Meat stock"
+        },
+        {
+            "term_id": 3256,
+            "ru": "Белая колбаса",
+            "name": "White sausage"
+        },
+        {
+            "term_id": 3257,
+            "ru": "Копченая колбаса",
+            "name": "Smoked sausage"
+        },
+        {
+            "term_id": 3258,
+            "ru": "Грудинка свиная копченая",
+            "name": "Smoked pork belly"
+        },
+        {
+            "term_id": 3259,
+            "ru": "Грибы свежие",
+            "name": "Fresh mushrooms"
+        },
+        {
+            "term_id": 3260,
+            "ru": "Уксус 6%",
+            "name": "Vinegar 6%"
+        },
+        {
+            "term_id": 3261,
+            "ru": "Сельдь слабосоленая",
+            "name": "Lightly salted herring"
+        },
+        {
+            "term_id": 3262,
+            "ru": "Сметана 30%",
+            "name": "Sour cream 30%"
+        },
+        {
+            "term_id": 3263,
+            "ru": "Свёкла",
+            "name": "Beetroot"
+        },
+        {
+            "term_id": 3264,
+            "ru": "Яйца отварные",
+            "name": "Boiled eggs"
+        },
+        {
+            "term_id": 3265,
+            "ru": "Буррата",
+            "name": "Burrata"
+        },
+        {
+            "term_id": 3266,
+            "ru": "Инжирная горчица",
+            "name": "Fig mustard"
+        },
+        {
+            "term_id": 3267,
+            "ru": "Вяленые томаты",
+            "name": "Sun-dried tomatoes"
+        }
+    ]
+}

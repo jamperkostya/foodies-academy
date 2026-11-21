@@ -1,9 +1,12 @@
 // The sitemaps: /sitemap.xml lists one sitemap per kind of page (sitemap-recipes.xml…), so each
 // stays small and Search Console shows how many pages of each kind are indexed. Left out: log-in,
-// profile, search, page 2+ of lists, and authors whose page Yoast SEO marks noindex.
+// profile, search, page 2+ of lists, authors whose page Yoast SEO marks noindex and thin ingredients.
+// English pages have their own sitemaps (sitemap-en-recipes.xml…): only what is translated.
+import { localize, withLang, type Lang } from "../i18n/lang";
+
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
 
-const load = async <T>(path: string): Promise<T> => (await fetch(`${API_URL}${path}`).then((r) => r.json())).data;
+const load = async <T>(lang: Lang, path: string): Promise<T> => (await fetch(withLang(lang, `${API_URL}${path}`)).then((r) => r.json())).data;
 
 /** A page in a sitemap: its path, last change and photos (full URLs). */
 export interface Entry {
@@ -18,34 +21,56 @@ interface RecipeEntry {
 	images: string[];
 }
 
-const terms = async (path: string, prefix: string): Promise<Entry[]> =>
-	(await load<{ slug: string }[]>(path)).map(({ slug }) => ({ path: `${prefix}/${slug}` }));
+/** The sitemaps of one language; paths are under its prefix (/en/recipe/…). */
+function sitemapsOf(lang: Lang): Record<string, () => Promise<Entry[]>> {
+	const at = (path: string) => localize(lang, path);
+	const terms = async (path: string, prefix: string): Promise<Entry[]> =>
+		(await load<{ slug: string }[]>(lang, path)).map(({ slug }) => ({ path: at(`${prefix}/${slug}`) }));
+	const paths = (prefix: string, slugs: string[]): Entry[] => slugs.map((slug) => ({ path: at(`${prefix}/${slug}`) }));
+	const recipes = () => load<RecipeEntry[]>(lang, "/recipes/sitemap");
 
-const paths = (prefix: string, slugs: string[]): Entry[] => slugs.map((slug) => ({ path: `${prefix}/${slug}` }));
+	const common = {
+		recipes: async () => (await recipes()).map(({ slug, modified }) => ({ path: at(`/recipe/${slug}`), modified })),
+		// Google Images: each recipe page with its photos.
+		images: async () =>
+			(await recipes()).filter(({ images }) => images.length > 0).map(({ slug, images }) => ({ path: at(`/recipe/${slug}`), images })),
+		categories: async () => [...(await terms("/categories?type=course", "/category")), ...(await terms("/categories?type=country", "/category"))],
+		ingredients: async () =>
+			// Thin ones (Laravel's `indexed`: fewer than 3 recipes, no text of their own) are noindex.
+			(await load<{ slug: string; indexed: boolean }[]>(lang, "/ingredients"))
+				.filter(({ indexed }) => indexed)
+				.map(({ slug }) => ({ path: at(`/ingredient/${slug}`) })),
+		collections: () => terms("/collections", "/collections"),
+	};
+	if (lang !== "ru") {
+		// News, videos, the blog, kitchen hacks and site pages are not translated yet.
+		return {
+			pages: async () => ["/", "/categories", "/kitchens", "/authors"].map((path) => ({ path: at(path) })),
+			...common,
+			authors: () => terms("/authors", "/author"),
+		};
+	}
+
+	return {
+		pages: async () => [
+			...["/", "/categories", "/kitchens", "/authors", "/news", "/video", "/blog", "/lifehacks"].map((path) => ({ path })),
+			...(await terms("/pages", "")),
+		],
+		...common,
+		authors: async () => {
+			const authors = await load<{ slug: string }[]>(lang, "/authors");
+			const pages = await Promise.all(authors.map(({ slug }) => load<{ slug: string; seo?: { index?: boolean } | null }>(lang, `/authors/${slug}`)));
+			return pages.filter((author) => author.seo?.index !== false).map(({ slug }) => ({ path: `/author/${slug}` }));
+		},
+		articles: async () => [...paths("/news", await load<string[]>(lang, "/news/slugs")), ...paths("/blog", await load<string[]>(lang, "/blog/slugs"))],
+		videos: async () => paths("/video", await load<string[]>(lang, "/videos/slugs")),
+		lifehacks: () => terms("/lifehacks", "/lifehack"),
+	};
+}
 
 export const SITEMAPS: Record<string, () => Promise<Entry[]>> = {
-	pages: async () => [
-		...["/", "/categories", "/kitchens", "/authors", "/news", "/video", "/blog", "/lifehacks"].map((path) => ({ path })),
-		...(await terms("/pages", "")),
-	],
-	recipes: async () =>
-		(await load<RecipeEntry[]>("/recipes/sitemap")).map(({ slug, modified }) => ({ path: `/recipe/${slug}`, modified })),
-	// Google Images: each recipe page with its photos.
-	images: async () =>
-		(await load<RecipeEntry[]>("/recipes/sitemap"))
-			.filter(({ images }) => images.length > 0)
-			.map(({ slug, images }) => ({ path: `/recipe/${slug}`, images })),
-	categories: async () => [...(await terms("/categories?type=course", "/category")), ...(await terms("/categories?type=country", "/category"))],
-	ingredients: () => terms("/ingredients", "/ingredient"),
-	collections: () => terms("/collections", "/collections"),
-	authors: async () => {
-		const authors = await load<{ slug: string }[]>("/authors");
-		const pages = await Promise.all(authors.map(({ slug }) => load<{ slug: string; seo?: { index?: boolean } | null }>(`/authors/${slug}`)));
-		return pages.filter((author) => author.seo?.index !== false).map(({ slug }) => ({ path: `/author/${slug}` }));
-	},
-	articles: async () => [...paths("/news", await load<string[]>("/news/slugs")), ...paths("/blog", await load<string[]>("/blog/slugs"))],
-	videos: async () => paths("/video", await load<string[]>("/videos/slugs")),
-	lifehacks: () => terms("/lifehacks", "/lifehack"),
+	...sitemapsOf("ru"),
+	...Object.fromEntries(Object.entries(sitemapsOf("en")).map(([name, build]) => [`en-${name}`, build])),
 };
 
 const escape = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

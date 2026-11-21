@@ -4,22 +4,24 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Section from "../components/layout/Section.astro";
 import FormField from "../components/account/FormField.astro";
+import { langOf, t } from "../i18n";
+const lang = langOf(Astro.url);
 
 const tabs = [
-	{ id: "profile", label: "Профиль" },
-	{ id: "favorites", label: "Избранное" },
-	{ id: "follows", label: "Подписки" },
+	{ id: "profile", label: t(lang, "Профиль") },
+	{ id: "favorites", label: t(lang, "Избранное") },
+	{ id: "follows", label: t(lang, "Подписки") },
 ];
 ---
-<BaseLayout title="Мой профиль" description="Профиль на Foodies Academy." breadcrumbs={[{ label: "Профиль" }]} noindex>
+<BaseLayout bilingual title={t(lang, "Мой профиль")} description={t(lang, "Профиль на Foodies Academy.")} breadcrumbs={[{ label: t(lang, "Профиль") }]} noindex>
 	<Section>
 		<div class="profile" hidden>
 			<div class="profile__head flex gap-15 items-center">
 				<h1 class="profile__title"></h1>
-				<button type="button" class="profile__logout btn btn--secondary">Выйти</button>
+				<button type="button" class="profile__logout btn btn--secondary">{t(lang, "Выйти")}</button>
 			</div>
 
-			<div class="profile__tabs flex gap-10" role="tablist" aria-label="Разделы профиля">
+			<div class="profile__tabs flex gap-10" role="tablist" aria-label={t(lang, "Разделы профиля")}>
 				{tabs.map((tab) => (
 					<button type="button" class="profile__tab" role="tab" id={`tab-${tab.id}`} aria-controls={`panel-${tab.id}`} data-tab={tab.id} aria-selected="false">
 						{tab.label} <span class="profile__tab-count" data-count={tab.id}></span>
@@ -29,38 +31,38 @@ const tabs = [
 
 			<section class="profile__panel" role="tabpanel" id="panel-profile" aria-labelledby="tab-profile" hidden>
 				<form class="profile__form" data-form="details" novalidate>
-					<h2 class="profile__subtitle">Личные данные</h2>
-					<FormField name="name" label="Отображаемое имя" autocomplete="nickname" required minlength={2} hint="Так вас видят в отзывах" />
+					<h2 class="profile__subtitle">{t(lang, "Личные данные")}</h2>
+					<FormField name="name" label={t(lang, "Отображаемое имя")} autocomplete="nickname" required minlength={2} hint={t(lang, "Так вас видят в отзывах")} />
 					<div class="profile__row">
-						<FormField name="firstName" label="Имя" autocomplete="given-name" />
-						<FormField name="lastName" label="Фамилия" autocomplete="family-name" />
+						<FormField name="firstName" label={t(lang, "Имя")} autocomplete="given-name" />
+						<FormField name="lastName" label={t(lang, "Фамилия")} autocomplete="family-name" />
 					</div>
-					<FormField name="description" label="О себе" multiline />
-					<button type="submit" class="btn">Сохранить</button>
+					<FormField name="description" label={t(lang, "О себе")} multiline />
+					<button type="submit" class="btn">{t(lang, "Сохранить")}</button>
 				</form>
 
 				<form class="profile__form" data-form="security" novalidate>
-					<h2 class="profile__subtitle">E-mail и пароль</h2>
+					<h2 class="profile__subtitle">{t(lang, "E-mail и пароль")}</h2>
 					<FormField name="email" label="E-mail" type="email" autocomplete="email" required />
-					<FormField name="password" label="Новый пароль" type="password" autocomplete="new-password" minlength={8} hint="Оставьте пустым, чтобы не менять" />
-					<FormField name="currentPassword" label="Текущий пароль" type="password" autocomplete="current-password" hint="Нужен, чтобы сменить e-mail или пароль" />
-					<button type="submit" class="btn">Сохранить</button>
+					<FormField name="password" label={t(lang, "Новый пароль")} type="password" autocomplete="new-password" minlength={8} hint={t(lang, "Оставьте пустым, чтобы не менять")} />
+					<FormField name="currentPassword" label={t(lang, "Текущий пароль")} type="password" autocomplete="current-password" hint={t(lang, "Нужен, чтобы сменить e-mail или пароль")} />
+					<button type="submit" class="btn">{t(lang, "Сохранить")}</button>
 				</form>
 			</section>
 
 			<section class="profile__panel" role="tabpanel" id="panel-favorites" aria-labelledby="tab-favorites" hidden>
-				<p class="profile__empty" data-empty="favorites" hidden>Здесь будут рецепты, которые вы сохраните кнопкой с закладкой на странице рецепта.</p>
+				<p class="profile__empty" data-empty="favorites" hidden>{t(lang, "Здесь будут рецепты, которые вы сохраните кнопкой с закладкой на странице рецепта.")}</p>
 				<ul class="profile__cards" data-list="favorites"></ul>
 			</section>
 
 			<section class="profile__panel" role="tabpanel" id="panel-follows" aria-labelledby="tab-follows" hidden>
-				<h2 class="profile__subtitle">Новые рецепты с прошлого визита</h2>
+				<h2 class="profile__subtitle">{t(lang, "Новые рецепты с прошлого визита")}</h2>
 				<p class="profile__since" data-since></p>
-				<p class="profile__empty" data-empty="new" hidden>С прошлого визита новых рецептов у ваших авторов нет.</p>
+				<p class="profile__empty" data-empty="new" hidden>{t(lang, "С прошлого визита новых рецептов у ваших авторов нет.")}</p>
 				<ul class="profile__cards" data-list="new"></ul>
 
-				<h2 class="profile__subtitle">Мои авторы</h2>
-				<p class="profile__empty" data-empty="authors" hidden>Подпишитесь на автора на его странице — его новые рецепты появятся здесь.</p>
+				<h2 class="profile__subtitle">{t(lang, "Мои авторы")}</h2>
+				<p class="profile__empty" data-empty="authors" hidden>{t(lang, "Подпишитесь на автора на его странице — его новые рецепты появятся здесь.")}</p>
 				<ul class="profile__authors" data-list="authors"></ul>
 			</section>
 		</div>
@@ -68,10 +70,10 @@ const tabs = [
 </BaseLayout>
 
 <script>
+	import { href, pageLang, pluralc, tc } from "../scripts/i18n";
 	import { api, goToLogin, loadMe, logout, patchMe, type Me, type User } from "../scripts/account";
 	import { clearErrors, formValues, showError } from "../scripts/accountForm";
 	import { showToast } from "../scripts/toast";
-	import { recipesWord } from "../utils/plural";
 
 	type RecipeCard = { slug: string; title: string; image: string; time: string; categories: { course: Record<string, string> } };
 	type AuthorCard = { slug: string; name: string; avatar: string; recipes: number };
@@ -134,7 +136,7 @@ const tabs = [
 					const user = await api<User>("/me", { method: "POST", body: values });
 					showUser(user);
 					await patchMe({ user });
-					showToast("Сохранено");
+					showToast(tc("Сохранено"));
 				} catch (error) {
 					showError(form, error);
 				} finally {
@@ -144,23 +146,23 @@ const tabs = [
 		});
 		$(".profile__logout").addEventListener("click", async () => {
 			await logout();
-			location.href = "/";
+			location.href = href("/");
 		});
 	}
 
 	function recipeItem(recipe: RecipeCard, onRemove?: () => void) {
 		const item = el("li", "profile-card");
 		const link = el("a", "profile-card__link");
-		link.href = `/recipe/${recipe.slug}`;
+		link.href = href(`/recipe/${recipe.slug}`);
 		const image = el("span", "profile-card__img");
 		if (recipe.image) image.style.backgroundImage = `url("${recipe.image}")`;
 		const meta = [recipe.time, ...Object.values(recipe.categories.course)].filter(Boolean).join(" · ");
 		link.append(image, el("span", "profile-card__title", recipe.title), el("span", "profile-card__meta", meta));
 		item.append(link);
 		if (onRemove) {
-			const remove = el("button", "profile-card__remove", "Убрать");
+			const remove = el("button", "profile-card__remove", tc("Убрать"));
 			remove.type = "button";
-			remove.setAttribute("aria-label", `Убрать «${recipe.title}» из избранного`);
+			remove.setAttribute("aria-label", tc("Убрать «{title}» из избранного", { title: recipe.title }));
 			remove.addEventListener("click", onRemove);
 			item.append(remove);
 		}
@@ -183,37 +185,37 @@ const tabs = [
 						setCount("favorites", favorites.length);
 						recipes.splice(recipes.indexOf(recipe), 1);
 						render(recipes);
-						showToast("Убрано из избранного");
+						showToast(tc("Убрано из избранного"));
 					} catch (error) {
-						showToast(error instanceof Error ? error.message : "Не удалось убрать рецепт");
+						showToast(error instanceof Error ? error.message : tc("Не удалось убрать рецепт"));
 					}
 				})));
 			render(recipes);
 		} catch {
-			showToast("Не удалось загрузить избранное");
+			showToast(tc("Не удалось загрузить избранное"));
 		}
 	}
 
 	async function loadFollows() {
 		try {
 			const data = await api<{ authors: AuthorCard[]; newRecipes: { since: string; recipes: RecipeCard[] } }>("/me/follows");
-			const since = new Date(data.newRecipes.since).toLocaleString("ru-RU", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
-			$("[data-since]").textContent = `Прошлый визит: ${since}`;
+			const since = new Date(data.newRecipes.since).toLocaleString(pageLang === "en" ? "en-US" : "ru-RU", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
+			$("[data-since]").textContent = tc("Прошлый визит: {date}", { date: since });
 			fill("new", data.newRecipes.recipes.map((recipe) => recipeItem(recipe)));
 			fill("authors", data.authors.map((author) => {
 				const item = el("li", "profile-author");
 				const link = el("a", "profile-author__link flex gap-12 items-center");
-				link.href = `/author/${author.slug}`;
+				link.href = href(`/author/${author.slug}`);
 				const avatar = el("span", "profile-author__avatar", author.avatar ? "" : author.name.slice(0, 1));
 				if (author.avatar) avatar.style.backgroundImage = `url("${author.avatar}")`;
 				const text = el("span", "profile-author__text");
-				text.append(el("strong", "profile-author__name", author.name), el("span", "profile-author__meta", `${author.recipes} ${recipesWord(author.recipes)}`));
+				text.append(el("strong", "profile-author__name", author.name), el("span", "profile-author__meta", `${author.recipes} ${pluralc(author.recipes, ["рецепт", "рецепта", "рецептов"])}`));
 				link.append(avatar, text);
 				item.append(link);
 				return item;
 			}));
 		} catch {
-			showToast("Не удалось загрузить подписки");
+			showToast(tc("Не удалось загрузить подписки"));
 		}
 	}
 </script>

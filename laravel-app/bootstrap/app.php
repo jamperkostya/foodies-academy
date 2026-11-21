@@ -13,6 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias(['visitor' => \App\Http\Middleware\AuthenticateVisitor::class]);
+        $middleware->appendToGroup('api', \App\Http\Middleware\SetLanguage::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Without it Laravel 11+ doesn't hand unhandled exceptions to Sentry.

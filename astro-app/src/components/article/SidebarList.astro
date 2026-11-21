@@ -1,6 +1,8 @@
 ---
 // "Похожие рецепты" / "Похожие лайфхаки" in the article sidebar.
 import SidebarCard from "./SidebarCard.astro";
+import { langOf, localize } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Item {
 	title: string;
@@ -21,7 +23,7 @@ const { title, items } = Astro.props;
 	<ul class="sidebar-list flex">
 		{items.map((item) => (
 			<li class="sidebar-list__item">
-				<a class="sidebar-list__link flex gap-12 items-center" href={item.href}>
+				<a class="sidebar-list__link flex gap-12 items-center" href={localize(lang, item.href)}>
 					<span class="sidebar-list__img" style={`background-image: url('${item.image}')`}></span>
 					<span>
 						<strong class="sidebar-list__title">{item.title}</strong>

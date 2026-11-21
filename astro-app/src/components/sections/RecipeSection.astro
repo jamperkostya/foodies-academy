@@ -3,6 +3,8 @@ import Section from "../layout/Section.astro";
 import Carousel from "../ui/Carousel.astro";
 import RecipeCard from "../recipes/RecipeCard.astro";
 import type { Recipe } from "../../types/recipe";
+import { langOf, localize } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	recipes: Recipe[];
@@ -18,9 +20,9 @@ const { recipes, groupsOf, href } = Astro.props;
 const groups = groupsOf ? [...new Set(recipes.flatMap(groupsOf))].filter(Boolean) : [];
 const hasFilters = groups.length > 1;
 ---
-<Section href={hasFilters ? undefined : href}>
+<Section href={localize(lang, hasFilters ? undefined : href)}>
 	<slot name="title" slot="title" />
-	<Carousel variant="recipes" groups={hasFilters ? groups : undefined} href={href}>
+	<Carousel variant="recipes" groups={hasFilters ? groups : undefined} href={localize(lang, href)}>
 		{recipes.map((recipe) => (
 			<RecipeCard class="carousel__item" recipe={recipe} groups={groupsOf?.(recipe)} />
 		))}

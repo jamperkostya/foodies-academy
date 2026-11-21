@@ -1,4 +1,4 @@
-FROM wordpress:7.0.2-php8.3-apache
+FROM wordpress:7.1.5-php8.3-apache
 
 # WP-CLI installs and activates the site's plugins on start (see install-plugins.sh).
 ARG WP_CLI_VERSION=2.12.0

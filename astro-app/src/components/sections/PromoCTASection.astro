@@ -1,6 +1,8 @@
 ---
 // Home page block from a WordPress page (title, excerpt, featured image) with a button to the page.
 import type { SitePage } from "../../types/page";
+import { langOf, localize } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	page: SitePage;
@@ -21,7 +23,7 @@ const image = page.image || "https://foodies.academy/wp-content/uploads/2025/11/
 					<p class="promo__desc">{page.excerpt}</p>
 				</div>
 			)}
-			<a href={`/${page.slug}`} class="btn btn--primary">{buttonLabel}</a>
+			<a href={localize(lang, `/${page.slug}`)} class="btn btn--primary">{buttonLabel}</a>
 		</div>
 		<div class="promo__media">
 			<div class="promo__img" style={`background-image:url('${image}')`}></div>

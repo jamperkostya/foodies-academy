@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Services\ApiTokens;
+use App\Support\Lang;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +17,7 @@ class AuthenticateVisitor
     {
         $userId = $request->bearerToken() ? $this->tokens->userId($request->bearerToken()) : null;
         if (! $userId) {
-            return response()->json(['message' => 'Войдите в аккаунт'], 401);
+            return response()->json(['message' => Lang::text('Войдите в аккаунт', 'Please log in')], 401);
         }
         $request->attributes->set('wp_user_id', $userId);
 

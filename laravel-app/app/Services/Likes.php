@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 /**
  * Likes and dislikes of a post, stored where the Posts Like Dislike plugin keeps them
  * (postmeta "pld_like_count" / "pld_dislike_count"), so the WordPress admin shows the same numbers.
+ * A recipe has one count in all languages: a vote is written to every translation of the post.
  */
 class Likes
 {
@@ -37,12 +38,15 @@ class Likes
      */
     public function vote(int $postId, ?string $from, ?string $to): array
     {
-        $this->db->transaction(function () use ($postId, $from, $to) {
-            if ($from) {
-                $this->add($postId, self::KEYS[$from], -1);
-            }
-            if ($to) {
-                $this->add($postId, self::KEYS[$to], 1);
+        $ids = app(Translations::class)->group($postId);
+        $this->db->transaction(function () use ($ids, $from, $to) {
+            foreach ($ids as $id) {
+                if ($from) {
+                    $this->add($id, self::KEYS[$from], -1);
+                }
+                if ($to) {
+                    $this->add($id, self::KEYS[$to], 1);
+                }
             }
         });
 

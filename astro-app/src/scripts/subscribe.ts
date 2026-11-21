@@ -1,3 +1,4 @@
+import { tc } from "./i18n";
 // Sign-up forms: <form data-subscribe={url} data-list="book|newsletter"> with "name" and "email"
 // fields (SubscribeSection: the free recipe book, NewsletterCard: the newsletter). Laravel passes
 // them to the list's Contact Form 7 form, and CFDB7 saves them under it.
@@ -11,7 +12,7 @@ document.querySelectorAll<HTMLFormElement>("form[data-subscribe]").forEach((form
 		const name = String(data.get("name") ?? "").trim();
 		const email = String(data.get("email") ?? "").trim();
 		if (!name || !email || !form.checkValidity()) {
-			showToast("Укажите имя и e-mail");
+			showToast(tc("Укажите имя и e-mail"));
 			return;
 		}
 
@@ -25,9 +26,9 @@ document.querySelectorAll<HTMLFormElement>("form[data-subscribe]").forEach((form
 			});
 			if (!response.ok) {
 				showToast(
-					response.status === 422 ? "Проверьте имя и e-mail"
-					: response.status === 429 ? "Слишком много попыток, попробуйте через минуту"
-					: "Не удалось оформить подписку, попробуйте позже",
+					response.status === 422 ? tc("Проверьте имя и e-mail")
+					: response.status === 429 ? tc("Слишком много попыток, попробуйте через минуту")
+					: tc("Не удалось оформить подписку, попробуйте позже"),
 				);
 				return;
 			}
@@ -37,10 +38,10 @@ document.querySelectorAll<HTMLFormElement>("form[data-subscribe]").forEach((form
 				form.hidden = true;
 				done.hidden = false;
 			} else {
-				showToast("Готово! Вы подписаны на рассылку");
+				showToast(tc("Готово! Вы подписаны на рассылку"));
 			}
 		} catch {
-			showToast("Не удалось оформить подписку, проверьте интернет");
+			showToast(tc("Не удалось оформить подписку, проверьте интернет"));
 		} finally {
 			if (button) button.disabled = false;
 		}

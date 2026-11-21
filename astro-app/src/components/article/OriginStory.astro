@@ -3,6 +3,8 @@
 // from WordPress (wp-content/mu-plugins/foodies-origin-story.php), styled by
 // its origin-story__* classes. Parts the editor deleted simply don't render.
 import ContentBlock from "./ContentBlock.astro";
+import { langOf, t } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	html: string;
@@ -10,7 +12,7 @@ interface Props {
 
 const { html } = Astro.props;
 ---
-<ContentBlock title="История происхождения" id="origin">
+<ContentBlock title={t(lang, "История происхождения")} id="origin">
 	{/* Either plain paragraphs (the recipe's history field) or the origin-story block. */}
 	<div class="origin-story-content" set:html={html} />
 </ContentBlock>

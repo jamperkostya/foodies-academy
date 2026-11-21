@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Support\Lang;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -36,11 +37,20 @@ class Seo
 
     public function forUser(string $slug): ?array
     {
+        // Yoast's templates are Russian ("Рецепт блюда: …"): another language keeps the page's own
+        // title. Translated posts and terms have English fields (wp foodies seo-templates).
+        if (! Lang::isDefault()) {
+            return null;
+        }
         return $this->fetch('users', ['slug' => $slug]);
     }
 
     public function forPageId(int $id): ?array
     {
+        // Yoast's title templates are Russian ("Рецепт блюда: …"): another language keeps the page's own title.
+        if (! Lang::isDefault()) {
+            return null;
+        }
         return $this->fetch("pages/$id");
     }
 

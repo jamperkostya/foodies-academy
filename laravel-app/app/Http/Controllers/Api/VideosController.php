@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\Comments;
 use App\Services\Videos;
+use App\Support\Lang;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -22,20 +23,20 @@ class VideosController extends Controller
         $page = (int) ($data['page'] ?? 1);
         $perPage = (int) ($data['per_page'] ?? 24);
 
-        return response()->json(['data' => Cache::remember("videos:page:$page:$perPage", now()->addMinutes(self::CACHE_MINUTES),
+        return response()->json(['data' => Cache::remember(Lang::key("videos:page:$page:$perPage"), now()->addMinutes(self::CACHE_MINUTES),
             fn () => $this->videos->getPage($page, $perPage))]);
     }
 
     // GET /api/videos/slugs
     public function slugs(): JsonResponse
     {
-        return response()->json(['data' => Cache::remember('videos:slugs', now()->addMinutes(self::CACHE_MINUTES), fn () => $this->videos->getSlugs())]);
+        return response()->json(['data' => Cache::remember(Lang::key('videos:slugs'), now()->addMinutes(self::CACHE_MINUTES), fn () => $this->videos->getSlugs())]);
     }
 
     // GET /api/videos/{slug}
     public function show(string $slug): JsonResponse
     {
-        $video = Cache::remember("videos:slug:$slug", now()->addMinutes(self::CACHE_MINUTES), fn () => $this->videos->getBySlug($slug));
+        $video = Cache::remember(Lang::key("videos:slug:$slug"), now()->addMinutes(self::CACHE_MINUTES), fn () => $this->videos->getBySlug($slug));
         abort_if(! $video, 404, 'Video not found');
 
         return response()->json(['data' => $video]);
@@ -55,6 +56,6 @@ class VideosController extends Controller
         $comments->addPending($postId, strip_tags(trim($data['name'])), strip_tags(trim($data['text'])),
             $data['rating'] ?? null, (string) $request->ip(), (string) $request->userAgent());
 
-        return response()->json(['message' => 'Комментарий отправлен на модерацию'], 201);
+        return response()->json(['message' => Lang::text('Комментарий отправлен на модерацию', 'Your comment will appear after moderation')], 201);
     }
 }

@@ -1,5 +1,7 @@
 ---
 import type { Lifehack } from "../../types/lifehack";
+import { langOf, localize, viewsText } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	lifehack: Lifehack;
@@ -9,16 +11,23 @@ interface Props {
 
 const { lifehack, hidden } = Astro.props;
 ---
-<a href={`/lifehack/${lifehack.slug}`} class="lifehack-card" data-groups={JSON.stringify([lifehack.category])} hidden={hidden}>
+<a href={localize(lang, `/lifehack/${lifehack.slug}`)} class="lifehack-card" data-groups={JSON.stringify([lifehack.category])} hidden={hidden}>
 	<div class="lifehack-card__top">
 		<span class="lifehack-card__icon" aria-hidden="true">{lifehack.icon}</span>
 		<span class="lifehack-card__tag">{lifehack.category}</span>
 	</div>
 	<h3 class="lifehack-card__title">{lifehack.title}</h3>
 	<p class="lifehack-card__text">{lifehack.description}</p>
+	{lifehack.views > 0 && <span class="lifehack-card__views">{viewsText(lang, lifehack.views)}</span>}
 </a>
 
 <style lang="less">
+.lifehack-card__views {
+	margin-top: auto;
+	font-size: 13px;
+	color: var(--color-grey);
+}
+
 .lifehack-card {
 	display: flex;
 	flex-direction: column;

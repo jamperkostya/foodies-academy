@@ -4,19 +4,20 @@ import PageHero from "../../components/layout/PageHero.astro";
 import CardGrid from "../../components/ui/CardGrid.astro";
 import NewsCard from "../../components/news/NewsCard.astro";
 import type { News } from "../../types/news";
-import { plural } from "../../utils/plural";
+import { langOf, localize, pluralOf, t, withLang } from "../../i18n";
+const lang = langOf(Astro.url);
 
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
 // News: WordPress post type "news".
-const { data: news }: { data: News[] } = await fetch(`${API_URL}/news?limit=200`).then((r) => r.json());
+const { data: news }: { data: News[] } = await fetch(withLang(lang, `${API_URL}/news?limit=200`)).then((r) => r.json());
 
 const description = news.length
-	? `${news.length} ${plural(news.length, ["новость", "новости", "новостей"])} Foodies Academy: события, продукты и кулинарные тренды.`
-	: "Новости Foodies Academy: события, продукты и кулинарные тренды.";
+	? `${news.length} ${pluralOf(lang, news.length, [t(lang, "новость"), t(lang, "новости"), t(lang, "новостей")])} Foodies Academy: события, продукты и кулинарные тренды.`
+	: t(lang, "Новости Foodies Academy: события, продукты и кулинарные тренды.");
 ---
-<BaseLayout title="Новости" description={description} breadcrumbs={[{ label: "Новости" }]}>
-	<PageHero slot="hero" eyebrow="Журнал" description={description}>
-		<span class="page-hero__accent">Новости</span>
+<BaseLayout title={t(lang, "Новости")} description={description} breadcrumbs={[{ label: t(lang, "Новости") }]}>
+	<PageHero slot="hero" eyebrow={t(lang, "Журнал")} description={description}>
+		<span class="page-hero__accent">{t(lang, "Новости")}</span>
 	</PageHero>
 
 	<section class="news-list section-item">
@@ -25,7 +26,7 @@ const description = news.length
 				{news.map((item) => <NewsCard news={item} />)}
 			</CardGrid>
 		) : (
-			<p class="news-list__empty">Новостей пока нет — загляните в <a href="/blog">блог</a>.</p>
+			<p class="news-list__empty">{t(lang, "Новостей пока нет — загляните в")}{" "}<a href={localize(lang, "/blog")}>{t(lang, "блог")}</a>.</p>
 		)}
 	</section>
 </BaseLayout>

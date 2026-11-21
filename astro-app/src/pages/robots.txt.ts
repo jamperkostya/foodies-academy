@@ -13,6 +13,10 @@ export const GET: APIRoute = ({ site }) => {
 					"Disallow: /register",
 					"Disallow: /profile",
 					"Disallow: /search",
+					"Disallow: /en/login",
+					"Disallow: /en/register",
+					"Disallow: /en/profile",
+					"Disallow: /en/search",
 					"",
 					`Sitemap: ${new URL("/sitemap.xml", site).href}`,
 				]

@@ -5,10 +5,13 @@ import Breadcrumbs from "../components/layout/Breadcrumbs.astro";
 import BackToTop from "../components/layout/BackToTop.astro";
 import Toast from "../components/ui/Toast.astro";
 import SiteCounters from "../components/layout/SiteCounters.astro";
+import CookieConsent from "../components/layout/CookieConsent.astro";
 import type { Breadcrumb } from "../types/breadcrumb";
 import type { Seo } from "../types/seo";
 import { jsonLd } from "../utils/jsonLd";
 import "../styles/global.less";
+import { clientStrings, langOf, LANGS, LOCALES, localize, t, unlocalize, type Lang } from "../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	// Page name, shown before the site name in the browser tab.
@@ -17,37 +20,54 @@ interface Props {
 	description?: string;
 	// Trail shown under the header, after "Главная". Omit on the home page.
 	breadcrumbs?: Breadcrumb[];
-	// Pages search engines shouldn't list (log-in, profile).
-	noindex?: boolean;
+	// Pages search engines shouldn't list (log-in, profile). "follow": not listed, but its links
+	// are (a thin ingredient page).
+	noindex?: boolean | "follow";
 	// Yoast SEO fields of the WordPress object behind the page; they win over title/description.
 	seo?: Seo | null;
 	// Picture for social networks when Yoast has none (a recipe's photo, a video's thumbnail).
 	image?: string;
 	// og:type when Yoast has none: "article" for recipes and news, "website" otherwise.
 	type?: string;
+	// Addresses of this page in every language it exists in ({ ru: "/recipe/x", en: "/en/recipe/y" }):
+	// hreflang and the language switch. Omitted: the page exists in its own language only.
+	translations?: Partial<Record<Lang, string>>;
+	// A page without content of its own (categories, search, log-in): it exists in every language.
+	bilingual?: boolean;
 }
 
 const {
 	title,
-	description = "Foodies Academy — рецепты с пошаговыми фото и видео: основные блюда, супы, салаты, десерты и выпечка.",
+	description = t(lang, "Foodies Academy — рецепты с пошаговыми фото и видео: основные блюда, супы, салаты, десерты и выпечка."),
 	breadcrumbs,
 	noindex = false,
 	seo,
 	image,
 	type = "website",
+	bilingual = false,
 } = Astro.props;
+const ownPath = Astro.url.pathname.replace(/\.html$/, "").replace(/\/index$/, "") || "/";
+const translations: Partial<Record<Lang, string>> = bilingual
+	? Object.fromEntries(LANGS.map((code) => [code, localize(code, unlocalize(ownPath))]))
+	: (Astro.props.translations ?? {});
+// The other languages of this page (absolute URLs for hreflang), its own among them.
+const alternates = Object.entries({ ...translations, [lang]: ownPath }) as [Lang, string][];
 
 const SITE_NAME = "Foodies.academy";
 // `site` from astro.config; unset when a component is rendered on its own (tests).
 const site = Astro.site ?? new URL("https://foodies.academy");
 // Yoast titles already end with the site name.
 const fullTitle = seo?.title ?? (title ? `${title} — ${SITE_NAME}` : SITE_NAME);
-const metaDescription = seo?.description ?? description;
+// Page 2+ of a list: its own description, not page 1's ("… — страница 3").
+const listPage = Number(Astro.url.pathname.match(/\/page\/(\d+)(\.html)?$/)?.[1] ?? 1);
+const metaDescription = listPage > 1
+	? `${(seo?.description ?? description).replace(/\.$/, "")}${t(lang, " — страница {n}", { n: listPage })}.`
+	: (seo?.description ?? description);
 // This page's address on the site, without ?query; Yoast's canonical points at WordPress.
 // The build sees the file (recipe/x.html), the page is served at /recipe/x.
 const path = Astro.url.pathname.replace(/\.html$/, "").replace(/\/index$/, "/");
 const canonical = new URL(path, site).href;
-const robots = [noindex || seo?.index === false ? "noindex" : "index", noindex || seo?.follow === false ? "nofollow" : "follow"];
+const robots = [noindex || seo?.index === false ? "noindex" : "index", noindex === true || seo?.follow === false ? "nofollow" : "follow"];
 const ogImage = seo?.og.image ?? (image ? { url: new URL(image, site).href, width: null, height: null, type: null } : null);
 const ogTitle = seo?.og.title ?? fullTitle;
 const ogDescription = seo?.og.description ?? metaDescription;
@@ -56,17 +76,17 @@ const ogDescription = seo?.og.description ?? metaDescription;
 const breadcrumbSchema = breadcrumbs?.length
 	? jsonLd({
 			"@type": "BreadcrumbList",
-			itemListElement: [{ label: "Главная", href: "/" }, ...breadcrumbs].map((crumb, i) => ({
+			itemListElement: [{ label: t(lang, "Главная"), href: localize(lang, "/") }, ...breadcrumbs].map((crumb, i) => ({
 				"@type": "ListItem",
 				position: i + 1,
 				name: crumb.label,
-				item: new URL(crumb.href ?? path, site).href,
+				item: new URL(crumb.href ? localize(lang, crumb.href) : path, site).href,
 			})),
 		})
 	: null;
 ---
 
-<html lang="ru">
+<html lang={lang}>
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -97,7 +117,10 @@ const breadcrumbSchema = breadcrumbs?.length
 		<link rel="canonical" href={canonical}>
 
 		{/* Open Graph and Twitter: Yoast's fields, or the page's own title, description and picture. */}
-		<meta property="og:locale" content="ru_RU">
+		<meta property="og:locale" content={LOCALES[lang].replace("-", "_")}>
+		{alternates.filter(([code]) => code !== lang).map(([code]) => <meta property="og:locale:alternate" content={LOCALES[code].replace("-", "_")}>)}
+		{alternates.length > 1 && alternates.map(([code, href]) => <link rel="alternate" hreflang={code} href={new URL(href, site).href}>)}
+		{alternates.length > 1 && <link rel="alternate" hreflang="x-default" href={new URL(translations.ru ?? alternates[0][1], site).href}>}
 		<meta property="og:type" content={seo?.og.type ?? type}>
 		<meta property="og:title" content={ogTitle}>
 		<meta property="og:description" content={ogDescription}>
@@ -118,7 +141,8 @@ const breadcrumbSchema = breadcrumbs?.length
 		<SiteCounters host={Astro.site?.hostname} />
 	</head>
 	<body>
-		<Header />
+		{lang !== "ru" && <script type="application/json" id="i18n-strings" is:inline set:html={JSON.stringify(clientStrings(lang))} />}
+		<Header translations={Object.fromEntries(alternates)} />
 		{breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
 		{/* Full-width intro between the breadcrumbs and the page content (e.g. PageHero). */}
 		<slot name="hero" />
@@ -126,5 +150,7 @@ const breadcrumbSchema = breadcrumbs?.length
 		<Footer />
 		<BackToTop />
 		<Toast />
+		{/* Only where SiteCounters puts the counters. */}
+		{Astro.site?.hostname === "foodies.academy" && <CookieConsent />}
 	</body>
 </html>

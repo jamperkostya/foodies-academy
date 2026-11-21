@@ -1,4 +1,6 @@
 ---
+import { langOf, t } from "../../i18n";
+const lang = langOf(Astro.url);
 // "Оцените автора": five star buttons. Saved via Laravel in the author's WordPress usermeta.
 // The page is built ahead of time, so fresh numbers load on open. One vote per browser,
 // remembered in localStorage: clicking other stars changes it, the same stars take it back.
@@ -9,11 +11,11 @@ interface Props {
 }
 
 const { slug, action } = Astro.props;
-const labels = ["1 звезда", "2 звезды", "3 звезды", "4 звезды", "5 звёзд"];
+const labels = [t(lang, "1 звезда"), t(lang, "2 звезды"), t(lang, "3 звезды"), t(lang, "4 звезды"), t(lang, "5 звёзд")];
 ---
 <div class="author-rating flex gap-10 items-center no-print" data-slug={slug} data-action={action}>
-	<span class="author-rating__title">Оцените автора</span>
-	<div class="author-rating__stars flex" role="group" aria-label="Оценка автора">
+	<span class="author-rating__title">{t(lang, "Оцените автора")}</span>
+	<div class="author-rating__stars flex" role="group" aria-label={t(lang, "Оценка автора")}>
 		{labels.map((label, i) => (
 			<button type="button" class="author-rating__star" data-stars={i + 1} aria-label={label} aria-pressed="false">★</button>
 		))}
@@ -22,9 +24,9 @@ const labels = ["1 звезда", "2 звезды", "3 звезды", "4 зве�
 </div>
 
 <script>
+	import { pluralc, tc } from "../../scripts/i18n";
 	import { showToast } from "../../scripts/toast";
-	import { plural } from "../../utils/plural";
-
+	
 	type Rating = { average: number | null; count: number };
 
 	document.querySelectorAll<HTMLElement>(".author-rating").forEach((root) => {
@@ -57,8 +59,8 @@ const labels = ["1 звезда", "2 звезды", "3 звезды", "4 зве�
 			paint(vote ?? 0);
 			if (rating) {
 				summary.textContent = rating.average
-					? `${rating.average} · ${rating.count} ${plural(rating.count, ["оценка", "оценки", "оценок"])}`
-					: "Пока без оценок";
+					? `${rating.average} · ${rating.count} ${pluralc(rating.count, ["оценка", "оценки", "оценок"])}`
+					: tc("Пока без оценок");
 			}
 		};
 		render();
@@ -82,15 +84,15 @@ const labels = ["1 звезда", "2 звезды", "3 звезды", "4 зве�
 						body: JSON.stringify({ from: vote, to: next }),
 					});
 					if (!response.ok) {
-						showToast(response.status === 429 ? "Слишком часто, попробуйте через минуту" : "Не удалось сохранить оценку");
+						showToast(response.status === 429 ? tc("Слишком часто, попробуйте через минуту") : tc("Не удалось сохранить оценку"));
 						return;
 					}
 					vote = next;
 					saveVote(vote);
 					render((await response.json()).data);
-					if (vote) showToast("Спасибо за оценку!");
+					if (vote) showToast(tc("Спасибо за оценку!"));
 				} catch {
-					showToast("Не удалось сохранить оценку, проверьте интернет");
+					showToast(tc("Не удалось сохранить оценку, проверьте интернет"));
 				} finally {
 					busy = false;
 				}

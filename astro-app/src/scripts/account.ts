@@ -1,3 +1,5 @@
+import { href, pageLang, tc } from "./i18n";
+import { withLang } from "../i18n/lang";
 // The visitor's account in the browser: the log-in token (localStorage), calls to the
 // Laravel account API with it, and the header/menu links that depend on being logged in.
 
@@ -34,7 +36,8 @@ export const isLoggedIn = () => Boolean(readToken());
 
 export async function api<T>(path: string, options: { method?: string; body?: unknown } = {}): Promise<T> {
 	const token = readToken();
-	const response = await fetch(`${API}${path}`, {
+	// Recipe lists (favourites, new recipes of followed authors) in the page's language.
+	const response = await fetch(withLang(pageLang, `${API}${path}`), {
 		method: options.method ?? "GET",
 		headers: {
 			Accept: "application/json",
@@ -48,7 +51,7 @@ export async function api<T>(path: string, options: { method?: string; body?: un
 	if (!response.ok) {
 		// The token expired or was revoked: forget it.
 		if (response.status === 401 && token) forgetToken();
-		const message = response.status === 429 ? "Слишком много попыток, попробуйте через минуту" : json.message ?? "Что-то пошло не так, попробуйте ещё раз";
+		const message = response.status === 429 ? tc("Слишком много попыток, попробуйте через минуту") : json.message ?? tc("Что-то пошло не так, попробуйте ещё раз");
 		throw new ApiError(response.status, message, json.errors);
 	}
 	return json.data as T;
@@ -88,16 +91,16 @@ export async function patchMe(change: Partial<Me>) {
 
 /** Sends a logged-out visitor to log in and come back here. */
 export function goToLogin() {
-	location.href = `/login?next=${encodeURIComponent(location.pathname + location.hash)}`;
+	location.href = href(`/login?next=${encodeURIComponent(location.pathname + location.hash)}`);
 }
 
 /** ?next= of a query string if it's a path on this site, so it can't send a visitor elsewhere. */
-export function nextPath(search: string, fallback = "/profile") {
+export function nextPath(search: string, fallback = href("/profile")) {
 	const next = new URLSearchParams(search).get("next") ?? "";
 	return next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/\\") ? next : fallback;
 }
 
-export const safeNext = (fallback = "/profile") => nextPath(location.search, fallback);
+export const safeNext = (fallback = href("/profile")) => nextPath(location.search, fallback);
 
 // Header and mobile menu: [data-account-link] (name → /profile, or "Регистрация"),
 // [data-account-profile] (/profile or /login), [data-account-favorites] (/profile#favorites)
@@ -105,15 +108,15 @@ export const safeNext = (fallback = "/profile") => nextPath(location.search, fal
 export async function renderAccountLinks() {
 	const current = await loadMe();
 	document.querySelectorAll<HTMLAnchorElement>("[data-account-link]").forEach((link) => {
-		link.textContent = current ? current.user.name : "Регистрация";
-		link.href = current ? "/profile" : "/register";
+		link.textContent = current ? current.user.name : tc("Регистрация");
+		link.href = href(current ? "/profile" : "/register");
 	});
 	document.querySelectorAll<HTMLAnchorElement>("[data-account-profile]").forEach((link) => {
-		link.href = current ? "/profile" : "/login";
-		link.setAttribute("aria-label", current ? "Профиль" : "Войти");
+		link.href = href(current ? "/profile" : "/login");
+		link.setAttribute("aria-label", current ? tc("Профиль") : tc("Войти"));
 	});
 	document.querySelectorAll<HTMLAnchorElement>("[data-account-favorites]").forEach((link) => {
-		link.href = current ? "/profile#favorites" : "/login?next=%2Fprofile%23favorites";
+		link.href = href(current ? "/profile#favorites" : `/login?next=${encodeURIComponent(href("/profile") + "#favorites")}`);
 	});
 	document.querySelectorAll<HTMLElement>("[data-account-count]").forEach((count) => {
 		const n = current?.favorites.length ?? 0;

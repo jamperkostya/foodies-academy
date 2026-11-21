@@ -97,8 +97,24 @@ class LifehacksAndViewsImportTest extends SiteTestCase
         $this->term('ingredient', 'tmin', 'Тмин', [$draft]);
 
         $this->getJson('/api/ingredients')->assertExactJson(['data' => [
-            ['name' => 'Свёкла', 'slug' => 'svekla', 'count' => 1],
-            ['name' => 'Соль', 'slug' => 'sol', 'count' => 1],
+            ['name' => 'Свёкла', 'slug' => 'svekla', 'count' => 1, 'indexed' => false],
+            ['name' => 'Соль', 'slug' => 'sol', 'count' => 1, 'indexed' => false],
         ]]);
+    }
+
+    public function test_an_ingredient_is_indexed_from_3_recipes_or_with_a_long_text_of_its_own(): void
+    {
+        $ids = [$this->recipe('a'), $this->recipe('b'), $this->recipe('c')];
+        $this->term('ingredient', 'sol', 'Соль', $ids);
+        $this->term('ingredient', 'tmin', 'Тмин', [$ids[0], $ids[1]]);
+        $kochugaru = $this->term('ingredient', 'kochugaru', 'Кочугару', [$ids[0]]);
+        $this->site()->table('termmeta')->insert(['term_id' => $kochugaru, 'meta_key' => 'seo_text', 'meta_value' => '<p>'.str_repeat('Кочугару. ', 150).'</p>']);
+
+        $this->getJson('/api/ingredients')
+            ->assertJsonPath('data.0.indexed', true)
+            ->assertJsonPath('data.1.indexed', true)
+            ->assertJsonPath('data.2.indexed', false);
+        $this->getJson('/api/ingredients/tmin')->assertJsonPath('data.indexed', false);
+        $this->getJson('/api/ingredients/kochugaru')->assertJsonPath('data.indexed', true);
     }
 }

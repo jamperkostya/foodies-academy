@@ -7,6 +7,7 @@ import ArticleLayout from "./ArticleLayout.astro";
 import ContentBlock from "./ContentBlock.astro";
 import PageContent from "./PageContent.astro";
 import Reviews from "./Reviews.astro";
+import ViewCounter from "./ViewCounter.astro";
 import AuthorCard from "./AuthorCard.astro";
 import SidebarList from "./SidebarList.astro";
 import NewsletterCard from "./NewsletterCard.astro";
@@ -15,7 +16,8 @@ import Avatar from "../ui/Avatar.astro";
 import AdSlot from "../ui/AdSlot.astro";
 import { AD_UNITS } from "../../data/ads";
 import type { Article } from "../../types/article";
-import { plural } from "../../utils/plural";
+import { langOf, localize, pluralOf, t, viewsText } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	article: Article;
@@ -30,7 +32,7 @@ const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/
 
 const comments = article.comments ?? [];
 const commentForms: [string, string, string] = ["комментарий", "комментария", "комментариев"];
-const commentsCount = `${comments.length} ${plural(comments.length, commentForms)}`;
+const commentsCount = `${comments.length} ${pluralOf(lang, comments.length, commentForms)}`;
 
 const similar = others
 	.filter((item) => item.slug !== article.slug)
@@ -57,14 +59,14 @@ const image = article.image || "https://foodies.academy/wp-content/uploads/2025/
 		title={article.title}
 		description={article.excerpt}
 		image={image}
-		anchor={{ href: "#content", label: "Читать ↓" }}
+		anchor={{ href: "#content", label: t(lang, "Читать ↓") }}
 		withVideo={false}
 	>
 		<div slot="meta" class="article-author flex gap-10 items-center">
 			<Avatar name={article.author.name} />
 			<div>
 				<strong class="article-author__name">{article.author.name}</strong>
-				<span class="article-author__date">{article.dateText} · {article.readTime} мин чтения</span>
+				<span class="article-author__date">{[article.dateText, t(lang, "{n} мин чтения", { n: article.readTime }), viewsText(lang, article.views)].filter(Boolean).join(" · ")}</span>
 			</div>
 		</div>
 	</ArticleHero>
@@ -78,32 +80,33 @@ const image = article.image || "https://foodies.academy/wp-content/uploads/2025/
 
 			{section.api === "blog" && <AdSlot unit={AD_UNITS.beforeComments} host={Astro.site?.hostname} />}
 
-			<ContentBlock title="Комментарии" id="comments" class="no-print">
+			<ContentBlock title={t(lang, "Комментарии")} id="comments" class="no-print">
 				<span slot="hint" id="commentsCount">{commentsCount}</span>
 				<Reviews
 					reviews={comments}
-					formTitle="Оставить комментарий"
-					placeholder="Что думаете?"
-					submitLabel="Отправить"
-					successMessage="Спасибо! Комментарий появится после проверки модератором"
-					emptyText="Станьте первым, кто оставит комментарий"
+					formTitle={t(lang, "Оставить комментарий")}
+					placeholder={t(lang, "Что думаете?")}
+					submitLabel={t(lang, "Отправить")}
+					successMessage={t(lang, "Спасибо! Комментарий появится после проверки модератором")}
+					emptyText={t(lang, "Станьте первым, кто оставит комментарий")}
 					countId="commentsCount"
 					countForms={commentForms}
-					action={`${PUBLIC_API_URL}/${section.api}/${article.slug}/comments`}
+					action={localize(lang, `${PUBLIC_API_URL}/${section.api}/${article.slug}/comments`)}
 				/>
 			</ContentBlock>
 
 			{section.api === "blog" && <AdSlot unit={AD_UNITS.afterComments} host={Astro.site?.hostname} />}
 
 			<Fragment slot="sidebar">
-				<AuthorCard name={article.author.name} buttonLabel="Профиль автора" href={article.author.slug ? `/author/${article.author.slug}` : undefined} />
-				{similar.length > 0 && <SidebarList title={section.href === "/news" ? "Другие новости" : "Похожие статьи"} items={similar} />}
-				<NewsletterCard title={section.href === "/news" ? "Новости на почту" : "Новые статьи блога на почту"} />
+				<AuthorCard name={article.author.name} buttonLabel={t(lang, "Профиль автора")} href={localize(lang, article.author.slug ? `/author/${article.author.slug}` : undefined)} />
+				{similar.length > 0 && <SidebarList title={section.href === "/news" ? t(lang, "Другие новости") : t(lang, "Похожие статьи")} items={similar} />}
+				<NewsletterCard title={section.href === "/news" ? t(lang, "Новости на почту") : t(lang, "Новые статьи блога на почту")} />
 			</Fragment>
 		</ArticleLayout>
 	</Section>
 
 	<SEOTextSection html={article.seoText} />
+	<ViewCounter action={`${PUBLIC_API_URL}/${section.api}/${article.slug}/view`} />
 </BaseLayout>
 
 <style lang="less">

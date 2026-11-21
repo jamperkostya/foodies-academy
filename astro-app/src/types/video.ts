@@ -14,6 +14,7 @@ export interface Video {
   publishedAt: string; // ISO 8601
   duration: string; // "12:40", "" until the YouTube Data API filled it
   views: number; // YouTube views
+  siteViews: number; // views of its page on the site
   youtubeLikes: number;
   likes: number; // the site's likes (Posts Like Dislike)
   comments: number; // the site's approved comments

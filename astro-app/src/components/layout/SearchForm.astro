@@ -1,5 +1,7 @@
 ---
 import Icon from "../ui/Icon.astro";
+import { langOf, localize, t } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	// Id of the suggestion list; unique per form when a page has several.
@@ -8,26 +10,26 @@ interface Props {
 
 const { id = "search-suggestions" } = Astro.props;
 ---
-<form class="search" role="search" action="/search">
+<form class="search" role="search" action={localize(lang, "/search")}>
 	<input
 		type="search"
 		name="q"
 		class="search__input"
-		placeholder="Поиск рецептов..."
-		aria-label="Поиск рецептов"
+		placeholder={t(lang, "Поиск рецептов...")}
+		aria-label={t(lang, "Поиск рецептов")}
 		role="combobox"
 		aria-autocomplete="list"
 		aria-expanded="false"
 		aria-controls={id}
 		autocomplete="off"
 	>
-	<button type="submit" aria-label="Найти" class="search__btn btn">
+	<button type="submit" aria-label={t(lang, "Найти")} class="search__btn btn">
 		<Icon name="search" width={24} height={24} />
 	</button>
 	<div class="search__suggest">
-		<div class="search__list" id={id} role="listbox" aria-label="Подсказки"></div>
+		<div class="search__list" id={id} role="listbox" aria-label={t(lang, "Подсказки")}></div>
 		<p class="search__empty" hidden></p>
-		<a class="search__all" href="/search" hidden></a>
+		<a class="search__all" href={localize(lang, "/search")} hidden></a>
 	</div>
 </form>
 
@@ -175,6 +177,7 @@ const { id = "search-suggestions" } = Astro.props;
 </style>
 
 <script>
+	import { href, tc } from "../../scripts/i18n";
 	import { loadIndex, normalize, findItems, el, highlight, type SearchItem } from "../../scripts/search";
 
 	const MAX_RESULTS = 6;
@@ -242,8 +245,8 @@ const { id = "search-suggestions" } = Astro.props;
 			list.replaceChildren(...items);
 			empty.hidden = true;
 			all.hidden = false;
-			all.href = `/search?q=${encodeURIComponent(input.value.trim())}`;
-			all.textContent = `Все результаты по «${input.value.trim()}» →`;
+			all.href = href(`/search?q=${encodeURIComponent(input.value.trim())}`);
+			all.textContent = tc("Все результаты по «{query}» →", { query: input.value.trim() });
 			active = -1;
 			setOpen(true);
 		};
@@ -253,14 +256,14 @@ const { id = "search-suggestions" } = Astro.props;
 			const query = normalize(raw);
 			if (!query) return setOpen(false);
 
-			showMessage("Ищем…");
+			showMessage(tc("Ищем…"));
 			const data = await loadIndex();
 			// The query changed while the index was loading.
 			if (normalize(input.value.trim()) !== query) return;
 
 			const results = findItems(data, query).slice(0, MAX_RESULTS);
 			if (results.length) render(results, query);
-			else showMessage(`Ничего не найдено по запросу «${raw}»`);
+			else showMessage(tc("Ничего не найдено по запросу «{query}»", { query: raw }));
 		};
 
 		input.addEventListener("input", () => {

@@ -1,6 +1,7 @@
 ---
-import { recipesWord } from "../../utils/plural";
 import type { Category } from "../../types/category";
+import { langOf, localize, recipesWord } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	category: Category;
@@ -12,9 +13,9 @@ interface Props {
 
 const { category, variant, class: className } = Astro.props;
 
-const recipeWord = recipesWord(category.count);
+const recipeWord = recipesWord(lang, category.count);
 ---
-<a href={`/category/${category.slug}`} class:list={["category-card", variant && `category-card--${variant}`, className]} data-groups={JSON.stringify(category.groups)} data-recipes-count={category.count}>
+<a href={localize(lang, `/category/${category.slug}`)} class:list={["category-card", variant && `category-card--${variant}`, className]} data-groups={JSON.stringify(category.groups)} data-recipes-count={category.count}>
 	<div class="category-card__img" style={`background-image:url('${category.image}')`}></div>
 	<div class="category-card__label">
 		<strong class="category-card__title">{category.name}</strong>

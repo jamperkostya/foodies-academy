@@ -9,6 +9,9 @@ import type { AstroIntegration } from "astro";
 const MOVED: [string, string][] = [
 	// Without the page: the old site had fewer recipes on a page, its numbers run past the new last page.
 	["^(course|cuisine)/([^/]+)(/page/[0-9]+)?(/feed)?$", "/category/$2"],
+	// The lists of all dish types and countries.
+	["^course$", "/categories"],
+	["^cuisine$", "/kitchens"],
 	["^category/novosti$", "/news"],
 	["^category/zdorovoe-pitanie$", "/blog"],
 	["^category/video$", "/video"],
@@ -16,6 +19,8 @@ const MOVED: [string, string][] = [
 	// Print versions and attachment pages of a recipe's photos.
 	["^recipe/([^/]+)/.+$", "/recipe/$1"],
 	["^kuhni-mira$", "/kitchens"],
+	// The old theme's page of all recipes.
+	["^receipes$", "/categories"],
 	["^registration$", "/register"],
 	["^my-account$", "/profile"],
 	["^(cart|checkout)$", "/"],
@@ -50,6 +55,10 @@ export function htaccess(
 		`RewriteCond %{QUERY_STRING} (^|&)p=${id}(&|$)\nRewriteRule ^(index\\.php)?$ ${to} [R=301,L,QSD]`;
 	return [
 		"ErrorDocument 404 /404.html",
+		// The English site's own "page not found".
+		'<If "%{REQUEST_URI} =~ m#^/en(/|$)#">',
+		"\tErrorDocument 404 /en/404.html",
+		"</If>",
 		// /category/x is both a page (category/x.html) and the folder of its page 2+: no slash added.
 		"DirectorySlash Off",
 		"RewriteEngine On",

@@ -2,14 +2,15 @@ import type { APIRoute } from "astro";
 import type { AuthorSummary } from "../types/author";
 import type { Category } from "../types/category";
 import type { SearchItem } from "../scripts/search";
-import { recipesWord } from "../utils/plural";
+import { langOf, localize, recipesWord, t, withLang, type Lang } from "../i18n";
 
 // Built into a static /search-index.json that the header search fetches on
 // first use, instead of embedding the list in every page. Searched by:
 // recipes — title and ingredients; categories and cuisines — name; authors — name.
+// One per language: /search-index.json, /en/search-index.json.
 
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
-const load = async <T>(path: string): Promise<T> => (await fetch(`${API_URL}${path}`).then((r) => r.json())).data;
+const load = async <T>(lang: Lang, path: string): Promise<T> => (await fetch(withLang(lang, `${API_URL}${path}`)).then((r) => r.json())).data;
 
 interface RecipeEntry {
 	slug: string;
@@ -32,36 +33,48 @@ const COURSE_ICONS: Record<string, string> = {
 	"Бургеры": "🍔",
 	"Соусы": "🥫",
 	"Лапша": "🍜",
+	"Main Dishes": "🍖",
+	"Soups": "🍲",
+	"Salads": "🥗",
+	"Desserts": "🍰",
+	"Baking": "🥐",
+	"Snacks": "🍤",
+	"Breakfasts": "🍳",
+	"Drinks": "🍹",
+	"Burgers": "🍔",
+	"Sauces": "🥫",
+	"Noodles": "🍜",
 };
 const icon = (course: string) => COURSE_ICONS[course] ?? "🍽️";
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ url }) => {
+	const lang = langOf(url);
 	const [recipes, courses, countries, authors] = await Promise.all([
-		load<RecipeEntry[]>("/recipes/search-index"),
-		load<Category[]>("/categories?type=course"),
-		load<Category[]>("/categories?type=country"),
-		load<AuthorSummary[]>("/authors"),
+		load<RecipeEntry[]>(lang, "/recipes/search-index"),
+		load<Category[]>(lang, "/categories?type=course"),
+		load<Category[]>(lang, "/categories?type=country"),
+		load<AuthorSummary[]>(lang, "/authors"),
 	]);
 
 	const index: SearchItem[] = [
 		...recipes.map((recipe) => ({
 			title: recipe.title,
-			meta: [recipe.time, recipe.course].filter(Boolean).join(" · ") || "Рецепт",
+			meta: [recipe.time, recipe.course].filter(Boolean).join(" · ") || t(lang, "Рецепт"),
 			icon: icon(recipe.course),
-			href: `/recipe/${recipe.slug}`,
+			href: localize(lang, `/recipe/${recipe.slug}`),
 			ingredients: recipe.ingredients,
 		})),
 		...[...courses, ...countries].map((category) => ({
 			title: category.name,
-			meta: `${category.type === "country" ? "Кухня мира" : "Категория"} · ${category.count} ${recipesWord(category.count)}`,
+			meta: `${category.type === "country" ? t(lang, "Кухня мира") : t(lang, "Категория")} · ${category.count} ${recipesWord(lang, category.count)}`,
 			icon: category.type === "country" ? "🌍" : icon(category.name),
-			href: `/category/${category.slug}`,
+			href: localize(lang, `/category/${category.slug}`),
 		})),
 		...authors.map((author) => ({
 			title: author.name,
-			meta: `Автор · ${author.recipes} ${recipesWord(author.recipes)}`,
+			meta: `${t(lang, "Автор")} · ${author.recipes} ${recipesWord(lang, author.recipes)}`,
 			icon: "👨‍🍳",
-			href: `/author/${author.slug}`,
+			href: localize(lang, `/author/${author.slug}`),
 		})),
 	];
 

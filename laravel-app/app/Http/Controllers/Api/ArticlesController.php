@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\Articles;
 use App\Services\Comments;
+use App\Support\Lang;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -36,7 +37,7 @@ abstract class ArticlesController extends Controller
     // GET /{slug}
     public function show(string $slug): JsonResponse
     {
-        $item = Cache::remember(static::NAME.":slug:$slug", now()->addMinutes(self::CACHE_MINUTES), fn () => $this->articles->getBySlug($slug));
+        $item = Cache::remember(Lang::key(static::NAME.":slug:$slug"), now()->addMinutes(self::CACHE_MINUTES), fn () => $this->articles->getBySlug($slug));
         abort_if(! $item, 404, 'Not found');
 
         return response()->json(['data' => $item]);
@@ -52,11 +53,11 @@ abstract class ArticlesController extends Controller
         $comments->addPending($postId, strip_tags(trim($data['name'])), strip_tags(trim($data['text'])), null,
             (string) $request->ip(), (string) $request->userAgent());
 
-        return response()->json(['message' => 'Комментарий отправлен на модерацию'], 201);
+        return response()->json(['message' => Lang::text('Комментарий отправлен на модерацию', 'Your comment will appear after moderation')], 201);
     }
 
     private function cached(string $key, callable $load): JsonResponse
     {
-        return response()->json(['data' => Cache::remember($key, now()->addMinutes(self::CACHE_MINUTES), $load)]);
+        return response()->json(['data' => Cache::remember(Lang::key($key), now()->addMinutes(self::CACHE_MINUTES), $load)]);
     }
 }

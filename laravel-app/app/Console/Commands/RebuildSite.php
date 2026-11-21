@@ -26,7 +26,7 @@ class RebuildSite extends Command
             // own settings show up the next day at the latest.
             $seo->flush();
         }
-        $this->info('Site rebuild: '.$rebuild->trigger($this->option('force') ? 'nightly' : 'content changed'));
+        $this->info('Site rebuild: '.$rebuild->trigger($this->option('force') ? 'nightly' : 'content changed', all: (bool) $this->option('force')));
 
         return self::SUCCESS;
     }

@@ -4,16 +4,17 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Hero from "../components/sections/Hero.astro";
 
 import { recipes } from '../data/recipes';
+const lang = langOf(Astro.url);
 const API_URL = import.meta.env.API_URL ?? 'http://localhost:8000/api';
-const { data: topRecipes } = await fetch(`${API_URL}/recipes/top?limit=5`).then(r => r.json());
-const { data: featuredRecipes } = await fetch(`${API_URL}/recipes/featured?limit=10`).then(r => r.json());
-const { data: ingredientRecipes } = await fetch(`${API_URL}/recipes/by-ingredients?ingredients=5&limit=20`).then(r => r.json());
+const { data: topRecipes } = await fetch(withLang(lang, `${API_URL}/recipes/top?limit=5`)).then(r => r.json());
+const { data: featuredRecipes } = await fetch(withLang(lang, `${API_URL}/recipes/featured?limit=10`)).then(r => r.json());
+const { data: ingredientRecipes } = await fetch(withLang(lang, `${API_URL}/recipes/by-ingredients?ingredients=5&limit=20`)).then(r => r.json());
 // The 30 newest recipes, filtered by dish type on the page.
-const { data: newRecipes } = await fetch(`${API_URL}/recipes/new?limit=30`).then(r => r.json());
+const { data: newRecipes } = await fetch(withLang(lang, `${API_URL}/recipes/new?limit=30`)).then(r => r.json());
 
-const { data: popularCategories } = await fetch(`${API_URL}/categories/popular?type=course&limit=10`).then(r => r.json());
+const { data: popularCategories } = await fetch(withLang(lang, `${API_URL}/categories/popular?type=course&limit=10`)).then(r => r.json());
 // Newest video recipes (imported from YouTube into WordPress).
-const { data: { videos } } = await fetch(`${API_URL}/videos?per_page=10`).then(r => r.json());
+const { data: { videos } } = await fetch(withLang(lang, `${API_URL}/videos?per_page=10`)).then(r => r.json());
 
 import RecipeSection from "../components/sections/RecipeSection.astro";
 import CategorySection from "../components/sections/CategorySection.astro";
@@ -29,71 +30,82 @@ import SEOTextSection from "../components/sections/SEOTextSection.astro";
 import { wpPage } from "../utils/wpPage";
 
 // "SEO-текст" and Yoast SEO of the WordPress page "home".
-const { seoText, seo } = await wpPage("home");
+const { seoText, seo } = await wpPage("home", lang);
 // The two promo blocks are WordPress pages: title, excerpt and image are edited in the admin.
 const [getStartedPage, ingredientGuidePage] = await Promise.all(
-	["get-started", "ingredient-guide"].map((slug) => fetch(`${API_URL}/pages/${slug}`).then((r) => r.json()).then((r) => r.data)),
+	["get-started", "ingredient-guide"].map((slug) => fetch(withLang(lang, `${API_URL}/pages/${slug}`)).then((r) => r.json()).then((r) => r.data)),
 );
 
 import TrustSection from "../components/sections/TrustSection.astro";
 
 import SubscribeSection from "../components/sections/SubscribeSection.astro";
+import { langOf, localize, t, withLang } from "../i18n";
 
 // 1 featured (shown on the right) + 6 in the list on the left
-const { data: lastNews } = await fetch(`${API_URL}/news?limit=4`).then(r => r.json());
+const { data: lastNews } = await fetch(withLang(lang, `${API_URL}/news?limit=4`)).then(r => r.json());
 // The home grid has 4 columns, so the first 4 here; the footer lists them all.
-const { data: allCollections } = await fetch(`${API_URL}/collections`).then(r => r.json());
+const { data: allCollections } = await fetch(withLang(lang, `${API_URL}/collections`)).then(r => r.json());
 const collections = allCollections.slice(0, 4);
 ---
 
-<BaseLayout seo={seo}>
+{/* The Russian home page has Yoast's fields; other languages get these. */}
+<BaseLayout
+	seo={seo}
+	bilingual
+	title={t(lang, "Рецепты со всего мира с пошаговыми фото и видео")}
+	description={t(lang, "Рецепты блюд со всего мира с пошаговыми фото и видео: вторые блюда, супы, салаты, десерты и выпечка, истории блюд и советы шефов.")}>
+	{/* The page's subject for search engines and screen readers: the slider has no heading. */}
+	<h1 class="sr-only">{t(lang, "Foodies Academy — рецепты с пошаговыми фото и видео")}</h1>
 	<Hero recipes={featuredRecipes} />
 
 	<RecipeSection recipes={topRecipes}>
 		<Fragment slot="title">
-			<span class="section-title__accent">ТОП 5</span> рецептов
+			<span class="section-title__accent">{t(lang, "ТОП 5")}</span>{" "}{t(lang, "рецептов")}
 		</Fragment>
 	</RecipeSection>
 
 	<RecipeSection
 		recipes={newRecipes}
 		groupsOf={(recipe) => Object.values(recipe.categories.course)}
-		href="/categories"
+		href={localize(lang, "/categories")}
 	>
 		<Fragment slot="title">
-			<span class="section-title__accent">Новые</span> рецепты
+			<span class="section-title__accent">{t(lang, "Новые")}</span>{" "}{t(lang, "рецепты")}
 		</Fragment>
 	</RecipeSection>
 	
-	<CategorySection categories={popularCategories} href="/categories">
+	<CategorySection categories={popularCategories} href={localize(lang, "/categories")}>
 		<Fragment slot="title">
-			<span class="section-title__accent">Популярные</span> категории
+			<span class="section-title__accent">{t(lang, "Популярные")}</span>{" "}{t(lang, "категории")}
 		</Fragment>
 	</CategorySection>
 
-	<VideoSection videos={videos} href="/video">
-		<Fragment slot="title">
-			<span class="section-title__accent">Видео</span>рецепты
-		</Fragment>
-	</VideoSection>
+	{/* Videos and the promo pages are not translated yet: their blocks wait for them. */}
+	{videos.length > 0 && (
+		<VideoSection videos={videos} href={localize(lang, "/video")}>
+			<Fragment slot="title">
+				<span class="section-title__accent">{t(lang, "Видео")}</span>{t(lang, "рецепты")}
+			</Fragment>
+		</VideoSection>
+	)}
 	
 	<RecipeCollectionsSection collections={collections}>
 		<Fragment slot="title">
-			<span class="section-title__accent">Подборки</span> Рецептов
+			<span class="section-title__accent">{t(lang, "Подборки")}</span>{" "}{t(lang, "Рецептов")}
 		</Fragment>
 	</RecipeCollectionsSection>
 
 	<RecipeSection
 		recipes={ingredientRecipes}
 		groupsOf={(recipe) => recipe.groups ?? []}
-		href="/categories"
+		href={localize(lang, "/categories")}
 	>
 		<Fragment slot="title">
-			<span class="section-title__accent">Рецепты</span> по ингредиентам
+			<span class="section-title__accent">{t(lang, "Рецепты")}</span>{" "}{t(lang, "по ингредиентам")}
 		</Fragment>
 	</RecipeSection>
 	
-	<PromoSection page={getStartedPage} />
+	{getStartedPage && <PromoSection page={getStartedPage} />}
 	
 	{/* News (post type "news") — the block appears once there is some. */}
 	{lastNews.length > 0 && (
@@ -101,16 +113,16 @@ const collections = allCollections.slice(0, 4);
 			news={lastNews}
 		>
 			<Fragment slot="title">
-				<span class="section-title__accent">Последние</span> новости
+				<span class="section-title__accent">{t(lang, "Последние")}</span>{" "}{t(lang, "новости")}
 			</Fragment>
 		</LastNewsSection>
 	)}
 	
-	<PromoCTASection page={ingredientGuidePage} />
+	{ingredientGuidePage && <PromoCTASection page={ingredientGuidePage} />}
 	
 	<TrustSection>
 		<Fragment slot="title">
-			Нам <span class="section-title__accent">доверяют</span>
+			{t(lang, "Нам")}{" "}<span class="section-title__accent">{t(lang, "доверяют")}</span>
 		</Fragment>
 	</TrustSection>
 	

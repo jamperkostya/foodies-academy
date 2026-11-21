@@ -16,6 +16,25 @@ describe("SiteCounters", () => {
 		expect(html).toContain('gtag("config","G-B1B19LSS7V")');
 	});
 
+	it("waits for the consent of readers in the EU and the UK", async () => {
+		const html = await render("foodies.academy");
+		const script = html.match(/<script>([\s\S]*?)<\/script>/)![1];
+		const run = (zone: string, choice: string | null) => {
+			const loaded: string[] = [];
+			const win: Record<string, unknown> = {};
+			const doc = { createElement: () => ({}), head: { appendChild: () => loaded.push("gtag") }, scripts: [], getElementsByTagName: () => [{ parentNode: { insertBefore: () => loaded.push("metrika") } }] };
+			new Function("window", "document", "Intl", "localStorage", "dataLayer", "ym", script)(
+				win, doc, { DateTimeFormat: () => ({ resolvedOptions: () => ({ timeZone: zone }) }) }, { getItem: () => choice }, [], () => {},
+			);
+			return { needed: (win.foodiesCounters as { needed: boolean }).needed, loaded };
+		};
+
+		expect(run("Europe/Berlin", null)).toEqual({ needed: true, loaded: [] });
+		expect(run("Europe/London", "yes")).toEqual({ needed: true, loaded: ["gtag", "metrika"] });
+		expect(run("Europe/Kyiv", null)).toEqual({ needed: false, loaded: ["gtag", "metrika"] });
+		expect(run("America/New_York", null).loaded).toHaveLength(2);
+	});
+
 	it("leaves dev and local builds out of the statistics", async () => {
 		for (const host of ["dev.foodies.academy", "localhost", undefined]) {
 			expect((await render(host)).trim()).toBe("");

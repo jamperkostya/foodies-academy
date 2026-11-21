@@ -8,23 +8,25 @@ import FeedAd from "../components/ui/FeedAd.astro";
 import { AD_EVERY, AD_UNITS } from "../data/ads";
 import SubscribeSection from "../components/sections/SubscribeSection.astro";
 import type { Lifehack } from "../types/lifehack";
+import { langOf, t, withLang } from "../i18n";
+const lang = langOf(Astro.url);
 
 // Lifehacks are a post type in the WordPress admin.
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
-const { data: lifehacks }: { data: Lifehack[] } = await fetch(`${API_URL}/lifehacks`).then((r) => r.json());
+const { data: lifehacks }: { data: Lifehack[] } = await fetch(withLang(lang, `${API_URL}/lifehacks`)).then((r) => r.json());
 
 const PAGE_SIZE = AD_EVERY;
 const groups = [...new Set(lifehacks.map((lifehack) => lifehack.category))];
 const description =
-	"Маленькие хитрости, которые экономят время, продукты и нервы. Проверено редакцией и тысячами читателей на собственной кухне.";
+	t(lang, "Маленькие хитрости, которые экономят время, продукты и нервы. Проверено редакцией и тысячами читателей на собственной кухне.");
 ---
-<BaseLayout title="Лайфхаки для кухни" description={description} breadcrumbs={[{ label: "Лайфхаки" }]}>
-	<PageHero slot="hero" eyebrow="Полезное" description={description}>
-		Лайфхаки <span class="page-hero__accent">для кухни</span>
+<BaseLayout title={t(lang, "Лайфхаки для кухни")} description={description} breadcrumbs={[{ label: t(lang, "Лайфхаки") }]}>
+	<PageHero slot="hero" eyebrow={t(lang, "Полезное")} description={description}>
+		Лайфхаки <span class="page-hero__accent">{t(lang, "для кухни")}</span>
 	</PageHero>
 
 	<Section>
-		<FilterableGrid groups={groups} pageSize={PAGE_SIZE} total={lifehacks.length} moreLabel="Показать больше лайфхаков" minCardWidth={400}>
+		<FilterableGrid groups={groups} pageSize={PAGE_SIZE} total={lifehacks.length} moreLabel={t(lang, "Показать больше лайфхаков")} minCardWidth={400}>
 			{lifehacks.map((lifehack, i) => (
 				<>
 					<LifehackCard lifehack={lifehack} hidden={i >= PAGE_SIZE} />
@@ -34,5 +36,5 @@ const description =
 		</FilterableGrid>
 	</Section>
 
-	<SubscribeSection title="Лайфхак недели — прямо на почту" />
+	<SubscribeSection title={t(lang, "Лайфхак недели — прямо на почту")} />
 </BaseLayout>

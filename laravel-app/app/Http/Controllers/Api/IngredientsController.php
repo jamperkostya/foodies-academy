@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\Ingredients;
+use App\Support\Lang;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -17,7 +18,7 @@ class IngredientsController extends Controller
     // GET /api/ingredients: every ingredient with a recipe (the site builds a page for each)
     public function index(): JsonResponse
     {
-        $ingredients = Cache::remember('ingredients:all', now()->addMinutes(self::CACHE_MINUTES),
+        $ingredients = Cache::remember(Lang::key('ingredients:all'), now()->addMinutes(self::CACHE_MINUTES),
             fn () => $this->ingredients->getAll());
 
         return response()->json(['data' => $ingredients]);
@@ -31,7 +32,7 @@ class IngredientsController extends Controller
         ]);
         $limit = (int) ($data['limit'] ?? 5);
 
-        $ingredients = Cache::remember("ingredients:popular:$limit", now()->addMinutes(self::CACHE_MINUTES),
+        $ingredients = Cache::remember(Lang::key("ingredients:popular:$limit"), now()->addMinutes(self::CACHE_MINUTES),
             fn () => $this->ingredients->getPopular($limit));
 
         return response()->json(['data' => $ingredients]);
@@ -45,7 +46,7 @@ class IngredientsController extends Controller
         ]);
         $page = (int) ($data['page'] ?? 1);
 
-        $ingredient = Cache::remember("ingredients:slug:$slug:page:$page", now()->addMinutes(self::CACHE_MINUTES),
+        $ingredient = Cache::remember(Lang::key("ingredients:slug:$slug:page:$page"), now()->addMinutes(self::CACHE_MINUTES),
             fn () => $this->ingredients->getBySlug($slug, $page));
 
         abort_if(! $ingredient, 404, 'Ingredient not found');

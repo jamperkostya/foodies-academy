@@ -4,22 +4,28 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHero from "../components/layout/PageHero.astro";
 import PageContent from "../components/article/PageContent.astro";
+import ViewCounter from "../components/article/ViewCounter.astro";
 import SEOTextSection from "../components/sections/SEOTextSection.astro";
 import type { SitePage } from "../types/page";
 import { isTakenAddress } from "../utils/sitePages";
+import { builds, langOf, langOfRoute, withLang } from "../i18n";
+const lang = langOf(Astro.url);
 
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
+const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/api";
 
-export async function getStaticPaths() {
+export async function getStaticPaths({ routePattern }: { routePattern?: string } = {}) {
+	// Not built when only another language is rebuilt.
+	if (!builds(langOfRoute(routePattern))) return [];
 	// getStaticPaths can't see the constants above, so the URL is read again here.
 	const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
-	const { data: pages }: { data: { slug: string }[] } = await fetch(`${API_URL}/pages`).then((r) => r.json());
+	const { data: pages }: { data: { slug: string }[] } = await fetch(withLang(langOfRoute(routePattern), `${API_URL}/pages`)).then((r) => r.json());
 
 	return pages.filter((page) => !isTakenAddress(page.slug)).map((page) => ({ params: { slug: page.slug } }));
 }
 
 const { slug } = Astro.params;
-const response = await fetch(`${API_URL}/pages/${slug}`);
+const response = await fetch(withLang(lang, `${API_URL}/pages/${slug}`));
 if (!response.ok) {
 	throw new Error(`Page "${slug}" from ${API_URL}: HTTP ${response.status}`);
 }
@@ -29,11 +35,12 @@ const { data: page }: { data: SitePage } = await response.json();
 	<PageHero slot="hero" description={page.excerpt || undefined}>{page.title}</PageHero>
 
 	<section class="site-page section-item">
-		{page.image && <img class="site-page__image" src={page.image} alt="" loading="eager" />}
+		{page.image && <img class="site-page__image" src={page.image} alt={page.title} loading="eager" />}
 		<PageContent html={page.content} />
 	</section>
 
 	<SEOTextSection html={page.seoText} />
+	<ViewCounter action={`${PUBLIC_API_URL}/pages/${slug}/view`} />
 </BaseLayout>
 
 <style lang="less">
