@@ -54,6 +54,46 @@ add_action('init', function () {
 	update_option('foodies_site_pages_version', '1');
 });
 
+// Yoast SEO title and description of the site pages, once and only where empty: without them the
+// pages share the site's default description. Edited in the page's Yoast box afterwards.
+add_action('init', function () {
+	if (get_option('foodies_site_pages_seo_version') === '1') {
+		return;
+	}
+	$seo = [
+		'about' => [
+			'О проекте: кулинарная академия гурмэ %%sep%% %%sitename%%',
+			'Foodies Academy — кулинарная платформа с рецептами со всего мира: пошаговые фото и видео, истории блюд и советы для тех, кто любит готовить.',
+		],
+		'contacts' => [
+			'Контакты редакции %%sep%% %%sitename%%',
+			'Как связаться с редакцией Foodies Academy: вопросы по рецептам, предложения о сотрудничестве и рекламе, замечания по работе сайта.',
+		],
+		'privacy-policy' => [
+			'Политика конфиденциальности %%sep%% %%sitename%%',
+			'Как Foodies Academy собирает, использует и защищает данные читателей: аккаунт, отзывы, подписка на рассылку и файлы cookie.',
+		],
+		'terms' => [
+			'Правила использования сайта %%sep%% %%sitename%%',
+			'Правила использования Foodies Academy: аккаунт и отзывы, публикация материалов, авторские права на рецепты и фото.',
+		],
+	];
+	global $wpdb;
+	foreach ($seo as $slug => [$title, $description]) {
+		if (!$page = get_page_by_path($slug, OBJECT, 'page')) {
+			continue;
+		}
+		foreach (['_yoast_wpseo_title' => $title, '_yoast_wpseo_metadesc' => $description] as $key => $value) {
+			if (trim((string) get_post_meta($page->ID, $key, true)) === '') {
+				update_post_meta($page->ID, $key, $value);
+			}
+		}
+		// Yoast answers from its indexables table: the row is built again from the meta.
+		$wpdb->delete($wpdb->prefix . 'yoast_indexable', ['object_type' => 'post', 'object_id' => $page->ID]);
+	}
+	update_option('foodies_site_pages_seo_version', '1');
+}, 20);
+
 // Pages need an excerpt field: it is the short text of a home page block.
 add_action('init', function () {
 	add_post_type_support('page', 'excerpt');

@@ -3,15 +3,18 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHero from "../components/layout/PageHero.astro";
 import SubscribeSection from "../components/sections/SubscribeSection.astro";
 import PageContent from "../components/article/PageContent.astro";
+import ViewCounter from "../components/article/ViewCounter.astro";
 import SEOTextSection from "../components/sections/SEOTextSection.astro";
 import type { SitePage } from "../types/page";
-import { plural, recipesWord } from "../utils/plural";
+import { langOf, LOCALES, pluralOf, recipesWord, t, withLang } from "../i18n";
+const lang = langOf(Astro.url);
 
 // Title, text and short description come from the WordPress page "О проекте" (editable in
 // the admin). The numbers come from Laravel, so they always match the catalogue.
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
-const load = async (path: string): Promise<unknown[]> => (await fetch(`${API_URL}${path}`).then((r) => r.json())).data;
-const { data: page }: { data: SitePage } = await fetch(`${API_URL}/pages/about`).then((r) => r.json());
+const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/api";
+const load = async (path: string): Promise<unknown[]> => (await fetch(withLang(lang, `${API_URL}${path}`)).then((r) => r.json())).data;
+const { data: page }: { data: SitePage } = await fetch(withLang(lang, `${API_URL}/pages/about`)).then((r) => r.json());
 const [recipes, kitchens, courses] = await Promise.all([
 	load("/recipes/slugs"),
 	load("/categories?type=country"),
@@ -19,23 +22,23 @@ const [recipes, kitchens, courses] = await Promise.all([
 ]);
 
 const stats = [
-	{ value: recipes.length, label: recipesWord(recipes.length) },
-	{ value: kitchens.length, label: `${plural(kitchens.length, ["кухня", "кухни", "кухонь"])} мира` },
-	{ value: courses.length, label: plural(courses.length, ["тип блюд", "типа блюд", "типов блюд"]) },
+	{ value: recipes.length, label: recipesWord(lang, recipes.length) },
+	{ value: kitchens.length, label: `${pluralOf(lang, kitchens.length, [t(lang, "кухня"), t(lang, "кухни"), t(lang, "кухонь")])} мира` },
+	{ value: courses.length, label: pluralOf(lang, courses.length, [t(lang, "тип блюд"), t(lang, "типа блюд"), t(lang, "типов блюд")]) },
 ];
 
 // The excerpt is the line under the title; the old one until it's filled in.
-const description = page.excerpt || "Платформа обучения и вдохновения для тех, кто любит готовить: от новичка до шефа сети ресторанов.";
+const description = page.excerpt || t(lang, "Платформа обучения и вдохновения для тех, кто любит готовить: от новичка до шефа сети ресторанов.");
 ---
 <BaseLayout seo={page.seo} title={page.title} description={description} breadcrumbs={[{ label: page.title }]}>
-	<PageHero slot="hero" eyebrow="Академия Гурмэ" description={description}>{page.title}</PageHero>
+	<PageHero slot="hero" eyebrow={t(lang, "Академия Гурмэ")} description={description}>{page.title}</PageHero>
 
 	<section class="about-intro section-item">
 		<PageContent html={page.content} />
 		<ul class="about-stats">
 			{stats.map((stat) => (
 				<li class="about-stats__item">
-					<strong class="about-stats__value">{stat.value.toLocaleString("ru-RU")}</strong>
+					<strong class="about-stats__value">{stat.value.toLocaleString(LOCALES[lang])}</strong>
 					<span class="about-stats__label">{stat.label}</span>
 				</li>
 			))}
@@ -45,6 +48,7 @@ const description = page.excerpt || "Платформа обучения и вд
 	<SubscribeSection />
 
 	<SEOTextSection html={page.seoText} />
+	<ViewCounter action={`${PUBLIC_API_URL}/pages/about/view`} />
 </BaseLayout>
 
 <style lang="less">

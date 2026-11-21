@@ -21,10 +21,13 @@ export interface Ingredient {
   unit: string; // "кг"
   notes: string; // "(голяшка, ребра)"
   group: string; // "ДЛЯ МЯСНОГО БУЛЬОНА", or "" when the recipe has no groups
+  unitCode?: string | null; // config/units.php in Laravel ("tbsp"), null when unknown
 }
 
 export interface Recipe {
-  id: number;
+  id: number; // the Russian original's in every language
+  // Slugs of the recipe in its languages ({ ru: "borshch", en: "borscht" }); only on GET /api/recipes/{slug}.
+  translations?: Record<string, string>;
   slug: string;
   title: string;
   image: string;

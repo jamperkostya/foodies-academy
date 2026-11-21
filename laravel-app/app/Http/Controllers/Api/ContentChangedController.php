@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\Seo;
 use App\Services\SiteRebuild;
+use App\Support\Lang;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -33,8 +34,22 @@ class ContentChangedController extends Controller
                 $seo->forget($taxonomy, ['slug' => $slug]);
             }
         }
-        $rebuild->contentChanged(mb_substr((string) $request->input('reason', 'content changed'), 0, 200));
+        $rebuild->contentChanged(mb_substr((string) $request->input('reason', 'content changed'), 0, 200), $this->langs((array) $request->input('changed', [])));
 
         return response()->json(null, 202);
+    }
+
+    /**
+     * Languages whose pages changed: those of the changed translations, or all when anything
+     * Russian changed (or WordPress didn't say what: a deletion, an author's profile).
+     */
+    private function langs(array $changed): array
+    {
+        $langs = array_map(fn ($item) => (string) ($item['lang'] ?? ''), $changed);
+        if (! $langs || array_diff($langs, array_diff(Lang::ALL, [Lang::DEFAULT]))) {
+            return Lang::ALL;
+        }
+
+        return array_values(array_unique($langs));
     }
 }

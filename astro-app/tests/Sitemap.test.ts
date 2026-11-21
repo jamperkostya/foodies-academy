@@ -11,6 +11,7 @@ const API: Record<string, unknown> = {
 		{ slug: "borscht", modified: "2026-03-01T10:00:00+00:00", images: ["https://foodies.academy/wp-content/uploads/a&b.jpg"] },
 		{ slug: "salad", modified: null, images: [] },
 	],
+	"/ingredients": [{ slug: "salt", count: 3, indexed: true }, { slug: "kochugaru", count: 2, indexed: false }],
 	"/authors": [{ slug: "mariana" }, { slug: "admin" }],
 	"/authors/mariana": { slug: "mariana", seo: { index: true } },
 	"/authors/admin": { slug: "admin", seo: { index: false } },
@@ -46,5 +47,13 @@ describe("sitemaps", () => {
 		const authors = await read("authors");
 		expect(authors).toContain("/author/mariana");
 		expect(authors).not.toContain("/author/admin");
+	});
+
+	it("leaves out thin ingredients", async () => {
+		vi.stubGlobal("fetch", async (url: string) => new Response(JSON.stringify({ data: API[new URL(url).pathname.replace(/^\/api/, "")] ?? [] })));
+
+		const ingredients = await read("ingredients");
+		expect(ingredients).toContain("<loc>https://foodies.academy/ingredient/salt</loc>");
+		expect(ingredients).not.toContain("kochugaru");
 	});
 });

@@ -77,7 +77,7 @@ abstract class Articles
     {
         return $this->db->table('posts as p')
             ->where('p.post_type', static::POST_TYPE)
-            ->where('p.post_status', 'publish');
+            ->where('p.post_status', 'publish')->tap(fn ($q) => app(Translations::class)->scope($q));
     }
 
     /** post_id => [taxonomy => [names]] for the category and tags of the posts. */
@@ -117,8 +117,9 @@ abstract class Articles
         ]);
         $images = app(Attachments::class)->urls($thumbs->filter()->values()->all());
         $users = $this->db->table('users')->whereIn('ID', $posts->pluck('post_author'))->get(['ID', 'user_nicename', 'display_name'])->keyBy('ID');
+        $views = app(PostViews::class)->totals($ids);
 
-        return $posts->map(function ($post) use ($terms, $meta, $thumbs, $images, $users) {
+        return $posts->map(function ($post) use ($terms, $meta, $thumbs, $images, $users, $views) {
             $user = $users->get($post->post_author);
 
             return [
@@ -138,6 +139,7 @@ abstract class Articles
                 // About 180 words a minute.
                 'readTime' => max(1, (int) round(count(preg_split('/\s+/u', trim(strip_tags($post->post_content)), -1, PREG_SPLIT_NO_EMPTY)) / 180)),
                 'commentCount' => (int) $post->comment_count,
+                'views' => $views[$post->ID] ?? 0,
             ];
         })->values()->all();
     }

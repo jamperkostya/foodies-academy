@@ -10,57 +10,67 @@ import AuthorRating from "../../../components/article/AuthorRating.astro";
 import AuthorFollow from "../../../components/article/AuthorFollow.astro";
 import type { AuthorProfile, AuthorSummary } from "../../../types/author";
 import { pageNumber, pageParams } from "../../../utils/pagination";
-import { plural, recipesWord } from "../../../utils/plural";
+import { builds, langOf, langOfRoute, LOCALES, localize, pluralOf, recipesWord, t, withLang, type Lang } from "../../../i18n";
+const lang = langOf(Astro.url);
 
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
 
 // Every author with recipes, split into pages of 24 recipes.
-export async function getStaticPaths() {
+export async function getStaticPaths({ routePattern }: { routePattern?: string } = {}) {
+	// Not built when only another language is rebuilt.
+	if (!builds(langOfRoute(routePattern))) return [];
 	// getStaticPaths can't see the constants above, so the URL is read again here.
 	const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
-	const { data: authors }: { data: AuthorSummary[] } = await fetch(`${API_URL}/authors`).then((r) => r.json());
+	const { data: authors }: { data: AuthorSummary[] } = await fetch(withLang(langOfRoute(routePattern), `${API_URL}/authors`)).then((r) => r.json());
 
 	return authors.flatMap((author) => pageParams(author.recipes).map((page) => ({ params: { slug: author.slug, page } })));
 }
 
 const { slug } = Astro.params;
 const page = pageNumber(Astro.params.page);
-const response = await fetch(`${API_URL}/authors/${slug}?page=${page}`);
+const response = await fetch(withLang(lang, `${API_URL}/authors/${slug}?page=${page}`));
 if (!response.ok) {
 	throw new Error(`Author "${slug}" from ${API_URL}: HTTP ${response.status}`);
 }
 const { data: author }: { data: AuthorProfile } = await response.json();
 // The browser rates the author straight in Laravel, so it needs the public URL.
 const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/api";
+// The author's page in the other language exists when they have recipes in it.
+const otherLang: Lang = lang === "ru" ? "en" : "ru";
+const { data: otherAuthors }: { data: { slug: string }[] } = await fetch(withLang(otherLang, `${API_URL}/authors`)).then((r) => r.json());
+const translations = page === 1 && Array.isArray(otherAuthors) && otherAuthors.some((other) => other.slug === slug)
+	? { [lang]: localize(lang, `/author/${slug}`), [otherLang]: localize(otherLang, `/author/${slug}`) }
+	: undefined;
 
 // Only what WordPress has: no rating without rated recipes, no news tab without news.
 const stats = [
-	{ value: author.total.toLocaleString("ru-RU"), label: recipesWord(author.total) },
-	{ value: author.news.length, label: plural(author.news.length, ["новость", "новости", "новостей"]) },
-	{ value: author.posts.length, label: plural(author.posts.length, ["статья", "статьи", "статей"]) + " в блоге" },
-	{ value: author.rating, label: author.ratingCount ? "рейтинг автора" : "средний рейтинг рецептов" },
+	{ value: author.total.toLocaleString(LOCALES[lang]), label: recipesWord(lang, author.total) },
+	{ value: author.news.length, label: pluralOf(lang, author.news.length, [t(lang, "новость"), t(lang, "новости"), t(lang, "новостей")]) },
+	{ value: author.posts.length, label: pluralOf(lang, author.posts.length, [t(lang, "статья"), t(lang, "статьи"), t(lang, "статей")]) + t(lang, " в блоге") },
+	{ value: author.rating, label: author.ratingCount ? t(lang, "рейтинг автора") : t(lang, "средний рейтинг рецептов") },
 ].filter((stat) => stat.value);
 
 // The news tab only on the first page: the other pages are more of the recipes.
 const tabs = [
-	{ id: "recipes", label: "Рецепты", count: author.total },
-	{ id: "news", label: "Новости", count: page === 1 ? author.news.length : 0 },
-	{ id: "posts", label: "Блог", count: page === 1 ? author.posts.length : 0 },
+	{ id: "recipes", label: t(lang, "Рецепты"), count: author.total },
+	{ id: "news", label: t(lang, "Новости"), count: page === 1 ? author.news.length : 0 },
+	{ id: "posts", label: t(lang, "Блог"), count: page === 1 ? author.posts.length : 0 },
 ].filter((tab) => tab.count > 0);
 ---
 <BaseLayout
 	seo={page === 1 ? author.seo : null}
 	image={author.avatar || undefined}
-	title={`${author.name}${page > 1 ? ` — страница ${page}` : ""}`}
-	description={`${author.name}: ${author.total} ${recipesWord(author.total)} на Foodies Academy.`}
-	breadcrumbs={[{ label: "Авторы", href: "/authors" }, { label: author.name }]}>
+	title={`${author.name}${page > 1 ? t(lang, " — страница {n}", { n: page }) : ""}`}
+	description={t(lang, "{name}: {n} {recipes} на Foodies Academy.", { name: author.name, n: author.total, recipes: recipesWord(lang, author.total) })}
+	translations={translations}
+	breadcrumbs={[{ label: t(lang, "Авторы"), href: "/authors" }, { label: author.name }]}>
 
 	<section slot="hero" class="author-hero">
 		<div class="author-hero__inner container">
 			<Avatar name={author.name} src={author.avatar} size="xl" />
 			<div>
 				<h1 class="author-hero__name">{author.name}</h1>
-				<p class="author-hero__role">На Foodies Academy с {author.since} года</p>
+				<p class="author-hero__role">{t(lang, "На Foodies Academy с {year} года", { year: author.since })}</p>
 
 				<ul class="author-hero__stats">
 					{stats.map((stat) => (
@@ -71,7 +81,7 @@ const tabs = [
 					))}
 				</ul>
 
-				<AuthorRating slug={author.slug} action={`${PUBLIC_API_URL}/authors/${author.slug}/rating`} />
+				<AuthorRating slug={author.slug} action={localize(lang, `${PUBLIC_API_URL}/authors/${author.slug}/rating`)} />
 				<AuthorFollow slug={author.slug} id={author.id} />
 			</div>
 		</div>
@@ -81,7 +91,7 @@ const tabs = [
 		{author.bio && <div class="author-bio" set:html={author.bio} />}
 
 		{tabs.length > 1 && (
-			<div class="author-tabs" role="tablist" aria-label="Материалы автора">
+			<div class="author-tabs" role="tablist" aria-label={t(lang, "Материалы автора")}>
 				{tabs.map((tab, i) => (
 					<button
 						type="button"

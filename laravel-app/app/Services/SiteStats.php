@@ -14,14 +14,15 @@ class SiteStats
 
         $recipeIds = $db->table('posts as p')
             ->where('p.post_type', 'recipe')
-            ->where('p.post_status', 'publish')
+            ->where('p.post_status', 'publish')->tap(fn ($q) => app(Translations::class)->scope($q))
             ->select('p.ID');
 
         $approved = $db->table('comments')->where('comment_approved', '1')->whereIn('comment_type', ['comment', '']);
 
         // Every rating a visitor gave: likes and dislikes (Posts Like Dislike), stars in approved
         // reviews, stars for authors.
-        $votes = (int) $db->table('postmeta')->whereIn('meta_key', ['pld_like_count', 'pld_dislike_count'])->sum(DB::raw("CAST({$prefix}postmeta.meta_value AS UNSIGNED)"));
+        // A translation repeats its original's likes: counted once.
+        $votes = (int) $db->table('postmeta')->whereIn('meta_key', ['pld_like_count', 'pld_dislike_count'])->whereNotIn('post_id', app(Translations::class)->translatedIds())->sum(DB::raw("CAST({$prefix}postmeta.meta_value AS UNSIGNED)"));
         $stars = (clone $approved)->join('commentmeta as m', function ($join) {
             $join->on('m.comment_id', '=', 'comments.comment_ID')->where('m.meta_key', 'rating');
         })->count();

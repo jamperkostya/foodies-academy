@@ -1,6 +1,8 @@
 ---
 import Icon from "../ui/Icon.astro";
 import type { RecipeCollection } from "../../types/recipeCollection";
+import { langOf, localize } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	collection: RecipeCollection;
@@ -9,7 +11,7 @@ interface Props {
 const { collection } = Astro.props;
 ---
 
-<a href={`/collections/${collection.slug}`} class="collection-card">
+<a href={localize(lang, `/collections/${collection.slug}`)} class="collection-card">
 	<div class="collection-card__img" style={`background-image: url('${collection.image}')`}></div>
 	<span class="collection-card__arrow" aria-hidden="true">
 		<Icon name="arrow-recipe" width={33} height={33} />

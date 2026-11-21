@@ -55,7 +55,7 @@ class Lifehacks
 
     private function published()
     {
-        return $this->db->table('posts')->where('post_type', 'lifehack')->where('post_status', 'publish');
+        return $this->db->table('posts')->where('post_type', 'lifehack')->where('post_status', 'publish')->tap(fn ($q) => app(Translations::class)->scope($q, 'posts.ID'));
     }
 
     private function present(Collection $posts): array
@@ -74,8 +74,9 @@ class Lifehacks
         $images = app(Attachments::class)->urls($meta->map(fn ($m) => (int) $m->get('_thumbnail_id', 0))->filter()->values()->all());
         $users = $this->db->table('users')->whereIn('ID', $posts->pluck('post_author'))->get(['ID', 'user_nicename', 'display_name'])->keyBy('ID');
         $recipeCounts = collect(app(Authors::class)->getAll())->pluck('recipes', 'id');
+        $views = app(PostViews::class)->totals($ids);
 
-        return $posts->map(function ($post) use ($meta, $categories, $images, $users, $recipeCounts) {
+        return $posts->map(function ($post) use ($meta, $categories, $images, $users, $recipeCounts, $views) {
             $m = $meta->get($post->ID, collect());
             $user = $users->get($post->post_author);
             $points = $this->points((string) $m->get('lifehack_points', ''));
@@ -105,6 +106,7 @@ class Lifehacks
                 'readTime' => $this->readTime([$post->post_excerpt, $intro, $tip['text'], ...array_merge(...array_map('array_values', $points))]),
                 'videoMinutes' => (int) $m->get('lifehack_video_minutes', 0) ?: null,
                 'commentCount' => (int) $post->comment_count,
+                'views' => $views[$post->ID] ?? 0,
             ];
         })->values()->all();
     }

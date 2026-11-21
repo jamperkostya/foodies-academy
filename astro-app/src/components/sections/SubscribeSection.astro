@@ -1,27 +1,29 @@
 ---
 import { Image } from "astro:assets";
 import book from "../../assets/images/subscribe.jpg";
+import { langOf, t, withLang } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	title?: string;
 }
 
-const { title = "Подпишись и получи книгу рецептов бесплатно!" } = Astro.props;
+const { title = t(lang, "Подпишись и получи книгу рецептов бесплатно!") } = Astro.props;
 // Sent from the browser to Laravel → Contact Form 7 (see scripts/subscribe.ts).
 const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/api";
 ---
 <section class="section-item">
 	<div class="subscribe flex gap-40">
-		<Image class="subscribe__img" src={book} alt="Кулинарная книга Foodies" />
+		<Image class="subscribe__img" src={book} alt={t(lang, "Кулинарная книга Foodies")} />
 
-		<form method="post" class="subscribe__form flex gap-15" data-subscribe={`${PUBLIC_API_URL}/subscribe`} data-list="book">
+		<form method="post" class="subscribe__form flex gap-15" data-subscribe={withLang(lang, `${PUBLIC_API_URL}/subscribe`)} data-list="book">
 			<h2 class="subscribe__title">{title}</h2>
 
-			<input class="subscribe__input" type="text" name="name" placeholder="Имя" aria-label="Имя" autocomplete="given-name" required>
+			<input class="subscribe__input" type="text" name="name" placeholder={t(lang, "Имя")} aria-label={t(lang, "Имя")} autocomplete="given-name" required>
 
 			<input class="subscribe__input" type="email" name="email" placeholder="E-mail" aria-label="E-mail" autocomplete="email" required>
 
-			<button type="submit" class="subscribe__btn btn btn--primary">Подписаться</button>
+			<button type="submit" class="subscribe__btn btn btn--primary">{t(lang, "Подписаться")}</button>
 		</form>
 	</div>
 </section>

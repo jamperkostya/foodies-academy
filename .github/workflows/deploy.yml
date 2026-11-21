@@ -6,7 +6,7 @@ name: Deploy Astro to Hestia
 on:
   push:
     branches: [main]
-    paths: ['astro-app/**', '.github/workflows/deploy.yml']
+    paths: ['astro-app/**', 'wp-content/mu-plugins/foodies-strings.json', '.github/workflows/deploy.yml']
   workflow_dispatch:
     inputs:
       environment:
@@ -14,8 +14,14 @@ on:
         type: choice
         options: [dev, production]
         default: dev
+      langs:
+        description: Languages to build (the others stay as they are on the server)
+        type: choice
+        options: [all, ru, en]
+        default: all
   # Sent by Laravel (php artisan site:rebuild) after WordPress content changes, and every night;
-  # the production Laravel sends its own type (GITHUB_DEPLOY_EVENT).
+  # the production Laravel sends its own type (GITHUB_DEPLOY_EVENT). client_payload.langs: "en"
+  # when only English content changed, "ru", or empty for both.
   repository_dispatch:
     types: [content-changed, content-changed-production]
 
@@ -29,6 +35,10 @@ jobs:
     defaults:
       run:
         working-directory: astro-app
+    env:
+      # "en", "ru" or "" (both): see builds() in astro-app/src/i18n/lang.ts. Not for the tests,
+      # which build every language (npm test runs with it unset).
+      LANGS: ${{ github.event.client_payload.langs || (inputs.langs != 'all' && inputs.langs) || '' }}
     steps:
       # Production only gets code that is in main. Without the "production" environment GitHub would
       # silently use the repository secrets, which point at dev.
@@ -60,6 +70,7 @@ jobs:
           API_URL: ${{ vars.API_URL }}
           PUBLIC_API_URL: ${{ vars.PUBLIC_API_URL }}
           SITE_URL: ${{ vars.SITE_URL }}
+          BUILD_LANGS: ${{ env.LANGS }}
 
       - name: Setup SSH
         run: |
@@ -68,8 +79,23 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
+      # Only what was built: one language's build leaves the other language's pages on the server.
       - name: Rsync dist to server
+        env:
+          TARGET: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}
+          SSH: ssh -p ${{ secrets.SSH_PORT }}
         run: |
-          rsync -az --delete \
-            -e "ssh -p ${{ secrets.SSH_PORT }}" \
-            dist/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/
+          case "$LANGS" in
+            en)
+              rsync -az --delete -e "$SSH" dist/en/ "$TARGET/en/"
+              # Redirects (old English slugs too) and the English sitemaps.
+              rsync -az -e "$SSH" dist/.htaccess dist/sitemap.xml dist/sitemap-en-*.xml "$TARGET/"
+              ;;
+            ru)
+              # Excluded paths are also kept on the server by --delete.
+              rsync -az --delete --exclude '/en/' --exclude '/sitemap-en-*.xml' -e "$SSH" dist/ "$TARGET/"
+              ;;
+            *)
+              rsync -az --delete -e "$SSH" dist/ "$TARGET/"
+              ;;
+          esac

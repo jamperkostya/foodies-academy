@@ -5,6 +5,8 @@ interface Step {
 	text: string;
 	// Bold lead-in before the text.
 	title?: string;
+	// Heading of the group this step starts ("ДЛЯ КВАСА"): a row of its own, not a step.
+	group?: string;
 }
 
 interface Props {
@@ -16,21 +18,25 @@ const { steps, progressId } = Astro.props;
 ---
 <ol class:list={["step-list", { "step-list--checkable": progressId }]} data-progress-id={progressId}>
 	{steps.map((step) => (
-		<li class="step-list__item flex gap-10">
-			<p class="step-list__text">
-				{step.title && <strong>{step.title}</strong>} {step.text}
-			</p>
-		</li>
+		<Fragment>
+			{step.group && <li class="step-list__group">{step.group}</li>}
+			<li class="step-list__item flex gap-10">
+				<p class="step-list__text">
+					{step.title && <strong>{step.title}</strong>} {step.text}
+				</p>
+			</li>
+		</Fragment>
 	))}
 </ol>
 
 <script>
+	import { tc } from "../../scripts/i18n";
 	document.querySelectorAll<HTMLElement>(".step-list[data-progress-id]").forEach((list) => {
 		const progress = document.getElementById(list.dataset.progressId!);
 		const update = () => {
 			if (!progress) return;
 			const done = list.querySelectorAll(".is-done").length;
-			progress.textContent = `${done} из ${list.children.length} шагов`;
+			progress.textContent = tc("{done} из {total} шагов", { done, total: list.querySelectorAll(".step-list__item").length });
 		};
 
 		list.addEventListener("click", (event) => {
@@ -44,8 +50,20 @@ const { steps, progressId } = Astro.props;
 </script>
 
 <style lang="less">
+// Group headings look like the ingredient groups' (pages/recipe/[slug].astro).
 .step-list {
 	counter-reset: step;
+	&__group {
+		padding: 16px 8px 6px;
+		font-size: 12px;
+		font-weight: 700;
+		letter-spacing: .5px;
+		text-transform: uppercase;
+		color: var(--color-grey);
+		&:first-child {
+			padding-top: 0;
+		}
+	}
 	&__item {
 		margin-bottom: 5px;
 		padding: 16px 8px;

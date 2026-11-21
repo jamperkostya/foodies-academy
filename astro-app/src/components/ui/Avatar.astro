@@ -12,7 +12,7 @@ interface Props {
 const { name, src, size = "md" } = Astro.props;
 ---
 {src
-	? <img class:list={["avatar", "avatar--photo", `avatar--${size}`]} src={src} alt="" loading="lazy" />
+	? <img class:list={["avatar", "avatar--photo", `avatar--${size}`]} src={src} alt={name} loading="lazy" />
 	: <span class:list={["avatar", `avatar--${size}`]} aria-hidden="true">{initials(name)}</span>}
 
 <style lang="less">

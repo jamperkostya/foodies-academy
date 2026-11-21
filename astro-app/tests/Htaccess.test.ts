@@ -14,6 +14,10 @@ describe(".htaccess", () => {
 
 		// Old page numbers run past the new last page: to the first one.
 		expect(text).toContain("RewriteRule ^(course|cuisine)/([^/]+)(/page/[0-9]+)?(/feed)?$ /category/$2 [R=301,L]");
+		// The empty /course and /cuisine pages are gone: their lists.
+		expect(text).toContain("RewriteRule ^course$ /categories [R=301,L]");
+		expect(text).toContain("RewriteRule ^cuisine$ /kitchens [R=301,L]");
+		expect(text).toContain("RewriteRule ^receipes$ /categories [R=301,L]");
 		expect(text).toContain("RewriteRule ^recipe(/page/[0-9]+)?$ /categories [R=301,L]");
 		// The recipe list's pages go to /categories before the rule for a recipe's subpages takes them.
 		expect(text.indexOf("^recipe(/page")).toBeLessThan(text.indexOf("^recipe/([^/]+)/.+$"));

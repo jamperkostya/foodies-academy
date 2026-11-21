@@ -1,6 +1,8 @@
 ---
 import Avatar from "../ui/Avatar.astro";
 import type { Article } from "../../types/article";
+import { langOf, localize, t, viewsText } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	post: Article;
@@ -12,7 +14,7 @@ const { post, hidden } = Astro.props;
 // Not every post has a featured image in WordPress.
 const image = post.image || "https://foodies.academy/wp-content/uploads/2025/11/mat-300x300.jpeg";
 ---
-<a href={`/blog/${post.slug}`} class="post-card" data-groups={JSON.stringify([post.category])} hidden={hidden}>
+<a href={localize(lang, `/blog/${post.slug}`)} class="post-card" data-groups={JSON.stringify([post.category])} hidden={hidden}>
 	<div class="post-card__media">
 		<div class="post-card__img" style={`background-image: url('${image}')`}></div>
 	</div>
@@ -22,7 +24,7 @@ const image = post.image || "https://foodies.academy/wp-content/uploads/2025/11/
 		<p class="post-card__excerpt">{post.excerpt}</p>
 		<div class="post-card__meta">
 			<Avatar name={post.author.name} size="sm" />
-			<span>{post.author.name} · {post.dateText} · {post.readTime} мин</span>
+			<span>{[post.author.name, post.dateText, t(lang, "{n} мин", { n: post.readTime }), viewsText(lang, post.views)].filter(Boolean).join(" · ")}</span>
 		</div>
 	</div>
 </a>

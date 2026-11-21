@@ -9,8 +9,9 @@ use App\Services\Likes;
 use App\Services\PostViews;
 use App\Services\Recipes;
 use App\Services\SearchLog;
-use App\Services\Videos;
 use App\Services\Subscriptions;
+use App\Services\Videos;
+use App\Support\Lang;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -40,11 +41,12 @@ class EngagementController extends Controller
         return response()->json(['data' => $counts]);
     }
 
-    // POST /api/{recipes|videos}/{slug}/view: the page was opened (the browser sends it at most
+    // POST /api/{recipes|videos|lifehacks|news|blog|pages}/{slug}/view: the page was opened (the browser sends it at most
     // once a day per page). Bots are not counted.
     public function view(Request $request, string $type, string $slug, PostViews $views): JsonResponse
     {
-        $postId = $this->postId($type, $slug);
+        $postId = $type === 'recipes' ? $this->postId($type, $slug) : $views->postId($type, $slug);
+        abort_if(! $postId, 404, 'Not found');
         if (! PostViews::isBot((string) $request->userAgent())) {
             $views->count($postId);
         }
@@ -80,7 +82,7 @@ class EngagementController extends Controller
         } catch (RuntimeException $e) {
             report($e);
 
-            return response()->json(['message' => 'Не удалось оформить подписку, попробуйте позже'], 502);
+            return response()->json(['message' => Lang::text('Не удалось оформить подписку, попробуйте позже', 'Could not subscribe, please try again later')], 502);
         }
         if ($errors) {
             // CF7 field names → ours, so the form can point at the field.
@@ -89,7 +91,7 @@ class EngagementController extends Controller
                 ->all());
         }
 
-        return response()->json(['message' => 'Вы подписаны'], 201);
+        return response()->json(['message' => Lang::text('Вы подписаны', 'You are subscribed')], 201);
     }
 
     // GET /api/authors/{slug}/rating → {average, count}

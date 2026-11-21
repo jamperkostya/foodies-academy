@@ -1,6 +1,8 @@
 ---
 import Icon from "../ui/Icon.astro";
 import VideoStats from "./VideoStats.astro";
+import { langOf, localize } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	href: string;
@@ -23,7 +25,7 @@ interface Props {
 const { href, size, image, title, views, likes, comments, rating, videoId, groups, class: className } = Astro.props;
 ---
 
-<a href={href} class:list={["video-card", `video-card--${size}`, className]} data-groups={groups && JSON.stringify(groups)}>
+<a href={localize(lang, href)} class:list={["video-card", `video-card--${size}`, className]} data-groups={groups && JSON.stringify(groups)}>
 	<div class="video-card__img" style={`background-image:url('${image}')`}></div>
 	<div class="video-card__top">
 		{/* A span, not a button: the whole card is already a link. */}

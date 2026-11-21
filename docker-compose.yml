@@ -1,6 +1,6 @@
 services:
   mysql:
-    image: mysql:9.7.1
+    image: mysql:9.7.4
     container_name: foodies_mysql
     restart: unless-stopped
     environment:
@@ -25,7 +25,7 @@ services:
     # so likes, searches and subscriptions from the site show up in this admin.
     environment:
       WORDPRESS_DB_HOST: ${SITE_DB_HOST:-host.docker.internal}:${SITE_DB_PORT:-3306}
-      WORDPRESS_DB_NAME: ${SITE_DB_DATABASE:-foodies.academy_with_content}
+      WORDPRESS_DB_NAME: ${SITE_DB_DATABASE:-foodies_dev}
       WORDPRESS_DB_USER: ${SITE_DB_USERNAME:-root}
       WORDPRESS_DB_PASSWORD: ${SITE_DB_PASSWORD:-root}
       WORDPRESS_TABLE_PREFIX: ${SITE_DB_PREFIX:-artit_}
@@ -95,6 +95,8 @@ services:
     volumes:
       - ./astro-app:/app
       - astro_node_modules:/app/node_modules
+      # Interface strings with their default translations (src/i18n), shared with WordPress.
+      - ./wp-content/mu-plugins/foodies-strings.json:/wp-content/mu-plugins/foodies-strings.json:ro
     depends_on:
       - laravel
     environment:

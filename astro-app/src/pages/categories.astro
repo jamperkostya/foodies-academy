@@ -4,38 +4,39 @@ import PageHero from "../components/layout/PageHero.astro";
 import SortBar from "../components/ui/SortBar.astro";
 import CardGrid from "../components/ui/CardGrid.astro";
 import CategoryCard from "../components/categories/CategoryCard.astro";
+const lang = langOf(Astro.url);
 const API_URL = import.meta.env.API_URL ?? 'http://localhost:8000/api';
-const { data: categories }: { data: { count: number }[] } = await fetch(`${API_URL}/categories?type=course`).then(r => r.json());
+const { data: categories }: { data: { count: number }[] } = await fetch(withLang(lang, `${API_URL}/categories?type=course`)).then(r => r.json());
 const totalRecipes = categories.reduce((sum, category) => sum + category.count, 0);
 
-import { plural, recipesWord } from "../utils/plural";
 import SEOTextSection from "../components/sections/SEOTextSection.astro";
 import { wpPage } from "../utils/wpPage";
+import { langOf, LOCALES, pluralOf, recipesWord, t, withLang } from "../i18n";
 
 // "SEO-текст" and Yoast SEO of the WordPress page "blyuda".
-const { seoText, seo } = await wpPage("blyuda");
+const { seoText, seo } = await wpPage("blyuda", lang);
 
 // Counted from the data, so the intro never disagrees with the catalogue.
 const description =
-	`${totalRecipes.toLocaleString("ru-RU")} ${recipesWord(totalRecipes)}, ` +
-	"разложенных по полочкам — от завтрака до праздничного стола. Выберите категорию и найдите то, что приготовите уже сегодня.";
+	`${totalRecipes.toLocaleString(LOCALES[lang])} ${recipesWord(lang, totalRecipes)}, ` +
+	t(lang, "разложенных по полочкам — от завтрака до праздничного стола. Выберите категорию и найдите то, что приготовите уже сегодня.");
 
 // "popular" keeps the data's own order.
 const sortOptions = [
-	{ value: "popular", label: "По популярности" },
-	{ value: "az", label: "По алфавиту" },
-	{ value: "count", label: "По числу рецептов" },
+	{ value: "popular", label: t(lang, "По популярности") },
+	{ value: "az", label: t(lang, "По алфавиту") },
+	{ value: "count", label: t(lang, "По числу рецептов") },
 ];
 ---
-<BaseLayout seo={seo} title="Все категории" description={description} breadcrumbs={[{ label: "Категории" }]}>
-	<PageHero slot="hero" eyebrow="Каталог" description={description}>
-		Все <span class="page-hero__accent">категории</span>
+<BaseLayout bilingual seo={seo} title={t(lang, "Все категории")} description={description} breadcrumbs={[{ label: t(lang, "Категории") }]}>
+	<PageHero slot="hero" eyebrow={t(lang, "Каталог")} description={description}>
+		{t(lang, "Все")}{" "}<span class="page-hero__accent">{t(lang, "категории")}</span>
 	</PageHero>
 
 	<section class="catalog section-item">
 		<SortBar
 			count={categories.length}
-			countWord={plural(categories.length, ["категория", "категории", "категорий"])}
+			countWord={pluralOf(lang, categories.length, [t(lang, "категория"), t(lang, "категории"), t(lang, "категорий")])}
 			options={sortOptions}
 		/>
 		{/* Category cards are at least 195px wide (325px min-height at 3:5). */}

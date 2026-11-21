@@ -47,4 +47,9 @@ class WpHtmlTest extends TestCase
         $this->assertSame("<p>Смешать муку и сахар.</p>\n<p>Поставить в холодильник.</p>", $html);
         $this->assertNotFalse(json_encode($html));
     }
+
+    public function test_a_first_level_heading_of_the_text_becomes_second_level(): void
+    {
+        $this->assertSame("<h2 class=\"wp-block-heading\">Танцы</h2>\n<p>Текст</p>", WpHtml::render("<h1 class=\"wp-block-heading\">Танцы</h1>\nТекст"));
+    }
 }

@@ -3,6 +3,8 @@ import Section from "../layout/Section.astro";
 import Carousel from "../ui/Carousel.astro";
 import VideoCard from "../videos/VideoCard.astro";
 import type { Video } from "../../types/video";
+import { langOf, localize } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	videos: Video[];
@@ -12,13 +14,13 @@ interface Props {
 
 const { videos, href } = Astro.props;
 ---
-<Section href={href}>
+<Section href={localize(lang, href)}>
 	<slot name="title" slot="title" />
 	<Carousel variant="videos">
 		{videos.map((video) => (
 			<VideoCard
 				class="carousel__item"
-				href={`/video/${video.slug}`}
+				href={localize(lang, `/video/${video.slug}`)}
 				size="compact"
 				image={video.image}
 				title={video.title}

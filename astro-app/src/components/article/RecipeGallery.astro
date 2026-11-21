@@ -3,6 +3,8 @@
 // The video slide is only its YouTube preview: the player loads on click (VideoPlayer).
 import Icon from "../ui/Icon.astro";
 import VideoPlayer from "../videos/VideoPlayer.astro";
+import { langOf, t } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	title: string;
@@ -18,7 +20,7 @@ const { title, photos, youtubeId } = Astro.props;
 			{youtubeId && (
 				<div class="carousel__slide">
 					{/* maxresdefault has no black bars, but not every video has it (see the script). */}
-					<VideoPlayer youtubeId={youtubeId} title={`Видеорецепт: ${title}`} image={`https://i.ytimg.com/vi/${youtubeId}/maxresdefault.jpg`} />
+					<VideoPlayer youtubeId={youtubeId} title={t(lang, "Видеорецепт: {title}", { title })} image={`https://i.ytimg.com/vi/${youtubeId}/maxresdefault.jpg`} />
 				</div>
 			)}
 			{photos.map((src, i) => (
@@ -26,17 +28,17 @@ const { title, photos, youtubeId } = Astro.props;
 					<img
 						class="carousel__photo"
 						src={src}
-						alt={photos.length > 1 ? `${title} — фото ${i + 1}` : title}
+						alt={photos.length > 1 ? t(lang, "{title} — фото {n}", { title, n: i + 1 }) : title}
 						loading={i === 0 && !youtubeId ? "eager" : "lazy"}
 						decoding="async"
 					/>
 				</div>
 			))}
 		</div>
-		<button type="button" class="carousel__arrow carousel__arrow--prev no-print" aria-label="Предыдущее фото">
+		<button type="button" class="carousel__arrow carousel__arrow--prev no-print" aria-label={t(lang, "Предыдущее фото")}>
 			<Icon name="arrow-slider" width={12} height={10} />
 		</button>
-		<button type="button" class="carousel__arrow carousel__arrow--next no-print" aria-label="Следующее фото">
+		<button type="button" class="carousel__arrow carousel__arrow--next no-print" aria-label={t(lang, "Следующее фото")}>
 			<Icon name="arrow-slider" width={12} height={10} />
 		</button>
 	</div>

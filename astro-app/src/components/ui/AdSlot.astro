@@ -1,4 +1,6 @@
 ---
+import { langOf, t } from "../../i18n";
+const lang = langOf(Astro.url);
 // Google AdSense unit: responsive display, or in-feed when `layoutKey` is given. Served only on foodies.academy: AdSense doesn't fill other hosts,
 // and dev clicks would count as invalid traffic. Elsewhere a placeholder shows where the ad goes.
 interface Props {
@@ -22,7 +24,7 @@ const live = host === PRODUCTION_HOST;
 {
 	live ? (
 		unit && (
-			<aside class:list={["ad-slot no-print", { "ad-slot--feed": layoutKey }, className]} aria-label="Реклама">
+			<aside class:list={["ad-slot no-print", { "ad-slot--feed": layoutKey }, className]} aria-label={t(lang, "Реклама")}>
 				{layoutKey ? (
 					<ins class="ad-slot__unit" data-ad-client={CLIENT} data-ad-slot={unit} data-ad-format="fluid" data-ad-layout-key={layoutKey} />
 				) : (
@@ -32,7 +34,7 @@ const live = host === PRODUCTION_HOST;
 		)
 	) : (
 		<aside class:list={["ad-slot ad-slot--placeholder no-print", { "ad-slot--feed": layoutKey }, className]} aria-hidden="true">
-			Реклама
+			{t(lang, "Реклама")}
 		</aside>
 	)
 }

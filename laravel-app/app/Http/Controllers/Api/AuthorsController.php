@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\Authors;
+use App\Support\Lang;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -17,7 +18,7 @@ class AuthorsController extends Controller
     // GET /api/authors
     public function index(): JsonResponse
     {
-        $authors = Cache::remember('authors:all', now()->addMinutes(self::CACHE_MINUTES),
+        $authors = Cache::remember(Lang::key('authors:all'), now()->addMinutes(self::CACHE_MINUTES),
             fn () => $this->authors->getAll());
 
         return response()->json(['data' => $authors]);
@@ -31,7 +32,7 @@ class AuthorsController extends Controller
         ]);
         $page = (int) ($data['page'] ?? 1);
 
-        $author = Cache::remember("authors:slug:$slug:page:$page", now()->addMinutes(self::CACHE_MINUTES),
+        $author = Cache::remember(Lang::key("authors:slug:$slug:page:$page"), now()->addMinutes(self::CACHE_MINUTES),
             fn () => $this->authors->getBySlug($slug, $page));
 
         abort_if(! $author, 404, 'Author not found');

@@ -1,0 +1,1452 @@
+[
+	{
+		"ru": " в блоге",
+		"en": " in the blog"
+	},
+	{
+		"ru": " на YouTube",
+		"en": " on YouTube"
+	},
+	{
+		"ru": " — страница {n}",
+		"en": " — page {n}"
+	},
+	{
+		"ru": "1 звезда",
+		"en": "1 star"
+	},
+	{
+		"ru": "2 звезды",
+		"en": "2 stars"
+	},
+	{
+		"ru": "3 звезды",
+		"en": "3 stars"
+	},
+	{
+		"ru": "4 звезды",
+		"en": "4 stars"
+	},
+	{
+		"ru": "404: страница подгорела с обеих сторон.",
+		"en": "404: this page got burnt on both sides."
+	},
+	{
+		"ru": "5 звёзд",
+		"en": "5 stars"
+	},
+	{
+		"ru": "E-mail и пароль",
+		"en": "E-mail and password"
+	},
+	{
+		"ru": "Foodies Academy — рецепты с пошаговыми фото и видео",
+		"en": "Foodies Academy — recipes with step-by-step photos and videos"
+	},
+	{
+		"ru": "Рецепты со всего мира с пошаговыми фото и видео",
+		"en": "World Recipes with Step-by-Step Photos and Videos"
+	},
+	{
+		"ru": "Рецепты блюд со всего мира с пошаговыми фото и видео: вторые блюда, супы, салаты, десерты и выпечка, истории блюд и советы шефов.",
+		"en": "Recipes from around the world with step-by-step photos and videos: main dishes, soups, salads, desserts and baking, with the story of each dish and chef's tips."
+	},
+	{
+		"ru": "Foodies Academy — рецепты с пошаговыми фото и видео: основные блюда, супы, салаты, десерты и выпечка.",
+		"en": "Foodies Academy — recipes with step-by-step photos and videos: main dishes, soups, salads, desserts and baking."
+	},
+	{
+		"ru": "YouTube-канал Foodies Academy",
+		"en": "Foodies Academy YouTube channel"
+	},
+	{
+		"ru": "{done} из {total} шагов",
+		"en": "{done} of {total} steps",
+		"client": true
+	},
+	{
+		"ru": "{name}: {n} {recipes} на Foodies Academy.",
+		"en": "{name}: {n} {recipes} on Foodies Academy."
+	},
+	{
+		"ru": "{name}: рецепты с пошаговыми фото на Foodies Academy.",
+		"en": "{name}: recipes with step-by-step photos on Foodies Academy."
+	},
+	{
+		"ru": "{n} {authors} рецептов Foodies Academy.",
+		"en": "{n} Foodies Academy recipe {authors}."
+	},
+	{
+		"ru": "{n} {recipes} {collection}: самые популярные у наших читателей — первыми.",
+		"en": "{n} {recipes} {collection}: our readers' favourites first."
+	},
+	{
+		"ru": "{n} {recipes} с ингредиентом «{name}»: самые популярные у наших читателей — первыми.",
+		"en": "{n} {recipes} with {name}: our readers' favourites first."
+	},
+	{
+		"ru": "{n} {recipes} с пошаговыми фото.",
+		"en": "{n} {recipes} with step-by-step photos."
+	},
+	{
+		"ru": "{n} из {total} шагов",
+		"en": "{n} of {total} steps",
+		"client": true
+	},
+	{
+		"ru": "{n} ккал",
+		"en": "{n} kcal"
+	},
+	{
+		"ru": "{n} мин",
+		"en": "{n} min"
+	},
+	{
+		"ru": "{n} мин чтения",
+		"en": "{n} min read"
+	},
+	{
+		"ru": "{title} — фото {n}",
+		"en": "{title} — photo {n}"
+	},
+	{
+		"ru": "{title}: рецепт с пошаговыми фото на Foodies Academy.",
+		"en": "{title}: a recipe with step-by-step photos on Foodies Academy."
+	},
+	{
+		"ru": "Автор",
+		"en": "Author"
+	},
+	{
+		"ru": "Авторы",
+		"en": "Authors"
+	},
+	{
+		"ru": "Академия Гурмэ",
+		"en": "Gourmet Academy"
+	},
+	{
+		"ru": "Академия Гурмэ – это рецепты, написанные, созданные, и проверенные поварами для поваров.",
+		"en": "Gourmet Academy is recipes written, created and tested by cooks for cooks."
+	},
+	{
+		"ru": "Блог",
+		"en": "Blog"
+	},
+	{
+		"ru": "В этой категории пока нет рецептов.",
+		"en": "There are no recipes in this category yet."
+	},
+	{
+		"ru": "Ваша оценка",
+		"en": "Your rating"
+	},
+	{
+		"ru": "Ваше имя",
+		"en": "Your name"
+	},
+	{
+		"ru": "Введите запрос в строку поиска вверху страницы.",
+		"en": "Type what you are looking for in the search box at the top of the page."
+	},
+	{
+		"ru": "Видео",
+		"en": "Video"
+	},
+	{
+		"ru": "Видео скоро будет доступно",
+		"en": "The video will be available soon",
+		"client": true
+	},
+	{
+		"ru": "Видеорецепт: {title}",
+		"en": "Video recipe: {title}"
+	},
+	{
+		"ru": "Видеорецепты",
+		"en": "Video recipes"
+	},
+	{
+		"ru": "Войдите, чтобы подписаться на автора",
+		"en": "Log in to follow the author",
+		"client": true
+	},
+	{
+		"ru": "Войдите, чтобы сохранять рецепты",
+		"en": "Log in to save recipes",
+		"client": true
+	},
+	{
+		"ru": "Войти",
+		"en": "Log in",
+		"client": true
+	},
+	{
+		"ru": "Вперёд",
+		"en": "Next"
+	},
+	{
+		"ru": "Все",
+		"en": "All"
+	},
+	{
+		"ru": "Все категории",
+		"en": "All categories"
+	},
+	{
+		"ru": "Все кухни",
+		"en": "All cuisines"
+	},
+	{
+		"ru": "Все результаты по «{query}» →",
+		"en": "All results for “{query}” →",
+		"client": true
+	},
+	{
+		"ru": "Всего",
+		"en": "Total"
+	},
+	{
+		"ru": "Вход",
+		"en": "Log in"
+	},
+	{
+		"ru": "Вход в аккаунт Foodies Academy.",
+		"en": "Log in to your Foodies Academy account."
+	},
+	{
+		"ru": "Вы отписались от автора",
+		"en": "You unfollowed the author",
+		"client": true
+	},
+	{
+		"ru": "Вы очень настойчивы. Уважаем.",
+		"en": "You are very persistent. Respect.",
+		"client": true
+	},
+	{
+		"ru": "Вы подписаны",
+		"en": "Following",
+		"client": true
+	},
+	{
+		"ru": "Выйти",
+		"en": "Log out"
+	},
+	{
+		"ru": "Главная",
+		"en": "Home"
+	},
+	{
+		"ru": "Готовка",
+		"en": "Cooking"
+	},
+	{
+		"ru": "Готово!",
+		"en": "Done!"
+	},
+	{
+		"ru": "Готово! Вы подписаны на рассылку",
+		"en": "Done! You are subscribed to the newsletter",
+		"client": true
+	},
+	{
+		"ru": "Длительность",
+		"en": "Duration"
+	},
+	{
+		"ru": "Дополнительная навигация",
+		"en": "More navigation"
+	},
+	{
+		"ru": "Другие новости",
+		"en": "More news"
+	},
+	{
+		"ru": "Единицы измерения",
+		"en": "Units"
+	},
+	{
+		"ru": "Журнал",
+		"en": "Magazine"
+	},
+	{
+		"ru": "Загружаем…",
+		"en": "Loading…",
+		"client": true
+	},
+	{
+		"ru": "Закрыть меню",
+		"en": "Close menu"
+	},
+	{
+		"ru": "Заполните имя и комментарий",
+		"en": "Enter your name and a comment",
+		"client": true
+	},
+	{
+		"ru": "Заполните имя, отзыв и поставьте оценку",
+		"en": "Enter your name and a review, and pick a rating",
+		"client": true
+	},
+	{
+		"ru": "Зарегистрироваться",
+		"en": "Sign up"
+	},
+	{
+		"ru": "Здесь будут рецепты, которые вы сохраните кнопкой с закладкой на странице рецепта.",
+		"en": "Recipes you save with the bookmark button on a recipe page will appear here."
+	},
+	{
+		"ru": "Избранное",
+		"en": "Favourites"
+	},
+	{
+		"ru": "Имя",
+		"en": "First name"
+	},
+	{
+		"ru": "Ингредиенты",
+		"en": "Ingredients"
+	},
+	{
+		"ru": "Информация",
+		"en": "Information"
+	},
+	{
+		"ru": "Истории про еду, разборы кухонной техники, интервью с шеф-поварами и всё, что не поместилось в рецепт. Новые материалы — каждую неделю.",
+		"en": "Food stories, kitchen gear reviews, interviews with chefs and everything that didn't fit into a recipe. New articles every week."
+	},
+	{
+		"ru": "История происхождения",
+		"en": "Origin story"
+	},
+	{
+		"ru": "Ищем…",
+		"en": "Searching…",
+		"client": true
+	},
+	{
+		"ru": "К комментариям ↓",
+		"en": "To comments ↓"
+	},
+	{
+		"ru": "Калории",
+		"en": "Calories"
+	},
+	{
+		"ru": "Каталог",
+		"en": "Catalogue"
+	},
+	{
+		"ru": "Категории",
+		"en": "Categories"
+	},
+	{
+		"ru": "Категория",
+		"en": "Category"
+	},
+	{
+		"ru": "Команда",
+		"en": "Team"
+	},
+	{
+		"ru": "Комментарии",
+		"en": "Comments"
+	},
+	{
+		"ru": "Кто-то забыл эту страницу на плите. Есть уже нельзя.",
+		"en": "Someone left this page on the stove. It's no longer edible."
+	},
+	{
+		"ru": "Кулинарная книга Foodies",
+		"en": "Foodies cookbook"
+	},
+	{
+		"ru": "Кухни",
+		"en": "World"
+	},
+	{
+		"ru": "Кухни мира",
+		"en": "World cuisines"
+	},
+	{
+		"ru": "Кухня мира",
+		"en": "World cuisine"
+	},
+	{
+		"ru": "Ладно-ладно, это просто пасхалка 🍳",
+		"en": "Okay, okay, it's just an Easter egg 🍳",
+		"client": true
+	},
+	{
+		"ru": "Лайков на YouTube",
+		"en": "Likes on YouTube"
+	},
+	{
+		"ru": "Лайфхак недели на почту",
+		"en": "Hack of the week by e-mail"
+	},
+	{
+		"ru": "Лайфхак недели — прямо на почту",
+		"en": "Hack of the week — straight to your inbox"
+	},
+	{
+		"ru": "Лайфхаки",
+		"en": "Kitchen hacks"
+	},
+	{
+		"ru": "Лайфхаки для кухни",
+		"en": "Kitchen hacks"
+	},
+	{
+		"ru": "Личные данные",
+		"en": "Personal details"
+	},
+	{
+		"ru": "Лучшая авторская кухня в Европе",
+		"en": "The best original cooking in Europe"
+	},
+	{
+		"ru": "Маленькие хитрости, которые экономят время, продукты и нервы. Проверено редакцией и тысячами читателей на собственной кухне.",
+		"en": "Little tricks that save time, food and nerves. Tested by our editors and thousands of readers in their own kitchens."
+	},
+	{
+		"ru": "Материалы автора",
+		"en": "Author's content"
+	},
+	{
+		"ru": "Меню",
+		"en": "Menu"
+	},
+	{
+		"ru": "Метрические",
+		"en": "Metric"
+	},
+	{
+		"ru": "Мои авторы",
+		"en": "My authors"
+	},
+	{
+		"ru": "Мой профиль",
+		"en": "My profile"
+	},
+	{
+		"ru": "Монобанк",
+		"en": "Monobank"
+	},
+	{
+		"ru": "Мы бы предложили её заменить, но замены тоже нет.",
+		"en": "We'd suggest a substitute, but there isn't one either."
+	},
+	{
+		"ru": "Мы искали её по всему холодильнику — не нашли.",
+		"en": "We searched the whole fridge for it — no luck."
+	},
+	{
+		"ru": "Мы используем файлы cookie Google Analytics и Яндекс Метрики, чтобы понимать, какие рецепты вам нравятся. Разрешаете?",
+		"en": "We use Google Analytics and Yandex Metrica cookies to learn which recipes you like. Do you allow them?"
+	},
+	{
+		"ru": "На Foodies Academy с {year} года",
+		"en": "On Foodies Academy since {year}"
+	},
+	{
+		"ru": "На главную",
+		"en": "Back to home"
+	},
+	{
+		"ru": "На порцию",
+		"en": "Per serving"
+	},
+	{
+		"ru": "Наверх",
+		"en": "Back to top"
+	},
+	{
+		"ru": "Назад",
+		"en": "Back"
+	},
+	{
+		"ru": "Найти",
+		"en": "Search"
+	},
+	{
+		"ru": "Нам",
+		"en": "Trusted"
+	},
+	{
+		"ru": "Не короче 8 символов",
+		"en": "At least 8 characters"
+	},
+	{
+		"ru": "Не нравится",
+		"en": "Dislike"
+	},
+	{
+		"ru": "Не удалось загрузить избранное",
+		"en": "Could not load your favourites",
+		"client": true
+	},
+	{
+		"ru": "Не удалось загрузить подписки",
+		"en": "Could not load the authors you follow",
+		"client": true
+	},
+	{
+		"ru": "Не удалось отправить отзыв",
+		"en": "Could not send your review",
+		"client": true
+	},
+	{
+		"ru": "Не удалось отправить отзыв, проверьте интернет",
+		"en": "Could not send your review, check your connection",
+		"client": true
+	},
+	{
+		"ru": "Не удалось оформить подписку, попробуйте позже",
+		"en": "Could not subscribe, please try again later",
+		"client": true
+	},
+	{
+		"ru": "Не удалось оформить подписку, проверьте интернет",
+		"en": "Could not subscribe, check your connection",
+		"client": true
+	},
+	{
+		"ru": "Не удалось подписаться",
+		"en": "Could not follow",
+		"client": true
+	},
+	{
+		"ru": "Не удалось сохранить",
+		"en": "Could not save",
+		"client": true
+	},
+	{
+		"ru": "Не удалось сохранить оценку",
+		"en": "Could not save your rating",
+		"client": true
+	},
+	{
+		"ru": "Не удалось сохранить оценку, проверьте интернет",
+		"en": "Could not save your rating, check your connection",
+		"client": true
+	},
+	{
+		"ru": "Не удалось убрать рецепт",
+		"en": "Could not remove the recipe",
+		"client": true
+	},
+	{
+		"ru": "Нет аккаунта?",
+		"en": "No account?"
+	},
+	{
+		"ru": "Нет связи с сервером, проверьте интернет",
+		"en": "No connection to the server, check your internet",
+		"client": true
+	},
+	{
+		"ru": "Ничего не найдено по запросу «{query}»",
+		"en": "Nothing found for “{query}”",
+		"client": true
+	},
+	{
+		"ru": "Новостей пока нет — загляните в",
+		"en": "No news yet — have a look at"
+	},
+	{
+		"ru": "Новости",
+		"en": "News"
+	},
+	{
+		"ru": "Новости Foodies Academy: события, продукты и кулинарные тренды.",
+		"en": "Foodies Academy news: events, products and food trends."
+	},
+	{
+		"ru": "Новости на почту",
+		"en": "News by e-mail"
+	},
+	{
+		"ru": "Новые",
+		"en": "New"
+	},
+	{
+		"ru": "Новые видеорецепты",
+		"en": "New video recipes"
+	},
+	{
+		"ru": "Новые видеорецепты на почту",
+		"en": "New video recipes by e-mail"
+	},
+	{
+		"ru": "Новые рецепты автора появятся в вашем профиле",
+		"en": "The author's new recipes will appear in your profile",
+		"client": true
+	},
+	{
+		"ru": "Новые рецепты с прошлого визита",
+		"en": "New recipes since your last visit"
+	},
+	{
+		"ru": "Новые статьи блога на почту",
+		"en": "New blog posts by e-mail"
+	},
+	{
+		"ru": "Новые статьи блога — раз в неделю на почту",
+		"en": "New blog posts — once a week by e-mail"
+	},
+	{
+		"ru": "Новый пароль",
+		"en": "New password"
+	},
+	{
+		"ru": "Нравится",
+		"en": "Like"
+	},
+	{
+		"ru": "Нужен, чтобы сменить e-mail или пароль",
+		"en": "Needed to change your e-mail or password"
+	},
+	{
+		"ru": "О себе",
+		"en": "About me"
+	},
+	{
+		"ru": "Ой! Эта страница пригорела",
+		"en": "Oops! This page got burnt"
+	},
+	{
+		"ru": "Описание",
+		"en": "Description"
+	},
+	{
+		"ru": "Опубликовано",
+		"en": "Published"
+	},
+	{
+		"ru": "Опубликовать",
+		"en": "Publish"
+	},
+	{
+		"ru": "Опубликовать отзыв",
+		"en": "Post review"
+	},
+	{
+		"ru": "Оставить комментарий",
+		"en": "Leave a comment"
+	},
+	{
+		"ru": "Оставить отзыв",
+		"en": "Leave a review"
+	},
+	{
+		"ru": "Оставьте пустым, чтобы не менять",
+		"en": "Leave empty to keep it"
+	},
+	{
+		"ru": "Отзывы",
+		"en": "Reviews"
+	},
+	{
+		"ru": "Отклонить",
+		"en": "Decline"
+	},
+	{
+		"ru": "Отображаемое имя",
+		"en": "Display name"
+	},
+	{
+		"ru": "Отправить",
+		"en": "Send"
+	},
+	{
+		"ru": "Оцените автора",
+		"en": "Rate the author"
+	},
+	{
+		"ru": "Оценка автора",
+		"en": "Author rating"
+	},
+	{
+		"ru": "Ошибка 404",
+		"en": "Error 404"
+	},
+	{
+		"ru": "Пароль",
+		"en": "Password"
+	},
+	{
+		"ru": "Пасхалка: яичница вместо нуля",
+		"en": "Easter egg: a fried egg instead of a zero"
+	},
+	{
+		"ru": "Первое письмо придёт в понедельник.",
+		"en": "The first e-mail arrives on Monday."
+	},
+	{
+		"ru": "Перейти к рецепту ↓",
+		"en": "Jump to recipe ↓"
+	},
+	{
+		"ru": "Пищевая ценность",
+		"en": "Nutrition"
+	},
+	{
+		"ru": "Платформа обучения и вдохновения для тех, кто любит готовить: от новичка до шефа сети ресторанов.",
+		"en": "A place to learn and get inspired for everyone who loves to cook: from beginners to restaurant chefs."
+	},
+	{
+		"ru": "По алфавиту",
+		"en": "A–Z"
+	},
+	{
+		"ru": "По запросу «{query}» {found} {n} {results}",
+		"en": "{n} {results} {found} for “{query}”",
+		"client": true
+	},
+	{
+		"ru": "По популярности",
+		"en": "Most popular"
+	},
+	{
+		"ru": "По числу рецептов",
+		"en": "Most recipes"
+	},
+	{
+		"ru": "Подборка",
+		"en": "Collection"
+	},
+	{
+		"ru": "Подборки",
+		"en": "Collections"
+	},
+	{
+		"ru": "Подборки рецептов",
+		"en": "Recipe collections"
+	},
+	{
+		"ru": "Подготовка",
+		"en": "Prep"
+	},
+	{
+		"ru": "Поделиться",
+		"en": "Share"
+	},
+	{
+		"ru": "Подписаться",
+		"en": "Follow",
+		"client": true
+	},
+	{
+		"ru": "Подписки",
+		"en": "Following"
+	},
+	{
+		"ru": "Подпишись и получи книгу рецептов бесплатно!",
+		"en": "Subscribe and get a free recipe book!"
+	},
+	{
+		"ru": "Подпишитесь на автора на его странице — его новые рецепты появятся здесь.",
+		"en": "Follow an author on their page — their new recipes will appear here."
+	},
+	{
+		"ru": "Подробнее →",
+		"en": "Read more →"
+	},
+	{
+		"ru": "Подсказки",
+		"en": "Suggestions"
+	},
+	{
+		"ru": "Поиск",
+		"en": "Search"
+	},
+	{
+		"ru": "Поиск рецептов",
+		"en": "Search recipes"
+	},
+	{
+		"ru": "Поиск рецептов, категорий, кухонь мира и авторов на Foodies Academy.",
+		"en": "Search for recipes, categories, world cuisines and authors on Foodies Academy."
+	},
+	{
+		"ru": "Поиск рецептов...",
+		"en": "Search recipes..."
+	},
+	{
+		"ru": "Пока без оценок",
+		"en": "No ratings yet",
+		"client": true
+	},
+	{
+		"ru": "Показать больше",
+		"en": "Show more",
+		"client": true
+	},
+	{
+		"ru": "Показать больше лайфхаков",
+		"en": "Show more hacks"
+	},
+	{
+		"ru": "Показать больше статей",
+		"en": "Show more posts"
+	},
+	{
+		"ru": "Показать ещё",
+		"en": "Show more"
+	},
+	{
+		"ru": "Полезное",
+		"en": "Useful"
+	},
+	{
+		"ru": "Понравился видеорецепт?",
+		"en": "Did you like the video recipe?"
+	},
+	{
+		"ru": "Понравился рецепт?",
+		"en": "Did you like the recipe?"
+	},
+	{
+		"ru": "Понравился рецепт? Угостите нас кофе ☕",
+		"en": "Liked the recipe? Buy us a coffee ☕"
+	},
+	{
+		"ru": "Популярные",
+		"en": "Popular"
+	},
+	{
+		"ru": "Порции",
+		"en": "Servings"
+	},
+	{
+		"ru": "Последние",
+		"en": "Latest"
+	},
+	{
+		"ru": "Похоже, эту страницу съели раньше вас.",
+		"en": "Looks like someone ate this page before you."
+	},
+	{
+		"ru": "Похожие",
+		"en": "Similar"
+	},
+	{
+		"ru": "Похожие лайфхаки",
+		"en": "Similar hacks"
+	},
+	{
+		"ru": "Похожие рецепты",
+		"en": "Similar recipes"
+	},
+	{
+		"ru": "Похожие статьи",
+		"en": "Similar posts"
+	},
+	{
+		"ru": "Предыдущая страница",
+		"en": "Previous page"
+	},
+	{
+		"ru": "Предыдущее фото",
+		"en": "Previous photo"
+	},
+	{
+		"ru": "Приготовление",
+		"en": "Method"
+	},
+	{
+		"ru": "Проверьте имя и e-mail",
+		"en": "Check your name and e-mail",
+		"client": true
+	},
+	{
+		"ru": "Профиль",
+		"en": "Profile",
+		"client": true
+	},
+	{
+		"ru": "Профиль автора",
+		"en": "Author's profile"
+	},
+	{
+		"ru": "Профиль на Foodies Academy.",
+		"en": "Your Foodies Academy profile."
+	},
+	{
+		"ru": "Прошлый визит: {date}",
+		"en": "Last visit: {date}",
+		"client": true
+	},
+	{
+		"ru": "Раз в неделю — только лучшее, без спама.",
+		"en": "Once a week — only the best, no spam."
+	},
+	{
+		"ru": "Разбор",
+		"en": "Review"
+	},
+	{
+		"ru": "Разделы профиля",
+		"en": "Profile sections"
+	},
+	{
+		"ru": "Разрешить",
+		"en": "Allow"
+	},
+	{
+		"ru": "Распечатать",
+		"en": "Print"
+	},
+	{
+		"ru": "Расскажите, как получилось...",
+		"en": "Tell us how it turned out..."
+	},
+	{
+		"ru": "Расскажите, как получился рецепт...",
+		"en": "Tell us how the recipe turned out..."
+	},
+	{
+		"ru": "Регистрация",
+		"en": "Sign up",
+		"client": true
+	},
+	{
+		"ru": "Регистрация на Foodies Academy: избранные рецепты и подписки на авторов.",
+		"en": "Sign up to Foodies Academy: favourite recipes and authors to follow."
+	},
+	{
+		"ru": "Результаты",
+		"en": "Results"
+	},
+	{
+		"ru": "Рейтинг {rating} из {max}",
+		"en": "Rated {rating} out of {max}"
+	},
+	{
+		"ru": "Реклама",
+		"en": "Advertisement"
+	},
+	{
+		"ru": "Рецепт",
+		"en": "Recipe"
+	},
+	{
+		"ru": "Рецепт недели на почту",
+		"en": "Recipe of the week by e-mail"
+	},
+	{
+		"ru": "Рецепт этой страницы утерян ещё в 2019-м.",
+		"en": "The recipe for this page was lost back in 2019."
+	},
+	{
+		"ru": "Рецептов",
+		"en": "of recipes"
+	},
+	{
+		"ru": "Рецепты",
+		"en": "Recipes"
+	},
+	{
+		"ru": "Рецепты {collection}",
+		"en": "Recipes {collection}"
+	},
+	{
+		"ru": "Рецепты по ингредиентам",
+		"en": "Recipes by ingredient"
+	},
+	{
+		"ru": "Рецепты с ингредиентом «{name}»",
+		"en": "Recipes with {name}"
+	},
+	{
+		"ru": "С прошлого визита новых рецептов у ваших авторов нет.",
+		"en": "Your authors have no new recipes since your last visit."
+	},
+	{
+		"ru": "США",
+		"en": "US"
+	},
+	{
+		"ru": "Свернуть",
+		"en": "Show less",
+		"client": true
+	},
+	{
+		"ru": "Следующая страница",
+		"en": "Next page"
+	},
+	{
+		"ru": "Следующее фото",
+		"en": "Next photo"
+	},
+	{
+		"ru": "Слишком много отзывов, попробуйте через минуту",
+		"en": "Too many reviews, try again in a minute",
+		"client": true
+	},
+	{
+		"ru": "Слишком много попыток, попробуйте через минуту",
+		"en": "Too many attempts, try again in a minute",
+		"client": true
+	},
+	{
+		"ru": "Слишком часто, попробуйте через минуту",
+		"en": "Too often, try again in a minute",
+		"client": true
+	},
+	{
+		"ru": "Сложность",
+		"en": "Difficulty"
+	},
+	{
+		"ru": "Смотреть видео",
+		"en": "Watch the video"
+	},
+	{
+		"ru": "Смотреть видео: {title}",
+		"en": "Watch the video: {title}"
+	},
+	{
+		"ru": "Смотреть все",
+		"en": "See all"
+	},
+	{
+		"ru": "Совет",
+		"en": "Tip"
+	},
+	{
+		"ru": "Совет от шефа",
+		"en": "Chef's tip"
+	},
+	{
+		"ru": "Сортировка:",
+		"en": "Sort by:"
+	},
+	{
+		"ru": "Сохранено",
+		"en": "Saved",
+		"client": true
+	},
+	{
+		"ru": "Сохранено в избранное",
+		"en": "Saved to favourites",
+		"client": true
+	},
+	{
+		"ru": "Сохранить",
+		"en": "Save"
+	},
+	{
+		"ru": "Сохранить в избранное",
+		"en": "Save to favourites",
+		"client": true
+	},
+	{
+		"ru": "Спасибо за отзыв!",
+		"en": "Thank you for your review!"
+	},
+	{
+		"ru": "Спасибо за оценку!",
+		"en": "Thank you for rating!",
+		"client": true
+	},
+	{
+		"ru": "Спасибо! Комментарий появится после проверки модератором",
+		"en": "Thank you! Your comment will appear after moderation"
+	},
+	{
+		"ru": "Спасибо! Отзыв появится после проверки модератором",
+		"en": "Thank you! Your review will appear after moderation"
+	},
+	{
+		"ru": "Ссылка скопирована",
+		"en": "Link copied",
+		"client": true
+	},
+	{
+		"ru": "Станьте первым, кто оставит комментарий",
+		"en": "Be the first to comment"
+	},
+	{
+		"ru": "Станьте первым, кто оставит комментарий для этого рецепта",
+		"en": "Be the first to review this recipe"
+	},
+	{
+		"ru": "Станьте первым, кто оставит комментарий к этому видеорецепту",
+		"en": "Be the first to comment on this video recipe"
+	},
+	{
+		"ru": "Страница не найдена",
+		"en": "Page not found"
+	},
+	{
+		"ru": "Страницы",
+		"en": "Pages"
+	},
+	{
+		"ru": "ТОП 5",
+		"en": "TOP 5"
+	},
+	{
+		"ru": "Так вас видят в отзывах",
+		"en": "This is how others see you in reviews"
+	},
+	{
+		"ru": "Такой страницы нет в меню. И, кажется, никогда не было.",
+		"en": "This page is not on the menu. And it seems it never was."
+	},
+	{
+		"ru": "Такой страницы нет — но есть сотни рецептов.",
+		"en": "There's no such page — but there are hundreds of recipes."
+	},
+	{
+		"ru": "Текущий пароль",
+		"en": "Current password"
+	},
+	{
+		"ru": "Типы блюд",
+		"en": "Dish types"
+	},
+	{
+		"ru": "Только что",
+		"en": "Just now"
+	},
+	{
+		"ru": "Убрано из избранного",
+		"en": "Removed from favourites",
+		"client": true
+	},
+	{
+		"ru": "Убрать",
+		"en": "Remove",
+		"client": true
+	},
+	{
+		"ru": "Убрать «{title}» из избранного",
+		"en": "Remove “{title}” from favourites",
+		"client": true
+	},
+	{
+		"ru": "Убрать из избранного",
+		"en": "Remove from favourites",
+		"client": true
+	},
+	{
+		"ru": "Увеличить порции",
+		"en": "More servings"
+	},
+	{
+		"ru": "Уже есть аккаунт?",
+		"en": "Already have an account?"
+	},
+	{
+		"ru": "Укажите имя и e-mail",
+		"en": "Enter your name and e-mail",
+		"client": true
+	},
+	{
+		"ru": "Уменьшить порции",
+		"en": "Fewer servings"
+	},
+	{
+		"ru": "Файлы cookie",
+		"en": "Cookies"
+	},
+	{
+		"ru": "Фамилия",
+		"en": "Last name"
+	},
+	{
+		"ru": "Фильтры",
+		"en": "Filters"
+	},
+	{
+		"ru": "Хлебные крошки",
+		"en": "Breadcrumbs"
+	},
+	{
+		"ru": "Читать ↓",
+		"en": "Read ↓"
+	},
+	{
+		"ru": "Что думаете?",
+		"en": "What do you think?"
+	},
+	{
+		"ru": "Что-то пошло не так, попробуйте ещё раз",
+		"en": "Something went wrong, please try again",
+		"client": true
+	},
+	{
+		"ru": "Шеф уронил эту страницу на пол. Правило пяти секунд не спасло.",
+		"en": "The chef dropped this page on the floor. The five-second rule didn't help."
+	},
+	{
+		"ru": "Яйцо сдалось. Идите уже готовить что-нибудь 👨‍🍳",
+		"en": "The egg gives up. Go and cook something 👨‍🍳",
+		"client": true
+	},
+	{
+		"ru": "автор",
+		"en": "author"
+	},
+	{
+		"ru": "авторов",
+		"en": "authors"
+	},
+	{
+		"ru": "блог",
+		"en": "blog"
+	},
+	{
+		"ru": "быстрый рецепт",
+		"en": "quick recipe"
+	},
+	{
+		"ru": "видеорецепт",
+		"en": "video recipe"
+	},
+	{
+		"ru": "видеорецепта",
+		"en": "video recipes"
+	},
+	{
+		"ru": "видеорецептов",
+		"en": "video recipes"
+	},
+	{
+		"ru": "для кухни",
+		"en": "for the kitchen"
+	},
+	{
+		"ru": "доверяют",
+		"en": "by thousands"
+	},
+	{
+		"ru": "из {n} {countries}: от итальянской пасты до азиатского стритфуда. Выберите кухню и отправьтесь в гастрономическое путешествие.",
+		"en": "from {n} {countries}: from Italian pasta to Asian street food. Pick a cuisine and set off on a culinary journey."
+	},
+	{
+		"ru": "категории",
+		"en": "categories"
+	},
+	{
+		"ru": "категорий",
+		"en": "categories"
+	},
+	{
+		"ru": "категория",
+		"en": "category"
+	},
+	{
+		"ru": "комментариев",
+		"en": "comments"
+	},
+	{
+		"ru": "комментарий",
+		"en": "comment"
+	},
+	{
+		"ru": "кухни",
+		"en": "cuisines"
+	},
+	{
+		"ru": "кухня",
+		"en": "cuisine"
+	},
+	{
+		"ru": "кухонь",
+		"en": "cuisines"
+	},
+	{
+		"ru": "мира",
+		"en": "cuisines"
+	},
+	{
+		"ru": "на {n} {word}",
+		"en": "for {n} {word}",
+		"client": true
+	},
+	{
+		"ru": "на {n} порции",
+		"en": "for {n} servings"
+	},
+	{
+		"ru": "на порцию",
+		"en": "per serving"
+	},
+	{
+		"ru": "найден",
+		"en": "found",
+		"client": true
+	},
+	{
+		"ru": "найдено",
+		"en": "found",
+		"client": true
+	},
+	{
+		"ru": "новостей",
+		"en": "news"
+	},
+	{
+		"ru": "новости",
+		"en": "news"
+	},
+	{
+		"ru": "новость",
+		"en": "news item"
+	},
+	{
+		"ru": "ответ для {name}",
+		"en": "reply to {name}"
+	},
+	{
+		"ru": "отзыв",
+		"en": "review"
+	},
+	{
+		"ru": "отзыва",
+		"en": "reviews"
+	},
+	{
+		"ru": "отзывов",
+		"en": "reviews"
+	},
+	{
+		"ru": "оценка",
+		"en": "rating",
+		"client": true
+	},
+	{
+		"ru": "оценок",
+		"en": "ratings",
+		"client": true
+	},
+	{
+		"ru": "по ингредиентам",
+		"en": "by ingredient"
+	},
+	{
+		"ru": "поиска",
+		"en": "search"
+	},
+	{
+		"ru": "порции",
+		"en": "servings"
+	},
+	{
+		"ru": "порций",
+		"en": "servings",
+		"client": true
+	},
+	{
+		"ru": "порцию",
+		"en": "serving",
+		"client": true
+	},
+	{
+		"ru": "порция",
+		"en": "serving"
+	},
+	{
+		"ru": "просмотр",
+		"en": "view"
+	},
+	{
+		"ru": "просмотра",
+		"en": "views"
+	},
+	{
+		"ru": "просмотров",
+		"en": "views"
+	},
+	{
+		"ru": "разложенных по полочкам — от завтрака до праздничного стола. Выберите категорию и найдите то, что приготовите уже сегодня.",
+		"en": "neatly sorted — from breakfast to a festive table. Pick a category and find something to cook today."
+	},
+	{
+		"ru": "результат",
+		"en": "result",
+		"client": true
+	},
+	{
+		"ru": "результатов",
+		"en": "results",
+		"client": true
+	},
+	{
+		"ru": "рейтинг автора",
+		"en": "author rating"
+	},
+	{
+		"ru": "рецепт",
+		"en": "recipe",
+		"client": true
+	},
+	{
+		"ru": "рецептов",
+		"en": "recipes",
+		"client": true
+	},
+	{
+		"ru": "рецепты",
+		"en": "recipes"
+	},
+	{
+		"ru": "с ингредиентом «{name}»",
+		"en": "with {name}",
+		"client": true
+	},
+	{
+		"ru": "средний рейтинг рецептов",
+		"en": "average recipe rating"
+	},
+	{
+		"ru": "статей",
+		"en": "posts"
+	},
+	{
+		"ru": "статьи",
+		"en": "posts"
+	},
+	{
+		"ru": "статья",
+		"en": "post"
+	},
+	{
+		"ru": "стран",
+		"en": "countries"
+	},
+	{
+		"ru": "страны",
+		"en": "country"
+	},
+	{
+		"ru": "тип блюд",
+		"en": "dish type"
+	},
+	{
+		"ru": "типа блюд",
+		"en": "dish types"
+	},
+	{
+		"ru": "типов блюд",
+		"en": "dish types"
+	},
+	{
+		"ru": "🎲 Случайный рецепт",
+		"en": "🎲 Random recipe"
+	},
+	{
+		"ru": "🔄 Другая шутка",
+		"en": "🔄 Another joke"
+	},
+	{
+		"ru": "Просмотров на сайте",
+		"en": "Views on the site"
+	}
+]

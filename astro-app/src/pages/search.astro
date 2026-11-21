@@ -1,14 +1,16 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Section from "../components/layout/Section.astro";
+import { langOf, t } from "../i18n";
+const lang = langOf(Astro.url);
 // The browser reports each search to Laravel, which saves it for Search Meter.
 const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/api";
 ---
-<BaseLayout noindex title="Поиск" description="Поиск рецептов, категорий, кухонь мира и авторов на Foodies Academy." breadcrumbs={[{ label: "Поиск" }]}>
+<BaseLayout bilingual noindex title={t(lang, "Поиск")} description={t(lang, "Поиск рецептов, категорий, кухонь мира и авторов на Foodies Academy.")} breadcrumbs={[{ label: t(lang, "Поиск") }]}>
 	<Section>
-		<Fragment slot="title"><span class="section-title__accent">Результаты</span> поиска</Fragment>
+		<Fragment slot="title"><span class="section-title__accent">{t(lang, "Результаты")}</span>{" "}{t(lang, "поиска")}</Fragment>
 		<div class="search-results" data-log={`${PUBLIC_API_URL}/search-log`}>
-			<p class="search-results__summary" aria-live="polite">Введите запрос в строку поиска вверху страницы.</p>
+			<p class="search-results__summary" aria-live="polite">{t(lang, "Введите запрос в строку поиска вверху страницы.")}</p>
 			<ul class="search-results__list"></ul>
 		</div>
 	</Section>
@@ -76,8 +78,8 @@ const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/
 </style>
 
 <script>
+	import { pluralc, tc } from "../scripts/i18n";
 	import { loadIndex, normalize, findItems, el, highlight } from "../scripts/search";
-	import { plural } from "../utils/plural";
 
 	const summary = document.querySelector<HTMLElement>(".search-results__summary");
 	const list = document.querySelector<HTMLElement>(".search-results__list");
@@ -85,12 +87,12 @@ const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/
 	const query = normalize(raw);
 
 	const showResults = async (summary: HTMLElement, list: HTMLElement) => {
-		summary.textContent = "Ищем…";
+		summary.textContent = tc("Ищем…");
 		const results = findItems(await loadIndex(), query);
 
 		summary.textContent = results.length
-			? `По запросу «${raw}» ${plural(results.length, ["найден", "найдено", "найдено"])} ${results.length} ${plural(results.length, ["результат", "результата", "результатов"])}`
-			: `Ничего не найдено по запросу «${raw}»`;
+			? tc("По запросу «{query}» {found} {n} {results}", { query: raw, found: pluralc(results.length, ["найден", "найдено", "найдено"]), n: results.length, results: pluralc(results.length, ["результат", "результата", "результатов"]) })
+			: tc("Ничего не найдено по запросу «{query}»", { query: raw });
 
 		list.replaceChildren(
 			...results.map((result) => {

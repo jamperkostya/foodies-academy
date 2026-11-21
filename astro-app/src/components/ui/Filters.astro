@@ -1,4 +1,6 @@
 ---
+import { langOf, localize, t } from "../../i18n";
+const lang = langOf(Astro.url);
 interface Props {
 	groups: string[];
 	// "Смотреть все" link, always the last item in the row.
@@ -8,13 +10,13 @@ interface Props {
 const { groups, href } = Astro.props;
 ---
 <div class="filters">
-	<div class="filters__list" role="group" aria-label="Фильтры">
-		<button type="button" class="filters__btn filter-name is-active" aria-pressed="true" data-group="">Все</button>
+	<div class="filters__list" role="group" aria-label={t(lang, "Фильтры")}>
+		<button type="button" class="filters__btn filter-name is-active" aria-pressed="true" data-group="">{t(lang, "Все")}</button>
 		{groups.map((group) => (
 			<button type="button" class="filters__btn filter-name" aria-pressed="false" data-group={group}>{group}</button>
 		))}
 	</div>
-	{href && <a href={href} class="filters__all filter-name">Смотреть все</a>}
+	{href && <a href={localize(lang, href)} class="filters__all filter-name">{t(lang, "Смотреть все")}</a>}
 </div>
 
 <script>

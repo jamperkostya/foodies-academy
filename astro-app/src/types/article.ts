@@ -17,6 +17,7 @@ export interface Article {
   author: { slug: string; name: string };
   readTime: number; // minutes
   commentCount: number;
+  views: number; // on the site
   // Only in GET /api/{news|blog}/{slug}:
   content?: string; // HTML
   comments?: Review[];

@@ -1,4 +1,6 @@
 ---
+import { langOf, t } from "../../i18n";
+const lang = langOf(Astro.url);
 // Row above a listing: how many items there are, and a sort dropdown. The page
 // does the actual sorting (see pages/categories.astro).
 interface Props {
@@ -13,7 +15,7 @@ const { count, countWord, options } = Astro.props;
 <div class="sort-bar">
 	<p class="sort-bar__count"><strong class="sort-bar__value">{count}</strong>{" "}{countWord}</p>
 	<label class="sort-bar__select">
-		Сортировка:
+		{t(lang, "Сортировка:")}
 		<select class="sort-bar__field">
 			{options.map((option) => <option value={option.value}>{option.label}</option>)}
 		</select>

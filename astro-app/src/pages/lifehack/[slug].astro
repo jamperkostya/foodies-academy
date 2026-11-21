@@ -7,6 +7,7 @@ import ContentBlock from "../../components/article/ContentBlock.astro";
 import StepList from "../../components/article/StepList.astro";
 import TipBox from "../../components/article/TipBox.astro";
 import Reviews from "../../components/article/Reviews.astro";
+import ViewCounter from "../../components/article/ViewCounter.astro";
 import AuthorCard from "../../components/article/AuthorCard.astro";
 import SidebarList from "../../components/article/SidebarList.astro";
 import NewsletterCard from "../../components/article/NewsletterCard.astro";
@@ -15,32 +16,35 @@ import AdSlot from "../../components/ui/AdSlot.astro";
 import { AD_UNITS } from "../../data/ads";
 import SEOTextSection from "../../components/sections/SEOTextSection.astro";
 import type { Lifehack } from "../../types/lifehack";
-import { plural } from "../../utils/plural";
+import { builds, langOf, langOfRoute, localize, pluralOf, t, viewsText, withLang } from "../../i18n";
+const lang = langOf(Astro.url);
 
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
 
 // One page per lifehack in WordPress.
-export async function getStaticPaths() {
+export async function getStaticPaths({ routePattern }: { routePattern?: string } = {}) {
+	// Not built when only another language is rebuilt.
+	if (!builds(langOfRoute(routePattern))) return [];
 	// getStaticPaths can't see the constants above, so the URL is read again here.
 	const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
-	const { data }: { data: Lifehack[] } = await fetch(`${API_URL}/lifehacks`).then((r) => r.json());
+	const { data }: { data: Lifehack[] } = await fetch(withLang(langOfRoute(routePattern), `${API_URL}/lifehacks`)).then((r) => r.json());
 
 	return data.map((lifehack) => ({ params: { slug: lifehack.slug } }));
 }
 
 const { slug } = Astro.params;
-const response = await fetch(`${API_URL}/lifehacks/${slug}`);
+const response = await fetch(withLang(lang, `${API_URL}/lifehacks/${slug}`));
 if (!response.ok) {
 	throw new Error(`Lifehack "${slug}" from ${API_URL}: HTTP ${response.status}`);
 }
 const { data: lifehack }: { data: Lifehack } = await response.json();
-const { data: lifehacks }: { data: Lifehack[] } = await fetch(`${API_URL}/lifehacks`).then((r) => r.json());
+const { data: lifehacks }: { data: Lifehack[] } = await fetch(withLang(lang, `${API_URL}/lifehacks`)).then((r) => r.json());
 // Comments are posted straight from the browser, so it needs Laravel's public URL.
 const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/api";
 
 const comments = lifehack.comments ?? [];
 const commentForms: [string, string, string] = ["комментарий", "комментария", "комментариев"];
-const commentsCount = `${comments.length} ${plural(comments.length, commentForms)}`;
+const commentsCount = `${comments.length} ${pluralOf(lang, comments.length, commentForms)}`;
 
 // Same category first, then the newest.
 const similar = lifehacks
@@ -56,17 +60,17 @@ const similar = lifehacks
 	type="article"
 	title={lifehack.title}
 	description={lifehack.description}
-	breadcrumbs={[{ label: "Лайфхаки", href: "/lifehacks" }, { label: lifehack.title }]}>
+	breadcrumbs={[{ label: t(lang, "Лайфхаки"), href: "/lifehacks" }, { label: lifehack.title }]}>
 
 	<ArticleHero
 		slot="hero"
-		badge="Лайфхаки"
+		badge={t(lang, "Лайфхаки")}
 		label={lifehack.category}
 		title={lifehack.title}
 		titleAccent={lifehack.titleAccent || undefined}
 		description={lifehack.description}
 		image={lifehack.image}
-		anchor={{ href: "#comments", label: "К комментариям ↓" }}
+		anchor={{ href: "#comments", label: t(lang, "К комментариям ↓") }}
 		withVideo={Boolean(lifehack.videoMinutes)}
 		videoLabel={`Смотреть видео (${lifehack.videoMinutes} мин)`}
 	>
@@ -74,7 +78,7 @@ const similar = lifehacks
 			<Avatar name={lifehack.author.name} />
 			<div>
 				<strong class="lifehack-author__name">{lifehack.author.name}</strong>
-				<span class="lifehack-author__date">{lifehack.date} · {lifehack.readTime} мин чтения</span>
+				<span class="lifehack-author__date">{[lifehack.date, t(lang, "{n} мин чтения", { n: lifehack.readTime }), viewsText(lang, lifehack.views)].filter(Boolean).join(" · ")}</span>
 			</div>
 		</div>
 	</ArticleHero>
@@ -84,40 +88,41 @@ const similar = lifehacks
 			{lifehack.intro && <p class="lifehack-intro">{lifehack.intro}</p>}
 
 			{lifehack.points.length > 0 && (
-				<ContentBlock title="Разбор" id="points">
+				<ContentBlock title={t(lang, "Разбор")} id="points">
 					<StepList steps={lifehack.points} />
 				</ContentBlock>
 			)}
 
-			{lifehack.tip.text && <TipBox title={lifehack.tip.title || "Совет"}>{lifehack.tip.text}</TipBox>}
+			{lifehack.tip.text && <TipBox title={lifehack.tip.title || t(lang, "Совет")}>{lifehack.tip.text}</TipBox>}
 
 			<AdSlot unit={AD_UNITS.beforeComments} host={Astro.site?.hostname} />
 
-			<ContentBlock title="Комментарии" id="comments" class="no-print">
+			<ContentBlock title={t(lang, "Комментарии")} id="comments" class="no-print">
 				<span slot="hint" id="commentsCount">{commentsCount}</span>
 				<Reviews
 					reviews={comments}
-					formTitle="Оставить комментарий"
-					placeholder="Что думаете?"
-					submitLabel="Отправить"
-					successMessage="Спасибо! Комментарий появится после проверки модератором"
+					formTitle={t(lang, "Оставить комментарий")}
+					placeholder={t(lang, "Что думаете?")}
+					submitLabel={t(lang, "Отправить")}
+					successMessage={t(lang, "Спасибо! Комментарий появится после проверки модератором")}
 					countId="commentsCount"
 					countForms={commentForms}
-					action={`${PUBLIC_API_URL}/lifehacks/${lifehack.slug}/comments`}
+					action={localize(lang, `${PUBLIC_API_URL}/lifehacks/${lifehack.slug}/comments`)}
 				/>
 			</ContentBlock>
 
 			<AdSlot unit={AD_UNITS.afterComments} host={Astro.site?.hostname} />
 
 			<Fragment slot="sidebar">
-				<AuthorCard name={lifehack.author.name} info={lifehack.author.info} buttonLabel="Профиль автора" href={lifehack.author.info ? `/author/${lifehack.author.slug}` : undefined} />
-				<SidebarList title="Похожие лайфхаки" items={similar} />
-				<NewsletterCard title="Лайфхак недели на почту" />
+				<AuthorCard name={lifehack.author.name} info={lifehack.author.info} buttonLabel={t(lang, "Профиль автора")} href={localize(lang, lifehack.author.info ? `/author/${lifehack.author.slug}` : undefined)} />
+				<SidebarList title={t(lang, "Похожие лайфхаки")} items={similar} />
+				<NewsletterCard title={t(lang, "Лайфхак недели на почту")} />
 			</Fragment>
 		</ArticleLayout>
 	</Section>
 
 	<SEOTextSection html={lifehack.seoText} />
+	<ViewCounter action={`${PUBLIC_API_URL}/lifehacks/${lifehack.slug}/view`} />
 </BaseLayout>
 
 <style lang="less">

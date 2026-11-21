@@ -6,7 +6,8 @@
 #   gunzip -c ~/jamper_foodies_site-….sql.gz | mysql -u jamper_foodies_site -p jamper_foodies_site
 set -euo pipefail
 
-MYSQLDUMP="${MYSQLDUMP:-/Applications/MAMP/Library/bin/mysqldump}"
+# MAMP keeps the client of each MySQL version in its own folder.
+MYSQLDUMP="${MYSQLDUMP:-/Applications/MAMP/Library/bin/mysql80/bin/mysqldump}"
 DB="${SITE_DB_DATABASE:-foodies_dev}"
 OUT="$(cd "$(dirname "$0")/../.." && pwd)/backups/jamper_foodies_site-$(date +%Y%m%d-%H%M).sql.gz"
 mkdir -p "$(dirname "$OUT")"

@@ -1,4 +1,4 @@
-FROM php:8.3-cli
+FROM php:8.3.37-cli
 
 RUN apt-get update && apt-get install -y \
     git \
@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_mysql zip \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.10 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 

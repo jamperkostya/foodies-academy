@@ -2,7 +2,9 @@
 import { Image } from "astro:assets";
 import Icon from "../ui/Icon.astro";
 import logo from "../../assets/images/logotype.png";
-import { footerColumns } from "../../data/menu";
+import { menuOf } from "../../data/menu";
+import { langOf, localize, t } from "../../i18n";
+const lang = langOf(Astro.url);
 
 const SOCIAL = [
 	{ label: "Facebook", icon: "social-facebook", href: "https://www.facebook.com/Foodies.Academy" },
@@ -15,26 +17,26 @@ const SOCIAL = [
 <footer class="footer container no-print">
 	<div class="footer__top">
 		<div class="footer__brand">
-			<a href="/" class="footer__logo">
+			<a href={localize(lang, "/")} class="footer__logo">
 				<Image src={logo} alt="Foodies" width={242} height={81} />
 			</a>
-			<p class="footer__desc">Академия Гурмэ – это рецепты, написанные, созданные, и проверенные поварами для поваров.</p>
+			<p class="footer__desc">{t(lang, "Академия Гурмэ – это рецепты, написанные, созданные, и проверенные поварами для поваров.")}</p>
 			<div class="footer__social">
 				{SOCIAL.map(({ label, icon, href }) => (
-					<a href={href} class="footer__social-link" aria-label={label} target="_blank" rel="noopener"><Icon name={icon} width={24} height={24} /></a>
+					<a href={localize(lang, href)} class="footer__social-link" aria-label={label} target="_blank" rel="noopener"><Icon name={icon} width={24} height={24} /></a>
 				))}
 			</div>
 		</div>
 
-		<nav class="footer__cols" aria-label="Дополнительная навигация">
-			{footerColumns.map((column) => (
+		<nav class="footer__cols" aria-label={t(lang, "Дополнительная навигация")}>
+			{menuOf(lang).footer.map((column) => (
 				<div class="footer__col">
 					{column.href
-						? <a href={column.href} class="footer__col-header">{column.title}</a>
+						? <a href={localize(lang, column.href)} class="footer__col-header">{column.title}</a>
 						: <span class="footer__col-header">{column.title}</span>}
 					<ul class="footer__list">
 						{column.items.map((item) => (
-							<li class="footer__item"><a href={item.href} class="footer__link">{item.title}</a></li>
+							<li class="footer__item"><a href={localize(lang, item.href)} class="footer__link">{item.title}</a></li>
 						))}
 					</ul>
 				</div>

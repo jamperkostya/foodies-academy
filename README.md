@@ -3,8 +3,7 @@
 Recipe website: content is edited in **WordPress**, served by a **Laravel** API and built into a static site by **Astro**.
 Visitor activity (likes, views, reviews, searches, subscriptions, accounts) is written into the WordPress plugins' own tables, so it is all visible and managed in the WordPress admin.
 
-- Live site: https://foodies.academy
-- Production after the move: https://foodies.academy · https://api.foodies.academy/api · https://wp.foodies.academy/wp-admin
+- Production: https://foodies.academy (site, English under `/en`) · https://api.foodies.academy/api · https://wp.foodies.academy/wp-admin
 - Dev: https://dev.foodies.academy (site) · https://api.dev.foodies.academy/api (API) · https://wp.dev.foodies.academy/wp-admin
 
 ## Architecture
@@ -13,7 +12,7 @@ Visitor activity (likes, views, reviews, searches, subscriptions, accounts) is w
 WordPress admin ──▶ site database (WordPress, prefix artit_) ◀── Laravel writes likes, views, reviews, users
                               │
                               ▼
-                    Laravel API (/api/*) ──▶ Astro build ──▶ static HTML (dev.foodies.academy)
+                    Laravel API (/api/*) ──▶ Astro build ──▶ static HTML (Russian at /, English at /en)
                               ▲
         browser: reviews, likes, views, search, log-in, favourites
 ```
@@ -28,7 +27,7 @@ WordPress admin ──▶ site database (WordPress, prefix artit_) ◀── Lar
 |---|---|---|
 | Site | Astro 7 (static), Less, TypeScript, Vitest | `astro-app/` |
 | API | Laravel 12, PHP 8.3, PHPUnit | `laravel-app/` |
-| CMS | WordPress 7.0.2, pinned plugins, own mu-plugins | `wp-content/mu-plugins/`, `wordpress/` |
+| CMS | WordPress 7.1.5, pinned plugins (Polylang, Yoast SEO, Contact Form 7…), own mu-plugins | `wp-content/mu-plugins/`, `wordpress/` |
 | Databases | MySQL (MAMP locally, MariaDB on the server) | |
 | Local | Docker Compose | `docker-compose.yml` |
 | Deploy | GitHub Actions → HestiaCP over SSH/rsync | `.github/workflows/`, `deploy/hestia/` |
@@ -46,7 +45,13 @@ WordPress admin ──▶ site database (WordPress, prefix artit_) ◀── Lar
 | WordPress admin | http://localhost:8081/wp-admin |
 | Laravel's MySQL | localhost:3307 |
 
-WordPress plugins are installed on container start (`wordpress/install-plugins.sh`); Laravel's scheduled commands run in the `scheduler` container.
+On container start `wordpress/install-plugins.sh` brings WordPress and its plugins up to the versions pinned there (the deploy runs it on the servers too); Laravel's scheduled commands run in the `scheduler` container.
+
+Pinned images: `wordpress:7.1.5-php8.3-apache`, `php:8.3.37-cli`, `node:22.23.5`, `mysql:9.7.4`. After changing them: `docker compose build && docker compose up -d`.
+
+## Languages
+
+Russian is the original, at the root; English lives under `/en` (Polylang: a translation is its own post or term linked to the Russian one). The API takes `?lang=en`; interface strings are in `wp-content/mu-plugins/foodies-strings.json` and editable in the WordPress admin (Languages → String translations). Likes, dislikes and views are shared by the translations, reviews are not. Details and import commands: [`CLAUDE.md`](CLAUDE.md#переводы).
 
 ## Tests
 
@@ -64,6 +69,8 @@ docker exec foodies_laravel php artisan test   # WordPress tables in foodies_sit
 | `videos:sync [--latest]` | Imports the YouTube channel's videos |
 | `likes:import-legacy`, `views:import-legacy` | Move old counters into the plugins' ones |
 | `slugs:check` | Reports invalid and duplicate slugs |
+| `recipes:prepare-translations`, `translations:sync-counters` | Prepare recipe translations for import into WordPress; copy likes and views to new translations |
+| `recipes:fix-ingredients`, `units:check` | Fix typos in amounts and units of Russian recipes; report unknown units |
 
 ## Deploy
 

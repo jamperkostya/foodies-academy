@@ -1,28 +1,30 @@
 ---
 import { shortCount as short } from "../../utils/shortCount";
+import { langOf, LOCALES, t, withLang } from "../../i18n";
+const lang = langOf(Astro.url);
 
 // Totals from the WordPress database (GET /api/stats), rounded down for display.
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
 const totals: { recipes: number; ratings: number; views: number; comments: number } =
-	(await fetch(`${API_URL}/stats`).then((r) => r.json())).data;
+	(await fetch(withLang(lang, `${API_URL}/stats`)).then((r) => r.json())).data;
 
 const stats = [
-	{ ...short(totals.recipes), label: "рецептов" },
-	{ ...short(totals.ratings), label: "оценок" },
-	{ ...short(totals.views), label: "просмотров" },
-	{ ...short(totals.comments), label: "комментариев" },
+	{ ...short(totals.recipes, lang), label: t(lang, "рецептов") },
+	{ ...short(totals.ratings, lang), label: t(lang, "оценок") },
+	{ ...short(totals.views, lang), label: t(lang, "просмотров") },
+	{ ...short(totals.comments, lang), label: t(lang, "комментариев") },
 ];
 ---
 
 <section class="section-item">
 	<div class="trust">
 		<h3 class="trust__title section-title"><slot name="title" /></h3>
-		<div class="trust__subtitle">Лучшая авторская кухня в Европе</div>
+		<div class="trust__subtitle">{t(lang, "Лучшая авторская кухня в Европе")}</div>
 
 		<div class="trust__stats">
 			{stats.map((stat) => (
 				<div class="trust__stat" data-count={stat.count} data-decimals={stat.decimals} data-suffix={stat.suffix}>
-					<strong class="trust__value">{stat.count.toLocaleString("ru-RU", { minimumFractionDigits: stat.decimals })}{stat.suffix}</strong>
+					<strong class="trust__value">{stat.count.toLocaleString(LOCALES[lang], { minimumFractionDigits: stat.decimals })}{stat.suffix}</strong>
 					<span class="trust__label">{stat.label}</span>
 				</div>
 			))}
@@ -85,6 +87,7 @@ const stats = [
 </style>
 
 <script>
+	import { pageLang } from "../../scripts/i18n";
 	// Count each stat up from 0 once it scrolls into view.
 	const DURATION = 900;
 
@@ -104,7 +107,7 @@ const stats = [
 				const step = (now: number) => {
 					const progress = Math.min(1, (now - start) / DURATION);
 					const eased = 1 - Math.pow(1 - progress, 3);
-					value.textContent = (target * eased).toLocaleString("ru-RU", { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + suffix;
+					value.textContent = (target * eased).toLocaleString(pageLang === "en" ? "en-US" : "ru-RU", { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + suffix;
 					if (progress < 1) requestAnimationFrame(step);
 				};
 				requestAnimationFrame(step);

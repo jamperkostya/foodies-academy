@@ -1,20 +1,22 @@
 ---
 import type { Breadcrumb } from "../../types/breadcrumb";
+import { langOf, localize, t } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	// Trail after "Главная", ending with the current page.
 	items: Breadcrumb[];
 }
 
-const trail: Breadcrumb[] = [{ label: "Главная", href: "/" }, ...Astro.props.items];
+const trail: Breadcrumb[] = [{ label: t(lang, "Главная"), href: "/" }, ...Astro.props.items];
 ---
 <div class="breadcrumbs no-print">
-	<nav class="container" aria-label="Хлебные крошки">
+	<nav class="container" aria-label={t(lang, "Хлебные крошки")}>
 		<ol class="breadcrumbs__list">
 			{trail.map((item, i) => (
 				<li class="breadcrumbs__item">
 					{item.href && i < trail.length - 1 ? (
-						<a class="breadcrumbs__link" href={item.href}>{item.label}</a>
+						<a class="breadcrumbs__link" href={localize(lang, item.href)}>{item.label}</a>
 					) : (
 						<span class="breadcrumbs__current" aria-current="page">{item.label}</span>
 					)}

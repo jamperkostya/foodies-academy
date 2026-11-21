@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\Comments;
 use App\Services\Lifehacks;
+use App\Support\Lang;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -18,13 +19,13 @@ class LifehacksController extends Controller
     // GET /api/lifehacks → all, newest first
     public function index(): JsonResponse
     {
-        return response()->json(['data' => Cache::remember('lifehacks:all', now()->addMinutes(self::CACHE_MINUTES), fn () => $this->lifehacks->getAll())]);
+        return response()->json(['data' => Cache::remember(Lang::key('lifehacks:all'), now()->addMinutes(self::CACHE_MINUTES), fn () => $this->lifehacks->getAll())]);
     }
 
     // GET /api/lifehacks/{slug}
     public function show(string $slug): JsonResponse
     {
-        $lifehack = Cache::remember("lifehacks:slug:$slug", now()->addMinutes(self::CACHE_MINUTES), fn () => $this->lifehacks->getBySlug($slug));
+        $lifehack = Cache::remember(Lang::key("lifehacks:slug:$slug"), now()->addMinutes(self::CACHE_MINUTES), fn () => $this->lifehacks->getBySlug($slug));
         abort_if(! $lifehack, 404, 'Lifehack not found');
 
         return response()->json(['data' => $lifehack]);
@@ -40,6 +41,6 @@ class LifehacksController extends Controller
         $comments->addPending($postId, strip_tags(trim($data['name'])), strip_tags(trim($data['text'])), null,
             (string) $request->ip(), (string) $request->userAgent());
 
-        return response()->json(['message' => 'Комментарий отправлен на модерацию'], 201);
+        return response()->json(['message' => Lang::text('Комментарий отправлен на модерацию', 'Your comment will appear after moderation')], 201);
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use Illuminate\Database\ConnectionInterface;
 use App\Support\WpHtml;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Facades\DB;
 
 /** WordPress pages (post_type "page"), for what the Astro pages take from them, such as the SEO text. */
@@ -24,7 +24,7 @@ class Pages
                 $join->on('m.post_id', '=', 'p.ID')->where('m.meta_key', 'foodies_site_page')->where('m.meta_value', '1');
             })
             ->where('p.post_type', 'page')
-            ->where('p.post_status', 'publish')
+            ->where('p.post_status', 'publish')->tap(fn ($q) => app(Translations::class)->scope($q))
             ->orderBy('p.menu_order')
             ->orderBy('p.ID')
             ->get(['p.post_name', 'p.post_title'])
@@ -38,7 +38,7 @@ class Pages
      */
     public function getBySlug(string $slug): ?array
     {
-        $query = $this->db->table('posts')->where('post_type', 'page')->where('post_status', 'publish');
+        $query = $this->db->table('posts')->where('post_type', 'page')->where('post_status', 'publish')->tap(fn ($q) => app(Translations::class)->scope($q, 'posts.ID'));
         $page = $slug === 'home'
             ? $query->where('ID', (int) $this->db->table('options')->where('option_name', 'page_on_front')->value('option_value'))->first()
             : $query->where('post_name', $slug)->first();

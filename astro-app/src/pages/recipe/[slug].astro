@@ -22,22 +22,25 @@ import RecipeSection from "../../components/sections/RecipeSection.astro";
 
 import type { Recipe } from "../../types/recipe";
 import type { Review } from "../../types/review";
-import { plural, recipesWord } from "../../utils/plural";
 import { jsonLd } from "../../utils/jsonLd";
+import { builds, langOf, langOfRoute, LOCALES, localize, pluralOf, recipesWord, t, withLang, type Lang } from "../../i18n";
+const lang = langOf(Astro.url);
 
 const API_URL = import.meta.env.API_URL ?? 'http://localhost:8000/api';
 
 // One page per published recipe in Laravel.
-export async function getStaticPaths() {
+export async function getStaticPaths({ routePattern }: { routePattern?: string } = {}) {
+	// Not built when only another language is rebuilt.
+	if (!builds(langOfRoute(routePattern))) return [];
 	// getStaticPaths can't see the constants above, so the URL is read again here.
 	const API_URL = import.meta.env.API_URL ?? 'http://localhost:8000/api';
-	const { data: slugs }: { data: string[] } = await fetch(`${API_URL}/recipes/slugs`).then((r) => r.json());
+	const { data: slugs }: { data: string[] } = await fetch(withLang(langOfRoute(routePattern), `${API_URL}/recipes/slugs`)).then((r) => r.json());
 
 	return slugs.map((slug) => ({ params: { slug } }));
 }
 
 const { slug } = Astro.params;
-const response = await fetch(`${API_URL}/recipes/${slug}`);
+const response = await fetch(withLang(lang, `${API_URL}/recipes/${slug}`));
 if (!response.ok) {
 	throw new Error(`Recipe "${slug}" from ${API_URL}: HTTP ${response.status}`);
 }
@@ -53,30 +56,30 @@ const sidebarRecipes = similarRecipes.slice(0, 3).map((item) => ({
 	title: item.title,
 	meta: [item.time, ...Object.values(item.categories.course)].filter(Boolean).join(" · "),
 	image: item.image,
-	href: `/recipe/${item.slug}`,
+	href: localize(lang, `/recipe/${item.slug}`),
 }));
 
 // Ingredients split by their group ("Для бульона", "Для зажарки"…), in recipe order.
 // The servings stepper rescales every `quantity` on the client.
 const ingredientGroups = Map.groupBy(recipe.ingredients, (item) => item.group);
 
-// The group name ("ПРИГОТОВЛЕНИЕ ЛАНСПИКА") leads the first step of its group.
+// The group name ("ПРИГОТОВЛЕНИЕ ЛАНСПИКА") is a heading before the first step of its group.
 const steps = recipe.steps.map((step, i) => ({
 	text: step.text,
-	title: step.group && step.group !== recipe.steps[i - 1]?.group ? step.group : undefined,
+	group: step.group && step.group !== recipe.steps[i - 1]?.group ? step.group : undefined,
 }));
 
 // Only what is filled in WordPress is shown.
 const quickFacts = [
-	{ icon: "clock", size: 16, value: recipe.prepTime, label: "Подготовка" },
-	{ icon: "fire", size: 18, value: recipe.cookTime, label: "Готовка" },
-	{ icon: "total", size: 16, value: recipe.time, label: "Всего" },
-	{ icon: "difficult", size: 16, value: recipe.complexity, label: "Сложность" },
-	{ icon: "kcal", size: 24, value: recipe.calories ? `${recipe.calories} ккал` : "", label: "На порцию" },
+	{ icon: "clock", size: 16, value: recipe.prepTime, label: t(lang, "Подготовка") },
+	{ icon: "fire", size: 18, value: recipe.cookTime, label: t(lang, "Готовка") },
+	{ icon: "total", size: 16, value: recipe.time, label: t(lang, "Всего") },
+	{ icon: "difficult", size: 16, value: recipe.complexity, label: t(lang, "Сложность") },
+	{ icon: "kcal", size: 24, value: recipe.calories ? t(lang, "{n} ккал", { n: recipe.calories }) : "", label: t(lang, "На порцию") },
 ].filter((fact) => fact.value);
 
 // Only calories are stored in WordPress; the block is hidden without them.
-const nutrition = recipe.calories ? [{ label: "Калории", value: `${recipe.calories} ккал` }] : [];
+const nutrition = recipe.calories ? [{ label: t(lang, "Калории"), value: t(lang, "{n} ккал", { n: recipe.calories }) }] : [];
 
 // Star split from the reviews that have a rating; nothing to show without them.
 const ratedReviews = (recipe.reviews ?? []).filter((review) => review.rating);
@@ -93,8 +96,8 @@ const hasRating = recipe.comments > 0 || ratedReviews.length > 0;
 const photos = recipe.gallery?.length ? recipe.gallery : [recipe.image];
 const hasGallery = photos.length > 1 || Boolean(recipe.youtubeId);
 
-const reviewsCount = `${recipe.comments.toLocaleString("ru-RU")} ${plural(recipe.comments, ["отзыв", "отзыва", "отзывов"])}`;
-const description = `${recipe.title}: рецепт с пошаговыми фото на Foodies Academy.`;
+const reviewsCount = `${recipe.comments.toLocaleString(LOCALES[lang])} ${pluralOf(lang, recipe.comments, [t(lang, "отзыв"), t(lang, "отзыва"), t(lang, "отзывов")])}`;
+const description = t(lang, "{title}: рецепт с пошаговыми фото на Foodies Academy.", { title: recipe.title });
 // Recipes without servings in WordPress keep the old default of 4.
 const servings = recipe.servings || 4;
 
@@ -107,8 +110,8 @@ const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/
 const keywords = [
 	recipe.focusKeyword,
 	recipe.complexity,
-	recipe.minutes > 0 && recipe.minutes <= 30 ? "быстрый рецепт" : "",
-	recipe.youtubeId ? "видеорецепт" : "",
+	recipe.minutes > 0 && recipe.minutes <= 30 ? t(lang, "быстрый рецепт") : "",
+	recipe.youtubeId ? t(lang, "видеорецепт") : "",
 ].filter(Boolean);
 
 // Recipe rich result in Google (rating, time, calories). Every value here is
@@ -116,14 +119,15 @@ const keywords = [
 const recipeSchema = jsonLd({
 	"@type": "Recipe",
 	name: recipe.title,
+	inLanguage: lang,
 	image: photos,
 	description,
 	author: recipe.author ? { "@type": "Person", name: recipe.author.name } : undefined,
 	recipeCategory: course,
 	recipeCuisine: country,
 	totalTime: `PT${recipe.minutes}M`,
-	recipeYield: `${servings} ${plural(servings, ["порция", "порции", "порций"])}`,
-	nutrition: recipe.calories ? { "@type": "NutritionInformation", calories: `${recipe.calories} ккал` } : undefined,
+	recipeYield: `${servings} ${pluralOf(lang, servings, [t(lang, "порция"), t(lang, "порции"), t(lang, "порций")])}`,
+	nutrition: recipe.calories ? { "@type": "NutritionInformation", calories: t(lang, "{n} ккал", { n: recipe.calories }) } : undefined,
 	recipeIngredient: recipe.ingredients.map((item) => [item.amount, item.unit, item.name, item.notes].filter(Boolean).join(" ")),
 	recipeInstructions: steps.map((step) => ({ "@type": "HowToStep", text: step.text })),
 	keywords: keywords.length ? keywords.join(", ") : undefined,
@@ -149,7 +153,8 @@ const recipeSchema = jsonLd({
 	type="article"
 	title={recipe.title}
 	description={description}
-	breadcrumbs={[{ label: "Рецепты", href: "/categories" }, { label: recipe.title }]}>
+	breadcrumbs={[{ label: t(lang, "Рецепты"), href: "/categories" }, { label: recipe.title }]}
+	translations={Object.fromEntries(Object.entries(recipe.translations ?? {}).map(([code, slug]) => [code, localize(code as Lang, `/recipe/${slug}`)]))}>
 	<script type="application/ld+json" is:inline set:html={recipeSchema} />
 
 	<ArticleHero
@@ -162,7 +167,7 @@ const recipeSchema = jsonLd({
 		withVideo={false}
 		badgeLinks={recipe.categoryLinks?.course.map((term) => ({ name: term.name, href: `/category/${term.slug}` }))}
 		labelLinks={recipe.categoryLinks?.country.map((term) => ({ name: term.name, href: `/category/${term.slug}` }))}
-		anchor={{ href: "#ingredients", label: "Перейти к рецепту ↓" }}
+		anchor={{ href: "#ingredients", label: t(lang, "Перейти к рецепту ↓") }}
 		printable
 		flush
 		favorite={{ slug: recipe.slug, id: recipe.id }}
@@ -190,11 +195,11 @@ const recipeSchema = jsonLd({
 				<Icon name="profile" width={18} height={20} />
 				<div class="quick-fact-item-data quick-fact-item__servings flex">
 					<div class="servings-stepper flex gap-10 items-center">
-						<button type="button" class="no-print" id="servingsMinus" aria-label="Уменьшить порции">−</button>
+						<button type="button" class="no-print" id="servingsMinus" aria-label={t(lang, "Уменьшить порции")}>−</button>
 						<strong id="servingsValue" aria-live="polite">{servings}</strong>
-						<button type="button" class="no-print" id="servingsPlus" aria-label="Увеличить порции">+</button>
+						<button type="button" class="no-print" id="servingsPlus" aria-label={t(lang, "Увеличить порции")}>+</button>
 					</div>
-					<span class="quick-fact-item__description block">Порции</span>
+					<span class="quick-fact-item__description block">{t(lang, "Порции")}</span>
 				</div>
 			</div>
 		</div>
@@ -202,14 +207,21 @@ const recipeSchema = jsonLd({
 
 	<Section>
 		<ArticleLayout>
-			<ContentBlock title="Ингредиенты" id="ingredients">
-				<span slot="hint" id="ingredientsServings">на {servings} {plural(servings, ["порцию", "порции", "порций"])}</span>
-				<ul class="ingredient-list" id="ingredientList" data-servings={servings}>
+			<ContentBlock title={t(lang, "Ингредиенты")} id="ingredients">
+				<span slot="hint" id="ingredientsServings">{t(lang, "на {n} {word}", { n: servings, word: pluralOf(lang, servings, ["порцию", "порции", "порций"]) })}</span>
+				{/* English readers measure in metric or US units: the browser converts (scripts/recipePage.ts). */}
+				{lang !== "ru" && (
+					<div class="units-switch no-print" role="group" aria-label={t(lang, "Единицы измерения")}>
+						<button type="button" class="units-switch__option" data-units="metric" aria-pressed="true">{t(lang, "Метрические")}</button>
+						<button type="button" class="units-switch__option" data-units="us" aria-pressed="false">{t(lang, "США")}</button>
+					</div>
+				)}
+				<ul class="ingredient-list" id="ingredientList" data-servings={servings} data-recipe={recipe.id}>
 					{[...ingredientGroups].map(([group, items]) => (
 						<Fragment>
 							{group && <li class="ingredient-list__group">{group}</li>}
 							{items.map((item) => (
-								<li class="ingredient-list__item" data-base={item.quantity ?? undefined} data-unit={item.unit}>
+								<li class="ingredient-list__item" data-base={item.quantity ?? undefined} data-unit={item.unit} data-code={item.unitCode ?? undefined}>
 									<label class="ingredient-list__label">
 										<input class="ingredient-list__checkbox" type="checkbox">
 										<span class="ingredient-list__qty">{item.amount} {item.unit}</span>
@@ -222,21 +234,21 @@ const recipeSchema = jsonLd({
 				</ul>
 			</ContentBlock>
 
-			<ContentBlock title="Приготовление" id="instructions">
-				<span slot="hint" id="stepsProgress">0 из {steps.length} шагов</span>
+			<ContentBlock title={t(lang, "Приготовление")} id="instructions">
+				<span slot="hint" id="stepsProgress">{t(lang, "{done} из {total} шагов", { done: 0, total: steps.length })}</span>
 				<StepList steps={steps} progressId="stepsProgress" />
 			</ContentBlock>
 
 			{recipe.tip && (
-				<TipBox title="Совет от шефа">
+				<TipBox title={t(lang, "Совет от шефа")}>
 					{/* HTML from our own WordPress (recipe_notes). */}
 					<Fragment set:html={recipe.tip} />
 				</TipBox>
 			)}
 
 			{nutrition.length > 0 && (
-				<ContentBlock title="Пищевая ценность" id="nutrition">
-					<span slot="hint">на порцию</span>
+				<ContentBlock title={t(lang, "Пищевая ценность")} id="nutrition">
+					<span slot="hint">{t(lang, "на порцию")}</span>
 					<div class="nutrition-table">
 						{nutrition.map((item) => (
 							<div class="nutrition-table__row">{item.label}<strong class="nutrition-table__value">{item.value}</strong></div>
@@ -247,11 +259,11 @@ const recipeSchema = jsonLd({
 
 			{recipe.history && <OriginStory html={recipe.history} />}
 
-			<RecipeLikes slug={recipe.slug} votes={recipe.votes} action={`${PUBLIC_API_URL}/recipes/${recipe.slug}/likes`} />
+			<RecipeLikes slug={recipe.slug} votes={recipe.votes} action={withLang(lang, `${PUBLIC_API_URL}/recipes/${recipe.slug}/likes`)} />
 
 			<DonateCard />
 
-			<ContentBlock title="Отзывы" id="reviews" class="no-print">
+			<ContentBlock title={t(lang, "Отзывы")} id="reviews" class="no-print">
 				{hasRating && (
 					<div class="rating-summary flex gap-40 items-center">
 						<div class="rating-summary__score">
@@ -275,11 +287,11 @@ const recipeSchema = jsonLd({
 				<Reviews
 					reviews={reviews}
 					withRating
-					placeholder="Расскажите, как получился рецепт..."
-					submitLabel="Опубликовать отзыв"
-					successMessage="Спасибо! Отзыв появится после проверки модератором"
-					emptyText="Станьте первым, кто оставит комментарий для этого рецепта"
-					action={`${PUBLIC_API_URL}/recipes/${recipe.slug}/comments`}
+					placeholder={t(lang, "Расскажите, как получился рецепт...")}
+					submitLabel={t(lang, "Опубликовать отзыв")}
+					successMessage={t(lang, "Спасибо! Отзыв появится после проверки модератором")}
+					emptyText={t(lang, "Станьте первым, кто оставит комментарий для этого рецепта")}
+					action={withLang(lang, `${PUBLIC_API_URL}/recipes/${recipe.slug}/comments`)}
 				/>
 			</ContentBlock>
 
@@ -288,13 +300,13 @@ const recipeSchema = jsonLd({
 					<AuthorCard
 						name={recipe.author.name}
 						avatar={recipe.author.avatar}
-						info={`${recipe.author.recipes.toLocaleString("ru-RU")} ${recipesWord(recipe.author.recipes)}`}
-						buttonLabel="Профиль автора"
-						href={`/author/${recipe.author.slug}`}
+						info={`${recipe.author.recipes.toLocaleString(LOCALES[lang])} ${recipesWord(lang, recipe.author.recipes)}`}
+						buttonLabel={t(lang, "Профиль автора")}
+						href={localize(lang, `/author/${recipe.author.slug}`)}
 					/>
 				)}
-				<SidebarList title="Похожие рецепты" items={sidebarRecipes} />
-				<NewsletterCard title="Рецепт недели на почту" />
+				<SidebarList title={t(lang, "Похожие рецепты")} items={sidebarRecipes} />
+				<NewsletterCard title={t(lang, "Рецепт недели на почту")} />
 			</Fragment>
 		</ArticleLayout>
 	</Section>
@@ -302,7 +314,7 @@ const recipeSchema = jsonLd({
 	<div class="no-print">
 		<RecipeSection recipes={similarRecipes}>
 			<Fragment slot="title">
-				<span class="section-title__accent">Похожие</span> рецепты
+				<span class="section-title__accent">{t(lang, "Похожие")}</span> {t(lang, "рецепты")}
 			</Fragment>
 		</RecipeSection>
 	</div>
@@ -311,7 +323,7 @@ const recipeSchema = jsonLd({
 		<SEOTextSection html={recipe.seoText} />
 	</div>
 
-	<ViewCounter action={`${PUBLIC_API_URL}/recipes/${recipe.slug}/view`} />
+	<ViewCounter action={withLang(lang, `${PUBLIC_API_URL}/recipes/${recipe.slug}/view`)} />
 </BaseLayout>
 
 <script>
@@ -321,6 +333,29 @@ const recipeSchema = jsonLd({
 <style lang="less">
 .recipe-reviews-link {
 	text-decoration: underline;
+}
+
+.units-switch {
+	display: inline-flex;
+	gap: 4px;
+	margin-bottom: 10px;
+	padding: 3px;
+	border-radius: var(--border-radius-25);
+	background: var(--color-gradient-violet);
+	&__option {
+		padding: 6px 14px;
+		border: 0;
+		border-radius: var(--border-radius-25);
+		background: transparent;
+		font: inherit;
+		font-size: 13px;
+		font-weight: 700;
+		cursor: pointer;
+		&[aria-pressed="true"] {
+			background: var(--color-black);
+			color: var(--color-white);
+		}
+	}
 }
 
 .recipe-quick-facts {

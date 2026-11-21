@@ -2,6 +2,8 @@
 // Page numbers under a card grid, plus "Показать ещё": it fetches the next page,
 // appends its cards to the grid above and switches the address to that page.
 import { pageHref } from "../../utils/pagination";
+import { langOf, localize, t } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	page: number;
@@ -21,25 +23,26 @@ const items = shown.flatMap((n, i) => (i > 0 && n - shown[i - 1] > 1 ? ["…", n
 {pages > 1 && (
 	<div class="pagination" data-pagination>
 		{page < pages && (
-			<a class="pagination__more btn btn--secondary" href={pageHref(base, page + 1)} data-load-more>Показать ещё</a>
+			<a class="pagination__more btn btn--secondary" href={localize(lang, pageHref(base, page + 1))} data-load-more>{t(lang, "Показать ещё")}</a>
 		)}
-		<nav class="pagination__pages" aria-label="Страницы">
-			{page > 1 && <a class="pagination__link" href={pageHref(base, page - 1)} rel="prev" aria-label="Предыдущая страница">←</a>}
+		<nav class="pagination__pages" aria-label={t(lang, "Страницы")}>
+			{page > 1 && <a class="pagination__link" href={localize(lang, pageHref(base, page - 1))} rel="prev" aria-label={t(lang, "Предыдущая страница")}>←</a>}
 			{items.map((item) =>
 				item === "…" ? (
 					<span class="pagination__gap">…</span>
 				) : item === page ? (
 					<span class="pagination__link pagination__link--current" aria-current="page">{item}</span>
 				) : (
-					<a class="pagination__link" href={pageHref(base, item as number)}>{item}</a>
+					<a class="pagination__link" href={localize(lang, pageHref(base, item as number))}>{item}</a>
 				),
 			)}
-			{page < pages && <a class="pagination__link" href={pageHref(base, page + 1)} rel="next" aria-label="Следующая страница">→</a>}
+			{page < pages && <a class="pagination__link" href={localize(lang, pageHref(base, page + 1))} rel="next" aria-label={t(lang, "Следующая страница")}>→</a>}
 		</nav>
 	</div>
 )}
 
 <script>
+	import { tc } from "../../scripts/i18n";
 	// Delegated, so the button that arrives with the next page works too.
 	document.addEventListener("click", async (event) => {
 		const button = (event.target as HTMLElement).closest<HTMLAnchorElement>("[data-load-more]");
@@ -50,7 +53,7 @@ const items = shown.flatMap((n, i) => (i > 0 && n - shown[i - 1] > 1 ? ["…", n
 		if (button.getAttribute("aria-busy") === "true") return;
 
 		button.setAttribute("aria-busy", "true");
-		button.textContent = "Загружаем…";
+		button.textContent = tc("Загружаем…");
 		try {
 			const response = await fetch(button.href);
 			if (!response.ok) throw new Error(String(response.status));

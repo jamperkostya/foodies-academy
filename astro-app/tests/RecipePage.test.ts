@@ -195,9 +195,11 @@ describe("/recipe/[slug]", () => {
 		const { html, schema } = await renderRecipe("borscht");
 
 		expect(html).toContain("0 из 3 шагов");
-		expect(html).toMatch(/<strong[^>]*>Бульон<\/strong>\s*Сварить бульон\./);
-		expect(html).toMatch(/<strong[^>]*>Зажарка<\/strong>\s*Обжарить/);
-		expect(html.match(/<strong[^>]*>Бульон<\/strong>/g)).toHaveLength(1);
+		// A group is a heading of its own before its first step, not a part of the step.
+		expect(html).toMatch(/<li class="step-list__group"[^>]*>Бульон<\/li>\s*<li class="step-list__item[^>]*>\s*<p[^>]*>\s*Сварить бульон\./);
+		expect(html).toMatch(/<li class="step-list__group"[^>]*>Зажарка<\/li>\s*<li class="step-list__item[^>]*>\s*<p[^>]*>\s*Обжарить/);
+		expect(html.match(/step-list__group/g)).toHaveLength(2);
+		expect(html.match(/<li class="step-list__item/g)).toHaveLength(3);
 		for (const value of ["20 мин", "1 ч 20 мин", "Средне"]) expect(html).toContain(`>${value}<`);
 		expect(html).not.toContain("ккал");
 		expect(schema.nutrition).toBeUndefined();

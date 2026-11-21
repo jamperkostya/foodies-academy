@@ -2,6 +2,8 @@
 import RecipeStats from "./RecipeStats.astro";
 import Stars from "../ui/Stars.astro";
 import type { Recipe } from "../../types/recipe";
+import { langOf, localize } from "../../i18n";
+const lang = langOf(Astro.url);
 
 interface Props {
 	recipe: Recipe;
@@ -17,7 +19,7 @@ const { recipe, groups, class: className } = Astro.props;
 const course = Object.values(recipe.categories?.course ?? {}).join(', ');
 const country = Object.values(recipe.categories?.country ?? {}).join(', ');
 ---
-<a href={`/recipe/${recipe.slug}`} class:list={["recipe-card", className]} data-groups={groups && JSON.stringify(groups)}>
+<a href={localize(lang, `/recipe/${recipe.slug}`)} class:list={["recipe-card", className]} data-groups={groups && JSON.stringify(groups)}>
 	<div class="recipe-card__media">
 		<div class="recipe-card__img" style={`background-image: url('${recipe.image}')`}></div>
 		{course && <span class="recipe-card__badge badge">{course}</span>}

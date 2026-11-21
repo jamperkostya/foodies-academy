@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Support\Lang;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -52,7 +53,7 @@ class Comments
 
         return collect($ordered)->map(fn ($row) => array_filter([
             'name' => $name($row),
-            'date' => Carbon::parse($row->comment_date)->locale('ru')->translatedFormat('j F Y'),
+            'date' => Carbon::parse($row->comment_date)->locale(Lang::current())->translatedFormat(Lang::text('j F Y', 'F j, Y')),
             'text' => trim(html_entity_decode(strip_tags($row->comment_content), ENT_QUOTES | ENT_HTML5)),
             'rating' => isset($ratings[$row->comment_ID]) ? (int) $ratings[$row->comment_ID] : null,
             'replyTo' => $isReply($row) ? $name($rows[$row->comment_parent]) : null,

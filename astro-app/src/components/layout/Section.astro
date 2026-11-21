@@ -1,4 +1,6 @@
 ---
+import { langOf, localize, t } from "../../i18n";
+const lang = langOf(Astro.url);
 // A home page section: its heading, then whatever the section renders below it.
 // With `href`, a "Смотреть все" link sits on the heading's row (sections without filters;
 // with filters the link ends the filters row instead).
@@ -16,7 +18,7 @@ const title = Astro.slots.has("title") ? (await Astro.slots.render("title")).tri
 	{href ? (
 		<div class="section-head">
 			{title && <h2 class="section-title section-head__title" set:html={title} />}
-			<a href={href} class="section-head__all filter-name">Смотреть все</a>
+			<a href={localize(lang, href)} class="section-head__all filter-name">{t(lang, "Смотреть все")}</a>
 		</div>
 	) : (
 		title && <h2 class="section-title" set:html={title} />

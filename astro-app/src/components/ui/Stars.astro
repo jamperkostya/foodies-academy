@@ -1,5 +1,7 @@
 ---
+import { langOf, t } from "../../i18n";
 import Icon from "./Icon.astro";
+const lang = langOf(Astro.url);
 
 interface Props {
 	// Out of 5.
@@ -11,7 +13,7 @@ const { rating } = Astro.props;
 const percent = Math.max(0, Math.min(100, (rating / MAX) * 100));
 ---
 
-<span class="stars" style={`--stars-fill: ${percent}%`} role="img" aria-label={`Рейтинг ${rating} из ${MAX}`}>
+<span class="stars" style={`--stars-fill: ${percent}%`} role="img" aria-label={t(lang, "Рейтинг {rating} из {max}", { rating, max: MAX })}>
 	<span class="stars__track" aria-hidden="true">
 		{Array.from({ length: MAX }).map(() => <Icon class="stars__icon" name="star" width={19} height={19} />)}
 	</span>

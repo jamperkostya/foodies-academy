@@ -4,18 +4,20 @@
 import { Image } from "astro:assets";
 import Icon from "../ui/Icon.astro";
 import SearchForm from "./SearchForm.astro";
-import { menuColumns, menuLinks } from "../../data/menu";
+import { menuOf } from "../../data/menu";
 import logo from "../../assets/images/logotype.png";
+import { langOf, localize, t } from "../../i18n";
+const lang = langOf(Astro.url);
 ---
 <div class="mobile-nav" data-mobile-nav>
 	<div class="mobile-nav__backdrop" data-mobile-nav-close></div>
 
-	<nav class="mobile-nav__panel" id="mobile-nav-panel" aria-label="Меню">
+	<nav class="mobile-nav__panel" id="mobile-nav-panel" aria-label={t(lang, "Меню")}>
 		<div class="mobile-nav__head">
-			<a href="/" class="mobile-nav__logo">
+			<a href={localize(lang, "/")} class="mobile-nav__logo">
 				<Image class="mobile-nav__logo-img" src={logo} alt="Foodies" width={150} height={50} />
 			</a>
-			<button type="button" class="mobile-nav__close" aria-label="Закрыть меню" data-mobile-nav-close>✕</button>
+			<button type="button" class="mobile-nav__close" aria-label={t(lang, "Закрыть меню")} data-mobile-nav-close>✕</button>
 		</div>
 
 		<div class="mobile-nav__search">
@@ -25,29 +27,29 @@ import logo from "../../assets/images/logotype.png";
 		<ul class="mobile-nav__list">
 			<li class="mobile-nav__item">
 				<button type="button" class="mobile-nav__link mobile-nav__toggle" aria-expanded="false" aria-controls="mobile-nav-categories">
-					Категории
+					{t(lang, "Категории")}
 					<Icon class="mobile-nav__arrow" name="menu-arrow" width={12} height={7} />
 				</button>
 				<div class="mobile-nav__sub" id="mobile-nav-categories" hidden>
-					{menuColumns.map(({ group, items, all }) => (
+					{menuOf(lang).columns.map(({ group, items, all }) => (
 						<div class="mobile-nav__group">
 							<p class="mobile-nav__group-title">{group}</p>
 							<ul class="mobile-nav__sub-list">
 								{items.map((item) => (
-									<li><a class="mobile-nav__sub-link" href={item.href}>{item.title}</a></li>
+									<li><a class="mobile-nav__sub-link" href={localize(lang, item.href)}>{item.title}</a></li>
 								))}
 							</ul>
-							<a class="mobile-nav__all" href={all.href}>{all.label} →</a>
+							<a class="mobile-nav__all" href={localize(lang, all.href)}>{all.label} →</a>
 						</div>
 					))}
 				</div>
 			</li>
-			{menuLinks.map((link) => (
-				<li class="mobile-nav__item"><a class="mobile-nav__link" href={link.href}>{link.label}</a></li>
+			{menuOf(lang).links.map((link) => (
+				<li class="mobile-nav__item"><a class="mobile-nav__link" href={localize(lang, link.href)}>{link.label}</a></li>
 			))}
 			<!-- <li class="mobile-nav__item"><a class="mobile-nav__link" href="#">Ai Повар <Icon name="ai-chef" width={16} height={16} /></a></li> -->
-			<li class="mobile-nav__item"><a class="mobile-nav__link" href="/login?next=%2Fprofile%23favorites" data-account-favorites>Избранное <span class="mobile-nav__count" data-account-count hidden>0</span></a></li>
-			<li class="mobile-nav__item"><a class="mobile-nav__link mobile-nav__link--accent" href="/register" data-account-link>Регистрация</a></li>
+			<li class="mobile-nav__item"><a class="mobile-nav__link" href={localize(lang, "/login?next=%2Fprofile%23favorites")} data-account-favorites>{t(lang, "Избранное")}{" "}<span class="mobile-nav__count" data-account-count hidden>0</span></a></li>
+			<li class="mobile-nav__item"><a class="mobile-nav__link mobile-nav__link--accent" href={localize(lang, "/register")} data-account-link>{t(lang, "Регистрация")}</a></li>
 		</ul>
 	</nav>
 </div>

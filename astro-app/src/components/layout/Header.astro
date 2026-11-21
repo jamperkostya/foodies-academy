@@ -5,11 +5,19 @@ import CategoriesMenu from "./CategoriesMenu.astro";
 import SearchForm from "./SearchForm.astro";
 import MobileNav from "./MobileNav.astro";
 import logo from "../../assets/images/logotype.png";
+import { langOf, localize, t, type Lang } from "../../i18n";
+const lang = langOf(Astro.url);
+
+interface Props {
+	// This page in other languages (BaseLayout): a link to each one but the page's own.
+	translations?: Partial<Record<Lang, string>>;
+}
+const others = Object.entries(Astro.props.translations ?? {}).filter(([code]) => code !== lang) as [Lang, string][];
 ---
 
 <header class="header no-print">
 	<div class="header__inner container">
-		<a href="/" class="header__logo">
+		<a href={localize(lang, "/")} class="header__logo">
 			<Image class="header__logo-img" src={logo} alt="Foodies" width={242} height={81} loading="eager" />
 		</a>
 
@@ -22,20 +30,23 @@ import logo from "../../assets/images/logotype.png";
 			</div>
 
 			<div class="header__icons flex gap-13 flex-center">
+				{others.map(([code, href]) => (
+					<a href={href} class="header__lang" hreflang={code} lang={code}>{code.toUpperCase()}</a>
+				))}
 				{/* Links filled in by scripts/account.ts once it knows whether the visitor is logged in. */}
-				<a href="/login?next=%2Fprofile%23favorites" class="header__icon-btn flex gap-5 flex-center" aria-label="Избранное" data-account-favorites>
+				<a href={localize(lang, "/login?next=%2Fprofile%23favorites")} class="header__icon-btn flex gap-5 flex-center" aria-label={t(lang, "Избранное")} data-account-favorites>
 					<Icon name="favorites" width={24} height={24} />
 					<span class="header__count" data-account-count hidden>0</span>
 				</a>
 				<div class="header__register-block flex gap-20 flex-center">
-					<a href="/login" class="header__icon-btn" aria-label="Войти" data-account-profile>
+					<a href={localize(lang, "/login")} class="header__icon-btn" aria-label={t(lang, "Войти")} data-account-profile>
 						<Icon name="profile" width={18} height={20} />
 					</a>
 					<span class="header__divider"></span>
-					<a href="/register" class="header__register-link" data-account-link>Регистрация</a>
+					<a href={localize(lang, "/register")} class="header__register-link" data-account-link>{t(lang, "Регистрация")}</a>
 				</div>
 			</div>
-			<button type="button" class="header__burger" aria-label="Меню" aria-expanded="false" aria-controls="mobile-nav-panel"><span class="header__burger-line"></span></button>
+			<button type="button" class="header__burger" aria-label={t(lang, "Меню")} aria-expanded="false" aria-controls="mobile-nav-panel"><span class="header__burger-line"></span></button>
 		</div>
 	</div>
 	<MobileNav />

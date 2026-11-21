@@ -128,6 +128,36 @@ trait SiteDatabase
         return $termId;
     }
 
+    /** $translation made the $lang translation of $source, the way Polylang links them. */
+    protected function translate(int $source, int $translation, string $lang = 'en'): void
+    {
+        foreach (['ru' => $source, $lang => $translation] as $slug => $postId) {
+            $tt = $this->site()->table('term_taxonomy as tt')->join('terms as t', 't.term_id', '=', 'tt.term_id')
+                ->where('tt.taxonomy', 'language')->where('t.slug', $slug)->value('tt.term_taxonomy_id')
+                ?? $this->site()->table('term_taxonomy')->where('term_id', $this->term('language', $slug, $slug))->value('term_taxonomy_id');
+            $this->site()->table('term_relationships')->insert(['object_id' => $postId, 'term_taxonomy_id' => $tt, 'term_order' => 0]);
+        }
+        $group = $this->term('post_translations', "pll_$source", "pll_$source", [$source, $translation]);
+        $this->site()->table('term_taxonomy')->where('term_id', $group)->update(['description' => serialize(['ru' => $source, $lang => $translation])]);
+    }
+
+    /** Term $translation made the $lang translation of term $source, the way Polylang links them. */
+    protected function translateTerm(int $source, int $translation, string $lang = 'en'): void
+    {
+        foreach (['ru' => $source, $lang => $translation] as $slug => $termId) {
+            $tt = $this->site()->table('term_taxonomy as tt')->join('terms as t', 't.term_id', '=', 'tt.term_id')
+                ->where('tt.taxonomy', 'term_language')->where('t.slug', "pll_$slug")->value('tt.term_taxonomy_id')
+                ?? $this->site()->table('term_taxonomy')->where('term_id', $this->term('term_language', "pll_$slug", "pll_$slug"))->value('term_taxonomy_id');
+            $this->site()->table('term_relationships')->insert(['object_id' => $termId, 'term_taxonomy_id' => $tt, 'term_order' => 0]);
+        }
+        $group = $this->term('term_translations', "pll_t$source", "pll_t$source");
+        $tt = $this->site()->table('term_taxonomy')->where('term_id', $group)->value('term_taxonomy_id');
+        $this->site()->table('term_taxonomy')->where('term_id', $group)->update(['description' => serialize(['ru' => $source, $lang => $translation])]);
+        foreach ([$source, $translation] as $termId) {
+            $this->site()->table('term_relationships')->insert(['object_id' => $termId, 'term_taxonomy_id' => $tt, 'term_order' => 0]);
+        }
+    }
+
     /** An approved (or pending) comment, optionally with stars; returns its id. */
     protected function comment(int $postId, string $author, array $fields = [], ?int $rating = null): int
     {

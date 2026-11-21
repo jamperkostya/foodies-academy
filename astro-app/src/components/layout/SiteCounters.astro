@@ -12,8 +12,33 @@ const METRIKA_ID = 51455426;
 const GA_ID = "G-B1B19LSS7V";
 
 const { host } = Astro.props;
-const gtag = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","${GA_ID}");`;
+const gtag = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","${GA_ID}");var g=document.createElement("script");g.async=1;g.src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}";document.head.appendChild(g);`;
 const metrika = `(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(${METRIKA_ID},"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true,trackHash:true});`;
+
+// Readers in the EU, the EEA, the UK and Switzerland (by the browser's time zone: a static site
+// knows no IP) get the counters only once they agree (GDPR): CookieConsent.astro asks them.
+// Everyone else gets them at once, as before.
+const CONSENT_ZONES = [
+	"Europe/London", "Europe/Belfast", "Europe/Jersey", "Europe/Guernsey", "Europe/Isle_of_Man", "Europe/Gibraltar", "Europe/Dublin",
+	"Europe/Lisbon", "Atlantic/Madeira", "Atlantic/Azores", "Europe/Madrid", "Atlantic/Canary", "Africa/Ceuta", "Europe/Andorra",
+	"Europe/Paris", "Europe/Monaco", "Europe/Brussels", "Europe/Amsterdam", "Europe/Luxembourg", "Europe/Berlin", "Europe/Busingen",
+	"Europe/Zurich", "Europe/Vaduz", "Europe/Vienna", "Europe/Rome", "Europe/Vatican", "Europe/San_Marino", "Europe/Malta",
+	"Europe/Ljubljana", "Europe/Zagreb", "Europe/Budapest", "Europe/Bratislava", "Europe/Prague", "Europe/Warsaw",
+	"Europe/Copenhagen", "Europe/Stockholm", "Europe/Oslo", "Arctic/Longyearbyen", "Europe/Helsinki", "Europe/Mariehamn",
+	"Europe/Tallinn", "Europe/Riga", "Europe/Vilnius", "Europe/Bucharest", "Europe/Sofia", "Europe/Athens",
+	"Asia/Nicosia", "Asia/Famagusta", "Europe/Nicosia", "Atlantic/Reykjavik",
+];
+const counters = `(function(){
+var zone="";try{zone=Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){}
+var choice=null;try{choice=localStorage.getItem("foodies:consent");}catch(e){}
+var loaded=false;
+window.foodiesCounters={
+needed:${JSON.stringify(CONSENT_ZONES)}.indexOf(zone)>=0,
+choice:choice,
+load:function(){if(loaded)return;loaded=true;${gtag}${metrika}}
+};
+if(!window.foodiesCounters.needed||choice==="yes")window.foodiesCounters.load();
+})();`;
 ---
 
 {
@@ -21,9 +46,7 @@ const metrika = `(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||
 		<>
 			<meta name="google-site-verification" content="xeligI0KtM3Yup2uX5Mw_AOL78FE2X3Jz4F5CmT3vdk" />
 			<meta name="yandex-verification" content="96437330454fa524" />
-			<script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
-			<script is:inline set:html={gtag} />
-			<script is:inline set:html={metrika} />
+			<script is:inline set:html={counters} />
 			<noscript>
 				<div><img src={`https://mc.yandex.ru/watch/${METRIKA_ID}`} style="position:absolute;left:-9999px" alt="" /></div>
 			</noscript>

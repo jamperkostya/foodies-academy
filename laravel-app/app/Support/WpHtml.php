@@ -9,6 +9,8 @@ class WpHtml
     {
         // Block editor markers: <!-- wp:paragraph --> … <!-- /wp:paragraph -->
         $html = trim(preg_replace('/<!--\s*\/?wp:[\s\S]*?-->/u', '', (string) $html));
+        // The page has its H1 (the title): a heading of the text one level below.
+        $html = preg_replace('~<(/?)h1\b~iu', '<$1h2', $html);
         if ($html === '' || trim(strip_tags($html, '<img><iframe>')) === '') {
             return '';
         }

@@ -4,17 +4,21 @@ import PageHero from "../../../components/layout/PageHero.astro";
 import CardGrid from "../../../components/ui/CardGrid.astro";
 import RecipeCard from "../../../components/recipes/RecipeCard.astro";
 import type { RecipeCollection } from "../../../types/recipeCollection";
-import { recipesWord } from "../../../utils/plural";
 import Pagination from "../../../components/ui/Pagination.astro";
 import { pageHref, pageNumber, pageParams } from "../../../utils/pagination";
+import { builds, langOf, langOfRoute, localize, recipesWord, t, withLang, type Lang } from "../../../i18n";
+import { menuOf } from "../../../data/menu";
+const lang = langOf(Astro.url);
 
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
 
 // Every collection, split into pages of 24 recipes.
-export async function getStaticPaths() {
+export async function getStaticPaths({ routePattern }: { routePattern?: string } = {}) {
+	// Not built when only another language is rebuilt.
+	if (!builds(langOfRoute(routePattern))) return [];
 	// getStaticPaths can't see the constants above, so the URL is read again here.
 	const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
-	const { data: collections }: { data: RecipeCollection[] } = await fetch(`${API_URL}/collections`).then((r) => r.json());
+	const { data: collections }: { data: RecipeCollection[] } = await fetch(withLang(langOfRoute(routePattern), `${API_URL}/collections`)).then((r) => r.json());
 
 	return collections.flatMap((collection) =>
 		pageParams(collection.count).map((page) => ({ params: { slug: collection.slug, page } })),
@@ -23,7 +27,7 @@ export async function getStaticPaths() {
 
 const { slug } = Astro.params;
 const page = pageNumber(Astro.params.page);
-const response = await fetch(`${API_URL}/collections/${slug}?page=${page}`);
+const response = await fetch(withLang(lang, `${API_URL}/collections/${slug}?page=${page}`));
 if (!response.ok) {
 	throw new Error(`Collection "${slug}" from ${API_URL}: HTTP ${response.status}`);
 }
@@ -31,14 +35,20 @@ const { data: collection }: { data: RecipeCollection & { total: number; pages: n
 const recipes = collection.recipes ?? [];
 const count = collection.total;
 
-const description = `${count} ${recipesWord(count)} ${collection.title.toLowerCase()}: самые популярные у наших читателей — первыми.`;
+const description = t(lang, "{n} {recipes} {collection}: самые популярные у наших читателей — первыми.", { n: count, recipes: recipesWord(lang, count), collection: collection.title.toLowerCase() });
+// The collection in the other language: when it has recipes there (it is in that menu).
+const otherLang: Lang = lang === "ru" ? "en" : "ru";
+const translations = page === 1 && menuOf(otherLang).footer.some((column) => column.items.some((item) => item.href === localize(otherLang, `/collections/${slug}`)))
+	? { [lang]: localize(lang, `/collections/${slug}`), [otherLang]: localize(otherLang, `/collections/${slug}`) }
+	: undefined;
 ---
 <BaseLayout
-	title={`Рецепты ${collection.title.toLowerCase()}${page > 1 ? ` — страница ${page}` : ""}`}
+	title={`${t(lang, "Рецепты {collection}", { collection: collection.title.toLowerCase() })}${page > 1 ? t(lang, " — страница {n}", { n: page }) : ""}`}
+	translations={translations}
 	description={description}
-	breadcrumbs={[{ label: "Подборки" }, { label: collection.title }]}>
-	<PageHero slot="hero" eyebrow="Подборка" description={description}>
-		Рецепты <span class="page-hero__accent">{collection.title.toLowerCase()}</span>
+	breadcrumbs={[{ label: t(lang, "Подборки") }, { label: collection.title }]}>
+	<PageHero slot="hero" eyebrow={t(lang, "Подборка")} description={description}>
+		{t(lang, "Рецепты")}{" "}<span class="page-hero__accent">{collection.title.toLowerCase()}</span>
 	</PageHero>
 
 	<section class="collection section-item">

@@ -4,40 +4,41 @@ import PageHero from "../components/layout/PageHero.astro";
 import SortBar from "../components/ui/SortBar.astro";
 import CardGrid from "../components/ui/CardGrid.astro";
 import CategoryCard from "../components/categories/CategoryCard.astro";
+const lang = langOf(Astro.url);
 const API_URL = import.meta.env.API_URL ?? 'http://localhost:8000/api';
 // Most recipes first, so the default "popular" order means something.
-const { data: kitchens }: { data: { count: number }[] } = await fetch(`${API_URL}/categories?type=country`).then(r => r.json());
+const { data: kitchens }: { data: { count: number }[] } = await fetch(withLang(lang, `${API_URL}/categories?type=country`)).then(r => r.json());
 const categories = kitchens.toSorted((a, b) => b.count - a.count);
 const totalRecipes = categories.reduce((sum, category) => sum + category.count, 0);
 
-import { plural, recipesWord } from "../utils/plural";
 import SEOTextSection from "../components/sections/SEOTextSection.astro";
 import { wpPage } from "../utils/wpPage";
+import { langOf, LOCALES, pluralOf, recipesWord, t, withLang } from "../i18n";
 
 // "SEO-текст" and Yoast SEO of the WordPress page "kuhni-mira".
-const { seoText, seo } = await wpPage("kuhni-mira");
+const { seoText, seo } = await wpPage("kuhni-mira", lang);
 
 // Counted from the data, so the intro never disagrees with the catalogue.
 const description =
-	`${totalRecipes.toLocaleString("ru-RU")} ${recipesWord(totalRecipes)}, ` +
-	`из ${categories.length} ${plural(categories.length, ["страны", "стран", "стран"])}: от итальянской пасты до азиатского стритфуда. Выберите кухню и отправьтесь в гастрономическое путешествие.`;
+	`${totalRecipes.toLocaleString(LOCALES[lang])} ${recipesWord(lang, totalRecipes)}, ` +
+	t(lang, "из {n} {countries}: от итальянской пасты до азиатского стритфуда. Выберите кухню и отправьтесь в гастрономическое путешествие.", { n: categories.length, countries: pluralOf(lang, categories.length, ["страны", "стран", "стран"]) });
 
 // "popular" keeps the data's own order.
 const sortOptions = [
-	{ value: "popular", label: "По популярности" },
-	{ value: "az", label: "По алфавиту" },
-	{ value: "count", label: "По числу рецептов" },
+	{ value: "popular", label: t(lang, "По популярности") },
+	{ value: "az", label: t(lang, "По алфавиту") },
+	{ value: "count", label: t(lang, "По числу рецептов") },
 ];
 ---
-<BaseLayout seo={seo} title="Кухни мира" description={description} breadcrumbs={[{ label: "Кухни мира" }]}>
-	<PageHero slot="hero" eyebrow="Каталог" description={description}>
-		Кухни <span class="page-hero__accent">мира</span>
+<BaseLayout bilingual seo={seo} title={t(lang, "Кухни мира")} description={description} breadcrumbs={[{ label: t(lang, "Кухни мира") }]}>
+	<PageHero slot="hero" eyebrow={t(lang, "Каталог")} description={description}>
+		{t(lang, "Кухни")}{" "}<span class="page-hero__accent">{t(lang, "мира")}</span>
 	</PageHero>
 
 	<section class="catalog section-item">
 		<SortBar
 			count={categories.length}
-			countWord={plural(categories.length, ["кухня", "кухни", "кухонь"])}
+			countWord={pluralOf(lang, categories.length, [t(lang, "кухня"), t(lang, "кухни"), t(lang, "кухонь")])}
 			options={sortOptions}
 		/>
 		{/* Category cards are at least 195px wide (325px min-height at 3:5). */}

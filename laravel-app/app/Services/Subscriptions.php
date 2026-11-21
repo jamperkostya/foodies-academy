@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Support\Lang;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
@@ -22,9 +23,11 @@ class Subscriptions
 
     public function subscribe(string $list, string $name, string $email): ?array
     {
-        $formId = (int) config("services.wordpress.subscribe_forms.$list");
+        $forms = Lang::isDefault() ? 'subscribe_forms' : 'subscribe_forms_'.Lang::current();
+        $formId = (int) config("services.wordpress.$forms.$list");
         if ($formId <= 0) {
-            throw new RuntimeException("No Contact Form 7 form for the \"$list\" sign-ups: set CF7_SUBSCRIBE_FORM_ID / CF7_BOOK_FORM_ID in .env");
+            $suffix = Lang::isDefault() ? '' : '_'.strtoupper(Lang::current());
+            throw new RuntimeException("No Contact Form 7 form for the \"$list\" sign-ups: set CF7_SUBSCRIBE_FORM_ID$suffix / CF7_BOOK_FORM_ID$suffix in .env");
         }
         $url = rtrim(config('services.wordpress.url'), '/')."/wp-json/contact-form-7/v1/contact-forms/$formId/feedback";
 
@@ -36,7 +39,7 @@ class Subscriptions
             '_wpcf7' => $formId,
             '_wpcf7_unit_tag' => "wpcf7-f$formId-o1",
             '_wpcf7_container_post' => 0,
-            '_wpcf7_locale' => 'ru_RU',
+            '_wpcf7_locale' => Lang::text('ru_RU', 'en_US'),
         ]);
 
         $status = $response->json('status');

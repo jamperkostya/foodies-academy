@@ -11,29 +11,32 @@ import SEOTextSection from "../../components/sections/SEOTextSection.astro";
 import VideoPlayer from "../../components/videos/VideoPlayer.astro";
 import ViewCounter from "../../components/article/ViewCounter.astro";
 import type { VideoDetail, VideoPage } from "../../types/video";
-import { plural } from "../../utils/plural";
 import { jsonLd } from "../../utils/jsonLd";
+import { builds, langOf, langOfRoute, LOCALES, localize, pluralOf, t, withLang } from "../../i18n";
+const lang = langOf(Astro.url);
 
 const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
 
 // One page per video recipe in WordPress.
-export async function getStaticPaths() {
+export async function getStaticPaths({ routePattern }: { routePattern?: string } = {}) {
+	// Not built when only another language is rebuilt.
+	if (!builds(langOfRoute(routePattern))) return [];
 	// getStaticPaths can't see the constants above, so the URL is read again here.
 	const API_URL = import.meta.env.API_URL ?? "http://localhost:8000/api";
-	const { data: slugs }: { data: string[] } = await fetch(`${API_URL}/videos/slugs`).then((r) => r.json());
+	const { data: slugs }: { data: string[] } = await fetch(withLang(langOfRoute(routePattern), `${API_URL}/videos/slugs`)).then((r) => r.json());
 
 	return slugs.map((slug) => ({ params: { slug } }));
 }
 
 const { slug } = Astro.params;
-const response = await fetch(`${API_URL}/videos/${slug}`);
+const response = await fetch(withLang(lang, `${API_URL}/videos/${slug}`));
 if (!response.ok) {
 	throw new Error(`Video "${slug}" from ${API_URL}: HTTP ${response.status}`);
 }
 const { data: video }: { data: VideoDetail } = await response.json();
 
 // Newest videos in the sidebar, without this one.
-const { data: latest }: { data: VideoPage } = await fetch(`${API_URL}/videos?per_page=4`).then((r) => r.json());
+const { data: latest }: { data: VideoPage } = await fetch(withLang(lang, `${API_URL}/videos?per_page=4`)).then((r) => r.json());
 const sidebarVideos = latest.videos
 	.filter((item) => item.slug !== video.slug)
 	.slice(0, 3)
@@ -42,12 +45,13 @@ const sidebarVideos = latest.videos
 // The browser posts likes and reviews straight to Laravel, so it needs the public URL.
 const PUBLIC_API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000/api";
 
-const views = video.views.toLocaleString("ru-RU");
+const views = video.views.toLocaleString(LOCALES[lang]);
 const facts = [
-	{ label: "Опубликовано", value: video.date },
-	{ label: "Длительность", value: video.duration },
-	{ label: plural(video.views, ["просмотр", "просмотра", "просмотров"]) + " на YouTube", value: views },
-	{ label: "Лайков на YouTube", value: video.youtubeLikes ? video.youtubeLikes.toLocaleString("ru-RU") : "" },
+	{ label: t(lang, "Опубликовано"), value: video.date },
+	{ label: t(lang, "Длительность"), value: video.duration },
+	{ label: pluralOf(lang, video.views, [t(lang, "просмотр"), t(lang, "просмотра"), t(lang, "просмотров")]) + t(lang, " на YouTube"), value: views },
+	{ label: t(lang, "Лайков на YouTube"), value: video.youtubeLikes ? video.youtubeLikes.toLocaleString(LOCALES[lang]) : "" },
+	{ label: t(lang, "Просмотров на сайте"), value: video.siteViews ? video.siteViews.toLocaleString(LOCALES[lang]) : "" },
 ].filter((fact) => fact.value);
 
 const description = `${video.title}: видеорецепт Foodies Academy.`;
@@ -73,7 +77,7 @@ const videoSchema = jsonLd({
 	type="article"
 	title={video.title}
 	description={description}
-	breadcrumbs={[{ label: "Видеорецепты", href: "/video" }, { label: video.title }]}>
+	breadcrumbs={[{ label: t(lang, "Видеорецепты"), href: "/video" }, { label: video.title }]}>
 	<script type="application/ld+json" is:inline set:html={videoSchema} />
 
 	<Section>
@@ -91,29 +95,29 @@ const videoSchema = jsonLd({
 			</ul>
 
 			{video.description && (
-				<ContentBlock title="Описание" id="description">
+				<ContentBlock title={t(lang, "Описание")} id="description">
 					{/* HTML from our own WordPress (YouTube description, links escaped on import). */}
 					<div class="video-page__description" set:html={video.description} />
 				</ContentBlock>
 			)}
 
-			<RecipeLikes slug={video.slug} votes={video.votes} title="Понравился видеорецепт?" action={`${PUBLIC_API_URL}/videos/${video.slug}/likes`} />
+			<RecipeLikes slug={video.slug} votes={video.votes} title={t(lang, "Понравился видеорецепт?")} action={localize(lang, `${PUBLIC_API_URL}/videos/${video.slug}/likes`)} />
 
-			<ContentBlock title="Отзывы" id="reviews" class="no-print">
+			<ContentBlock title={t(lang, "Отзывы")} id="reviews" class="no-print">
 				<Reviews
 					reviews={video.reviews}
 					withRating
-					placeholder="Расскажите, как получилось..."
-					submitLabel="Опубликовать отзыв"
-					successMessage="Спасибо! Отзыв появится после проверки модератором"
-					emptyText="Станьте первым, кто оставит комментарий к этому видеорецепту"
-					action={`${PUBLIC_API_URL}/videos/${video.slug}/comments`}
+					placeholder={t(lang, "Расскажите, как получилось...")}
+					submitLabel={t(lang, "Опубликовать отзыв")}
+					successMessage={t(lang, "Спасибо! Отзыв появится после проверки модератором")}
+					emptyText={t(lang, "Станьте первым, кто оставит комментарий к этому видеорецепту")}
+					action={localize(lang, `${PUBLIC_API_URL}/videos/${video.slug}/comments`)}
 				/>
 			</ContentBlock>
 
 			<Fragment slot="sidebar">
-				{sidebarVideos.length > 0 && <SidebarList title="Новые видеорецепты" items={sidebarVideos} />}
-				<NewsletterCard title="Новые видеорецепты на почту" />
+				{sidebarVideos.length > 0 && <SidebarList title={t(lang, "Новые видеорецепты")} items={sidebarVideos} />}
+				<NewsletterCard title={t(lang, "Новые видеорецепты на почту")} />
 			</Fragment>
 		</ArticleLayout>
 	</Section>
@@ -122,7 +126,7 @@ const videoSchema = jsonLd({
 		<SEOTextSection html={video.seoText} />
 	</div>
 
-	<ViewCounter action={`${PUBLIC_API_URL}/videos/${video.slug}/view`} />
+	<ViewCounter action={localize(lang, `${PUBLIC_API_URL}/videos/${video.slug}/view`)} />
 </BaseLayout>
 
 <style lang="less">
