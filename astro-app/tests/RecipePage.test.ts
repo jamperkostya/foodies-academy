@@ -152,6 +152,15 @@ describe("/recipe/[slug]", () => {
 		expect(unrated).not.toContain("rating-summary__bars");
 	});
 
+	it("shows an ad right after the reviews", async () => {
+		const { html } = await renderRecipe("borscht");
+
+		// A placeholder: not a production build.
+		const reviews = html.indexOf('id="reviews"');
+		expect(html.match(/ad-slot--placeholder/g)).toHaveLength(1);
+		expect(html.indexOf("ad-slot--placeholder")).toBeGreaterThan(html.indexOf("</section>", reviews));
+	});
+
 	it("invites the first comment when there are none yet", async () => {
 		const { html: empty } = await renderRecipe("borscht", { reviews: [], comments: 0 });
 		expect(empty).toContain("Станьте первым, кто оставит комментарий для этого рецепта");
