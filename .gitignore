@@ -5,6 +5,9 @@ mysql-init/*.sql.bak
 # Only wp-content (themes/plugins/custom code) is tracked;
 # uploads are user-generated media and don't belong in the repo.
 wp-content/uploads/
+# WordPress's own: core translations and the temporary folder of updates.
+wp-content/languages/
+wp-content/upgrade/
 
 # OS
 .DS_Store
