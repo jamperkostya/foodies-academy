@@ -386,6 +386,12 @@ function foodies_seo_templates(string $lang, array $postIds = [], array $termIds
 		}
 		$filled['posts'] += (int) $done;
 	}
+	// Yoast keeps the fields of every term in one option (~0.5 MB) and rewrites it whole on each
+	// set_values(): term by term, a full import took most of an hour on the server. The fields are
+	// validated as set_values() does and the option is written once.
+	$taxMeta = get_option('wpseo_taxonomy_meta');
+	$taxMeta = is_array($taxMeta) ? $taxMeta : [];
+	$changed = [];
 	foreach (['course', 'cuisine', 'ingredient'] as $taxonomy) {
 		$terms = $termIds ?: get_terms(['taxonomy' => $taxonomy, 'lang' => $lang, 'hide_empty' => false, 'fields' => 'ids']);
 		foreach ($terms as $id) {
@@ -393,27 +399,31 @@ function foodies_seo_templates(string $lang, array $postIds = [], array $termIds
 			if (!$term instanceof WP_Term || pll_get_term_language($id) !== $lang) {
 				continue;
 			}
-			// One write of both fields: set_values() replaces the term's fields, and set_value() twice
-			// keeps only the second one (it merges with a cached copy).
+			$old = WPSEO_Taxonomy_Meta::get_term_meta($id, $taxonomy);
 			$values = [];
 			$done = false;
 			foreach (['title' => 'wpseo_title', 'description' => 'wpseo_desc'] as $field => $key) {
-				$value = trim((string) WPSEO_Taxonomy_Meta::get_term_meta($id, $taxonomy, str_replace('wpseo_', '', $key)));
+				$value = trim((string) ($old[$key] ?? ''));
 				$done = $done || $value === '';
 				$values[$key] = $value !== '' ? $value : $templates[$taxonomy][$field];
 			}
 			if ($done) {
-				WPSEO_Taxonomy_Meta::set_values($id, $taxonomy, $values);
-			}
-			$filled['terms'] += (int) $done;
-			if ($done) {
-				foodies_seo_forget_term_index($id);
+				// The term's other Yoast fields stay: validation starts from them.
+				$taxMeta[$taxonomy][$id] = WPSEO_Taxonomy_Meta::validate_term_meta_data($values, $old);
+				$changed[] = (int) $id;
+				$filled['terms']++;
 			}
 			if (trim((string) get_term_meta($id, 'seo_text', true)) === '') {
 				update_term_meta($id, 'seo_text', str_replace('{name}', esc_html($term->name), $templates[$taxonomy]['text']));
 				$filled['texts']++;
 			}
 		}
+	}
+	if ($changed) {
+		// What set_values() sets too: the values are validated, not the whole option again.
+		$taxMeta['wpseo_already_validated'] = true;
+		update_option('wpseo_taxonomy_meta', $taxMeta);
+		foodies_seo_forget_term_index($changed);
 	}
 
 	return $filled;
@@ -423,11 +433,13 @@ function foodies_seo_templates(string $lang, array $postIds = [], array $termIds
  * Yoast answers from its indexables table, which isn't rebuilt when the term meta is set from
  * code: the term's row is removed, and Yoast builds it again from the meta on the next request.
  */
-function foodies_seo_forget_term_index(int $term_id): void
+function foodies_seo_forget_term_index(array $term_ids): void
 {
 	global $wpdb;
 	$table = $wpdb->prefix . 'yoast_indexable';
-	$wpdb->query($wpdb->prepare("DELETE FROM `$table` WHERE object_type = 'term' AND object_id = %d", $term_id));
+	foreach (array_chunk(array_map('intval', $term_ids), 500) as $ids) {
+		$wpdb->query("DELETE FROM `$table` WHERE object_type = 'term' AND object_id IN (" . implode(',', $ids) . ')');
+	}
 }
 
 /**
